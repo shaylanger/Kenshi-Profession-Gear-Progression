@@ -307,3 +307,38 @@ Shay asked whether ProfessionGear can be moved into its own new Git repository a
 5. Push `main`.
 6. Verify clean tracking state and remote.
 7. Do not install or apply the mod to Kenshi.
+
+
+---
+
+## Turn update — 2026-10-02 standalone GitHub repository created
+
+### Standalone repository is now live
+- GitHub: `https://github.com/shaylanger/Kenshi-Profession-Gear-Progression`
+- Local canonical checkout: `C:\KenshiModding\Kenshi-Profession-Gear-Progression`
+- Branch: `main`
+- Remote: `origin`
+- Initial standalone root commit: `e161da1 feat: initial profession gear progression mod`
+- Push to `origin/main` succeeded.
+
+### Repository hygiene
+- Added standalone `.gitignore`.
+- Generated `obj/`, `out/`, DLL/EXE/PDB/LIB/EXP/log/runtime sidecar artifacts are ignored and are not part of the source commit.
+- Added `DESIGN_CONTEXT.md` so the full original design/feasibility context travels with this repo.
+- Kept `ACTIVE_CONTEXT.md` in the repository for future agent handoff.
+- Cleaned Markdown trailing whitespace in the copied design context after the first push.
+
+### Validation performed from the standalone checkout before push
+- `run_tests.bat`: PASS — 5,135 checks.
+- `build_portable.bat`: PASS — BUILD OK.
+- `verify_offline.bat`: PASS — 13/13 symbol/export checks.
+- `package.bat`: PASS.
+- No files were installed into Kenshi.
+
+### Canonical development rule from this point
+All future Profession Gear implementation work should be done in:
+`C:\KenshiModding\Kenshi-Profession-Gear-Progression`
+
+Do not continue feature development in:
+`C:\KenshiModding\components\ProfessionGear`
+unless explicitly reconciling/removing the old snapshot.

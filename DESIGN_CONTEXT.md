@@ -1,9 +1,9 @@
-﻿[Reading 1229 lines from start (total: 1229 lines, 0 remaining)]
+[Reading 1229 lines from start (total: 1229 lines, 0 remaining)]
 
 # Kenshi Generalized Equipment & Profession Progression Mod
 ## Unified Design + Feasibility Context
-**Prepared:** 2026-10-02  
-**Status:** Research/design only. No implementation has been performed.  
+**Prepared:** 2026-10-02
+**Status:** Research/design only. No implementation has been performed.
 **Intended use:** Handoff/context file for a future implementation agent.
 
 ---
@@ -1361,4 +1361,3 @@ Start with:
 If those core mechanics work safely, the architecture should scale to the full **Generalized Equipment & Profession Progression** system Shay described: profession tools and clothing, mobility/utility gear, specialized logistics equipment, contextual NPC loadouts, randomized crafted items, and automatic support for sensible vanilla/mod-added equipment.
 
 **Do not implement until Shay explicitly asks to start the mod.**
-
