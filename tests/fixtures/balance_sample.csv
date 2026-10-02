@@ -1,0 +1,13 @@
+test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,tier,roll_pct,notes
+163,Farming,50,0,100,10,1,baseline,,,
+163,Farming,50,0,102,10,1,baseline,,,
+166,Farming,50,4,96,10,1,synthetic,,4,
+166,Farming,50,4,95,10,1,synthetic,,4,
+166,Farming,50,8,91,10,1,synthetic,,8,
+166,Farming,50,8,90,10,1,synthetic,,8,
+167,Farming,50,15,84,10,1,synthetic,,15,
+167,Farming,50,20,80,10,1,synthetic,,20,
+177,Labouring,50,0,120,12,1,baseline,,,
+178,Labouring,50,5,114,12,1,synthetic,,5,
+178,Labouring,50,10,108,12,1,synthetic,,10,
+178,Labouring,50,20,96,12,1,synthetic,,20,

@@ -72,6 +72,10 @@ The plugin changes effective stat reads only. It does not write equipment bonuse
 the stored base profession skill values. Unequipping the item therefore removes the
 bonus without changing earned XP.
 
+## Balance calibration
+
+The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Final tier values should be frozen only after those in-game measurements are complete.
+
 ## Current validation boundary
 
 The core logic and final DLL are built and tested without installing the mod.

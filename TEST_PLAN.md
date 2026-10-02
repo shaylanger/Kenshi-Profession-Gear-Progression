@@ -228,6 +228,20 @@
 | 159 | AUTO | Rapid inventory transfer | No stale weight/bonus |
 | 160 | AUTO | Save during active crafting | Finished item rolls once only |
 
+## Section L — balance calibration
+
+Detailed methodology and measurement matrix: `BALANCE_TEST_PLAN.md`.
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 161–176 | AUTO | Farming baseline, response curve, Shoddy min/mid/max and full-set tiers | Real throughput curve measured; final Farming ranges fitted from data |
+| 177–183 | AUTO | Labouring/mining baseline, response curve and full-set progression | Real throughput curve measured; final Labouring ranges fitted from data |
+| 184–192 | AUTO | Science, Engineering, Robotics, Cooking, smithing, Medic and Turret calibration | Profession-specific response curves measured |
+| 193–199 | AUTO | Athletics, Swimming, Stealth, Lockpicking, Assassination, Thievery, Perception | Utility/probability effects measured with deterministic/repeated fixtures |
+| 200–210 | AUTO | Cross-profession fitting, skill-vs-gear sanity, full-set caps and final freeze | v1 ranges based on measured gameplay rather than placeholder percentages |
+
+Current tier values are **provisional until Section L is run in-game**.
+
 ## Release gate
 
 The mod is not release-ready until:

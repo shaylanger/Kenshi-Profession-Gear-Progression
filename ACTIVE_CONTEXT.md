@@ -342,3 +342,54 @@ All future Profession Gear implementation work should be done in:
 Do not continue feature development in:
 `C:\KenshiModding\components\ProfessionGear`
 unless explicitly reconciling/removing the old snapshot.
+
+
+---
+
+## Turn update — 2026-10-02 balance calibration framework
+
+### Request
+Shay asked to add tests that determine good balance values for tier bonuses instead of relying on placeholder intuition.
+
+### Changes made
+1. Added `BALANCE_TEST_PLAN.md`.
+2. Extended the master `TEST_PLAN.md` from 160 to **210 tests**.
+3. Added tests 161–210 specifically for balance calibration:
+   - Farming baseline/response curves and full-set progression.
+   - Labouring/mining response curves and full-set progression.
+   - Science, Engineering, Robotics, Cooking, smithing, Medic and Turret calibration.
+   - Athletics, Swimming, Stealth, Lockpicking, Assassination, Thievery and Perception calibration.
+   - Cross-profession fitting, skill-vs-gear sanity checks, full-set caps and final v1 range freeze.
+4. Defined controlled base-skill bands: 10, 25, 50, 75, 90.
+5. Defined controlled effective-bonus sweep: +2, +4, +6, +8, +10, +15, +20, +25, +35, +50%.
+6. Defined repeat policy: minimum 5 runs per point; 10 if variance exceeds 3%.
+7. Defined real throughput metric:
+   `gain% = (baseline_time / modified_time - 1) * 100`
+8. Added initial target gameplay bands to validate rather than assume:
+   - one Shoddy piece: 2–5% real throughput,
+   - full Shoddy set: 10–15%,
+   - full mid-tier set: 15–25%,
+   - full high/specialist set: 25–35%,
+   - full top-tier set: 35–50%.
+9. Explicitly requires profession-specific tier ranges if real response curves differ materially. We will not force a universal percent table if Farming, Labouring, Science, etc. react differently.
+10. Added `tools/analyze_balance.py`:
+    - reads live measurement CSV,
+    - groups by profession/base skill/effective bonus,
+    - computes median/mean/stddev throughput,
+    - compares each point with the 0% baseline,
+    - reports real throughput gain,
+    - proposes candidate effective-skill bonus bands at base skill 50,
+    - reports an insufficient sweep rather than pretending a target was reached.
+11. Added:
+    - `tests/fixtures/balance_results_template.csv`
+    - `tests/fixtures/balance_sample.csv`
+12. Tested analyzer against synthetic Farming and Labouring fixture data. It correctly produced response curves and flagged top-tier target bands as insufficient when the synthetic sweep did not reach them.
+13. Updated README to state that current tier values are provisional until calibration is run.
+
+### Important limitation
+No real balance result has been claimed yet. These are the tests/harness needed to derive it. Actual job-throughput data still requires loading the plugin into Kenshi, which remains prohibited until Shay explicitly authorizes installation/testing.
+
+### Next work
+- Keep current placeholder affix values unchanged until real calibration data exists.
+- When live testing is authorized, add ProfessionGear scenario commands/test bridge to set controlled skill/affix/loadout state and automatically emit the CSV format above.
+- Run Farming and Labouring first; fit their curves before expanding to every profession.
