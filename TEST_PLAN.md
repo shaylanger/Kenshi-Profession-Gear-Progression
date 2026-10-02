@@ -266,3 +266,42 @@ The mod is not release-ready until:
 7. SHAY tooltip/UI rows 135–141 are accepted.
 
 Any failure gets a bug number and a regression row before the fix is considered complete.
+
+## Section M — live distribution, shop stock, and recent classifier assumptions
+
+These tests exist specifically so design assumptions are not left as informal "needs testing" notes.
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 211 | AUTO | Generic workwear in trader inventory | Item may roll one of its legal profession stats even with no wearer profession context |
+| 212 | AUTO | Generic goggles in trader inventory | Item may roll only from Perception/Science/Engineering/Robotics/Turrets pool |
+| 213 | AUTO | Loose generic workwear in world/container with no trader or wearer context | No profession affix generated |
+| 214 | AUTO | Buy profession-affixed generic item from trader | Exact affix persists after purchase/transfer |
+| 215 | AUTO | Purchased item carried but not equipped | Zero effective-stat bonus |
+| 216 | AUTO | Purchased item equipped | Stored affix becomes active exactly once |
+| 217 | AUTO | Trader stock refresh/restock | New item instances may roll independently; existing surviving instances do not reroll |
+| 218 | AUTO | Trader character's personally equipped gear | Uses wearer role context, not random shop-stock context |
+| 219 | AUTO | Detect whether Kenshi shop stock actually resides in trader Character inventory | Runtime trader-source detection covers real vendor stock, or alternate shop-container hook is documented/implemented |
+| 220 | AUTO | Vendor scan: Farming gear availability | Qualifying Farming items appear at measurable frequency |
+| 221 | AUTO | Vendor scan: Labouring gear availability | Qualifying Labouring items appear at measurable frequency |
+| 222 | AUTO | Vendor scan: Medic gear availability | Qualifying Medic items appear at measurable frequency |
+| 223 | AUTO | Vendor scan: Engineering gear availability | Qualifying Engineering items appear at measurable frequency |
+| 224 | AUTO | Vendor scan: Science/Research gear availability | Qualifying Science items appear at measurable frequency |
+| 225 | AUTO | Vendor scan: Robotics gear availability | Qualifying Robotics items appear at measurable frequency |
+| 226 | AUTO | Vendor scan: Cooking gear availability | Qualifying Cooking items appear at measurable frequency |
+| 227 | AUTO | Vendor scan: Smithing gear availability | Weapon/Armour/Crossbow Smithing items appear at measurable frequency |
+| 228 | AUTO | NPC/loot distribution by profession | Role-context gear appears on appropriate NPCs without unrelated profession rolls |
+| 229 | AUTO | UWE Pickaxe/Sickle/Pitchfork-like weapon-class tools | Affix activates only while actually equipped |
+| 230 | AUTO | Non-equippable decorative/workstation tools (e.g. GenMod Pickaxe_Deco) | Never grant character stat bonuses |
+| 231 | AUTO | Farmer-named / Engineer-named / Medic-named / Chef-named weapons | Strong profession semantics produce only coherent profession affixes |
+| 232 | AUTO | Ordinary combat weapons across vanilla/UWE corpus | No profession affixes without profession semantics |
+| 233 | AUTO | Meitou/Cross/level-100 weapon corpus | Never modified |
+| 234 | AUTO | Edge-grade weapon on unique named NPC corpus | Protected as designed |
+| 235 | AUTO | Generic workwear profession fallback distribution | Farmer/Medic/Engineer/Cook/Researcher/etc. resolve to their matching profession, not random alternatives |
+| 236 | AUTO | Generic goggles profession fallback distribution | Research/Turret/Engineering/Robotics/Perception contexts resolve correctly |
+| 237 | AUTO | Shop-stock profession distribution | No illegal stats; distribution is broad enough to make browsing shops worthwhile |
+| 238 | AUTO | Vendor inventory performance with large mod load | No noticeable stall from classification/record creation during shop open/restock |
+| 239 | AUTO | Save/load after buying trader-generated profession gear | Item identity and affix survive save/load |
+| 240 | AUTO | Import/new-game behavior for trader-generated gear | No stale sidecar attachment to unrelated replacement items |
+
+Release note: if tests 220–227 show a profession is technically possible but too rare to encounter naturally, fix distribution with curated mappings or optional FCS profession items. Do not solve rarity by assigning unrelated gear nonsensical stats.

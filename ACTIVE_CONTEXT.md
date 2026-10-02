@@ -646,3 +646,55 @@ ProfessionGear itself does not spawn new gear; it augments existing instances.
 - `run_tests.bat`: PASS — 5,169 checks.
 - `build_portable.bat`: PASS — BUILD OK.
 - Mod remains uninstalled.
+
+
+---
+
+## Turn update — 2026-10-02 trader stock profession gear + mandatory live-test recording
+
+### User requirement
+Shay wants browsing shops to be a real way to discover profession gear. Generic items sold by traders should have a chance to roll any coherent stat in the item's allowed context pool even if no wearer profession exists yet.
+
+Shay also explicitly required that anything described as needing in-game validation must be recorded as an actual numbered test, not left as an informal note.
+
+### Trader-stock behavior implemented
+- Added `RoleProfile::traderSource`.
+- Runtime `RoleFor(Character*)` now uses Kenshi SDK `Character::isATrader()`.
+- When an item belongs to a trader and is **not equipped**, its shop-stock roll ignores the shopkeeper's unrelated strongest skill and treats the item as trader stock.
+- Contextual generic shop items may therefore roll randomly from their legal profession pool.
+- Example generic workwear at a shop may become Farming, Labouring, Engineering, Cooking, Medic, Science, Robotics, or Smithing gear, depending on the item pool.
+- Generic goggles in shop stock may roll Perception, Science, Engineering, Robotics, or Turrets.
+- Loose/contextless generic items that are not trader stock and have no wearer profession still get no profession roll.
+- Equipped gear on the trader still uses the trader character's own role context rather than shop-stock randomization.
+- Buying an item should preserve the instance affix; active stat bonus still requires the purchased item to be equipped.
+
+### Important live uncertainty now explicitly tested
+The SDK exposes `Character::isATrader()`, but we have not yet proven whether every real Kenshi vendor's sellable stock is physically stored in the trader Character inventory versus another shop/container structure. This is now test 219. If it is not, add the appropriate shop-container hook rather than silently missing vendor stock.
+
+### Test plan expansion
+Added Section M, tests **211–240**, covering:
+- trader-stock generation,
+- generic shop workwear/goggles,
+- contextless loose loot negative case,
+- purchase persistence,
+- carried-vs-equipped activation,
+- shop restocking,
+- trader personally equipped gear,
+- actual vendor stock ownership structure,
+- per-profession vendor availability for Farming/Labouring/Medic/Engineering/Science/Robotics/Cooking/Smithing,
+- NPC/loot profession distribution,
+- equip-only UWE tool weapons,
+- non-equippable GenMod decorative tools,
+- profession-named weapons,
+- ordinary combat-weapon negatives,
+- Meitou/Cross protection,
+- unique Edge-grade protection,
+- generic context resolution,
+- shop-stock distribution quality,
+- performance on large mod load,
+- save/load and import behavior.
+
+This makes the master numbered plan extend through **240**.
+
+### Release rule
+If live tests show a profession is technically supported but too rare in vendors/NPCs/loot, fix distribution using curated mappings or optional FCS profession items. Do not make unrelated equipment roll nonsensical stats merely to increase frequency.

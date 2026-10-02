@@ -317,12 +317,14 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
   const bool contextualGeneric =
       std::find(tags.begin(),tags.end(),TAG_WORKWEAR_GENERIC)!=tags.end() ||
       std::find(tags.begin(),tags.end(),TAG_GOGGLES_GENERIC)!=tags.end();
-  if(contextualGeneric && (role.primary==STAT_NONE || std::find(pool.begin(),pool.end(),role.primary)==pool.end()))
+  const bool hasMatchingRole =
+      role.primary!=STAT_NONE && std::find(pool.begin(),pool.end(),role.primary)!=pool.end();
+  if(contextualGeneric && !hasMatchingRole && !role.traderSource)
     return out;
 
   float chance=TierAffixChance(out.tier)*cfg.globalChance;
   if(role.slave || role.wealth01<.15f) chance*=cfg.poorNpcMultiplier;
-  if(role.primary!=STAT_NONE && std::find(pool.begin(),pool.end(),role.primary)!=pool.end()) chance*=cfg.npcRoleMultiplier;
+  if(hasMatchingRole) chance*=cfg.npcRoleMultiplier;
   if(crafted) chance*=cfg.playerCraftMultiplier;
   if(chance>1) chance=1;
   unsigned int state=seed^Hash32(key)^Hash32(item.baseId);

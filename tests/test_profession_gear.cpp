@@ -228,7 +228,12 @@ int main(){
   Check(!engineerRags.affixes.empty()&&engineerRags.affixes[0].stat==STAT_ENGINEERING,"generic workwear supports engineering context");
   RoleProfile noRole;
   AffixRecord contextlessRags=RollAffixes(contextRags,noRole,cfg,contextTags,"contextless-rags",99,false);
-  Check(contextlessRags.affixes.empty(),"generic workwear requires matching profession context");
+  Check(contextlessRags.affixes.empty(),"loose generic workwear without context gets no profession roll");
+
+  RoleProfile traderStock; traderStock.traderSource=true; traderStock.primary=STAT_NONE; traderStock.wealth01=.7f;
+  AffixRecord traderRags=RollAffixes(contextRags,traderStock,cfg,contextTags,"trader-rags",99,false);
+  Check(!traderRags.affixes.empty(),"generic workwear in trader stock can roll profession gear");
+  Check(HasStat(AllowedStats(contextTags),traderRags.affixes[0].stat),"trader generic roll stays inside item context pool");
 
   ItemDescriptor contextGoggles; contextGoggles.baseId="mod.plain_goggles"; contextGoggles.name="Plain Goggles"; contextGoggles.quality=.5f;
   std::vector<ItemTag> gTags=Classify(contextGoggles,overrides,exclusions);

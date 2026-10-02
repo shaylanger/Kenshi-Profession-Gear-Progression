@@ -94,7 +94,8 @@ struct RoleProfile {
   float wealth01;
   bool slave;
   bool unique;
-  RoleProfile() : primary(STAT_NONE), wealth01(0.5f), slave(false), unique(false) {}
+  bool traderSource;
+  RoleProfile() : primary(STAT_NONE), wealth01(0.5f), slave(false), unique(false), traderSource(false) {}
 };
 
 struct AffixRecord {

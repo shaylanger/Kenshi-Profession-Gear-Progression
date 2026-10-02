@@ -161,6 +161,7 @@ PGP::RoleProfile RoleFor(Character* c) {
   PGP::RoleProfile r;
   if (!c) return r;
   try { r.slave=(c->isSlave()!=NOT_SLAVE); } catch (...) {}
+  try { r.traderSource=c->isATrader(); } catch (...) {}
   try {
     CharStats* s=c->getStats();
     if (!s) return r;
@@ -226,6 +227,10 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
   std::vector<PGP::ItemTag> tags=TagsFor(d);
   if(tags.empty()) return 0;
   PGP::RoleProfile role=RoleFor(owner);
+  // Trader stock should be generated from the item's plausible profession pool, not from
+  // whatever unrelated skill happens to be highest on the shopkeeper. Equipped trader gear
+  // still uses the trader character's own role context.
+  if(role.traderSource && !d.equipped) role.primary=PGP::STAT_NONE;
   unsigned int seed=PGP::Hash32(key+"|"+d.baseId);
   PGP::AffixRecord r=PGP::RollAffixes(d,role,g_cfg,tags,key,seed,crafted);
 

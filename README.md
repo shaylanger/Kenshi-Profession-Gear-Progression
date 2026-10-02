@@ -80,7 +80,7 @@ Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tier
 
 ## Balance calibration
 
-The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Final tier values should be frozen only after those in-game measurements are complete.
+The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Tests 211–240 cover trader-stock generation, equip-only behavior, profession availability/frequency, installed-mod distribution, unique-weapon protection, and other live assumptions. Final tier values should be frozen only after those in-game measurements are complete.
 
 ## Current validation boundary
 
