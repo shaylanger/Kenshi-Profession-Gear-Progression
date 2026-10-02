@@ -118,6 +118,7 @@ ItemTag ParseTag(const std::string& value);
 int QualityTier(float quality);
 void TierRange(int tier, float& minPercent, float& maxPercent);
 float TierAffixChance(int tier);
+int TierAffixCap(int tier);
 
 std::vector<ItemTag> Classify(const ItemDescriptor& item,
                               const std::map<std::string, std::vector<ItemTag> >& overrides,

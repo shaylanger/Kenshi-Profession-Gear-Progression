@@ -393,3 +393,69 @@ No real balance result has been claimed yet. These are the tests/harness needed 
 - Keep current placeholder affix values unchanged until real calibration data exists.
 - When live testing is authorized, add ProfessionGear scenario commands/test bridge to set controlled skill/affix/loadout state and automatically emit the CSV format above.
 - Run Farming and Labouring first; fit their curves before expanding to every profession.
+
+
+---
+
+## Turn update — 2026-10-02 vanilla gear classification correction + 3-affix top tier
+
+### Request
+Shay asked whether the existing classifier was based on real Kenshi gear, asked for a review of the full vanilla gear catalogue, requested top tiers to support up to 3 stats, and asked how mod-added gear can still work if exact IDs are preferred.
+
+### Findings
+- Earlier examples such as lab coats, chef aprons, research tools and hoes were partly conceptual targets, not faithful vanilla equipment families.
+- Reviewed the real vanilla equipment families from the installed game/wiki references:
+  - headgear,
+  - shirts,
+  - body armour,
+  - legwear,
+  - footwear,
+  - backpacks,
+  - melee weapon classes,
+  - crossbows,
+  - robot limbs,
+  - lanterns.
+- Added `VANILLA_GEAR_CLASSIFICATION.md` with the real catalogue and revised policy.
+- Important real examples:
+  - Straw Hat exists and its vanilla description explicitly references peasant farmers/desert scouts.
+  - Square Goggles and Ashlander Stormgoggles exist and provide native Perception, but vanilla does NOT call them research gear.
+  - Wooden Sandals already improve Athletics/combat speed.
+  - Scout Legs, Stealth Legs, Thief's Arm, Steady Arm and Industrial Lifter Arms have strong native semantic stat signatures.
+  - Generic armour/weapons should not automatically receive profession stats.
+
+### Revised classifier strategy
+Not ID-only and not keyword-only.
+
+Priority/evidence:
+1. explicit exact-ID rule,
+2. native object type/slot,
+3. existing native mechanical fingerprint,
+4. description / linked GameData semantics where available,
+5. semantic name tokens as fallback,
+6. NPC/source context only for roll weighting among already-legal stats.
+
+Weak or contradictory evidence => no profession classification.
+
+This keeps third-party mod support because unknown IDs can still classify from slot/type + native stats + descriptions + semantic tokens. Exact IDs remain authoritative overrides/corrections, not the only route.
+
+### Affix count change
+Implemented requested tier ceilings:
+- tiers 0–2: max 1 affix,
+- tiers 3–4: up to 2 affixes,
+- tiers 5–6: up to 3 affixes.
+
+`MaxAffixes` default changed from 2 to 3.
+Extra affixes remain probabilistic and must come from the coherent legal stat pool. A one-stat item still cannot magically get three unrelated stats.
+
+### Validation
+- `run_tests.bat`: PASS — 5,140 checks.
+- `build_portable.bat`: PASS — BUILD OK.
+- `verify_offline.bat`: PASS — 13/13 symbol/export checks.
+- Mod remains uninstalled.
+
+### Next work
+1. Replace the current simple name-heavy runtime classifier with the scored hybrid evidence model documented in `VANILLA_GEAR_CLASSIFICATION.md`.
+2. Add explicit native mechanical fingerprint fields to `ItemDescriptor` where SDK access is safe.
+3. Add curated vanilla mappings only where profession semantics are defensible.
+4. Add classifier tests against a fixture catalogue of real vanilla items plus synthetic third-party items with unusual names.
+5. Keep exact rules as the final authority.

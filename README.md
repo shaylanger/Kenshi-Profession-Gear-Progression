@@ -72,6 +72,12 @@ The plugin changes effective stat reads only. It does not write equipment bonuse
 the stored base profession skill values. Unequipping the item therefore removes the
 bonus without changing earned XP.
 
+## Gear classification
+
+`VANILLA_GEAR_CLASSIFICATION.md` documents the reviewed vanilla equipment catalogue and the revised hybrid classifier. Automatic support is not ID-only: exact IDs are strongest, but native slot/type, existing mechanical stats, descriptions, semantic names, and NPC context are combined so unknown third-party gear can still classify when evidence is strong. Weak/contradictory cases receive no profession affix rather than a guess.
+
+Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tiers (3–4) up to 2, top tiers (5–6) up to 3 coherent stats.
+
 ## Balance calibration
 
 The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Final tier values should be frozen only after those in-game measurements are complete.

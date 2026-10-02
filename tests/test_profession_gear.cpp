@@ -50,6 +50,11 @@ int main(){
   Check(QualityTier(.94f)==6,"tier 6 lower");
   Check(QualityTier(5.0f)==6,"tier 6 clamp high");
 
+  Check(TierAffixCap(0)==1 && TierAffixCap(1)==1 && TierAffixCap(2)==1,"low tiers cap one affix");
+  Check(TierAffixCap(3)==2 && TierAffixCap(4)==2,"medium tiers cap two affixes");
+  Check(TierAffixCap(5)==3 && TierAffixCap(6)==3,"top tiers cap three affixes");
+  Check(TierAffixCap(-9)==1 && TierAffixCap(99)==3,"affix cap clamps tier");
+
   float lastChance=-1;
   for(int t=0;t<=6;++t){
     float lo=0,hi=0; TierRange(t,lo,hi);

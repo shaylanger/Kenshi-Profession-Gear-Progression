@@ -12,7 +12,7 @@ namespace PGP {
 RuleConfig::RuleConfig()
     : enabled(true), autoClassify(true), globalChance(1.0f),
       npcRoleMultiplier(1.35f), playerCraftMultiplier(1.15f),
-      poorNpcMultiplier(0.20f), maxAffixes(2) {}
+      poorNpcMultiplier(0.20f), maxAffixes(3) {}
 
 std::string Lower(const std::string& value) {
   std::string out = value;
@@ -148,6 +148,14 @@ float TierAffixChance(int tier) {
   return c[tier];
 }
 
+int TierAffixCap(int tier) {
+  if (tier < 0) tier = 0;
+  if (tier > 6) tier = 6;
+  if (tier <= 2) return 1;
+  if (tier <= 4) return 2;
+  return 3;
+}
+
 static void AddTag(std::vector<ItemTag>& out, ItemTag t) {
   if (t != TAG_NONE && std::find(out.begin(),out.end(),t)==out.end()) out.push_back(t);
 }
@@ -252,9 +260,18 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
   unsigned int state=seed^Hash32(key)^Hash32(item.baseId);
   if(UnitRoll(state)>chance) return out;
   float lo,hi; TierRange(out.tier,lo,hi);
+  int cap=TierAffixCap(out.tier);
+  if(cap>cfg.maxAffixes) cap=cfg.maxAffixes;
+  if(cap>(int)pool.size()) cap=(int)pool.size();
   int count=1;
-  if(cfg.maxAffixes>1 && out.tier>=4 && pool.size()>1 && UnitRoll(state)<.28f) count=2;
-  if(count>cfg.maxAffixes) count=cfg.maxAffixes;
+  if(cap>=2){
+    float secondChance=(out.tier==3)?0.35f:(out.tier==4)?0.50f:(out.tier==5)?0.65f:0.80f;
+    if(UnitRoll(state)<secondChance) count=2;
+  }
+  if(cap>=3 && count>=2){
+    float thirdChance=(out.tier==5)?0.25f:0.45f;
+    if(UnitRoll(state)<thirdChance) count=3;
+  }
   std::vector<ProfessionStat> rem=pool;
   for(int i=0;i<count && !rem.empty();++i){
     size_t idx=(size_t)(UnitRoll(state)*rem.size()); if(idx>=rem.size()) idx=rem.size()-1;

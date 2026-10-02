@@ -33,6 +33,9 @@
 | 14 | AUTO | Unknown stat ID | Rejected |
 | 15 | AUTO | Exact exclusion precedence | Excluded ID never classifies |
 | 16 | AUTO | Exact override precedence | Explicit tags replace automatic guess |
+| 16a | AUTO | Low-tier affix cap | Tiers 0–2 never exceed 1 affix |
+| 16b | AUTO | Medium-tier affix cap | Tiers 3–4 never exceed 2 affixes |
+| 16c | AUTO | Top-tier affix cap | Tiers 5–6 never exceed 3 affixes |
 | 17 | AUTO | Farming classifier | Hoe/farm tools map only to farming pool |
 | 18 | AUTO | Mining classifier | Pickaxe/mining tools map to labouring |
 | 19 | AUTO | Research classifier | Lab/research items map to science/robotics |
