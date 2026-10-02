@@ -571,3 +571,78 @@ New offline cases cover:
 3. Add description-driven synthetic cases for strangely named mod items.
 4. Add curated protection rules for any unique/legendary mod items discovered in the installed corpus.
 5. Keep real live item enumeration as a later authorized in-game/FCS step; do not install ProfessionGear yet.
+
+
+---
+
+## Turn update — 2026-10-02 equip-only clarification + profession weapon semantics + category coverage
+
+### Equip behavior clarified
+- Profession affix records can exist on an item while it is merely carried.
+- **No stat bonus is active unless `item->isEquipped` is true.**
+- This is already enforced by the runtime equipped-bonus cache.
+- Test 48 now explicitly states that carrying an eligible item grants zero bonus.
+- UWE's Pickaxe appears in `items\weapons\mesh\pickaxe.mesh`, so it is likely an equipable weapon-class item.
+- GenMod's `Pickaxe_Deco` is under industry/building assets and appears to be a prop, not equipable character gear. World/building props are outside ProfessionGear character stat bonuses.
+
+### Weapon semantic correction
+Shay explicitly wants roleplay semantics to beat the previous combat-weapon rejection when the name clearly implies a profession.
+
+Changed classifier:
+- `Farmer's Sword` can classify Farming.
+- Pitchfork weapon-class items classify Farming.
+- Pickaxe weapon-class items classify Labouring.
+- Chef/cooking-named weapons can classify Cooking.
+- Engineer/builder/mechanic-named weapons can classify Engineering.
+- Medic/doctor/surgeon-named weapons can classify Medic.
+- Research/science-named weapons can classify Science/Research.
+- Smithing/forge-named weapons can classify smithing.
+- Ordinary weapons with no profession semantics remain excluded.
+- Legendary/unique protections still win.
+
+### Generic-context fallback expanded
+`WORKWEAR_GENERIC` now supports:
+- Farming
+- Labouring
+- Engineering
+- Cooking
+- Medic
+- Science
+- Robotics
+- Weapon Smithing
+- Armour Smithing
+- Crossbow Smithing
+
+But generic workwear/goggles now **require a matching role context**. A contextless generic rag/hat does not randomly choose a profession. This prevents random loot from becoming nonsensical while allowing:
+- farmer rags -> Farming,
+- labourer rags -> Labouring,
+- field medic rags -> Medic,
+- cook rags -> Cooking,
+- engineer workwear -> Engineering,
+- researcher workwear/goggles -> Science,
+etc.
+
+### Installed-content evidence
+UWE database string scan found:
+- equipable-looking Plague Doctor mask assets and doctor/field-medic contexts,
+- Pickaxe item and weapon mesh,
+- Sickle weapon mesh,
+- extensive Farming/worker/mining contexts,
+- Engineer NPC/shop/construction contexts,
+- abundant Tech Hunter/research contexts,
+- cook NPC/cooking contexts.
+
+No clearly dedicated wearable Engineer/Research/Cooking sets were identified from the string scan. Therefore those categories currently rely more on contextual generic clothing/goggles unless later record-level audit finds dedicated items.
+
+Added a category availability matrix to `INSTALLED_MOD_GEAR_AUDIT.md`.
+
+### Current assessment
+ProfessionGear itself does not spawn new gear; it augments existing instances.
+- Strong natural coverage: Farming, Labouring, Turrets/Perception, Athletics/travel, Stealth.
+- Moderate but representable coverage: Medic, Engineering, Science, Robotics, Cooking, Smithing.
+- The live test phase must measure actual category frequency. If a category is too rare, use curated mappings or optional FCS profession items rather than assigning stats to unrelated equipment.
+
+### Validation
+- `run_tests.bat`: PASS — 5,169 checks.
+- `build_portable.bat`: PASS — BUILD OK.
+- Mod remains uninstalled.

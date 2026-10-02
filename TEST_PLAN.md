@@ -54,8 +54,8 @@
 | 30b | AUTO | Same Worker Rags on farmer vs labourer | Same base item rolls Farming vs Labouring by context |
 | 30c | AUTO | Plain mod-added goggles | Multi-context Perception/Science/Engineering/Robotics/Turrets pool |
 | 30d | AUTO | Running Shoes with no native Athletics stat | Name/type still classify as Athletics/travel |
-| 30e | AUTO | Farmer-named normal combat sword | Rejected by combat-weapon gate |
-| 30f | AUTO | Weapon-slot Pickaxe | Allowed as Labouring because explicit tool semantics override combat gate |
+| 30e | AUTO | Farmer-named combat sword | Farming is allowed because the name strongly signals profession roleplay |
+| 30f | AUTO | Weapon-slot Pickaxe / Pitchfork | Labouring/Farming allowed from strong profession semantics while bonus remains equip-only |
 | 30g | AUTO | Meitou/Cross/level-100 weapon | Never receives ProfessionGear affix |
 | 30h | AUTO | Edge-grade weapon on unique named NPC | Protected from ProfessionGear affixes |
 | 30i | AUTO | Installed UWE/GenMod classifier corpus | False positives/negatives reviewed and converted to regression fixtures |
@@ -86,7 +86,7 @@
 |---|---|---|---|
 | 46 | AUTO | First eligible equipped item observed | One record created |
 | 47 | AUTO | Same item scanned repeatedly | Record never rerolls |
-| 48 | AUTO | Unequipped eligible item in inventory | Record persists but bonus is not active |
+| 48 | AUTO | Unequipped eligible item in inventory | Record may persist, but **carrying it grants zero bonus** |
 | 49 | AUTO | Re-equip same item | Same roll becomes active |
 | 50 | AUTO | Drop and pick up same item | Same instance retains same roll |
 | 51 | AUTO | Transfer item to squadmate | Same item roll follows item |

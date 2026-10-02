@@ -175,3 +175,26 @@ Before v1 classifier freeze:
 7. Add every discovered regression as an automated classifier case.
 
 The game/mod install itself remains untouched by ProfessionGear.
+
+
+## Profession category availability assessment from installed content
+
+This is an evidence-based **pre-live-test** assessment, not a guarantee of spawn frequency. ProfessionGear does not create/spawn new items by itself; it augments qualifying existing item instances when they are observed.
+
+| Category | Current confidence | Evidence found |
+|---|---|---|
+| Farming | Strong | Vanilla Straw Hat; UWE Sickle weapon mesh; UWE farming content; names such as Farmer; generic workwear fallback; profession-named weapons now allowed |
+| Labouring/mining | Strong | UWE Pickaxe item/weapon mesh; worker/miner contexts; generic workwear; mining semantics |
+| Medic | Moderate/Strong | UWE plague-doctor mask wearable assets; field-medic NPC contexts; generic workwear can resolve to Medic |
+| Engineering | Moderate | Engineer NPCs/shops/maps/construction context exist; no clearly dedicated wearable engineer set found yet; generic workwear and goggles can resolve to Engineering |
+| Science/research | Moderate | Tech Hunter/researcher contexts are abundant; no clearly dedicated lab-wear set found yet; goggles/generic workwear can resolve to Science when worn by a Science-primary character |
+| Robotics | Moderate | Robotics/Mechanical Hive context exists; goggles/workwear can resolve to Robotics; dedicated wearable robotics gear still needs record-level audit |
+| Cooking | Moderate | Cook NPC context is present; no obvious dedicated chef/apron wearable found in UWE string scan; generic workwear can resolve to Cooking |
+| Weapon/Armour/Crossbow Smithing | Moderate | Smithing/forge semantics can classify explicit named gear; generic workwear can resolve to smith professions; dedicated wearable smith sets still need record-level audit |
+| Turrets/Perception | Strong | Goggles/visors and turret-gunner contexts provide a good generic precision pool |
+| Athletics/travel | Strong | Vanilla Wooden Sandals and travel footwear concepts; semantic names like Running Shoes/Scout gear work without native Athletics stats |
+| Stealth/thievery | Strong | Vanilla/modded ninja/assassin gear and semantic stealth items are abundant |
+
+Important: categories rated Moderate can still appear because contextual generic clothing/goggles can roll the wearer's real profession. The remaining question is **distribution/frequency**, not whether the classifier can represent the category.
+
+The live-game test phase should measure how often each category actually appears across NPCs/vendors/loot. If Engineering/Cooking/Research/Medic are too rare, add targeted curated mappings or optional FCS profession items rather than forcing unrelated gear.

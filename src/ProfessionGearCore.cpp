@@ -193,28 +193,42 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   if (item.legendary) return out;
   const std::string n = Lower(item.name+" "+item.description+" "+item.category+" "+item.slot);
 
-  const bool explicitProfessionTool =
-      Has(n,"hoe") || Has(n,"sickle") || Has(n,"pickaxe") || Has(n,"pick axe") ||
-      Has(n,"farm tool") || Has(n,"mining tool") || Has(n,"research tool") ||
-      Has(n,"science tool") || Has(n,"engineering tool") || Has(n,"tool belt") ||
-      Has(n,"robotics tool") || Has(n,"medical tool") || Has(n,"first aid tool") ||
-      Has(n,"smithing tool") || Has(n,"forge tool") || Has(n,"cooking tool") || Has(n,"chef tool");
+  const bool strongFarming =
+      Has(n,"hoe") || Has(n,"sickle") || Has(n,"pitchfork") || Has(n,"farmer") ||
+      Has(n,"farmhand") || Has(n,"farm tool") || Has(n,"agricultural") || Has(n,"harvesting");
+  const bool strongMining =
+      Has(n,"pickaxe") || Has(n,"pick axe") || Has(n,"miner") || Has(n,"mining");
+  const bool strongResearch =
+      Has(n,"research") || Has(n,"scientist") || Has(n,"science ") || Has(n,"laboratory") || Has(n,"lab tool");
+  const bool strongEngineering =
+      Has(n,"engineer") || Has(n,"engineering") || Has(n,"builder") || Has(n,"construction tool") || Has(n,"mechanic");
+  const bool strongRobotics =
+      Has(n,"robotic") || Has(n,"robotics") || Has(n,"roboticist");
+  const bool strongMedic =
+      Has(n,"medic") || Has(n,"medical") || Has(n,"doctor") || Has(n,"surgeon") || Has(n,"first aid");
+  const bool strongCooking =
+      Has(n,"chef") || Has(n,"cook's") || Has(n,"cooks ") || Has(n,"cooking") || Has(n,"kitchen");
+  const bool strongSmith =
+      Has(n,"weapon smith") || Has(n,"armour smith") || Has(n,"armor smith") ||
+      Has(n,"crossbow smith") || Has(n,"smithing") || Has(n,"forge tool");
 
-  // Normal combat weapons are not profession gear just because their names contain a profession-like word.
-  // Tool-like weapons (e.g. a modded pickaxe) are allowed through when the name/description is explicit.
-  if (item.weapon && !explicitProfessionTool) return out;
+  // Weapon-class items are allowed when their normal Kenshi name/description strongly implies
+  // a profession. This deliberately supports roleplay items such as Farmer's Sword, Pitchfork,
+  // Chef's Knife, Engineer's Hammer, etc. Ordinary combat weapons with no such semantics stay out.
+  if (item.weapon && !(strongFarming || strongMining || strongResearch || strongEngineering ||
+                       strongRobotics || strongMedic || strongCooking || strongSmith)) return out;
 
-  if (Has(n,"hoe") || Has(n,"sickle") || Has(n,"farm tool") || Has(n,"agricultural tool") || Has(n,"harvesting tool")) AddTag(out,TAG_TOOL_FARMING);
-  if (Has(n,"pickaxe") || Has(n,"pick axe") || Has(n,"mining tool")) AddTag(out,TAG_TOOL_MINING);
+  if (strongFarming) AddTag(out,TAG_TOOL_FARMING);
+  if (strongMining) AddTag(out,TAG_TOOL_MINING);
   if (Has(n,"lab coat") || Has(n,"research coat")) AddTag(out,TAG_BODY_RESEARCH);
-  if (Has(n,"research") || Has(n,"science") || Has(n,"laboratory")) AddTag(out,TAG_TOOL_RESEARCH);
-  if (Has(n,"engineer") || Has(n,"construction tool") || Has(n,"tool belt")) AddTag(out,TAG_TOOL_ENGINEERING);
-  if (Has(n,"robotic") || Has(n,"robotics")) AddTag(out,TAG_TOOL_ROBOTICS);
-  if (Has(n,"medic") || Has(n,"medical") || Has(n,"doctor") || Has(n,"first aid")) AddTag(out,TAG_TOOL_MEDIC);
+  if (strongResearch) AddTag(out,TAG_TOOL_RESEARCH);
+  if (strongEngineering || Has(n,"tool belt")) AddTag(out,TAG_TOOL_ENGINEERING);
+  if (strongRobotics) AddTag(out,TAG_TOOL_ROBOTICS);
+  if (strongMedic) AddTag(out,TAG_TOOL_MEDIC);
   if (Has(n,"weapon smith")) AddTag(out,TAG_TOOL_WEAPON_SMITH);
   if (Has(n,"armour smith") || Has(n,"armor smith")) AddTag(out,TAG_TOOL_ARMOUR_SMITH);
   if (Has(n,"crossbow smith")) AddTag(out,TAG_TOOL_CROSSBOW_SMITH);
-  if (Has(n,"cooking") || Has(n,"chef") || Has(n,"kitchen tool")) AddTag(out,TAG_TOOL_COOKING);
+  if (strongCooking) AddTag(out,TAG_TOOL_COOKING);
   if (Has(n,"straw hat")) AddTag(out,TAG_HEAD_FARMING);
 
   // Ambiguous real/modded gear: base item defines a plausible pool, wearer/source context selects the roll.
@@ -267,7 +281,10 @@ std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags) {
       case TAG_STEALTH_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_LOCKPICKING); break;
       case TAG_PACK_TRADE: AddStat(out,STAT_ATHLETICS); break;
       case TAG_WORKWEAR_GENERIC:
-        AddStat(out,STAT_FARMING); AddStat(out,STAT_LABOURING); AddStat(out,STAT_ENGINEERING); AddStat(out,STAT_COOKING); break;
+        AddStat(out,STAT_FARMING); AddStat(out,STAT_LABOURING); AddStat(out,STAT_ENGINEERING);
+        AddStat(out,STAT_COOKING); AddStat(out,STAT_MEDIC); AddStat(out,STAT_SCIENCE);
+        AddStat(out,STAT_ROBOTICS); AddStat(out,STAT_WEAPON_SMITH); AddStat(out,STAT_ARMOUR_SMITH);
+        AddStat(out,STAT_CROSSBOW_SMITH); break;
       case TAG_GOGGLES_GENERIC:
         AddStat(out,STAT_PERCEPTION); AddStat(out,STAT_SCIENCE); AddStat(out,STAT_ENGINEERING); AddStat(out,STAT_ROBOTICS); AddStat(out,STAT_TURRETS); break;
       default: break;
@@ -297,6 +314,12 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
   if(!cfg.enabled || item.stackable || item.legendary || (item.weapon && role.unique && item.weaponLevel>=70) || tags.empty()) return out;
   std::vector<ProfessionStat> pool=AllowedStats(tags);
   if(pool.empty()) return out;
+  const bool contextualGeneric =
+      std::find(tags.begin(),tags.end(),TAG_WORKWEAR_GENERIC)!=tags.end() ||
+      std::find(tags.begin(),tags.end(),TAG_GOGGLES_GENERIC)!=tags.end();
+  if(contextualGeneric && (role.primary==STAT_NONE || std::find(pool.begin(),pool.end(),role.primary)==pool.end()))
+    return out;
+
   float chance=TierAffixChance(out.tier)*cfg.globalChance;
   if(role.slave || role.wealth01<.15f) chance*=cfg.poorNpcMultiplier;
   if(role.primary!=STAT_NONE && std::find(pool.begin(),pool.end(),role.primary)!=pool.end()) chance*=cfg.npcRoleMultiplier;
@@ -317,9 +340,6 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
     float thirdChance=(out.tier==5)?0.25f:0.45f;
     if(UnitRoll(state)<thirdChance) count=3;
   }
-  const bool contextualGeneric =
-      std::find(tags.begin(),tags.end(),TAG_WORKWEAR_GENERIC)!=tags.end() ||
-      std::find(tags.begin(),tags.end(),TAG_GOGGLES_GENERIC)!=tags.end();
   std::vector<ProfessionStat> rem=pool;
   for(int i=0;i<count && !rem.empty();++i){
     size_t idx=(size_t)(UnitRoll(state)*rem.size()); if(idx>=rem.size()) idx=rem.size()-1;

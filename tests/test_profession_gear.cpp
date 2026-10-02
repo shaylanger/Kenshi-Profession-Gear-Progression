@@ -132,7 +132,10 @@ int main(){
   {std::vector<ItemTag> x=Classify(shoes,overrides,exclusions);Check(HasTag(x,TAG_BOOTS_TRAVEL),"running shoes infer athletics context from name");}
 
   ItemDescriptor combat; combat.baseId="mod.farmer_sword"; combat.name="Farmer's Sword"; combat.weapon=true; combat.weaponLevel=50;
-  Check(Classify(combat,overrides,exclusions).empty(),"normal combat weapon rejected despite farmer word");
+  {std::vector<ItemTag> x=Classify(combat,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"farmer named weapon can carry farming context");}
+
+  ItemDescriptor pitchfork; pitchfork.baseId="mod.pitchfork"; pitchfork.name="Rusty Pitchfork"; pitchfork.weapon=true; pitchfork.weaponLevel=25;
+  {std::vector<ItemTag> x=Classify(pitchfork,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"pitchfork weapon class gets farming context");}
 
   ItemDescriptor toolWeapon; toolWeapon.baseId="mod.pickaxe"; toolWeapon.name="Industrial Pickaxe"; toolWeapon.weapon=true; toolWeapon.weaponLevel=40;
   {std::vector<ItemTag> x=Classify(toolWeapon,overrides,exclusions);Check(HasTag(x,TAG_TOOL_MINING),"tool-like weapon allowed by explicit semantics");}
@@ -214,6 +217,18 @@ int main(){
   RoleProfile labourer; labourer.primary=STAT_LABOURING; labourer.wealth01=.7f;
   AffixRecord labourRags=RollAffixes(contextRags,labourer,cfg,contextTags,"labour-rags",99,false);
   Check(!labourRags.affixes.empty()&&labourRags.affixes[0].stat==STAT_LABOURING,"same workwear base uses labourer context on another instance");
+  RoleProfile medicCtx; medicCtx.primary=STAT_MEDIC; medicCtx.wealth01=.7f;
+  AffixRecord medicRags=RollAffixes(contextRags,medicCtx,cfg,contextTags,"medic-rags",99,false);
+  Check(!medicRags.affixes.empty()&&medicRags.affixes[0].stat==STAT_MEDIC,"generic workwear supports field medic context");
+  RoleProfile cookCtx; cookCtx.primary=STAT_COOKING; cookCtx.wealth01=.7f;
+  AffixRecord cookRags=RollAffixes(contextRags,cookCtx,cfg,contextTags,"cook-rags",99,false);
+  Check(!cookRags.affixes.empty()&&cookRags.affixes[0].stat==STAT_COOKING,"generic workwear supports cook context");
+  RoleProfile engineerCtx; engineerCtx.primary=STAT_ENGINEERING; engineerCtx.wealth01=.7f;
+  AffixRecord engineerRags=RollAffixes(contextRags,engineerCtx,cfg,contextTags,"engineer-rags",99,false);
+  Check(!engineerRags.affixes.empty()&&engineerRags.affixes[0].stat==STAT_ENGINEERING,"generic workwear supports engineering context");
+  RoleProfile noRole;
+  AffixRecord contextlessRags=RollAffixes(contextRags,noRole,cfg,contextTags,"contextless-rags",99,false);
+  Check(contextlessRags.affixes.empty(),"generic workwear requires matching profession context");
 
   ItemDescriptor contextGoggles; contextGoggles.baseId="mod.plain_goggles"; contextGoggles.name="Plain Goggles"; contextGoggles.quality=.5f;
   std::vector<ItemTag> gTags=Classify(contextGoggles,overrides,exclusions);
