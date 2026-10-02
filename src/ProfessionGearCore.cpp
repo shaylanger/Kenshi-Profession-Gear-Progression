@@ -12,7 +12,7 @@ namespace PGP {
 RuleConfig::RuleConfig()
     : enabled(true), autoClassify(true), globalChance(1.0f),
       npcRoleMultiplier(1.35f), playerCraftMultiplier(1.15f),
-      poorNpcMultiplier(0.20f), maxAffixes(3) {}
+      poorNpcMultiplier(0.20f), worldLootMultiplier(0.50f), maxAffixes(3) {}
 
 std::string Lower(const std::string& value) {
   std::string out = value;
@@ -319,10 +319,11 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
       std::find(tags.begin(),tags.end(),TAG_GOGGLES_GENERIC)!=tags.end();
   const bool hasMatchingRole =
       role.primary!=STAT_NONE && std::find(pool.begin(),pool.end(),role.primary)!=pool.end();
-  if(contextualGeneric && !hasMatchingRole && !role.traderSource)
+  if(contextualGeneric && !hasMatchingRole && !role.traderSource && !role.worldLootSource)
     return out;
 
   float chance=TierAffixChance(out.tier)*cfg.globalChance;
+  if(role.worldLootSource) chance*=cfg.worldLootMultiplier;
   if(role.slave || role.wealth01<.15f) chance*=cfg.poorNpcMultiplier;
   if(hasMatchingRole) chance*=cfg.npcRoleMultiplier;
   if(crafted) chance*=cfg.playerCraftMultiplier;

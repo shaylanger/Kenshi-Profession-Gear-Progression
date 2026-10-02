@@ -228,7 +228,16 @@ int main(){
   Check(!engineerRags.affixes.empty()&&engineerRags.affixes[0].stat==STAT_ENGINEERING,"generic workwear supports engineering context");
   RoleProfile noRole;
   AffixRecord contextlessRags=RollAffixes(contextRags,noRole,cfg,contextTags,"contextless-rags",99,false);
-  Check(contextlessRags.affixes.empty(),"loose generic workwear without context gets no profession roll");
+  Check(contextlessRags.affixes.empty(),"generic workwear without any recognized source context gets no roll");
+
+  RoleProfile worldLoot; worldLoot.worldLootSource=true; worldLoot.primary=STAT_NONE; worldLoot.wealth01=.7f;
+  RuleConfig worldCfg=cfg; worldCfg.worldLootMultiplier=1.0f;
+  AffixRecord worldRags=RollAffixes(contextRags,worldLoot,worldCfg,contextTags,"world-rags",99,false);
+  Check(!worldRags.affixes.empty(),"world loot generic workwear can roll profession gear");
+  Check(HasStat(AllowedStats(contextTags),worldRags.affixes[0].stat),"world loot roll stays inside legal item pool");
+  worldCfg.worldLootMultiplier=0.0f;
+  AffixRecord disabledWorldRags=RollAffixes(contextRags,worldLoot,worldCfg,contextTags,"world-rags-off",99,false);
+  Check(disabledWorldRags.affixes.empty(),"world loot multiplier can disable contextless exploration rolls");
 
   RoleProfile traderStock; traderStock.traderSource=true; traderStock.primary=STAT_NONE; traderStock.wealth01=.7f;
   AffixRecord traderRags=RollAffixes(contextRags,traderStock,cfg,contextTags,"trader-rags",99,false);

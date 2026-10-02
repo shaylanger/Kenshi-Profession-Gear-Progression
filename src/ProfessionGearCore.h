@@ -95,7 +95,8 @@ struct RoleProfile {
   bool slave;
   bool unique;
   bool traderSource;
-  RoleProfile() : primary(STAT_NONE), wealth01(0.5f), slave(false), unique(false), traderSource(false) {}
+  bool worldLootSource;
+  RoleProfile() : primary(STAT_NONE), wealth01(0.5f), slave(false), unique(false), traderSource(false), worldLootSource(false) {}
 };
 
 struct AffixRecord {
@@ -113,6 +114,7 @@ struct RuleConfig {
   float npcRoleMultiplier;
   float playerCraftMultiplier;
   float poorNpcMultiplier;
+  float worldLootMultiplier;
   int maxAffixes;
   RuleConfig();
 };

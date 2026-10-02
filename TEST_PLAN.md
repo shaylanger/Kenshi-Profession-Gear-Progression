@@ -275,7 +275,7 @@ These tests exist specifically so design assumptions are not left as informal "n
 |---|---|---|---|
 | 211 | AUTO | Generic workwear in trader inventory | Item may roll one of its legal profession stats even with no wearer profession context |
 | 212 | AUTO | Generic goggles in trader inventory | Item may roll only from Perception/Science/Engineering/Robotics/Turrets pool |
-| 213 | AUTO | Loose generic workwear in world/container with no trader or wearer context | No profession affix generated |
+| 213 | AUTO | Loose generic workwear discovered as world/container loot | May roll a random profession from its legal pool at the reduced world-loot chance |
 | 214 | AUTO | Buy profession-affixed generic item from trader | Exact affix persists after purchase/transfer |
 | 215 | AUTO | Purchased item carried but not equipped | Zero effective-stat bonus |
 | 216 | AUTO | Purchased item equipped | Stored affix becomes active exactly once |
@@ -305,3 +305,18 @@ These tests exist specifically so design assumptions are not left as informal "n
 | 240 | AUTO | Import/new-game behavior for trader-generated gear | No stale sidecar attachment to unrelated replacement items |
 
 Release note: if tests 220–227 show a profession is technically possible but too rare to encounter naturally, fix distribution with curated mappings or optional FCS profession items. Do not solve rarity by assigning unrelated gear nonsensical stats.
+
+## Section N — exploration/world-loot generation
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 241 | AUTO | Previously unseen eligible item picked up from ruin chest | Classified as world loot, not from player's profession |
+| 242 | AUTO | World-loot generic Rag Shirt | Can roll only from generic workwear pool |
+| 243 | AUTO | World-loot generic goggles | Can roll only from goggles pool |
+| 244 | AUTO | WorldLootMultiplier=0 | Contextless exploration gear never rolls an affix |
+| 245 | AUTO | WorldLootMultiplier=0.50 statistical sample | Observed eligible-roll frequency is approximately half normal tier chance within tolerance |
+| 246 | AUTO | Same ruin item dropped and picked up repeatedly | Never rerolls after first record is created |
+| 247 | AUTO | Two characters with different professions pick identical unseen world-loot fixtures | Roll distribution is independent of player profession |
+| 248 | AUTO | Inspect unopened chest before pickup, if game exposes item objects to plugin | If items are discoverable pre-pickup, affix is stable before/after pickup; otherwise pickup-time world-loot generation is documented and verified |
+| 249 | AUTO | Starting/player-owned pre-existing eligible item with no record | Does not inherit player's profession merely because it is first scanned on a player character |
+| 250 | AUTO | World-loot profession distribution across ruin/chest corpus | Exploration yields a useful mix of coherent profession gear without excessive frequency |

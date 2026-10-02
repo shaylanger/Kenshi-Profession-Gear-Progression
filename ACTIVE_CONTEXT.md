@@ -698,3 +698,51 @@ This makes the master numbered plan extend through **240**.
 
 ### Release rule
 If live tests show a profession is technically supported but too rare in vendors/NPCs/loot, fix distribution using curated mappings or optional FCS profession items. Do not make unrelated equipment roll nonsensical stats merely to increase frequency.
+
+
+---
+
+## Turn update — 2026-10-02 exploration/world-loot profession gear
+
+### User requirement
+Shay wants exploration itself to be a viable source of profession gear. A generic eligible item found in a ruin/chest with no NPC/trader context should still have a chance to become profession gear, e.g. a Rag Shirt with Cooking.
+
+### Behavior implemented
+- Added `RoleProfile::worldLootSource`.
+- Added config `WorldLootMultiplier=0.50`.
+- Contextless exploration gear can now roll randomly from its **legal item pool**.
+- The world-loot multiplier is applied to the normal tier affix chance, so exploration rolls are rarer than ordinary context-matched NPC gear by default.
+- Example generic workwear found in a ruin may become Farming, Labouring, Engineering, Cooking, Medic, Science, Robotics, or Smithing gear.
+- It still cannot roll a stat outside its allowed semantic pool.
+- World loot remains equip-only for active bonuses.
+
+### Player-profession bias fix
+The current plugin primarily discovers items through character inventories.
+Therefore an unseen chest item may first become visible to ProfessionGear when the player picks it up.
+Without a special rule, that would incorrectly generate the item from the player's profession.
+
+Implemented:
+- when a previously unseen, non-crafted eligible item is first observed on a player character, it is treated as `worldLootSource`,
+- the player's primary profession is cleared for that generation event,
+- the roll is therefore random within the item's legal pool and independent of who picked it up,
+- once the record exists, normal instance persistence prevents rerolls.
+
+Existing NPC/trader items should already have records before transfer if their source inventory was scanned. If vendor stock is not exposed that way, tests 219/214 will reveal it and the fallback behavior remains coherent rather than player-biased.
+
+### Tests added/changed
+- Test 213 changed: contextless world/container loot may roll at reduced world-loot chance.
+- Added Section N, tests **241–250**:
+  - ruin chest pickup classified as world loot,
+  - generic Rag Shirt/goggles legal-pool enforcement,
+  - WorldLootMultiplier off/on statistical behavior,
+  - no reroll after pickup/drop,
+  - independence from picker profession,
+  - unopened-chest discovery timing,
+  - pre-existing player gear source handling,
+  - real ruin/chest profession distribution.
+
+Master test plan now extends through **250**.
+
+### Important live question is explicitly tested
+We do not yet know whether unopened chest contents are instantiated/exposed to the plugin before pickup.
+This is now test 248. If exposed, affixes should exist before pickup. If not, pickup-time generation is acceptable as long as it is world-loot sourced, stable, and independent of the player profession.

@@ -231,6 +231,20 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
   // whatever unrelated skill happens to be highest on the shopkeeper. Equipped trader gear
   // still uses the trader character's own role context.
   if(role.traderSource && !d.equipped) role.primary=PGP::STAT_NONE;
+
+  // A previously unseen non-crafted item first observed on a player character is treated as
+  // exploration/world loot, not as gear generated for the player's profession. This avoids
+  // chest/ruin loot adapting itself to whoever picked it up.
+  if(owner && !crafted){
+    try {
+      if(owner->isPlayerCharacter()){
+        role.primary=PGP::STAT_NONE;
+        role.traderSource=false;
+        role.worldLootSource=true;
+      }
+    } catch (...) {}
+  }
+
   unsigned int seed=PGP::Hash32(key+"|"+d.baseId);
   PGP::AffixRecord r=PGP::RollAffixes(d,role,g_cfg,tags,key,seed,crafted);
 
@@ -452,6 +466,7 @@ void LoadConfig() {
     else if(k=="npcrolemultiplier") g_cfg.npcRoleMultiplier=(float)atof(v.c_str());
     else if(k=="playercraftmultiplier") g_cfg.playerCraftMultiplier=(float)atof(v.c_str());
     else if(k=="poornpcmultiplier") g_cfg.poorNpcMultiplier=(float)atof(v.c_str());
+    else if(k=="worldlootmultiplier") g_cfg.worldLootMultiplier=(float)atof(v.c_str());
     else if(k=="maxaffixes") g_cfg.maxAffixes=atoi(v.c_str());
   }
 }
