@@ -10,9 +10,19 @@
 namespace PGP {
 
 RuleConfig::RuleConfig()
-    : enabled(true), autoClassify(true), globalChance(1.0f),
+    : enabled(true), autoClassify(true), verboseLogging(false), globalChance(1.0f),
       npcRoleMultiplier(1.35f), playerCraftMultiplier(1.15f),
       poorNpcMultiplier(0.20f), worldLootMultiplier(0.50f), maxAffixes(3) {}
+
+void NormalizeConfig(RuleConfig& c) {
+  if(c.globalChance<0) c.globalChance=0;
+  if(c.npcRoleMultiplier<0) c.npcRoleMultiplier=0;
+  if(c.playerCraftMultiplier<0) c.playerCraftMultiplier=0;
+  if(c.poorNpcMultiplier<0) c.poorNpcMultiplier=0;
+  if(c.worldLootMultiplier<0) c.worldLootMultiplier=0;
+  if(c.maxAffixes<1) c.maxAffixes=1;
+  if(c.maxAffixes>3) c.maxAffixes=3;
+}
 
 std::string Lower(const std::string& value) {
   std::string out = value;
@@ -30,6 +40,24 @@ std::string Trim(const std::string& value) {
 
 static bool Has(const std::string& h, const char* n) {
   return h.find(n) != std::string::npos;
+}
+
+static bool IsWordChar(char c) {
+  const unsigned char u=static_cast<unsigned char>(c);
+  return std::isalnum(u)!=0 || c=='_';
+}
+
+static bool HasWord(const std::string& h, const char* word) {
+  const std::string w(word);
+  size_t pos=0;
+  while((pos=h.find(w,pos))!=std::string::npos){
+    const bool left=(pos==0)||!IsWordChar(h[pos-1]);
+    const size_t end=pos+w.size();
+    const bool right=(end>=h.size())||!IsWordChar(h[end]);
+    if(left&&right) return true;
+    ++pos;
+  }
+  return false;
 }
 
 std::string StatName(ProfessionStat stat) {
@@ -110,6 +138,11 @@ std::string TagName(ItemTag tag) {
     case TAG_TURRET_GEAR: return "TURRET_GEAR";
     case TAG_SCOUT_GEAR: return "SCOUT_GEAR";
     case TAG_STEALTH_GEAR: return "STEALTH_GEAR";
+    case TAG_ASSASSIN_GEAR: return "ASSASSIN_GEAR";
+    case TAG_THIEF_GEAR: return "THIEF_GEAR";
+    case TAG_SWIM_GEAR: return "SWIM_GEAR";
+    case TAG_PACK_HAULING: return "PACK_HAULING";
+    case TAG_PACK_GENERIC: return "PACK_GENERIC";
     case TAG_WORKWEAR_GENERIC: return "WORKWEAR_GENERIC";
     case TAG_GOGGLES_GENERIC: return "GOGGLES_GENERIC";
     default: return "NONE";
@@ -194,14 +227,17 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   const std::string n = Lower(item.name+" "+item.description+" "+item.category+" "+item.slot);
 
   const bool strongFarming =
-      Has(n,"hoe") || Has(n,"sickle") || Has(n,"pitchfork") || Has(n,"farmer") ||
-      Has(n,"farmhand") || Has(n,"farm tool") || Has(n,"agricultural") || Has(n,"harvesting");
+      HasWord(n,"hoe") || HasWord(n,"sickle") || HasWord(n,"pitchfork") ||
+      HasWord(n,"farmer") || HasWord(n,"farmers") || HasWord(n,"farmhand") ||
+      Has(n,"farm tool") || Has(n,"agricultural") || Has(n,"harvesting");
   const bool strongMining =
-      Has(n,"pickaxe") || Has(n,"pick axe") || Has(n,"miner") || Has(n,"mining");
+      Has(n,"pickaxe") || Has(n,"pick axe") || HasWord(n,"miner") ||
+      HasWord(n,"miners") || HasWord(n,"mining");
   const bool strongResearch =
       Has(n,"research") || Has(n,"scientist") || Has(n,"science ") || Has(n,"laboratory") || Has(n,"lab tool");
   const bool strongEngineering =
-      Has(n,"engineer") || Has(n,"engineering") || Has(n,"builder") || Has(n,"construction tool") || Has(n,"mechanic");
+      Has(n,"engineer") || Has(n,"engineering") || Has(n,"builder") || Has(n,"construction tool") ||
+      Has(n,"mechanic ") || Has(n,"mechanic's") || Has(n,"mechanics ");
   const bool strongRobotics =
       Has(n,"robotic") || Has(n,"robotics") || Has(n,"roboticist");
   const bool strongMedic =
@@ -211,12 +247,21 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   const bool strongSmith =
       Has(n,"weapon smith") || Has(n,"armour smith") || Has(n,"armor smith") ||
       Has(n,"crossbow smith") || Has(n,"smithing") || Has(n,"forge tool");
+  const bool strongUtilitySemantic =
+      HasWord(n,"assassin") || HasWord(n,"assassins") || HasWord(n,"thief") ||
+      HasWord(n,"thieves") || Has(n,"stealth") || Has(n,"infiltrat") ||
+      HasWord(n,"ninja") || HasWord(n,"ninjas") || HasWord(n,"scout") ||
+      HasWord(n,"scouts") || HasWord(n,"ranger") || HasWord(n,"rangers") ||
+      HasWord(n,"traveler") || HasWord(n,"travelers") || HasWord(n,"traveller") ||
+      HasWord(n,"travellers") || HasWord(n,"wanderer") || HasWord(n,"wanderers");
 
   // Weapon-class items are allowed when their normal Kenshi name/description strongly implies
-  // a profession. This deliberately supports roleplay items such as Farmer's Sword, Pitchfork,
-  // Chef's Knife, Engineer's Hammer, etc. Ordinary combat weapons with no such semantics stay out.
+  // a profession or utility role. This deliberately supports roleplay items such as Farmer's
+  // Sword, Pitchfork, Chef's Knife, Engineer's Hammer, Assassin's Blade, Thief's Dagger, etc.
+  // Ordinary combat weapons with no such semantics stay out.
   if (item.weapon && !(strongFarming || strongMining || strongResearch || strongEngineering ||
-                       strongRobotics || strongMedic || strongCooking || strongSmith)) return out;
+                       strongRobotics || strongMedic || strongCooking || strongSmith ||
+                       strongUtilitySemantic)) return out;
 
   if (strongFarming) AddTag(out,TAG_TOOL_FARMING);
   if (strongMining) AddTag(out,TAG_TOOL_MINING);
@@ -229,28 +274,77 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   if (Has(n,"armour smith") || Has(n,"armor smith")) AddTag(out,TAG_TOOL_ARMOUR_SMITH);
   if (Has(n,"crossbow smith")) AddTag(out,TAG_TOOL_CROSSBOW_SMITH);
   if (strongCooking) AddTag(out,TAG_TOOL_COOKING);
-  if (Has(n,"straw hat")) AddTag(out,TAG_HEAD_FARMING);
+  if (Has(n,"straw hat")) { AddTag(out,TAG_HEAD_FARMING); AddTag(out,TAG_SCOUT_GEAR); }
 
-  // Ambiguous real/modded gear: base item defines a plausible pool, wearer/source context selects the roll.
+  // Ambiguous real/modded gear: generic fallback is only used when stronger semantics are absent.
+  // This prevents Assassin's Rags, Straw Hats, Doctor masks, etc. from also becoming arbitrary workwear.
+  const bool strongProfession = strongFarming || strongMining || strongResearch || strongEngineering ||
+                                strongRobotics || strongMedic || strongCooking || strongSmith;
+  const bool strongUtility = strongUtilitySemantic || HasWord(n,"burglar") || HasWord(n,"burglars") ||
+                             Has(n,"swim") || Has(n,"diving") || Has(n,"diver") ||
+                             Has(n,"load bearing") || Has(n,"load-bearing") ||
+                             Has(n,"cargo frame");
   const bool plainHat = (Has(n," hat") || Has(n,"hat ")) && !Has(n,"helmet") && !Has(n,"armoured") && !Has(n,"armored") && !Has(n,"plate");
-  const bool simpleWorkCloth = Has(n,"rag") || Has(n,"workwear") || Has(n,"worker") || Has(n,"work shirt") || Has(n,"cloth shirt") || Has(n,"apron") || Has(n,"overalls");
-  if ((plainHat || simpleWorkCloth) && !item.weapon) AddTag(out,TAG_WORKWEAR_GENERIC);
-  if ((Has(n,"goggle") || Has(n,"glasses") || Has(n,"visor")) && !Has(n,"helmet")) AddTag(out,TAG_GOGGLES_GENERIC);
-  if (Has(n,"running shoe") || Has(n,"running boot") || Has(n,"runner shoe") || Has(n,"sneaker")) AddTag(out,TAG_BOOTS_TRAVEL);
+  const bool simpleWorkCloth = HasWord(n,"rag") || HasWord(n,"rags") || Has(n,"workwear") || HasWord(n,"worker") || Has(n,"work shirt") || Has(n,"cloth shirt") || HasWord(n,"apron") || Has(n,"overalls");
+  if ((plainHat || simpleWorkCloth) && !item.weapon && !strongProfession && !strongUtility) AddTag(out,TAG_WORKWEAR_GENERIC);
+  if ((Has(n,"goggle") || Has(n,"glasses") || HasWord(n,"visor") || HasWord(n,"visors")) &&
+      !Has(n,"helmet") && !strongProfession && !strongUtility &&
+      (item.armour || item.robotLimb || Has(n,"head")))
+    AddTag(out,TAG_GOGGLES_GENERIC);
+  if (Has(n,"running shoe") || Has(n,"running boot") || Has(n,"runner shoe") || Has(n,"sneaker") ||
+      Has(n,"wooden sandal") || Has(n,"drifter's boot")) AddTag(out,TAG_BOOTS_TRAVEL);
   if (Has(n,"miner") && (Has(n,"hat") || Has(n,"helmet") || Has(n,"goggle"))) AddTag(out,TAG_HEAD_MINING);
-  if ((Has(n,"research") || Has(n,"science")) && (Has(n,"goggle") || Has(n,"glass") || Has(n,"visor"))) AddTag(out,TAG_HEAD_RESEARCH);
+  if ((Has(n,"research") || Has(n,"science")) &&
+      (Has(n,"goggle") || Has(n,"glass") || HasWord(n,"visor") || HasWord(n,"visors")))
+    AddTag(out,TAG_HEAD_RESEARCH);
   if (Has(n,"glove") && (Has(n,"work") || Has(n,"industrial"))) AddTag(out,TAG_GLOVES_WORK);
   if (Has(n,"boot") && (Has(n,"work") || Has(n,"industrial"))) AddTag(out,TAG_BOOTS_WORK);
   if (Has(n,"boot") && (Has(n,"travel") || Has(n,"scout") || Has(n,"runner"))) AddTag(out,TAG_BOOTS_TRAVEL);
-  if (Has(n,"ore pack") || Has(n,"mining pack")) AddTag(out,TAG_PACK_ORE);
-  if (Has(n,"crop pack") || Has(n,"farm pack")) AddTag(out,TAG_PACK_CROP);
-  if (Has(n,"construction pack") || Has(n,"builder pack")) AddTag(out,TAG_PACK_CONSTRUCTION);
-  if (Has(n,"medical pack") || Has(n,"medic pack")) AddTag(out,TAG_PACK_MEDICAL);
-  if (Has(n,"trade pack") || Has(n,"caravan pack")) AddTag(out,TAG_PACK_TRADE);
-  if (Has(n,"research pack") || Has(n,"tech pack")) AddTag(out,TAG_PACK_TECH);
-  if (Has(n,"turret") && (Has(n,"goggle") || Has(n,"visor") || Has(n,"gear"))) AddTag(out,TAG_TURRET_GEAR);
-  if (Has(n,"scout") || Has(n,"ranger")) AddTag(out,TAG_SCOUT_GEAR);
-  if (Has(n,"stealth") || Has(n,"infiltrat")) AddTag(out,TAG_STEALTH_GEAR);
+  const bool packLike=item.container || Has(n,"backpack") || Has(n," satchel") ||
+                      Has(n," pack") || Has(n," bag") || Has(n,"basket");
+  if (Has(n,"ore pack") || Has(n,"mining pack") ||
+      (packLike && (HasWord(n,"miner") || HasWord(n,"miners") || HasWord(n,"mining"))))
+    AddTag(out,TAG_PACK_ORE);
+  if (Has(n,"crop pack") || Has(n,"farm pack") ||
+      (packLike && (HasWord(n,"farmer") || HasWord(n,"farmers") || HasWord(n,"farmhand"))))
+    AddTag(out,TAG_PACK_CROP);
+  if (Has(n,"construction pack") || Has(n,"builder pack") ||
+      (packLike && (strongEngineering || Has(n,"construction"))))
+    AddTag(out,TAG_PACK_CONSTRUCTION);
+  if (Has(n,"medical pack") || Has(n,"medic pack") ||
+      (packLike && strongMedic))
+    AddTag(out,TAG_PACK_MEDICAL);
+  if (Has(n,"trade pack") || Has(n,"caravan pack") ||
+      ((Has(n,"trader's") || Has(n,"trader ")) && Has(n,"backpack"))) AddTag(out,TAG_PACK_TRADE);
+  if (Has(n,"research pack") || Has(n,"tech pack") ||
+      (packLike && (strongResearch || strongRobotics || Has(n,"tech "))))
+    AddTag(out,TAG_PACK_TECH);
+  if (Has(n,"hauling pack") || Has(n,"hauler pack") || Has(n,"cargo pack") ||
+      Has(n,"porter pack") || Has(n,"load bearing") || Has(n,"load-bearing") ||
+      Has(n,"cargo frame")) AddTag(out,TAG_PACK_HAULING);
+  if (Has(n,"turret") && (Has(n,"goggle") || HasWord(n,"visor") || HasWord(n,"visors") || Has(n,"gear"))) AddTag(out,TAG_TURRET_GEAR);
+  if (HasWord(n,"scout") || HasWord(n,"scouts") || HasWord(n,"ranger") || HasWord(n,"rangers") ||
+      HasWord(n,"traveler") || HasWord(n,"travelers") || HasWord(n,"traveller") ||
+      HasWord(n,"travellers") || HasWord(n,"wanderer") || HasWord(n,"wanderers"))
+    AddTag(out,TAG_SCOUT_GEAR);
+  if (Has(n,"stealth") || Has(n,"infiltrat") || Has(n,"ninja")) AddTag(out,TAG_STEALTH_GEAR);
+  if (HasWord(n,"assassin") || HasWord(n,"assassins")) AddTag(out,TAG_ASSASSIN_GEAR);
+  if (HasWord(n,"thief") || HasWord(n,"thieves") || HasWord(n,"burglar") ||
+      HasWord(n,"burglars") || Has(n,"lockpick")) AddTag(out,TAG_THIEF_GEAR);
+  if (Has(n,"swim") || Has(n,"diving") || Has(n,"diver") || Has(n,"flipper") ||
+      Has(n,"swim fin") || Has(n,"wetsuit")) AddTag(out,TAG_SWIM_GEAR);
+
+  const bool hasSpecialPack =
+      std::find(out.begin(),out.end(),TAG_PACK_ORE)!=out.end() ||
+      std::find(out.begin(),out.end(),TAG_PACK_CROP)!=out.end() ||
+      std::find(out.begin(),out.end(),TAG_PACK_CONSTRUCTION)!=out.end() ||
+      std::find(out.begin(),out.end(),TAG_PACK_MEDICAL)!=out.end() ||
+      std::find(out.begin(),out.end(),TAG_PACK_TRADE)!=out.end() ||
+      std::find(out.begin(),out.end(),TAG_PACK_TECH)!=out.end() ||
+      std::find(out.begin(),out.end(),TAG_PACK_HAULING)!=out.end();
+  if(item.container && !hasSpecialPack &&
+     (Has(n,"backpack") || Has(n," bag") || Has(n,"bag ") || Has(n,"basket")))
+    AddTag(out,TAG_PACK_GENERIC);
   return out;
 }
 
@@ -279,7 +373,10 @@ std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags) {
       case TAG_BOOTS_TRAVEL: case TAG_SCOUT_GEAR: AddStat(out,STAT_ATHLETICS); AddStat(out,STAT_PERCEPTION); break;
       case TAG_TURRET_GEAR: AddStat(out,STAT_TURRETS); AddStat(out,STAT_PERCEPTION); break;
       case TAG_STEALTH_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_LOCKPICKING); break;
-      case TAG_PACK_TRADE: AddStat(out,STAT_ATHLETICS); break;
+      case TAG_ASSASSIN_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_ASSASSINATION); break;
+      case TAG_THIEF_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_LOCKPICKING); AddStat(out,STAT_THIEVERY); break;
+      case TAG_SWIM_GEAR: AddStat(out,STAT_SWIMMING); break;
+      case TAG_PACK_TRADE: case TAG_PACK_HAULING: case TAG_PACK_GENERIC: AddStat(out,STAT_ATHLETICS); break;
       case TAG_WORKWEAR_GENERIC:
         AddStat(out,STAT_FARMING); AddStat(out,STAT_LABOURING); AddStat(out,STAT_ENGINEERING);
         AddStat(out,STAT_COOKING); AddStat(out,STAT_MEDIC); AddStat(out,STAT_SCIENCE);
@@ -404,6 +501,7 @@ float SpecialistPackItemWeightMultiplier(const std::vector<ItemTag>& tags,
         Has(n,"power core")) return 0.35f;
   }
   if (HasTagCore(tags, TAG_PACK_TRADE) && isTradeItem) return 0.55f;
+  if (HasTagCore(tags, TAG_PACK_HAULING)) return 0.75f;
   return 1.0f;
 }
 
@@ -416,8 +514,9 @@ std::string SerializeRecord(const AffixRecord& r) {
 bool ParseRecord(const std::string& line, AffixRecord& out) {
   std::vector<std::string> f; size_t st=0;
   for(;;){size_t p=line.find('\t',st);if(p==std::string::npos){f.push_back(line.substr(st));break;}f.push_back(line.substr(st,p-st));st=p+1;}
-  if(f.size()!=4 || f[0].empty()) return false;
+  if(f.size()!=4 || f[0].empty() || f[1].empty()) return false;
   out=AffixRecord();out.instanceKey=f[0];out.baseId=f[1];out.tier=std::atoi(f[2].c_str());
+  if(out.tier<0 || out.tier>6) return false;
   if(f[3].empty()) return true;
   st=0;
   while(st<f[3].size()){

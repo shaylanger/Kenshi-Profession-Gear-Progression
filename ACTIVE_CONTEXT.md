@@ -825,3 +825,219 @@ Master test plan now extends through **272**.
 ### Current design status
 No major product/design question remains blocking the pre-install implementation.
 Remaining uncertainties are technical/runtime questions and are represented by numbered tests rather than open design questions.
+
+
+---
+
+## Turn update — 2026-10-02 final pre-install implementation pass
+
+### User instruction
+Shay asked to continue implementation until ProfessionGear is finished enough to install and begin controlled in-game testing, adding tests whenever a new behavior needs coverage. The existing hard constraint remained in force: **do not install/enable/apply the mod in Kenshi until explicit authorization**.
+
+### Pretest version
+- Package/runtime version: **0.9.0-pretest**
+- Canonical package:
+  `C:\KenshiModding\Kenshi-Profession-Gear-Progression\out\package\ProfessionGearProgression`
+- The mod remains absent from both known Kenshi install paths.
+
+### Runtime hardening completed
+
+1. **Real stackability detection**
+   - Replaced the old quantity-only heuristic with Kenshi's real `InventoryItemBase::isStackable(InventorySection*)` path where a parent inventory/section exists.
+   - Quantity-one stack-capable items are now excluded correctly.
+   - Quantity remains a safe fallback if no section is available.
+
+2. **Item-handle reuse defense**
+   - Existing persisted records are only reused when the current item base ID still matches.
+   - A reused handle pointing to a different base item invalidates the stale record and generates safely from the new item.
+   - Unique/stackable/explicitly excluded items suppress and remove stale persisted rows instead of inheriting old affixes.
+
+3. **Character-cache identity hardening**
+   - Equipped-bonus cache now keys by the full Kenshi handle string rather than serial alone.
+
+4. **Inventory callback reentrancy guard**
+   - Add/remove/update callback refreshes cannot recursively trigger unbounded character rescans.
+
+5. **Tooltip deduplication/protection**
+   - Base/derived tooltip hook chains only append one `Profession Gear` section.
+   - Unique/stackable/excluded items never display stale profession rows.
+   - Current base ID must match the persisted record.
+
+6. **Atomic sidecar replacement**
+   - Sidecar writes now use `MoveFileEx(..., MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)`.
+   - On replacement failure the dirty state remains set so a later save can retry.
+
+7. **Config normalization**
+   - Negative chance multipliers clamp to 0.
+   - `MaxAffixes` clamps to 1–3.
+   - Normalization moved into SDK-independent core and is tested.
+
+8. **Double-start protection**
+   - `startPlugin()` is guarded so hooks initialize only once.
+
+9. **Startup diagnostics**
+   - Startup log identifies version and normalized config values plus override/exclusion counts.
+
+10. **Verbose generation diagnostics**
+    - New `VerboseLogging=false` config.
+    - When enabled, each newly generated eligible record logs source, instance/base identity, item name, equipped state, tier, semantic tags and resulting affixes.
+    - Intended for classifier/vendor/loot test runs.
+
+### Utility progression expanded
+
+Added tags and coherent stat pools:
+- `ASSASSIN_GEAR` -> Stealth + Assassination
+- `THIEF_GEAR` -> Stealth + Lockpicking + Thievery
+- `SWIM_GEAR` -> Swimming
+- `PACK_HAULING` -> Athletics + all-cargo weight support
+- `PACK_GENERIC` -> Athletics only
+
+Classifier additions include:
+- Assassin/Ninja/Thief/Burglar semantic gear
+- Swimming/diving/wetsuit/flipper gear
+- Traveler/Traveller/Wanderer/Scout/Ranger gear
+- hauling/cargo/load-bearing packs
+- vanilla Wooden Sandals / Drifter's Boots travel semantics
+- generic backpacks/bags/baskets get utility progression without specialist cargo reduction
+- strongly themed utility-role weapons such as Assassin's Blade, Thief's Dagger and Scout Sword are allowed, matching the already-approved Farmer's Sword rule.
+
+### Classifier safety improvements
+
+- Added word-boundary semantic matching for risky short terms.
+- `hoe` no longer matches `shoes`.
+- `rag` no longer matches `dragon`.
+- `miner` no longer matches `mineral`.
+- `visor` uses word semantics in generic/research/turret paths.
+- `mechanic` matching no longer causes `Mechanical Blade` to become Engineering gear.
+- Strong profession/utility semantics suppress generic workwear/goggle fallback.
+- Plural/common naming forms now supported: Farmers, Miners, Assassins, Thieves, Ninjas, Scouts, Rangers, Travelers/Travellers, Wanderers, Burglars.
+
+### Profession-named pack specialization
+
+Normal mod/FCS naming now automatically creates sensible specialist classification:
+- Miner's / Miners Backpack -> Ore pack
+- Farmer's / Farmers Backpack -> Crop pack
+- Field Medic / Doctor Backpack -> Medical pack
+- Engineer / Builder / Construction Pack -> Construction pack
+- Research / Science / Robotics / Tech Satchel/Pack -> Tech pack
+
+These specialist classifications suppress generic pack fallback.
+
+### Backpack utility/equip behavior
+
+- `PACK_HAULING` applies an all-cargo contents multiplier of 0.75 in the current provisional design.
+- Existing specialist multipliers remain:
+  - Ore 0.25 matching cargo
+  - Crop 0.30
+  - Construction 0.35
+  - Medical 0.35
+  - Tech 0.35
+  - Trade 0.55 for trade goods
+- Generic packs do not receive any extra contents-weight reduction.
+- Extra ProfessionGear backpack weight effects now only activate when the backpack is actually equipped.
+- Selective category stacking remains intentionally deferred to the roadmap because the available runtime API is section-wide and could incorrectly affect unrelated contents.
+
+### Unique gear
+
+Approved policy is now enforced:
+- any `Item::isUnique` item instance is protected,
+- Meitou/Cross/level-100/legendary markers remain protected,
+- stale sidecar rows cannot bypass this protection.
+
+### Packaging/install readiness
+
+Added a real Kenshi launcher-recognizable package structure:
+- `ProfessionGearProgression.dll`
+- `ProfessionGearProgression.mod` (minimal 46-byte FCS container stub consistent with installed RE_Kenshi mods)
+- `RE_Kenshi.json`
+- `mod.info`
+- `ProfessionGear.ini`
+- `ProfessionGear.rules`
+- `FIRST_LIVE_TEST.md`
+
+Added:
+- `verify_package.ps1`
+  - checks required package files,
+  - checks .mod is non-empty,
+  - rejects leaked runtime log/sidecar state.
+- `install_test_build.ps1`
+  - refuses to do anything unless explicitly passed `-Install`,
+  - backs up an existing ProfessionGearProgression install before replacement,
+  - copies the verified package only,
+  - does not alter launcher load order.
+- `verify_not_installed.ps1`
+  - asserts the mod is absent from known D: and C: Kenshi mod roots.
+- `verify_ready.bat`
+  - one-command final pre-install gate:
+    1. core tests,
+    2. DLL build,
+    3. SDK/export verification,
+    4. package creation/verification,
+    5. game-directory no-install safety check.
+- `FIRST_LIVE_TEST.md`
+  - ordered smoke/identity/job-path/distribution/utility/coexistence/balance plan.
+- `tests\fixtures\ProfessionGear.forced-test.ini`
+  - forced-roll + verbose logging config for short controlled smoke tests only.
+
+The installer refusal behavior was tested without `-Install` and correctly refused to touch the game.
+
+### SDK/static verification expanded
+
+`verify_sdk_symbols.ps1` now also verifies the exact SDK symbols for:
+- `InventoryItemBase::isStackable(InventorySection*)`
+- `Inventory::getSection(std::string const&)`
+- `Character::isATrader()`
+- `Character::isPlayerCharacter()`
+
+Total final offline symbol/export checks: **17/17 PASS**.
+
+### Test plan expansion
+
+Master `TEST_PLAN.md` now extends through **305**.
+
+New sections include:
+- 273–290: pre-install runtime hardening/package/install safety
+- 291–300: equip-only specialist utilities and semantic-boundary regressions
+- 301–305: profession-named backpack specialization
+
+SDK-independent executable coverage now passes **5,213 checks**.
+
+### Final readiness gate
+
+Final `verify_ready.bat` result:
+
+- `run_tests.bat`: **PASS — 5,213 checks**
+- `build_portable.bat`: **PASS — BUILD OK**
+- `verify_offline.bat`: **PASS — 17/17**
+- `package.bat`: **PASS**
+- `verify_package.ps1`: **PASS — 6 required runtime files**
+- known D: install path: **ABSENT**
+- known C: install path: **ABSENT**
+- final gate output: **READY FOR CONTROLLED KENSHI INSTALL/TEST**
+
+### Deliberately not implemented before first live test
+
+These are approved later-roadmap items, not blockers for the runtime test build:
+- new profession-themed FCS content records/distribution (Farmer's Sword, Engineer gear, Field Medic sets, etc.),
+- selective specialist-pack stacking,
+- any direct mutation of native armour movement/combat multipliers beyond the existing safe effective-stat/weight paths.
+
+### Remaining unknowns are live-test questions, not pre-install implementation gaps
+
+They are all represented by numbered tests:
+- hook ABI/chaining under live Kenshi,
+- real item-handle stability through save/load/stream/import,
+- whether all profession jobs consume the hooked effective-stat path,
+- actual trader stock ownership structure,
+- unopened chest item visibility timing,
+- tooltip visual layout,
+- live specialist backpack UI/weight behavior,
+- NPC spawn/stream timing,
+- long-world performance,
+- STOBE/KenshiFP/full-mod coexistence,
+- final balance ranges and distribution probabilities.
+
+### Status
+
+**The standalone runtime mod is ready for the first controlled install/live-test phase.**
+Do not call it release-ready until the live suites and balance calibration pass.

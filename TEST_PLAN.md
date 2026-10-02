@@ -2,7 +2,7 @@
 
 **Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
 
-**Current offline automation:** `run_tests.bat` passes 5,135 core checks; `verify_offline.bat` passes 13 required SDK/export symbol checks; `build_portable.bat` and `package.bat` are green. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **305**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -349,3 +349,54 @@ These tests correspond to approved future goals so roadmap work is not left as u
 | 270 | AUTO | Generated item runtime affix integration | New FCS/content variants use the same per-instance affix system as vanilla/modded gear |
 | 271 | AUTO | Specialist pack selective stacking feasibility | Implement only if intended cargo can stack more without boosting unrelated contents |
 | 272 | AUTO | Specialist pack fallback | If selective stacking is unsafe, weight specialization remains correct and stacking stays vanilla |
+
+
+## Section P — pre-install hardening / packaging
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 273 | AUTO | Quantity-one stack-capable item | Runtime uses Kenshi `isStackable(section)`; no profession affix even when current quantity is 1 |
+| 274 | AUTO | Existing sidecar key reused by different base item | Base-ID mismatch invalidates stale record and rerolls safely |
+| 275 | AUTO | Character bonus-cache identity | Full Kenshi handle string is used, not serial alone |
+| 276 | AUTO | Inventory callback reentrancy | Nested add/remove/update notifications do not recursively rescan indefinitely |
+| 277 | AUTO | Tooltip base + derived hook chain | `Profession Gear` section appears at most once |
+| 278 | AUTO | Invalid negative config multipliers / MaxAffixes out of range | Values normalize to safe limits |
+| 279 | AUTO | Sidecar replacement | Database update uses atomic replace; failed replace leaves dirty flag for retry |
+| 280 | AUTO | Plugin entry called twice | Hooks initialize only once |
+| 281 | AUTO | Generic vanilla/modded backpack | May roll Athletics utility but gets no specialist cargo weight reduction |
+| 282 | AUTO | Explicit specialist backpack | Uses specialist tag and does not fall back to generic pack classification |
+| 283 | AUTO | Strong themed clothing vs generic fallback | Assassin/Medic/Farming/etc. semantics prevent unrelated generic-workwear rolls |
+| 284 | AUTO | Utility classifier corpus | Assassin, Thief, Ninja/Stealth, Swim, Travel and Hauling tags map only to coherent utility stats |
+| 285 | AUTO | Mechanical-named ordinary weapon | Does not false-match the Engineer `mechanic` token |
+| 286 | AUTO | Package includes minimal Kenshi .mod stub | Launcher-recognizable `ProfessionGearProgression.mod` exists and is non-empty |
+| 287 | AUTO | Installer invoked without explicit `-Install` | Refuses to touch Kenshi |
+| 288 | AUTO | Package verifier | Required DLL/.mod/manifest/config/rules all present; runtime sidecar/log absent |
+| 289 | AUTO | Startup diagnostics | Log records version, normalized config and rule counts before hook results |
+| 290 | AUTO | Existing test install present | Installer backs it up before copying a replacement |
+
+
+## Section Q — equip-only specialist utilities / semantic boundary regressions
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 291 | AUTO | Specialist backpack not equipped | Extra category/hauling weight reduction is inactive |
+| 292 | AUTO | Specialist backpack equipped | Extra category/hauling weight reduction activates and composes with vanilla total |
+| 293 | AUTO | Assassin's Blade / Thief's Dagger / Scout Sword | Weapon class does not block strongly signaled utility-role affixes |
+| 294 | AUTO | Running Shoes semantic boundary | `shoe`/ `shoes` never false-match the Farming `hoe` token |
+| 295 | AUTO | Dragon Armour semantic boundary | `dragon` never false-matches generic `rag` workwear |
+| 296 | AUTO | Mineral-named gear semantic boundary | `mineral` never false-matches `miner` |
+| 297 | AUTO | Visor semantic boundary | unrelated words containing `visor` do not classify as goggles/research gear |
+| 298 | AUTO | Protected/excluded stale sidecar row | Unique or explicit-exclusion item suppresses/removes old persisted affix |
+| 299 | AUTO | Generic backpack vs specialist pack | Generic pack may roll Athletics but receives no specialist contents-weight reduction |
+| 300 | AUTO | Verbose generation diagnostics | New roll log contains source, key/base ID/name, tier, tags and affixes |
+
+
+## Section R — profession-named backpack specialization
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 301 | AUTO | Miner's/Miners Backpack | Classified as ore/mining specialist; not generic pack fallback |
+| 302 | AUTO | Farmer's/Farmers Backpack | Classified as crop/farming specialist; not generic pack fallback |
+| 303 | AUTO | Field Medic/Doctor Backpack | Classified as medical specialist; not generic pack fallback |
+| 304 | AUTO | Engineer/Builder Pack | Classified as construction specialist; not generic pack fallback |
+| 305 | AUTO | Research/Science/Robotics Satchel | Classified as tech specialist; not generic pack fallback |

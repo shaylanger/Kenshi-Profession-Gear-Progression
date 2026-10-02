@@ -60,6 +60,11 @@ enum ItemTag {
   TAG_TURRET_GEAR,
   TAG_SCOUT_GEAR,
   TAG_STEALTH_GEAR,
+  TAG_ASSASSIN_GEAR,
+  TAG_THIEF_GEAR,
+  TAG_SWIM_GEAR,
+  TAG_PACK_HAULING,
+  TAG_PACK_GENERIC,
   TAG_WORKWEAR_GENERIC,
   TAG_GOGGLES_GENERIC
 };
@@ -110,6 +115,7 @@ struct AffixRecord {
 struct RuleConfig {
   bool enabled;
   bool autoClassify;
+  bool verboseLogging;
   float globalChance;
   float npcRoleMultiplier;
   float playerCraftMultiplier;
@@ -118,6 +124,8 @@ struct RuleConfig {
   int maxAffixes;
   RuleConfig();
 };
+
+void NormalizeConfig(RuleConfig& config);
 
 std::string Lower(const std::string& value);
 std::string Trim(const std::string& value);

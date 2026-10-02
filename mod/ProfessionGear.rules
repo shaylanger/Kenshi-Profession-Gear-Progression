@@ -7,4 +7,7 @@
 # Examples:
 # tag|my_mod_iron_hoe|TOOL_FARMING
 # tag|my_mod_mining_pack|PACK_ORE
+# tag|my_mod_cargo_frame|PACK_HAULING
+# tag|my_mod_assassin_blade|ASSASSIN_GEAR
+# tag|my_mod_diving_suit|SWIM_GEAR
 # exclude|my_mod_decorative_pickaxe

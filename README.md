@@ -35,6 +35,8 @@ verify_offline.bat
 Output:
 `out\ProfessionGearProgression.dll`
 
+For the complete pre-install gate, run `verify_ready.bat`. It runs core tests, builds the DLL, verifies all required SDK symbols/exports, creates and verifies the installable package, and confirms ProfessionGear is not already present in the known Kenshi mod paths.
+
 The portable build uses:
 - `C:\StobeBuildTools` VS2010/SDK 7.1 toolchain
 - `C:\StobeBuild\sdk`
@@ -46,7 +48,7 @@ Run `package.bat` after a successful build. It creates:
 
 `out\package\ProfessionGearProgression\`
 
-Nothing in the build or package scripts copies files into Kenshi.
+Nothing in the build or package scripts copies files into Kenshi. The guarded `install_test_build.ps1` script is provided for the first controlled live test, but it refuses to install unless explicitly invoked with `-Install`.
 
 ## Runtime files
 
@@ -76,7 +78,7 @@ bonus without changing earned XP.
 
 `VANILLA_GEAR_CLASSIFICATION.md` documents the reviewed vanilla equipment catalogue and the revised hybrid classifier. Automatic support is not ID-only: exact IDs are strongest, but native slot/type, existing mechanical stats, descriptions, semantic names, and NPC context are combined so unknown third-party gear can still classify when evidence is strong. Weak/contradictory cases receive no profession affix rather than a guess.
 
-Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tiers (3–4) up to 2, top tiers (5–6) up to 3 coherent stats.
+Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tiers (3–4) up to 2, top tiers (5–6) up to 3 coherent stats. Utility classification also covers travel/Athletics, Swimming, stealth/assassination/thief gear, generic backpacks, hauling packs, and specialist cargo packs. Strong profession/utility semantics take precedence over generic fallback.
 
 ## Roadmap
 
@@ -84,7 +86,7 @@ Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tier
 
 ## Balance calibration
 
-The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Tests 211–240 cover trader-stock generation, equip-only behavior, profession availability/frequency, installed-mod distribution, unique-weapon protection, and other live assumptions. Tests 241–250 cover exploration/world-loot generation, reduced world-loot rarity, player-profession independence, chest discovery timing, and ruin-loot distribution. Tests 251–272 cover unique-item protection, broader utility effects, generated profession-themed item records/distribution, and specialist-pack stacking feasibility. Final tier values should be frozen only after those in-game measurements are complete.
+The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Tests 211–240 cover trader-stock generation, equip-only behavior, profession availability/frequency, installed-mod distribution, unique-weapon protection, and other live assumptions. Tests 241–250 cover exploration/world-loot generation, reduced world-loot rarity, player-profession independence, chest discovery timing, and ruin-loot distribution. Tests 251–272 cover unique-item protection, broader utility effects, generated profession-themed item records/distribution, and specialist-pack stacking feasibility. Tests 273–300 cover pre-install runtime hardening, package/install safety, semantic-boundary regressions, utility-role weapons, equip-only specialist packs, persistence defenses, and verbose diagnostics. Tests 301–305 cover automatic specialist classification for profession-named backpacks/satchels. Final tier values should be frozen only after those in-game measurements are complete.
 
 ## Current validation boundary
 

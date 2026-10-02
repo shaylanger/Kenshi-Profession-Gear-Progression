@@ -27,7 +27,8 @@ namespace {
 CRITICAL_SECTION g_lock;
 PGP::RuleConfig g_cfg;
 std::map<std::string, PGP::AffixRecord> g_records;
-std::map<unsigned int, std::map<PGP::ProfessionStat, float> > g_bonusCache;
+std::map<std::string, std::map<PGP::ProfessionStat, float> > g_bonusCache;
+bool g_refreshingInventory = false;
 std::map<std::string, std::vector<PGP::ItemTag> > g_overrides;
 std::set<std::string> g_exclusions;
 std::string g_dir;
@@ -35,6 +36,7 @@ std::string g_dbPath;
 std::string g_logPath;
 DWORD g_lastScan = 0;
 bool g_dirty = false;
+bool g_started = false;
 
 typedef void (*PlayerUpdateFn)(PlayerInterface*);
 typedef float (*GetStatFn)(const CharStats*, StatsEnumerated, bool);
@@ -107,8 +109,13 @@ PGP::ItemDescriptor Describe(Item* item) {
   d.quality=gear?gear->getLevel01():item->quality;
   d.weaponLevel=(d.weapon&&gear)?gear->level_0_100:-1;
   d.equipped=item->isEquipped;
-  d.stackable=item->quantity>1;
   d.slot=item->inventorySection;
+  d.stackable=item->quantity>1;
+  try {
+    Inventory* parent=item->getInventory();
+    InventorySection* section=parent?parent->getSection(item->inventorySection):0;
+    if(section) d.stackable=(item->isStackable(section)>1);
+  } catch (...) {}
 
   // Explicitly unique named/special item instances are author-defined gear and are protected
   // from ProfessionGear augmentation regardless of type or quality.
@@ -199,9 +206,10 @@ void SaveDb() {
     for(std::map<std::string,PGP::AffixRecord>::const_iterator i=g_records.begin();i!=g_records.end();++i)
       f<<PGP::SerializeRecord(i->second)<<"\n";
     f.close();
-    DeleteFileA(g_dbPath.c_str());
-    MoveFileA(tmp.c_str(),g_dbPath.c_str());
-    g_dirty=false;
+    if(MoveFileExA(tmp.c_str(),g_dbPath.c_str(),MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH))
+      g_dirty=false;
+    else
+      Log("failed to atomically replace affix database");
   }
   LeaveCriticalSection(&g_lock);
 }
@@ -222,12 +230,29 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
   if(!item) return 0;
   std::string key=ItemKey(item);
   if(key.empty()) return 0;
+  PGP::ItemDescriptor d=Describe(item);
+  const bool explicitlyExcluded=g_exclusions.count(PGP::Lower(d.baseId))!=0;
+  const bool forceIneligible=d.legendary || d.stackable || explicitlyExcluded;
   EnterCriticalSection(&g_lock);
   std::map<std::string,PGP::AffixRecord>::iterator existing=g_records.find(key);
-  if(existing!=g_records.end()){ PGP::AffixRecord* p=&existing->second; LeaveCriticalSection(&g_lock); return p; }
+  if(forceIneligible){
+    if(existing!=g_records.end()){ g_records.erase(existing); g_dirty=true; }
+    LeaveCriticalSection(&g_lock);
+    return 0;
+  }
+  if(existing!=g_records.end()){
+    if(existing->second.baseId==d.baseId){
+      PGP::AffixRecord* p=&existing->second;
+      LeaveCriticalSection(&g_lock);
+      return p;
+    }
+    // Defensive handle-reuse protection: never attach an old instance roll to a
+    // different base item that happens to receive the same runtime handle string.
+    g_records.erase(existing);
+    g_dirty=true;
+  }
   LeaveCriticalSection(&g_lock);
 
-  PGP::ItemDescriptor d=Describe(item);
   std::vector<PGP::ItemTag> tags=TagsFor(d);
   if(tags.empty()) return 0;
   PGP::RoleProfile role=RoleFor(owner);
@@ -251,6 +276,26 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
 
   unsigned int seed=PGP::Hash32(key+"|"+d.baseId);
   PGP::AffixRecord r=PGP::RollAffixes(d,role,g_cfg,tags,key,seed,crafted);
+
+  if(g_cfg.verboseLogging){
+    std::ostringstream ss;
+    const char* source=crafted?"crafted":(role.traderSource?"trader":(role.worldLootSource?"world_loot":"npc"));
+    ss<<"roll source="<<source
+      <<" key="<<key
+      <<" baseId="<<d.baseId
+      <<" name=\""<<d.name<<"\""
+      <<" equipped="<<(d.equipped?1:0)
+      <<" tier="<<r.tier
+      <<" tags=";
+    for(size_t i=0;i<tags.size();++i){if(i)ss<<",";ss<<PGP::TagName(tags[i]);}
+    ss<<" affixes=";
+    if(r.affixes.empty()) ss<<"none";
+    for(size_t i=0;i<r.affixes.size();++i){
+      if(i)ss<<",";
+      ss<<PGP::StatName(r.affixes[i].stat)<<":"<<r.affixes[i].percent;
+    }
+    Log(ss.str());
+  }
 
   EnterCriticalSection(&g_lock);
   g_records[key]=r;
@@ -276,9 +321,9 @@ void RebuildCharacterBonusCache(Character* c) {
     for(size_t j=0;j<it->second.affixes.size();++j)
       totals[it->second.affixes[j].stat]+=it->second.affixes[j].percent;
   }
-  unsigned int serial=0;
-  try { serial=c->getHandle().serial; } catch (...) {}
-  if(serial) g_bonusCache[serial]=totals;
+  std::string characterKey;
+  try { characterKey=c->getHandle().toString(); } catch (...) {}
+  if(!characterKey.empty()) g_bonusCache[characterKey]=totals;
   LeaveCriticalSection(&g_lock);
 }
 
@@ -294,11 +339,11 @@ void ProcessCharacter(Character* c) {
 
 float EquippedBonus(Character* c, PGP::ProfessionStat stat) {
   if(!g_cfg.enabled || !c || stat==PGP::STAT_NONE) return 0;
-  unsigned int serial=0;
-  try { serial=c->getHandle().serial; } catch (...) { return 0; }
-  if(!serial) return 0;
+  std::string characterKey;
+  try { characterKey=c->getHandle().toString(); } catch (...) { return 0; }
+  if(characterKey.empty()) return 0;
   EnterCriticalSection(&g_lock);
-  std::map<unsigned int,std::map<PGP::ProfessionStat,float> >::const_iterator ci=g_bonusCache.find(serial);
+  std::map<std::string,std::map<PGP::ProfessionStat,float> >::const_iterator ci=g_bonusCache.find(characterKey);
   if(ci!=g_bonusCache.end()){
     std::map<PGP::ProfessionStat,float>::const_iterator bi=ci->second.find(stat);
     float value=(bi==ci->second.end())?0.0f:bi->second;
@@ -308,7 +353,7 @@ float EquippedBonus(Character* c, PGP::ProfessionStat stat) {
   LeaveCriticalSection(&g_lock);
   RebuildCharacterBonusCache(c);
   EnterCriticalSection(&g_lock);
-  ci=g_bonusCache.find(serial);
+  ci=g_bonusCache.find(characterKey);
   float value=0.0f;
   if(ci!=g_bonusCache.end()){
     std::map<PGP::ProfessionStat,float>::const_iterator bi=ci->second.find(stat);
@@ -322,10 +367,14 @@ void AppendTip(InventoryItemBase* base,Ogre::vector<StringPair>::type& lines) {
   if(!g_cfg.enabled) return;
   Item* item=dynamic_cast<Item*>(base);
   if(!item) return;
+  PGP::ItemDescriptor current=Describe(item);
+  if(current.legendary || current.stackable || g_exclusions.count(PGP::Lower(current.baseId))) return;
+  for(size_t i=0;i<lines.size();++i) if(lines[i].s1=="Profession Gear") return;
   std::string key=ItemKey(item);
+  const std::string baseId=current.baseId;
   EnterCriticalSection(&g_lock);
   std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(key);
-  if(it!=g_records.end() && !it->second.affixes.empty()){
+  if(it!=g_records.end() && it->second.baseId==baseId && !it->second.affixes.empty()){
     lines.push_back(StringPair("Profession Gear",""));
     for(size_t j=0;j<it->second.affixes.size();++j){
       std::ostringstream s; s<<"+"<<it->second.affixes[j].percent<<"%";
@@ -370,12 +419,13 @@ float HookInventoryWeight(Inventory* inv) {
   RootObject* owner = 0;
   try { owner = inv->getOwner(); } catch (...) { return base; }
   ContainerItem* pack = dynamic_cast<ContainerItem*>(owner);
-  if (!pack) return base;
+  if (!pack || !pack->isEquipped) return base;
   PGP::ItemDescriptor pd = Describe(pack);
   std::vector<PGP::ItemTag> tags = TagsFor(pd);
   if (!HasTag(tags,PGP::TAG_PACK_ORE) && !HasTag(tags,PGP::TAG_PACK_CROP) &&
       !HasTag(tags,PGP::TAG_PACK_CONSTRUCTION) && !HasTag(tags,PGP::TAG_PACK_MEDICAL) &&
-      !HasTag(tags,PGP::TAG_PACK_TRADE) && !HasTag(tags,PGP::TAG_PACK_TECH)) return base;
+      !HasTag(tags,PGP::TAG_PACK_TRADE) && !HasTag(tags,PGP::TAG_PACK_TECH) &&
+      !HasTag(tags,PGP::TAG_PACK_HAULING)) return base;
   float raw=0.0f, adjusted=0.0f;
   try {
     const lektor<Item*>& items=inv->getAllItems();
@@ -391,10 +441,13 @@ float HookInventoryWeight(Inventory* inv) {
 }
 
 void RefreshInventoryOwner(Inventory* inv) {
-  if(!g_cfg.enabled || !inv) return;
+  if(!g_cfg.enabled || !inv || g_refreshingInventory) return;
   Character* c=0;
   try { c=inv->getCallbackCharacter(); } catch (...) {}
-  if(c) ProcessCharacter(c);
+  if(!c) return;
+  g_refreshingInventory=true;
+  try { ProcessCharacter(c); } catch (...) {}
+  g_refreshingInventory=false;
 }
 
 void HookInventoryAdd(Inventory* inv,Item* item) {
@@ -466,6 +519,7 @@ void LoadConfig() {
     std::string v=PGP::Trim(line.substr(eq+1));
     if(k=="enabled") g_cfg.enabled=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="autoclassify") g_cfg.autoClassify=(v!="0"&&PGP::Lower(v)!="false");
+    else if(k=="verboselogging") g_cfg.verboseLogging=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="globalchance") g_cfg.globalChance=(float)atof(v.c_str());
     else if(k=="npcrolemultiplier") g_cfg.npcRoleMultiplier=(float)atof(v.c_str());
     else if(k=="playercraftmultiplier") g_cfg.playerCraftMultiplier=(float)atof(v.c_str());
@@ -473,6 +527,7 @@ void LoadConfig() {
     else if(k=="worldlootmultiplier") g_cfg.worldLootMultiplier=(float)atof(v.c_str());
     else if(k=="maxaffixes") g_cfg.maxAffixes=atoi(v.c_str());
   }
+  PGP::NormalizeConfig(g_cfg);
 }
 
 void LoadRules() {
@@ -508,6 +563,8 @@ void LoadRules() {
 } // anonymous
 
 extern "C" __declspec(dllexport) void startPlugin() {
+  if(g_started) return;
+  g_started=true;
   InitializeCriticalSection(&g_lock);
   char path[MAX_PATH]={0};
   GetModuleFileNameA((HMODULE)&__ImageBase,path,MAX_PATH);
@@ -515,9 +572,24 @@ extern "C" __declspec(dllexport) void startPlugin() {
   g_dbPath=g_dir+"\\profession_gear_affixes.tsv";
   g_logPath=g_dir+"\\ProfessionGear.log";
   DeleteFileA(g_logPath.c_str());
-  Log("Profession Gear Progression 0.1.0 starting");
+  Log("Profession Gear Progression 0.9.0-pretest starting");
   LoadConfig();
   LoadRules();
+  {
+    std::ostringstream ss;
+    ss<<"config enabled="<<(g_cfg.enabled?1:0)
+      <<" autoClassify="<<(g_cfg.autoClassify?1:0)
+      <<" verboseLogging="<<(g_cfg.verboseLogging?1:0)
+      <<" globalChance="<<g_cfg.globalChance
+      <<" npcRoleMultiplier="<<g_cfg.npcRoleMultiplier
+      <<" playerCraftMultiplier="<<g_cfg.playerCraftMultiplier
+      <<" poorNpcMultiplier="<<g_cfg.poorNpcMultiplier
+      <<" worldLootMultiplier="<<g_cfg.worldLootMultiplier
+      <<" maxAffixes="<<g_cfg.maxAffixes
+      <<" overrides="<<(unsigned long)g_overrides.size()
+      <<" exclusions="<<(unsigned long)g_exclusions.size();
+    Log(ss.str());
+  }
   LoadDb();
   InstallHooks();
 }

@@ -33,6 +33,8 @@ int main(){
   Check(ParseStat("nope")==STAT_NONE,"parse unknown stat");
   Check(ParseTag("tool_mining")==TAG_TOOL_MINING,"parse mining tag");
   Check(ParseTag("PACK_TECH")==TAG_PACK_TECH,"parse pack tag");
+  Check(ParseTag("PACK_GENERIC")==TAG_PACK_GENERIC,"parse generic pack tag");
+  Check(ParseTag("ASSASSIN_GEAR")==TAG_ASSASSIN_GEAR,"parse assassin tag");
   Check(ParseTag("garbage")==TAG_NONE,"parse unknown tag");
 
   Check(QualityTier(.0f)==0,"tier 0");
@@ -54,6 +56,14 @@ int main(){
   Check(TierAffixCap(3)==2 && TierAffixCap(4)==2,"medium tiers cap two affixes");
   Check(TierAffixCap(5)==3 && TierAffixCap(6)==3,"top tiers cap three affixes");
   Check(TierAffixCap(-9)==1 && TierAffixCap(99)==3,"affix cap clamps tier");
+
+  RuleConfig badCfg;
+  badCfg.globalChance=-2; badCfg.npcRoleMultiplier=-1; badCfg.playerCraftMultiplier=-1;
+  badCfg.poorNpcMultiplier=-1; badCfg.worldLootMultiplier=-1; badCfg.maxAffixes=99;
+  NormalizeConfig(badCfg);
+  Check(Eq(badCfg.globalChance,0)&&Eq(badCfg.npcRoleMultiplier,0)&&Eq(badCfg.playerCraftMultiplier,0),"config negative multipliers clamped");
+  Check(Eq(badCfg.poorNpcMultiplier,0)&&Eq(badCfg.worldLootMultiplier,0)&&badCfg.maxAffixes==3,"config world/poor/max clamped");
+  badCfg.maxAffixes=0; NormalizeConfig(badCfg); Check(badCfg.maxAffixes==1,"config min affix clamp");
 
   float lastChance=-1;
   for(int t=0;t<=6;++t){
@@ -133,6 +143,8 @@ int main(){
 
   ItemDescriptor combat; combat.baseId="mod.farmer_sword"; combat.name="Farmer's Sword"; combat.weapon=true; combat.weaponLevel=50;
   {std::vector<ItemTag> x=Classify(combat,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"farmer named weapon can carry farming context");}
+  ItemDescriptor farmersSword=combat; farmersSword.baseId="mod.farmers_sword"; farmersSword.name="Farmers Sword";
+  {std::vector<ItemTag> x=Classify(farmersSword,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"farmers plural weapon carries farming context");}
 
   ItemDescriptor pitchfork; pitchfork.baseId="mod.pitchfork"; pitchfork.name="Rusty Pitchfork"; pitchfork.weapon=true; pitchfork.weaponLevel=25;
   {std::vector<ItemTag> x=Classify(pitchfork,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"pitchfork weapon class gets farming context");}
@@ -181,6 +193,62 @@ int main(){
   {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_ATHLETICS)&&HasStat(s,STAT_PERCEPTION),"travel stat pool");}
   tags.clear();tags.push_back(TAG_STEALTH_GEAR);
   {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_STEALTH)&&HasStat(s,STAT_LOCKPICKING),"stealth stat pool");}
+  tags.clear();tags.push_back(TAG_ASSASSIN_GEAR);
+  {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_STEALTH)&&HasStat(s,STAT_ASSASSINATION)&&!HasStat(s,STAT_FARMING),"assassin stat pool");}
+  tags.clear();tags.push_back(TAG_THIEF_GEAR);
+  {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_STEALTH)&&HasStat(s,STAT_LOCKPICKING)&&HasStat(s,STAT_THIEVERY),"thief stat pool");}
+  tags.clear();tags.push_back(TAG_SWIM_GEAR);
+  {std::vector<ProfessionStat> s=AllowedStats(tags);Check(s.size()==1&&s[0]==STAT_SWIMMING,"swim stat pool");}
+  tags.clear();tags.push_back(TAG_PACK_HAULING);
+  {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_ATHLETICS),"hauling pack utility pool");}
+
+  ItemDescriptor assassin; assassin.baseId="vanilla.assassin_rags"; assassin.name="Assassin's Rags"; assassin.armour=true;
+  {std::vector<ItemTag> x=Classify(assassin,overrides,exclusions);Check(HasTag(x,TAG_ASSASSIN_GEAR),"classify assassin rags");}
+  ItemDescriptor ninja; ninja.baseId="vanilla.ninja_rags"; ninja.name="Ninja Rags"; ninja.armour=true;
+  {std::vector<ItemTag> x=Classify(ninja,overrides,exclusions);Check(HasTag(x,TAG_STEALTH_GEAR),"classify ninja rags stealth");}
+  ItemDescriptor thief; thief.baseId="mod.thief_coat"; thief.name="Thief's Coat"; thief.armour=true;
+  {std::vector<ItemTag> x=Classify(thief,overrides,exclusions);Check(HasTag(x,TAG_THIEF_GEAR),"classify thief gear");}
+  ItemDescriptor swim; swim.baseId="mod.diving_suit"; swim.name="Diving Suit"; swim.armour=true;
+  {std::vector<ItemTag> x=Classify(swim,overrides,exclusions);Check(HasTag(x,TAG_SWIM_GEAR),"classify swimming gear");}
+  ItemDescriptor cargo; cargo.baseId="mod.cargo_frame"; cargo.name="Nomad Cargo Frame"; cargo.container=true;
+  {std::vector<ItemTag> x=Classify(cargo,overrides,exclusions);Check(HasTag(x,TAG_PACK_HAULING),"classify hauling cargo frame");}
+
+  ItemDescriptor genericPack; genericPack.baseId="vanilla.medium_backpack"; genericPack.name="Medium Backpack"; genericPack.container=true;
+  {std::vector<ItemTag> x=Classify(genericPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_GENERIC)&&!HasTag(x,TAG_PACK_HAULING),"generic backpack gets utility but not specialist hauling");}
+  ItemDescriptor minersPack; minersPack.baseId="mod.miners_backpack"; minersPack.name="Miners Backpack"; minersPack.container=true;
+  {std::vector<ItemTag> x=Classify(minersPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_ORE)&&!HasTag(x,TAG_PACK_GENERIC),"miners backpack becomes ore specialist");}
+  ItemDescriptor farmersPack; farmersPack.baseId="mod.farmers_backpack"; farmersPack.name="Farmers Backpack"; farmersPack.container=true;
+  {std::vector<ItemTag> x=Classify(farmersPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_CROP)&&!HasTag(x,TAG_PACK_GENERIC),"farmers backpack becomes crop specialist");}
+  ItemDescriptor medicPack; medicPack.baseId="mod.field_medic_backpack"; medicPack.name="Field Medic Backpack"; medicPack.container=true;
+  {std::vector<ItemTag> x=Classify(medicPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_MEDICAL)&&!HasTag(x,TAG_PACK_GENERIC),"medic backpack becomes medical specialist");}
+  ItemDescriptor engineerPack; engineerPack.baseId="mod.engineer_pack"; engineerPack.name="Engineer's Pack"; engineerPack.container=true;
+  {std::vector<ItemTag> x=Classify(engineerPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_CONSTRUCTION)&&!HasTag(x,TAG_PACK_GENERIC),"engineer pack becomes construction specialist");}
+  ItemDescriptor researchPack; researchPack.baseId="mod.research_satchel"; researchPack.name="Researcher's Satchel"; researchPack.container=true;
+  {std::vector<ItemTag> x=Classify(researchPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_TECH)&&!HasTag(x,TAG_PACK_GENERIC),"research satchel becomes tech specialist");}
+  ItemDescriptor traderPack; traderPack.baseId="vanilla.trader_backpack"; traderPack.name="Trader's Wooden Backpack"; traderPack.container=true;
+  {std::vector<ItemTag> x=Classify(traderPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_TRADE)&&!HasTag(x,TAG_PACK_GENERIC),"trader backpack gets trade specialization");}
+  ItemDescriptor thievesPack; thievesPack.baseId="vanilla.small_thieves_backpack"; thievesPack.name="Small Thieves Backpack"; thievesPack.container=true;
+  {std::vector<ItemTag> x=Classify(thievesPack,overrides,exclusions);Check(HasTag(x,TAG_THIEF_GEAR)&&HasTag(x,TAG_PACK_GENERIC),"vanilla thieves backpack combines thief and generic pack utility");}
+  ItemDescriptor sandals; sandals.baseId="vanilla.wooden_sandals"; sandals.name="Wooden Sandals"; sandals.armour=true; sandals.slot="boots";
+  {std::vector<ItemTag> x=Classify(sandals,overrides,exclusions);Check(HasTag(x,TAG_BOOTS_TRAVEL),"wooden sandals travel utility");}
+  ItemDescriptor doctorMask; doctorMask.baseId="uwe.plague_doctor"; doctorMask.name="Plague Doctor Mask"; doctorMask.armour=true;
+  {std::vector<ItemTag> x=Classify(doctorMask,overrides,exclusions);Check(HasTag(x,TAG_TOOL_MEDIC)&&!HasTag(x,TAG_WORKWEAR_GENERIC),"doctor mask stays medic-specific");}
+  ItemDescriptor assassinRags2; assassinRags2.baseId="uwe.assassin_rags"; assassinRags2.name="Assassin's Rags"; assassinRags2.armour=true;
+  {std::vector<ItemTag> x=Classify(assassinRags2,overrides,exclusions);Check(HasTag(x,TAG_ASSASSIN_GEAR)&&!HasTag(x,TAG_WORKWEAR_GENERIC),"assassin rags not generic workwear");}
+  ItemDescriptor mechanicalBlade; mechanicalBlade.baseId="uwe.mechanical_blade"; mechanicalBlade.name="Mechanical Blade"; mechanicalBlade.weapon=true; mechanicalBlade.weaponLevel=50;
+  Check(Classify(mechanicalBlade,overrides,exclusions).empty(),"mechanical weapon does not false-match mechanic profession");
+  ItemDescriptor assassinBlade; assassinBlade.baseId="mod.assassin_blade"; assassinBlade.name="Assassin's Blade"; assassinBlade.weapon=true; assassinBlade.weaponLevel=50;
+  {std::vector<ItemTag> x=Classify(assassinBlade,overrides,exclusions);Check(HasTag(x,TAG_ASSASSIN_GEAR),"assassin named weapon allowed utility role");}
+  ItemDescriptor thiefDagger; thiefDagger.baseId="mod.thief_dagger"; thiefDagger.name="Thief's Dagger"; thiefDagger.weapon=true; thiefDagger.weaponLevel=40;
+  {std::vector<ItemTag> x=Classify(thiefDagger,overrides,exclusions);Check(HasTag(x,TAG_THIEF_GEAR),"thief named weapon allowed utility role");}
+  ItemDescriptor scoutSword; scoutSword.baseId="mod.scout_sword"; scoutSword.name="Scout Sword"; scoutSword.weapon=true; scoutSword.weaponLevel=40;
+  {std::vector<ItemTag> x=Classify(scoutSword,overrides,exclusions);Check(HasTag(x,TAG_SCOUT_GEAR),"scout named weapon allowed utility role");}
+  ItemDescriptor runningShoes; runningShoes.baseId="mod.running_shoes_2"; runningShoes.name="Running Shoes"; runningShoes.armour=true; runningShoes.slot="boots";
+  {std::vector<ItemTag> x=Classify(runningShoes,overrides,exclusions);Check(HasTag(x,TAG_BOOTS_TRAVEL)&&!HasTag(x,TAG_TOOL_FARMING),"shoes do not false-match hoe");}
+  ItemDescriptor dragonArmour; dragonArmour.baseId="mod.dragon_armour"; dragonArmour.name="Dragon Armour"; dragonArmour.armour=true;
+  Check(!HasTag(Classify(dragonArmour,overrides,exclusions),TAG_WORKWEAR_GENERIC),"dragon does not false-match rag");
+  ItemDescriptor mineralMask; mineralMask.baseId="mod.mineral_mask"; mineralMask.name="Mineral Dust Mask"; mineralMask.armour=true;
+  Check(!HasTag(Classify(mineralMask,overrides,exclusions),TAG_TOOL_MINING),"mineral does not false-match miner");
 
   Check(Eq(EffectiveStatValue(50,20,false,150),60),"effective stat percent");
   Check(EffectiveStatValue(50,20,true,150)==50,"unmodified bypass");
@@ -208,6 +276,9 @@ int main(){
   tags.clear();tags.push_back(TAG_PACK_TRADE);
   Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Luxury Goods","lux",true),.55f),"trade pack trade item");
   Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Luxury Goods","lux",false),1.0f),"trade pack nontrade");
+  tags.clear();tags.push_back(TAG_PACK_HAULING);
+  Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Building Materials","bm",false),.75f),"hauling pack general cargo");
+  Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Foodcube","food",false),.75f),"hauling pack all-cargo support");
 
   ItemDescriptor hoe; hoe.baseId="mod.hoe"; hoe.name="Iron Hoe"; hoe.quality=.5f; hoe.stackable=false;
   RuleConfig cfg; cfg.globalChance=100.0f;
@@ -247,7 +318,7 @@ int main(){
   Check(!traderRags.affixes.empty(),"generic workwear in trader stock can roll profession gear");
   Check(HasStat(AllowedStats(contextTags),traderRags.affixes[0].stat),"trader generic roll stays inside item context pool");
 
-  ItemDescriptor contextGoggles; contextGoggles.baseId="mod.plain_goggles"; contextGoggles.name="Plain Goggles"; contextGoggles.quality=.5f;
+  ItemDescriptor contextGoggles; contextGoggles.baseId="mod.plain_goggles"; contextGoggles.name="Plain Goggles"; contextGoggles.quality=.5f; contextGoggles.armour=true;
   std::vector<ItemTag> gTags=Classify(contextGoggles,overrides,exclusions);
   RoleProfile researcherCtx; researcherCtx.primary=STAT_SCIENCE; researcherCtx.wealth01=.7f;
   AffixRecord researchGoggles=RollAffixes(contextGoggles,researcherCtx,cfg,gTags,"research-goggles",77,false);
@@ -264,6 +335,8 @@ int main(){
 
   ItemDescriptor stack=hoe;stack.stackable=true;
   Check(RollAffixes(stack,farmer,cfg,tags,"stack",1,false).affixes.empty(),"stackable excluded");
+  ItemDescriptor uniqueRoll=hoe;uniqueRoll.legendary=true;
+  Check(RollAffixes(uniqueRoll,farmer,cfg,tags,"unique",1,false).affixes.empty(),"unique item roll excluded");
   RuleConfig disabled=cfg;disabled.enabled=false;
   Check(RollAffixes(hoe,farmer,disabled,tags,"off",1,false).affixes.empty(),"disabled no roll");
   RuleConfig zero=cfg;zero.globalChance=0;
@@ -274,7 +347,7 @@ int main(){
   RoleProfile researcher;researcher.primary=STAT_SCIENCE;researcher.wealth01=.8f;
   AffixRecord highRoll=RollAffixes(high,researcher,cfg,tags,"high",777,false);
   Check(highRoll.tier==5,"high quality tier5");
-  Check(highRoll.affixes.size()<=2,"max two affixes");
+  Check(highRoll.affixes.size()<=3,"tier5 up to three affixes");
   for(size_t i=0;i<highRoll.affixes.size();++i)
     Check(highRoll.affixes[i].percent>=13&&highRoll.affixes[i].percent<=20,"tier5 magnitude");
 
@@ -290,6 +363,8 @@ int main(){
   Check(!ParseRecord("bad",parsed),"reject malformed");
   Check(!ParseRecord("x\ty\t1\t999:10",parsed),"reject invalid stat id");
   Check(!ParseRecord("\ty\t1\t1:10",parsed),"reject empty identity");
+  Check(!ParseRecord("x\t\t1\t1:10",parsed),"reject empty base id");
+  Check(!ParseRecord("x\ty\t99\t1:10",parsed),"reject invalid tier");
   Check(ParseRecord("x\ty\t1\t",parsed)&&parsed.affixes.empty(),"parse empty affix record");
 
   std::vector<AffixRecord> rs;
