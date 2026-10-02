@@ -1,0 +1,27 @@
+# Generated native build output
+obj/
+out/
+build*/
+*.obj
+*.o
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.lib
+*.exp
+*.log
+
+# Runtime-generated plugin state
+profession_gear_affixes.tsv
+ProfessionGear.log
+
+# Temporary/editor files
+*.tmp
+*.bak
+*.user
+.vs/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
