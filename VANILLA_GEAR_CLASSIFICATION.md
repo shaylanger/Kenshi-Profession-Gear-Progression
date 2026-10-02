@@ -143,7 +143,7 @@ Those remain valid additions for this mod's optional FCS content layer and can a
 
 ## Revised classifier priority
 
-Automatic support must not be "IDs only" and must not be "name keywords only".
+Automatic support must not be ID-only. Third-party mods normally add ordinary Kenshi items with no ProfessionGear metadata, so **the item name and description are primary semantic evidence**, constrained by the item type/slot and then resolved by wearer/source context when the item is ambiguous.
 
 Use a scored evidence model:
 
@@ -157,38 +157,48 @@ This handles:
 - false positives,
 - total conversions.
 
-### 2. Native object type and slot
+### 2. Native object type and slot — hard gate
 Examples:
 - backpack/container,
 - headgear,
-- shirt,
-- body armour,
-- legwear,
+- shirt/body/leg clothing,
 - footwear,
 - melee weapon,
 - crossbow,
 - robot limb,
 - belt/lantern.
 
-This defines what kinds of affixes are even legal.
+This prevents nonsense. A weapon called `Farmer's Sword` is still a combat weapon unless its name/description clearly identifies it as an actual work tool. A heavy helmet does not become cooking gear because a cook happens to wear it.
 
-### 3. Existing native mechanical fingerprint
-Use the item's own stats where available.
+### 3. Item name — primary semantic evidence
+This is how unknown mod-added gear is expected to work. Mod authors do not need to know about ProfessionGear.
 
-Examples:
-- native Athletics bonus => travel/mobility evidence,
-- native Stealth bonus => stealth evidence,
-- native Perception bonus => scout/precision evidence,
-- stack multiplier + strong weight reduction => logistics evidence,
-- robot limb Strength bonus => hauling/strength evidence,
-- robot limb Lockpicking/Thievery bonus => thief identity.
+Useful examples:
+- `Green Hat` => plain/light generic workwear candidate; profession comes from wearer/source context.
+- `Worker Rags` => generic workwear; Farming/Labouring/Engineering/Cooking are plausible depending on context.
+- `Running Shoes` => Athletics/travel candidate from the name alone.
+- `Research Goggles` => research/precision candidate.
+- plain `Goggles` => ambiguous precision gear; can support Perception/Science/Engineering/Robotics/Turrets depending on context.
+- `Pickaxe` => Labouring tool even if a mod implements it using a weapon slot.
+- `Chef Knife` is **not** automatically Cooking if it is just a normal combat knife; description/type/context must corroborate that it is a kitchen/work tool.
 
-This is especially important for mod-added gear with unusual names.
+### 4. Item description — co-primary semantic evidence
+Descriptions are especially valuable when names are generic or fictional. A mod can call an item `Mudgrubber Mk II`; if its normal Kenshi description says it is an agricultural harvesting implement, Farming becomes a strong classification without any ProfessionGear-specific metadata.
 
-### 4. Item description / linked game data where readable
-The local `rebirth.mod` contains descriptive data. Example: the real Straw Hat description explicitly says it is common among peasant farmers and desert scouts. Descriptions can be useful semantic evidence, but should not be trusted alone.
+The local `rebirth.mod` already demonstrates this with the Straw Hat description referring to peasant farmers and desert scouts.
 
-### 5. Semantic name tokens — fallback, not authority
+### 5. Existing native mechanics — optional corroboration, not required
+Many modded items will have completely ordinary Kenshi stats. That is expected. Existing bonuses can help when present, but **lack of a native Athletics/Perception/etc. bonus must never prevent classification**.
+
+Examples when native mechanics happen to help:
+- Athletics bonus can support a travel interpretation,
+- Stealth can support stealth gear,
+- Perception can support precision/scout gear,
+- backpack stacking/weight behavior can support logistics.
+
+These are supporting clues only.
+
+### 6. Semantic tokens used by name/description
 Useful for third-party items:
 - hoe, sickle, farm, cultivator
 - pickaxe, mining, miner
@@ -203,35 +213,45 @@ Useful for third-party items:
 
 A name hit must be compatible with the object's slot/type. A sword named "Farmer's Katana" is still a combat weapon unless another strong signal or explicit rule says otherwise.
 
-### 6. NPC/source context — roll weighting, not item identity
-NPC role, skills, faction and job should influence which legal affix is preferred and how likely the item is to be special.
+### 7. NPC/source context — resolves ambiguous legal pools per instance
+NPC role, skills, faction and job determine which plausible stat an ambiguous item actually receives.
 
-It should not transform an unrelated item category. A researcher carrying Samurai Armour does not make Samurai Armour a research coat.
+Example: the same `Worker Rags` base item can produce a Farming roll on a farmer and a Labouring roll on a miner/labourer. The same plain goggles can become Science on a researcher or Perception/Turrets on a turret specialist.
+
+Context cannot override the hard item-type gate. A researcher carrying Samurai Armour does not make Samurai Armour a research coat.
 
 ## Mod support
 
 This hybrid system is specifically how new mod gear remains supported.
 
-A mod item does **not** need a known ID if it exposes enough native/semantic evidence.
+A mod item does **not** need a known ID and does **not** need any ProfessionGear-style native stat. It only needs to be an ordinary Kenshi item whose name/description/type give us enough context.
 
 Examples:
 
-- `VX-9 Precision Ocular Rig`
-  - head slot
-  - +Perception native effect
-  - description mentions diagnostics/calibration
-  - classifier can infer precision/research/scout candidates even though the ID/name is unknown.
+- `Green Hat`
+  - head slot,
+  - ordinary cloth item with no special stats,
+  - enters the generic workwear pool; wearer/source context can make an individual copy Farming, Labouring, Cooking or Engineering.
+
+- `Running Shoes`
+  - footwear,
+  - no native Athletics bonus required,
+  - the name is enough to make Athletics/travel a strong legal interpretation.
 
 - `Mudgrubber Mk II`
-  - weapon/tool-like object
-  - description says agricultural implement / harvesting
-  - no combat-oriented weapon stats
-  - classifier can infer Farming despite an unusual display name.
+  - ordinary item or weapon-slot tool,
+  - description says agricultural implement / harvesting,
+  - classifier can infer Farming despite the fictional display name and no pre-existing Farming stat.
+
+- `Plain Goggles`
+  - head/face gear,
+  - no native Perception stat required,
+  - enters a multi-purpose precision pool and context picks the actual affix.
 
 - `Nomad Cargo Frame`
-  - backpack/container
-  - high stack multiplier and encumbrance reduction
-  - classifier can infer hauling/logistics without needing "backpack" in the name.
+  - backpack/container,
+  - name/description say cargo hauling,
+  - classifier can infer logistics even if its native backpack numbers are completely vanilla-like.
 
 When evidence is weak or contradictory, the correct answer is **no profession affix**, not a guess.
 
@@ -243,11 +263,13 @@ Example evidence weights:
 - exact rule: authoritative
 - known curated vanilla/mod ID: +100
 - compatible object type/slot: required gate
-- strong native mechanical signature: +30
-- description semantic match: +25
-- name semantic match: +15
-- NPC role match: +10 for roll selection only
-- contradictory type/native stats: -50 or hard reject
+- strong name semantic match: +35
+- strong description semantic match: +35
+- corroborating name+description agreement: +20
+- native mechanical signature when present: +10
+- NPC/source role match: resolves/weights the legal pool rather than inventing a new item identity
+- contradictory type: hard reject
+- explicitly legendary/unique protected item: hard reject
 
 Suggested behavior:
 - >= 50: auto-classify

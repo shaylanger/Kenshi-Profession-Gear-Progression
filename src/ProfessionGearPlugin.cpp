@@ -14,6 +14,7 @@
 #include <kenshi/Character.h>
 #include <kenshi/CharStats.h>
 #include <kenshi/GameWorld.h>
+#include <kenshi/Gear.h>
 #include <kenshi/Inventory.h>
 #include <kenshi/Item.h>
 #include <kenshi/PlayerInterface.h>
@@ -82,12 +83,40 @@ PGP::ItemDescriptor Describe(Item* item) {
   if (!item) return d;
   d.baseId=BaseId(item);
   try { d.name=item->getName(); } catch (...) {}
-  if (item->data) d.category=item->data->name;
-  d.quality=item->quality;
+  if (item->data) {
+    boost::unordered::unordered_map<std::string,std::string,boost::hash<std::string>,std::equal_to<std::string>,Ogre::STLAllocator<std::pair<std::string const,std::string>,Ogre::GeneralAllocPolicy> >::const_iterator di=item->data->sdata.find("description");
+    if(di!=item->data->sdata.end()) d.description=di->second;
+  }
+
+  Gear* gear=dynamic_cast<Gear*>(item);
+  Weapon* weapon=dynamic_cast<Weapon*>(item);
+  Armour* armour=dynamic_cast<Armour*>(item);
+  RobotLimbItem* limb=dynamic_cast<RobotLimbItem*>(item);
+  ContainerItem* container=dynamic_cast<ContainerItem*>(item);
+
+  d.weapon=(weapon!=0);
+  d.armour=(armour!=0);
+  d.robotLimb=(limb!=0);
+  d.container=(container!=0);
+  if(d.weapon) d.category="weapon";
+  else if(d.armour) d.category="armour";
+  else if(d.robotLimb) d.category="robot_limb";
+  else if(d.container) d.category="container";
+  else d.category="item";
+
+  d.quality=gear?gear->getLevel01():item->quality;
+  d.weaponLevel=(d.weapon&&gear)?gear->level_0_100:-1;
   d.equipped=item->isEquipped;
-  d.container=(dynamic_cast<ContainerItem*>(item)!=0);
   d.stackable=item->quantity>1;
   d.slot=item->inventorySection;
+
+  if(d.weapon&&gear){
+    std::string manufacturer;
+    if(item->manufacturerData) manufacturer=PGP::Lower(item->manufacturerData->name+" "+item->manufacturerData->stringID);
+    std::string lname=PGP::Lower(d.name+" "+d.description);
+    d.legendary=(gear->level_0_100>=100 || manufacturer.find("cross")!=std::string::npos ||
+                 lname.find("meitou")!=std::string::npos || lname.find("legendary")!=std::string::npos);
+  }
   return d;
 }
 

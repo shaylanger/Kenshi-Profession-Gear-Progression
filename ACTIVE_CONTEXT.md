@@ -459,3 +459,115 @@ Extra affixes remain probabilistic and must come from the coherent legal stat po
 3. Add curated vanilla mappings only where profession semantics are defensible.
 4. Add classifier tests against a fixture catalogue of real vanilla items plus synthetic third-party items with unusual names.
 5. Keep exact rules as the final authority.
+
+
+---
+
+## Turn update — 2026-10-02 classifier correction for plain modded items + installed mod audit
+
+### User correction / requirements
+Shay clarified:
+- third-party mods will normally add plain Kenshi items with no ProfessionGear metadata or native profession stats,
+- item **name** must therefore be a primary classifier signal,
+- examples include Green Hat, Running Shoes, Worker Rags, ordinary new weapons, etc.,
+- same base item may plausibly support multiple professions (e.g. generic rags: Farming or Labouring depending on wearer),
+- goggles may plausibly support several categories,
+- very high/unique named weapons should not be modified,
+- weapons have many more grades than armour and must be handled separately,
+- installed mods should be used as a real classifier corpus.
+
+### Installed mod audit performed
+Visible deployed mods include:
+- GenMod
+- Universal Wasteland Expansion
+- Dust
+- Unofficial Patches for Kenshi
+- Fixing Clipping Issues
+- Compressed Textures Project
+- detail textures
+- plus UI/animation/runtime mods.
+
+Asset scan:
+- UWE: 4673 files, ~1422 filenames/paths matching gear/weapon/armour patterns.
+- GenMod: 574 files, ~47 gear-looking files.
+- UWE deployed item assets include extensive armour/headwear/boots/bags/weapons and a real Pickaxe mesh.
+- GenMod deployed assets include multiple backpack meshes and Pickaxe industry assets.
+- UWE's Vortex source .mod is accessible (~41 MB).
+- GenMod's deployed .mod symlink points at a stale/missing Vortex source path, but its deployed assets remain readable.
+
+Added `INSTALLED_MOD_GEAR_AUDIT.md` documenting these observations and future corpus-testing plan.
+
+### Classifier implementation changes
+1. `ItemDescriptor` now includes:
+   - description,
+   - weapon level,
+   - weapon/armour/robot-limb/container flags,
+   - legendary protection flag.
+2. Plugin `Describe()` now:
+   - reads normal item description from GameData where present,
+   - uses real runtime class (Weapon/Armour/RobotLimb/Container),
+   - uses `Gear::getLevel01()` for gear quality,
+   - captures `level_0_100` for weapons,
+   - marks level-100 / Cross / Meitou / explicitly legendary weapons protected.
+3. Normal combat weapons are hard-rejected from profession classification unless name/description clearly identifies an actual profession tool such as Pickaxe/Hoe/etc.
+4. Added `WORKWEAR_GENERIC`:
+   - plain hats / Worker Rags / basic work clothing can legally support Farming, Labouring, Engineering or Cooking.
+   - first affix is resolved to the wearer's primary profession when it is inside that pool.
+   - therefore the exact same Worker Rags base item can become Farming on a farmer and Labouring on a labourer.
+5. Added `GOGGLES_GENERIC`:
+   - plain goggles/glasses/visors can support Perception, Science, Engineering, Robotics or Turrets.
+   - wearer/source context resolves the first affix.
+6. Added Running Shoes / sneaker semantic detection to Athletics/travel even when there is no native Athletics stat.
+7. Updated documentation so **name + description are first-class semantic evidence**. Native stats are optional corroboration only and are never required for third-party support.
+
+### Weapon grade handling
+Confirmed vanilla weapon ladder is separate from armour quality.
+Core now recognizes the 15 weapon grades/model levels:
+- Rusted Junk
+- Rusting Blade
+- Mid-Grade Salvage
+- Old Refitted Blade
+- Refitted Blade
+- Catun No.1
+- Catun No.2
+- Catun No.3
+- Mk I
+- Mk II
+- Mk III
+- Edge Type 1
+- Edge Type 2
+- Edge Type 3
+- Meitou
+
+Implementation:
+- added `WeaponGradeRank(level_0_100)`,
+- added `ProgressionTier(ItemDescriptor)`,
+- weapon grades map into the internal affix-balance bands instead of being treated like armour quality,
+- Meitou/level-100 is protected,
+- Edge-grade (>=70) weapon instances on unique named NPCs are protected by default,
+- ordinary combat weapons are normally outside the profession-affix system anyway.
+
+### Tests added
+New offline cases cover:
+- Green Hat => generic workwear,
+- Worker Rags => contextual Farming vs Labouring on different wearers,
+- plain goggles => multi-context pool,
+- researcher goggles => Science first affix,
+- Running Shoes without native Athletics => travel/Athletics,
+- Farmer's Sword => combat gate rejection,
+- weapon-slot Pickaxe => allowed Labouring tool,
+- legendary item => rejected,
+- exact weapon grade rank mappings,
+- internal progression tier mapping for weapon grades.
+
+### Validation this turn
+- `run_tests.bat`: PASS — **5,164 checks**.
+- `build_portable.bat`: PASS — BUILD OK.
+- Mod remains uninstalled.
+
+### Next work
+1. Build a reusable classifier fixture corpus from real vanilla + UWE + GenMod names/assets.
+2. Improve plain clothing/headwear type gates further so e.g. generic heavy/ceremonial hats do not enter workwear pools too easily.
+3. Add description-driven synthetic cases for strangely named mod items.
+4. Add curated protection rules for any unique/legendary mod items discovered in the installed corpus.
+5. Keep real live item enumeration as a later authorized in-game/FCS step; do not install ProfessionGear yet.

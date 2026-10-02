@@ -110,13 +110,15 @@ std::string TagName(ItemTag tag) {
     case TAG_TURRET_GEAR: return "TURRET_GEAR";
     case TAG_SCOUT_GEAR: return "SCOUT_GEAR";
     case TAG_STEALTH_GEAR: return "STEALTH_GEAR";
+    case TAG_WORKWEAR_GENERIC: return "WORKWEAR_GENERIC";
+    case TAG_GOGGLES_GENERIC: return "GOGGLES_GENERIC";
     default: return "NONE";
   }
 }
 
 ItemTag ParseTag(const std::string& value) {
   const std::string v = Lower(Trim(value));
-  for (int i = TAG_TOOL_FARMING; i <= TAG_STEALTH_GEAR; ++i) {
+  for (int i = TAG_TOOL_FARMING; i <= TAG_GOGGLES_GENERIC; ++i) {
     ItemTag t = static_cast<ItemTag>(i);
     if (Lower(TagName(t)) == v) return t;
   }
@@ -131,6 +133,26 @@ int QualityTier(float q) {
   if (q < 0.82f) return 4;
   if (q < 0.94f) return 5;
   return 6;
+}
+
+int WeaponGradeRank(int level) {
+  // Vanilla model levels: Rusted Junk 5 through Edge 3 80, Meitou 100.
+  static const int levels[] = {5,10,15,20,25,30,35,40,50,55,60,70,75,80,100};
+  if(level<=levels[0]) return 0;
+  for(int i=1;i<15;++i) if(level<=levels[i]) return i;
+  return 14;
+}
+
+int ProgressionTier(const ItemDescriptor& item) {
+  if(!item.weapon || item.weaponLevel<0) return QualityTier(item.quality);
+  const int rank=WeaponGradeRank(item.weaponLevel);
+  if(rank<=1) return 0;      // Rusted / Rusting
+  if(rank<=3) return 1;      // Mid-grade / Old Refitted
+  if(rank<=5) return 2;      // Refitted / Catun 1
+  if(rank<=7) return 3;      // Catun 2-3
+  if(rank<=10) return 4;     // Mk I-III
+  if(rank<=12) return 5;     // Edge 1-2
+  return 6;                  // Edge 3; Meitou is blocked as legendary
 }
 
 void TierRange(int tier, float& minP, float& maxP) {
@@ -168,9 +190,21 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   if (exclusions.count(id)) return out;
   std::map<std::string,std::vector<ItemTag> >::const_iterator it = overrides.find(id);
   if (it != overrides.end()) return it->second;
-  const std::string n = Lower(item.name+" "+item.category+" "+item.slot);
+  if (item.legendary) return out;
+  const std::string n = Lower(item.name+" "+item.description+" "+item.category+" "+item.slot);
 
-  if (Has(n,"hoe") || Has(n,"sickle") || Has(n,"farm tool")) AddTag(out,TAG_TOOL_FARMING);
+  const bool explicitProfessionTool =
+      Has(n,"hoe") || Has(n,"sickle") || Has(n,"pickaxe") || Has(n,"pick axe") ||
+      Has(n,"farm tool") || Has(n,"mining tool") || Has(n,"research tool") ||
+      Has(n,"science tool") || Has(n,"engineering tool") || Has(n,"tool belt") ||
+      Has(n,"robotics tool") || Has(n,"medical tool") || Has(n,"first aid tool") ||
+      Has(n,"smithing tool") || Has(n,"forge tool") || Has(n,"cooking tool") || Has(n,"chef tool");
+
+  // Normal combat weapons are not profession gear just because their names contain a profession-like word.
+  // Tool-like weapons (e.g. a modded pickaxe) are allowed through when the name/description is explicit.
+  if (item.weapon && !explicitProfessionTool) return out;
+
+  if (Has(n,"hoe") || Has(n,"sickle") || Has(n,"farm tool") || Has(n,"agricultural tool") || Has(n,"harvesting tool")) AddTag(out,TAG_TOOL_FARMING);
   if (Has(n,"pickaxe") || Has(n,"pick axe") || Has(n,"mining tool")) AddTag(out,TAG_TOOL_MINING);
   if (Has(n,"lab coat") || Has(n,"research coat")) AddTag(out,TAG_BODY_RESEARCH);
   if (Has(n,"research") || Has(n,"science") || Has(n,"laboratory")) AddTag(out,TAG_TOOL_RESEARCH);
@@ -180,8 +214,15 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   if (Has(n,"weapon smith")) AddTag(out,TAG_TOOL_WEAPON_SMITH);
   if (Has(n,"armour smith") || Has(n,"armor smith")) AddTag(out,TAG_TOOL_ARMOUR_SMITH);
   if (Has(n,"crossbow smith")) AddTag(out,TAG_TOOL_CROSSBOW_SMITH);
-  if (Has(n,"cooking") || Has(n,"chef")) AddTag(out,TAG_TOOL_COOKING);
+  if (Has(n,"cooking") || Has(n,"chef") || Has(n,"kitchen tool")) AddTag(out,TAG_TOOL_COOKING);
   if (Has(n,"straw hat")) AddTag(out,TAG_HEAD_FARMING);
+
+  // Ambiguous real/modded gear: base item defines a plausible pool, wearer/source context selects the roll.
+  const bool plainHat = (Has(n," hat") || Has(n,"hat ")) && !Has(n,"helmet") && !Has(n,"armoured") && !Has(n,"armored") && !Has(n,"plate");
+  const bool simpleWorkCloth = Has(n,"rag") || Has(n,"workwear") || Has(n,"worker") || Has(n,"work shirt") || Has(n,"cloth shirt") || Has(n,"apron") || Has(n,"overalls");
+  if ((plainHat || simpleWorkCloth) && !item.weapon) AddTag(out,TAG_WORKWEAR_GENERIC);
+  if ((Has(n,"goggle") || Has(n,"glasses") || Has(n,"visor")) && !Has(n,"helmet")) AddTag(out,TAG_GOGGLES_GENERIC);
+  if (Has(n,"running shoe") || Has(n,"running boot") || Has(n,"runner shoe") || Has(n,"sneaker")) AddTag(out,TAG_BOOTS_TRAVEL);
   if (Has(n,"miner") && (Has(n,"hat") || Has(n,"helmet") || Has(n,"goggle"))) AddTag(out,TAG_HEAD_MINING);
   if ((Has(n,"research") || Has(n,"science")) && (Has(n,"goggle") || Has(n,"glass") || Has(n,"visor"))) AddTag(out,TAG_HEAD_RESEARCH);
   if (Has(n,"glove") && (Has(n,"work") || Has(n,"industrial"))) AddTag(out,TAG_GLOVES_WORK);
@@ -225,6 +266,10 @@ std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags) {
       case TAG_TURRET_GEAR: AddStat(out,STAT_TURRETS); AddStat(out,STAT_PERCEPTION); break;
       case TAG_STEALTH_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_LOCKPICKING); break;
       case TAG_PACK_TRADE: AddStat(out,STAT_ATHLETICS); break;
+      case TAG_WORKWEAR_GENERIC:
+        AddStat(out,STAT_FARMING); AddStat(out,STAT_LABOURING); AddStat(out,STAT_ENGINEERING); AddStat(out,STAT_COOKING); break;
+      case TAG_GOGGLES_GENERIC:
+        AddStat(out,STAT_PERCEPTION); AddStat(out,STAT_SCIENCE); AddStat(out,STAT_ENGINEERING); AddStat(out,STAT_ROBOTICS); AddStat(out,STAT_TURRETS); break;
       default: break;
     }
   }
@@ -248,8 +293,8 @@ float UnitRoll(unsigned int& s) {
 AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
                         const RuleConfig& cfg,const std::vector<ItemTag>& tags,
                         const std::string& key,unsigned int seed,bool crafted) {
-  AffixRecord out; out.instanceKey=key; out.baseId=item.baseId; out.tier=QualityTier(item.quality);
-  if(!cfg.enabled || item.stackable || tags.empty()) return out;
+  AffixRecord out; out.instanceKey=key; out.baseId=item.baseId; out.tier=ProgressionTier(item);
+  if(!cfg.enabled || item.stackable || item.legendary || (item.weapon && role.unique && item.weaponLevel>=70) || tags.empty()) return out;
   std::vector<ProfessionStat> pool=AllowedStats(tags);
   if(pool.empty()) return out;
   float chance=TierAffixChance(out.tier)*cfg.globalChance;
@@ -272,12 +317,16 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
     float thirdChance=(out.tier==5)?0.25f:0.45f;
     if(UnitRoll(state)<thirdChance) count=3;
   }
+  const bool contextualGeneric =
+      std::find(tags.begin(),tags.end(),TAG_WORKWEAR_GENERIC)!=tags.end() ||
+      std::find(tags.begin(),tags.end(),TAG_GOGGLES_GENERIC)!=tags.end();
   std::vector<ProfessionStat> rem=pool;
   for(int i=0;i<count && !rem.empty();++i){
     size_t idx=(size_t)(UnitRoll(state)*rem.size()); if(idx>=rem.size()) idx=rem.size()-1;
     ProfessionStat st=rem[idx];
-    if(role.primary!=STAT_NONE && std::find(rem.begin(),rem.end(),role.primary)!=rem.end() && UnitRoll(state)<.70f){
-      st=role.primary; idx=(size_t)(std::find(rem.begin(),rem.end(),st)-rem.begin());
+    std::vector<ProfessionStat>::iterator roleIt=std::find(rem.begin(),rem.end(),role.primary);
+    if(role.primary!=STAT_NONE && roleIt!=rem.end() && ((contextualGeneric && i==0) || UnitRoll(state)<.70f)){
+      st=role.primary; idx=(size_t)(roleIt-rem.begin());
     }
     float p=lo+(hi-lo)*UnitRoll(state); p=(float)((int)(p*10+.5f))/10.0f;
     out.affixes.push_back(Affix(st,p)); rem.erase(rem.begin()+idx);

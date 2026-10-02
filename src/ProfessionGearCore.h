@@ -59,7 +59,9 @@ enum ItemTag {
   TAG_PACK_TECH,
   TAG_TURRET_GEAR,
   TAG_SCOUT_GEAR,
-  TAG_STEALTH_GEAR
+  TAG_STEALTH_GEAR,
+  TAG_WORKWEAR_GENERIC,
+  TAG_GOGGLES_GENERIC
 };
 
 struct Affix {
@@ -74,11 +76,17 @@ struct ItemDescriptor {
   std::string name;
   std::string slot;
   std::string category;
+  std::string description;
   float quality;
+  int weaponLevel;
   bool equipped;
   bool stackable;
   bool container;
-  ItemDescriptor() : quality(0.0f), equipped(false), stackable(false), container(false) {}
+  bool weapon;
+  bool armour;
+  bool robotLimb;
+  bool legendary;
+  ItemDescriptor() : quality(0.0f), weaponLevel(-1), equipped(false), stackable(false), container(false), weapon(false), armour(false), robotLimb(false), legendary(false) {}
 };
 
 struct RoleProfile {
@@ -116,6 +124,8 @@ std::string TagName(ItemTag tag);
 ItemTag ParseTag(const std::string& value);
 
 int QualityTier(float quality);
+int WeaponGradeRank(int level0to100);
+int ProgressionTier(const ItemDescriptor& item);
 void TierRange(int tier, float& minPercent, float& maxPercent);
 float TierAffixChance(int tier);
 int TierAffixCap(int tier);

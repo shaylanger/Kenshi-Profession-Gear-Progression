@@ -50,6 +50,15 @@
 | 28 | AUTO | Turret classifier | Turret gear maps Turrets/Perception |
 | 29 | AUTO | Stealth classifier | Stealth gear maps Stealth/Lockpicking only |
 | 30 | AUTO | Ordinary sword negative case | No Farming/Science/etc. affix |
+| 30a | AUTO | Plain mod-added hat (e.g. Green Hat) | Generic workwear pool; context chooses profession |
+| 30b | AUTO | Same Worker Rags on farmer vs labourer | Same base item rolls Farming vs Labouring by context |
+| 30c | AUTO | Plain mod-added goggles | Multi-context Perception/Science/Engineering/Robotics/Turrets pool |
+| 30d | AUTO | Running Shoes with no native Athletics stat | Name/type still classify as Athletics/travel |
+| 30e | AUTO | Farmer-named normal combat sword | Rejected by combat-weapon gate |
+| 30f | AUTO | Weapon-slot Pickaxe | Allowed as Labouring because explicit tool semantics override combat gate |
+| 30g | AUTO | Meitou/Cross/level-100 weapon | Never receives ProfessionGear affix |
+| 30h | AUTO | Edge-grade weapon on unique named NPC | Protected from ProfessionGear affixes |
+| 30i | AUTO | Installed UWE/GenMod classifier corpus | False positives/negatives reviewed and converted to regression fixtures |
 
 ## Section B — plugin startup/hook safety
 

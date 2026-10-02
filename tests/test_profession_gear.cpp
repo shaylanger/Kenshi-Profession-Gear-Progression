@@ -117,6 +117,44 @@ int main(){
   item.baseId="sword"; item.name="Katana"; item.category="weapon";
   Check(Classify(item,overrides,exclusions).empty(),"ordinary sword no profession class");
 
+  ItemDescriptor greenHat; greenHat.baseId="mod.green_hat"; greenHat.name="Green Hat"; greenHat.slot="head"; greenHat.armour=true;
+  {std::vector<ItemTag> x=Classify(greenHat,overrides,exclusions);Check(HasTag(x,TAG_WORKWEAR_GENERIC),"plain modded hat becomes generic workwear");}
+  {std::vector<ProfessionStat> x=AllowedStats(Classify(greenHat,overrides,exclusions));Check(HasStat(x,STAT_FARMING)&&HasStat(x,STAT_LABOURING)&&HasStat(x,STAT_ENGINEERING)&&HasStat(x,STAT_COOKING),"generic workwear has contextual profession pool");}
+
+  ItemDescriptor rags; rags.baseId="mod.rags"; rags.name="Worker Rags"; rags.armour=true;
+  {std::vector<ItemTag> x=Classify(rags,overrides,exclusions);Check(HasTag(x,TAG_WORKWEAR_GENERIC),"worker rags generic workwear");}
+
+  ItemDescriptor goggles; goggles.baseId="mod.goggles"; goggles.name="Green-Tint Goggles"; goggles.slot="head"; goggles.armour=true;
+  {std::vector<ItemTag> x=Classify(goggles,overrides,exclusions);Check(HasTag(x,TAG_GOGGLES_GENERIC),"plain modded goggles generic precision");}
+  {std::vector<ProfessionStat> x=AllowedStats(Classify(goggles,overrides,exclusions));Check(HasStat(x,STAT_PERCEPTION)&&HasStat(x,STAT_SCIENCE)&&HasStat(x,STAT_ENGINEERING)&&HasStat(x,STAT_ROBOTICS)&&HasStat(x,STAT_TURRETS),"goggles multi-context pool");}
+
+  ItemDescriptor shoes; shoes.baseId="mod.running_shoes"; shoes.name="Running Shoes"; shoes.slot="boots"; shoes.armour=true;
+  {std::vector<ItemTag> x=Classify(shoes,overrides,exclusions);Check(HasTag(x,TAG_BOOTS_TRAVEL),"running shoes infer athletics context from name");}
+
+  ItemDescriptor combat; combat.baseId="mod.farmer_sword"; combat.name="Farmer's Sword"; combat.weapon=true; combat.weaponLevel=50;
+  Check(Classify(combat,overrides,exclusions).empty(),"normal combat weapon rejected despite farmer word");
+
+  ItemDescriptor toolWeapon; toolWeapon.baseId="mod.pickaxe"; toolWeapon.name="Industrial Pickaxe"; toolWeapon.weapon=true; toolWeapon.weaponLevel=40;
+  {std::vector<ItemTag> x=Classify(toolWeapon,overrides,exclusions);Check(HasTag(x,TAG_TOOL_MINING),"tool-like weapon allowed by explicit semantics");}
+
+  ItemDescriptor legendary=toolWeapon; legendary.baseId="legendary"; legendary.legendary=true; legendary.weaponLevel=100;
+  Check(Classify(legendary,overrides,exclusions).empty(),"legendary item classification blocked");
+
+  Check(WeaponGradeRank(5)==0,"weapon rank rusted junk");
+  Check(WeaponGradeRank(10)==1,"weapon rank rusting blade");
+  Check(WeaponGradeRank(40)==7,"weapon rank catun3");
+  Check(WeaponGradeRank(60)==10,"weapon rank mk3");
+  Check(WeaponGradeRank(70)==11,"weapon rank edge1");
+  Check(WeaponGradeRank(80)==13,"weapon rank edge3");
+  Check(WeaponGradeRank(100)==14,"weapon rank meitou");
+
+  ItemDescriptor wg; wg.weapon=true; wg.weaponLevel=5;
+  Check(ProgressionTier(wg)==0,"weapon rusted affix tier");
+  wg.weaponLevel=40; Check(ProgressionTier(wg)==3,"weapon catun3 affix tier");
+  wg.weaponLevel=60; Check(ProgressionTier(wg)==4,"weapon mk3 affix tier");
+  wg.weaponLevel=75; Check(ProgressionTier(wg)==5,"weapon edge2 affix tier");
+  wg.weaponLevel=80; Check(ProgressionTier(wg)==6,"weapon edge3 affix tier");
+
   item.baseId="special"; item.name="Katana";
   overrides["special"].push_back(TAG_TOOL_FARMING);
   {std::vector<ItemTag> x=Classify(item,overrides,exclusions);Check(x.size()==1&&x[0]==TAG_TOOL_FARMING,"override precedence");}
@@ -168,6 +206,20 @@ int main(){
   ItemDescriptor hoe; hoe.baseId="mod.hoe"; hoe.name="Iron Hoe"; hoe.quality=.5f; hoe.stackable=false;
   RuleConfig cfg; cfg.globalChance=100.0f;
   RoleProfile farmer; farmer.primary=STAT_FARMING; farmer.wealth01=.7f;
+
+  ItemDescriptor contextRags; contextRags.baseId="mod.worker_rags"; contextRags.name="Worker Rags"; contextRags.quality=.5f;
+  std::vector<ItemTag> contextTags=Classify(contextRags,overrides,exclusions);
+  AffixRecord farmerRags=RollAffixes(contextRags,farmer,cfg,contextTags,"farmer-rags",99,false);
+  Check(!farmerRags.affixes.empty()&&farmerRags.affixes[0].stat==STAT_FARMING,"generic workwear uses farmer context for first affix");
+  RoleProfile labourer; labourer.primary=STAT_LABOURING; labourer.wealth01=.7f;
+  AffixRecord labourRags=RollAffixes(contextRags,labourer,cfg,contextTags,"labour-rags",99,false);
+  Check(!labourRags.affixes.empty()&&labourRags.affixes[0].stat==STAT_LABOURING,"same workwear base uses labourer context on another instance");
+
+  ItemDescriptor contextGoggles; contextGoggles.baseId="mod.plain_goggles"; contextGoggles.name="Plain Goggles"; contextGoggles.quality=.5f;
+  std::vector<ItemTag> gTags=Classify(contextGoggles,overrides,exclusions);
+  RoleProfile researcherCtx; researcherCtx.primary=STAT_SCIENCE; researcherCtx.wealth01=.7f;
+  AffixRecord researchGoggles=RollAffixes(contextGoggles,researcherCtx,cfg,gTags,"research-goggles",77,false);
+  Check(!researchGoggles.affixes.empty()&&researchGoggles.affixes[0].stat==STAT_SCIENCE,"goggles use researcher context for first affix");
   tags.clear();tags.push_back(TAG_TOOL_FARMING);
   AffixRecord a=RollAffixes(hoe,farmer,cfg,tags,"instance-a",1234,false);
   Check(!a.affixes.empty(),"forced roll produces affix");
