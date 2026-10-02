@@ -320,3 +320,32 @@ Release note: if tests 220–227 show a profession is technically possible but t
 | 248 | AUTO | Inspect unopened chest before pickup, if game exposes item objects to plugin | If items are discoverable pre-pickup, affix is stable before/after pickup; otherwise pickup-time world-loot generation is documented and verified |
 | 249 | AUTO | Starting/player-owned pre-existing eligible item with no record | Does not inherit player's profession merely because it is first scanned on a player character |
 | 250 | AUTO | World-loot profession distribution across ruin/chest corpus | Exploration yields a useful mix of coherent profession gear without excessive frequency |
+
+## Section O — approved roadmap validation
+
+These tests correspond to approved future goals so roadmap work is not left as untracked prose.
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 251 | AUTO | Explicitly unique non-weapon item | No ProfessionGear affix |
+| 252 | AUTO | Explicitly unique weapon below Meitou quality | No ProfessionGear affix |
+| 253 | AUTO | Normal non-unique high-quality item | May still participate if semantically eligible |
+| 254 | AUTO | Running/travel footwear utility effect | Uses appropriate native/effective movement mechanic without altering base skill permanently |
+| 255 | AUTO | Load-bearing/hauling gear utility effect | Encumbrance/carry benefit applies only while equipped |
+| 256 | AUTO | Swimming-oriented gear | Swimming utility applies only when semantically valid |
+| 257 | AUTO | Native utility modifier coexistence | ProfessionGear does not overwrite vanilla armour/container modifiers |
+| 258 | AUTO | Generated Farmer's Sword base record | Uses reused asset, classifies Farming, supports per-instance rolls |
+| 259 | AUTO | Generated Miner's Backpack base record | Uses reused asset, classifies mining/logistics, supports specialist behavior |
+| 260 | AUTO | Generated Traveler's Sandals base record | Uses reused asset, classifies travel/Athletics utility |
+| 261 | AUTO | Generated Engineer gear base records | Appear in appropriate content pool and classify Engineering |
+| 262 | AUTO | Generated Field Medic gear base records | Appear in appropriate content pool and classify Medic |
+| 263 | AUTO | Generated Research gear base records | Appear in appropriate content pool and classify Science/Robotics as intended |
+| 264 | AUTO | Generated Cooking gear base records | Appear in appropriate content pool and classify Cooking |
+| 265 | AUTO | Generated Smithing gear base records | Classify only the intended smithing families |
+| 266 | AUTO | Generated profession item vendor distribution | Correct shops can stock variants without requiring runtime-only injection hacks |
+| 267 | AUTO | Generated profession item ruin/loot distribution | Exploration can yield generated profession variants |
+| 268 | AUTO | Generated profession item NPC distribution | Profession/faction-appropriate NPCs can spawn with variants |
+| 269 | AUTO | Generated profession item crafting/blueprints | Player can obtain/craft variants through normal Kenshi systems where intended |
+| 270 | AUTO | Generated item runtime affix integration | New FCS/content variants use the same per-instance affix system as vanilla/modded gear |
+| 271 | AUTO | Specialist pack selective stacking feasibility | Implement only if intended cargo can stack more without boosting unrelated contents |
+| 272 | AUTO | Specialist pack fallback | If selective stacking is unsafe, weight specialization remains correct and stacking stays vanilla |

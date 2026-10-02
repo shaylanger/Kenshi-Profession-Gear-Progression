@@ -110,12 +110,16 @@ PGP::ItemDescriptor Describe(Item* item) {
   d.stackable=item->quantity>1;
   d.slot=item->inventorySection;
 
+  // Explicitly unique named/special item instances are author-defined gear and are protected
+  // from ProfessionGear augmentation regardless of type or quality.
+  d.legendary=item->isUnique;
+
   if(d.weapon&&gear){
     std::string manufacturer;
     if(item->manufacturerData) manufacturer=PGP::Lower(item->manufacturerData->name+" "+item->manufacturerData->stringID);
     std::string lname=PGP::Lower(d.name+" "+d.description);
-    d.legendary=(gear->level_0_100>=100 || manufacturer.find("cross")!=std::string::npos ||
-                 lname.find("meitou")!=std::string::npos || lname.find("legendary")!=std::string::npos);
+    d.legendary=d.legendary || gear->level_0_100>=100 || manufacturer.find("cross")!=std::string::npos ||
+                 lname.find("meitou")!=std::string::npos || lname.find("legendary")!=std::string::npos;
   }
   return d;
 }

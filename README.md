@@ -78,9 +78,13 @@ bonus without changing earned XP.
 
 Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tiers (3–4) up to 2, top tiers (5–6) up to 3 coherent stats.
 
+## Roadmap
+
+`ROADMAP.md` records approved later scope: broader native utility effects where they make sense, profession-themed item generation using reused Kenshi assets, normal vendor/loot/NPC/crafting distribution, and selective specialist-pack stacking if it can be implemented safely.
+
 ## Balance calibration
 
-The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Tests 211–240 cover trader-stock generation, equip-only behavior, profession availability/frequency, installed-mod distribution, unique-weapon protection, and other live assumptions. Tests 241–250 cover exploration/world-loot generation, reduced world-loot rarity, player-profession independence, chest discovery timing, and ruin-loot distribution. Final tier values should be frozen only after those in-game measurements are complete.
+The current affix percentages are provisional. `BALANCE_TEST_PLAN.md` defines a 50-test live calibration matrix (tests 161–210) that measures real Kenshi job throughput across skill bands and synthetic bonus levels. `tools/analyze_balance.py` converts captured CSV runs into throughput curves and candidate effective-skill bonus ranges. Tests 211–240 cover trader-stock generation, equip-only behavior, profession availability/frequency, installed-mod distribution, unique-weapon protection, and other live assumptions. Tests 241–250 cover exploration/world-loot generation, reduced world-loot rarity, player-profession independence, chest discovery timing, and ruin-loot distribution. Tests 251–272 cover unique-item protection, broader utility effects, generated profession-themed item records/distribution, and specialist-pack stacking feasibility. Final tier values should be frozen only after those in-game measurements are complete.
 
 ## Current validation boundary
 

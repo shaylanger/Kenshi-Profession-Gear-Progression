@@ -143,6 +143,9 @@ int main(){
   ItemDescriptor legendary=toolWeapon; legendary.baseId="legendary"; legendary.legendary=true; legendary.weaponLevel=100;
   Check(Classify(legendary,overrides,exclusions).empty(),"legendary item classification blocked");
 
+  ItemDescriptor uniqueClothing; uniqueClothing.baseId="unique.rags"; uniqueClothing.name="Hero's Work Rags"; uniqueClothing.armour=true; uniqueClothing.legendary=true;
+  Check(Classify(uniqueClothing,overrides,exclusions).empty(),"explicitly unique non-weapon item classification blocked");
+
   Check(WeaponGradeRank(5)==0,"weapon rank rusted junk");
   Check(WeaponGradeRank(10)==1,"weapon rank rusting blade");
   Check(WeaponGradeRank(40)==7,"weapon rank catun3");

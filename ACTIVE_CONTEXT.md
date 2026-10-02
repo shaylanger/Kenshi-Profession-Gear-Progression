@@ -746,3 +746,82 @@ Master test plan now extends through **250**.
 ### Important live question is explicitly tested
 We do not yet know whether unopened chest contents are instantiated/exposed to the plugin before pickup.
 This is now test 248. If exposed, affixes should exist before pickup. If not, pickup-time generation is acceptable as long as it is world-loot sourced, stable, and independent of the player profession.
+
+
+---
+
+## Turn update — 2026-10-02 final pre-build design decisions
+
+### User decisions
+1. Protect explicitly unique/special named items from ProfessionGear augmentation.
+2. Include broader utility effects wherever they make sense, especially where Kenshi already has native mechanics for them.
+3. Add profession-themed item generation/content as a formal mod goal using existing visual assets and new records/names.
+4. Keep specialist-pack weight specialization as the easier v1 path; selective category stacking remains a later goal if it can be done cleanly.
+5. New profession-specific FCS/content items are approved as a later phase rather than a v1 blocker.
+
+### Unique item protection implemented now
+- Runtime `Describe()` now marks **any `Item::isUnique` instance** as protected.
+- Existing Meitou/Cross/level-100/legendary-name protection remains.
+- This applies to weapons, armour, clothing, backpacks, etc.
+- Added an offline regression covering an explicitly unique non-weapon item.
+
+### New roadmap created
+Added `ROADMAP.md` with approved goals:
+
+#### Broad utility progression
+Use native/effective Kenshi mechanics wherever sensible:
+- Athletics / movement,
+- Swimming,
+- Perception,
+- Stealth,
+- Assassination,
+- Lockpicking / Thievery,
+- encumbrance handling,
+- carry/hauling efficiency,
+- specialist pack weight behavior,
+- other native equipment modifiers where semantically appropriate.
+
+#### Profession-themed item generation/content
+Later optional FCS/content layer using existing Kenshi assets with new profession-themed records/names, including examples:
+- Farmer's Sword / Sickle / Pitchfork,
+- Miner's Pickaxe / Backpack,
+- Traveler's Sandals,
+- Engineer's Goggles / Workwear,
+- Field Medic Coat / Mask / Pack,
+- Researcher's Goggles / Coat / Satchel,
+- Cook's Apron / Knife,
+- Smith's Gloves / Apron / Hammer,
+- specialist Ore/Crop/Construction/Medical/Tech packs.
+
+Goal: make profession gear easier and more fun to discover without needing custom art.
+
+#### Distribution
+Generated profession variants should later participate in normal Kenshi systems:
+- vendors,
+- ruins/chests,
+- profession/faction NPCs,
+- crafting,
+- blueprints/research.
+
+The runtime per-instance affix system remains separate from the FCS base records.
+
+#### Specialist stacking
+- Weight specialization remains v1.
+- Selective category stacking is a roadmap goal.
+- Do not implement section-wide stacking if it boosts unrelated cargo.
+
+### Tests recorded
+Added Section O, tests **251–272**, covering:
+- unique non-weapon/weapon protection,
+- normal high-quality non-unique eligibility,
+- movement/carry/swimming/native utility coexistence,
+- generated Farmer/Mining/Travel/Engineer/Medic/Research/Cooking/Smithing item records,
+- vendor/loot/NPC/crafting distribution,
+- runtime-affix integration for generated items,
+- specialist stacking feasibility/fallback.
+
+Master test plan now extends through **272**.
+
+### Current design status
+No major product/design question remains blocking the pre-install implementation.
+Remaining uncertainties are technical/runtime questions and are represented by numbered tests rather than open design questions.
