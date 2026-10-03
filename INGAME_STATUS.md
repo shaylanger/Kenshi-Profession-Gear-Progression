@@ -1,8 +1,8 @@
 # Profession Gear Progression — in-game test status
 
-**Updated:** 2026-10-03 (after coordinator runs m2-m13). One row per `TEST_PLAN.md` ID (1–330 plus 16a–16c and 30a–30i = 342 rows).
+**Updated:** 2026-10-03 (after coordinator runs m2-m13). One row per `TEST_PLAN.md` ID (1–331 plus 16a–16c and 30a–30i = 343 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
-`tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll 10C19BAB** (FAA5B471 ran m4-m12).
+`tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll 7D80DBB3** (FAA5B471 ran m4-m12).
 
 States: **PASS-offline** (core tests / build gates / source contracts), **PASS-live** (with evidence),
 **PENDING-auto** (a scenario file exists; the harness can run it without Shay), **NEEDS-SETUP**
@@ -13,11 +13,11 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 71 |
 | PASS-live | 169 |
-| PENDING-auto | 2 |
+| PENDING-auto | 3 |
 | NEEDS-SETUP | 64 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
-| total | 342 |
+| total | 343 |
 
 ## Rows
 
@@ -90,7 +90,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
-| 177 | PENDING-auto | `tests/ingame/auto-home/pg-12-job-throughput.txt` v4 (DLL 10C19BAB, Manual Stone Processor, 3 x 30 game min). m13/m14 powered Stone Mine: 0.47-0.48 stone/h in all windows (machine rate, not a skill benchmark). m15 v3: pg_operate counters uninitialised (fixed) and window A ran out of stone; summed worker amount per game minute A 6.6 / B 7.3 / C 7.4: inconclusive |
+| 177 | PENDING-auto | FIXED, recheck pending: `tests/ingame/auto-home/pg-12-job-throughput.txt` v5 (DLL 7D80DBB3). m16 v4 (Manual Stone Processor, 30 game min windows): no gear output_progress 0.1065, +50% hooked Labouring 0.1123 (x1.05: the job reads the raw skill), +50% with JobOperateScaling 0.1695 (x1.59). Scaling is now on by default (ini JobOperateScaling=true); v5 expects gear ~x1.5 with the default build. (m13/m14: powered Stone Mine runs at machine rate) |
 | 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
@@ -156,6 +156,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 328 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 329 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 330 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
+| 331 | PENDING-auto | `tests/ingame/auto-home/pg-12-job-throughput.txt` v5 (same run as 177) |
 
 ## Notes
 

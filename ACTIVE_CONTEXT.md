@@ -23,7 +23,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **10C19BAB** built (0.9.1-pretest; 59EFB4B1 installed for m13). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **7D80DBB3** built (0.9.1-pretest; 59EFB4B1 installed for m13). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
   pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),
@@ -49,6 +49,9 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   pg_operate could not find it: fixed with `radius`/`near`); v3 uses the Manual Stone Processor.
   m15 v3: counters uninitialised (VS2010 struct value-init bug: explicit constructor now) and window
   A ran out of stone; v4 (10C19BAB) = 3 x 30 game min, output_progress counts fractional units.
+  m16 v4: no gear 0.1065, +50% gear 0.1123 (x1.05: jobs read the RAW skill), +50% with scaling 0.1695
+  (x1.59). JobOperateScaling is now ON by default (7D80DBB3, ini key in mod/ProfessionGear.ini);
+  pg-12 v5 rechecks with the default build (row 177 + new row 331).
   Also note: vanilla effective stats of Malzin are ~31% of base (Farming 140 -> 42.8, Labouring 50 ->
   15.5): some game modifier; the PG bonus multiplies that vanilla effective value.
   Optional: the soak (pg-09).

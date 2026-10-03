@@ -54,4 +54,10 @@ if($text -notmatch [regex]::Escape('if(!itemId.empty() && ItemCurrentlyEligible(
 }
 Write-Host "OK      stale/ineligible records give no equipped bonus"
 
-Write-Host "Source contract verification passed: 9 checks"
+if($text -notmatch [regex]::Escape('bool g_jobOperateScaling = true;') -or
+   $text -notmatch [regex]::Escape('if(g_productionOperateOrig) g_productionOperateOrig(b,who,scaled);')){
+  throw "Source contract failed: worker jobs do not get the equipped bonus (JobOperateScaling default/scaled amount)"
+}
+Write-Host "OK      worker jobs get the equipped bonus by default (row 177)"
+
+Write-Host "Source contract verification passed: 10 checks"

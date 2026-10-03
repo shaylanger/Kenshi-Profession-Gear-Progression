@@ -84,7 +84,8 @@ OperateFn g_farmOperateOrig = 0;
 // Diagnostics per building (calls, summed amount, output before/after) answer that, and
 // JobOperateScaling (ini, or pg_jobscale at run time) multiplies the worker's amount by
 // (1 + equipped bonus of the job's stat): Labouring for production machines and mines,
-// Farming for farms. Default off until the in-game A/B decides.
+// Farming for farms. Run m16 (Manual Stone Processor, 30 game min windows): +50% hooked Labouring
+// alone gave output x1.05 (the job reads the raw skill), with scaling x1.59. Default on.
 // Explicit constructor: VS2010 does not zero the POD members of a struct with std::string members
 // on map::operator[] (live m15: calls ~2^32, output_start garbage).
 struct OperateStats {
@@ -95,7 +96,7 @@ struct OperateStats {
                    outputProgress(0), hasLast(false) {}
 };
 std::map<Building*, OperateStats> g_operateStats;
-bool g_jobOperateScaling = false;
+bool g_jobOperateScaling = true;   // default on since run m16 (row 177)
 
 std::string IntStr(long long v) { std::ostringstream s; s<<v; return s.str(); }
 float HookInventoryWeight(Inventory* inv);

@@ -2,7 +2,7 @@
 # covers: PG 131, 134 (123, 316, 317 recheck)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 10C19BAB; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 7D80DBB3; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: the same key and affix on both reloaded saves; ProfessionGear.log has "serialize item id=<K>" and, after each load, "restore item id=<K>" with a new runtime handle
 @wait-world
 @sleep 8

@@ -2,7 +2,7 @@
 
 **Status:** installed for testing; the coordinator session runs the game. Per-row state: `INGAME_STATUS.md`; in-game scenarios: `tests/ingame/` (`RUN_ORDER.md`).
 
-**Current offline automation:** `run_tests.bat` passes **5,238 core checks**; `verify_offline.bat` passes **21 required SDK/export symbol checks**; source-contract verification passes **9 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **330**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,238 core checks**; `verify_offline.bat` passes **21 required SDK/export symbol checks**; source-contract verification passes **9 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **331**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -470,3 +470,4 @@ Added after live test 123 proved Kenshi runtime item handles change across ordin
 | 328 | AUTO | Vanilla "Traders Backpack Medium/Large", "Old Traders backpack" | Trade pack (PACK_TRADE), not generic |
 | 329 | AUTO | Craft whose finished item in the bench output is another instance than the one passed to `addFinishedCraftItem` | The item in the output gets the crafted roll (crafter context, final quality); nothing is left unbound to roll later as world loot |
 | 330 | AUTO | Armour/weapon whose text mentions traders/backpack/miner (Square Goggles "standard issue in the Traders Guild" in shop storage) | Never a specialist pack tag; rolls only from its own pool |
+| 331 | AUTO | Worker job with equipped Labouring/Farming gear (JobOperateScaling default on) | Work per tick and output rise by the equipped bonus (live m16: raw skill path x1.05, with scaling x1.59); ini JobOperateScaling=false turns it off |

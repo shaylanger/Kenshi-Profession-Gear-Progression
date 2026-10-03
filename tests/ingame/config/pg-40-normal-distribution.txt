@@ -2,7 +2,7 @@
 # covers: PG 102, 126, 237 (normal chances)
 # fixture: Trader
 # reset: fresh
-# needs: ProfessionGearProgression.dll 10C19BAB; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (shipped chances, roll logging on, empty sidecar; after this launch: set_test_mode.ps1 -Sidecar Restore -Mode Forced -Rules InGameTest, or -Mode Normal -Rules Normal to leave testing)
+# needs: ProfessionGearProgression.dll 7D80DBB3; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (shipped chances, roll logging on, empty sidecar; after this launch: set_test_mode.ps1 -Sidecar Restore -Mode Forced -Rules InGameTest, or -Mode Normal -Rules Normal to leave testing)
 # verify: ProfessionGear.log "loaded affixes=0 legacyIgnored=0" (126, empty sidecar); 102 = rolled share on the 10 spawned slaves vs the 10 spawned drifters (slaves ~0.2x); 237 = shop stock rolls per stat across this town's shops
 @wait-world
 @sleep 8
