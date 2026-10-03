@@ -1,0 +1,33 @@
+# id: PG-melee-stats-71
+# covers: PG 84 (combat stats unrelated to professions are unchanged by profession affixes)
+# fixture: auto-home
+# reset: fresh
+# needs: harness 5798EDF5 (KAH 15-21) (`stat <npc> <name>` for combat stats, `stat <npc> all`); PG 7D80DBB3+; Forced + InGameTest
+# verify: every combat stat reads exactly the same (base and effective) with no affixes and with big profession affixes on 2 items;
+#   the two `stat Malzin all` lines (in the .out) differ only in the profession skills
+@wait-world
+@sleep 8
+speed 0
+health Malzin 100
+pg_clear Malzin ~ cleared affixes
+stat Malzin all
+@set S1 stat Malzin strength ~ (base=\S+ .*)$
+@set S2 stat Malzin toughness ~ (base=\S+ .*)$
+@set S3 stat Malzin dexterity ~ (base=\S+ .*)$
+@set S4 stat Malzin attack ~ (base=\S+ .*)$
+@set S5 stat Malzin defence ~ (base=\S+ .*)$
+@set S6 stat Malzin dodge ~ (base=\S+ .*)$
+@set S7 stat Malzin martial_arts ~ (base=\S+ .*)$
+@set S8 stat Malzin katanas ~ (base=\S+ .*)$
+pg_force_affix Malzin "Iron Hat" labouring 100 farming 100 medic 100 tier 6 ~ affixes=
+pg_force_affix Malzin "Black Cloth Shirt" athletics 100 turrets 100 science 100 tier 6 ~ affixes=
+pg_bonus Malzin labouring ~ equipped_bonus=100% .*match=1
+stat Malzin all
+stat Malzin strength ~ ${S1}$
+stat Malzin toughness ~ ${S2}$
+stat Malzin dexterity ~ ${S3}$
+stat Malzin attack ~ ${S4}$
+stat Malzin defence ~ ${S5}$
+stat Malzin dodge ~ ${S6}$
+stat Malzin martial_arts ~ ${S7}$
+stat Malzin katanas ~ ${S8}$

@@ -1,0 +1,51 @@
+# id: PG-newgame-import-58
+# covers: PG 133 (new game: the old save's records don't attach to new items), PG 132 (Kenshi import: do item IDs persist?
+#   policy), PG 240 (trader gear after new game/import: no stale sidecar record on replacement items)
+# fixture: auto-home copy (throwaway: this file saves kah-pg-import-src, then starts a new game; delete that save afterwards)
+# reset: fresh
+# needs: harness 5798EDF5 (KAH 21 `find start`, `newgame <start>`, `import <save> all`); PG 7D80DBB3+; Forced + InGameTest
+# verify:
+#   133: after `newgame` the census shows records only for items rolled now; ProfessionGear.log (grep after the
+#        "newgame" point) has no `restore item id=<K>` / `<K2>` line and no tier/base_mismatch from pg_check.
+#   132: after `import`: K_IMPORT vs K (echoed) = whether the persistent ID survives Kenshi's import. Same key + same affixes
+#        = IDs persist; a new key = reroll on import (then the policy is documented as "import rerolls"). Either way pg_check valid=1.
+#   240: traders near the new start: pg_shop lists keys, no "persistent-id
+#        collision" line pointing at K/K2.
+@wait-world
+@sleep 8
+speed 0
+# --- source save with two known records ---
+pg_clear Malzin ~ cleared affixes
+pg_force_affix Malzin "Black Cloth Shirt" medic 12 tier 3 ~ Black Cloth Shirt key=pgp\S+ equipped=1 tier=3 affixes=Medic:12
+@set K pg_info Malzin "Black Cloth Shirt" ~ key=(pgp\S+)
+give Shay 2185-gamedata.base 1
+@set K2 pg_info Shay "Rattan Hat" ~ Rattan Hat key=(pgp\S+)
+@set A2 pg_info Shay "Rattan Hat" ~ affixes=(.*)$
+save kah-pg-import-src
+@sleep 8
+@echo K=${K} K2=${K2} A2=${A2}
+# --- 133 + 240: new game ---
+find start wanderer ~ (?i)wanderer
+newgame "The Wanderer"
+@wait-world
+@sleep 10
+speed 0
+status ~ save=newgame:
+chars 40
+pg_census
+@set T traders 400 ~ traders within [\d.]+: ([^|#]+?) #\d+/\d+ \[
+pg_shop "${T}" ~ trader=1
+# --- 132 + 240: import the old save into this fresh game ---
+import kah-pg-import-src all
+@wait-world
+@sleep 10
+speed 0
+status ~ save=import:kah-pg-import-src
+where Malzin ~ Malzin
+@set KI pg_info Malzin "Black Cloth Shirt" ~ key=(pgp\S+)
+pg_info Malzin "Black Cloth Shirt" ~ affixes=
+pg_check Malzin "Black Cloth Shirt" ~ valid=1
+@set KI2 pg_info Shay "Rattan Hat" ~ key=(pgp\S+)
+pg_check Shay "Rattan Hat" ~ valid=1
+pg_census
+@echo 132: shirt K=${K} after import ${KI}; hat K2=${K2} after import ${KI2}

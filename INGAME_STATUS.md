@@ -13,8 +13,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 71 |
 | PASS-live | 171 |
-| PENDING-auto | 27 |
-| NEEDS-SETUP | 38 |
+| PENDING-auto | 35 |
+| NEEDS-SETUP | 30 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
 | total | 343 |
@@ -31,7 +31,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 45 | PASS-live | LIVE_TEST_PROGRESS.md Phase 2: sidecar reloaded after a full Kenshi restart (318) |
 | 46–48 | PASS-live | LIVE_TEST_PROGRESS.md "Phase 2 equipped-section rerun" + "Phase 2 - equip-only + persistence core PASS" |
 | 49 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
-| 50 | NEEDS-SETUP | waits for harness KAH 15 `drop`/`pickup`; scenario ready: `tests/ingame/pending-harness/pg-70-drop-pickup.txt` |
+| 50 | PENDING-auto | `tests/ingame/auto-home/pg-70-drop-pickup.txt` (harness 5798EDF5 `drop`/`pickup`) |
 | 51–56 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 57 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 58 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
@@ -43,7 +43,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 80 | PASS-live | LIVE_TEST_PROGRESS.md Phase 2 + `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) (all 17 stats match=1) |
 | 81–82 | PASS-live | `C:\KenshiTestRuns\m4\pg-08-job-path.out` (archive/test-run-2026-10-03-m4.md) 39/0: base Labouring 50.00 -> 50.43 while geared (+50%), unchanged by removing the gear |
 | 83 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
-| 84 | NEEDS-SETUP | waits for harness KAH 16 melee stat names; scenario ready: `tests/ingame/pending-harness/pg-71-melee-stats.txt` |
+| 84 | PENDING-auto | `tests/ingame/auto-home/pg-71-melee-stats.txt` (harness 5798EDF5 combat stat names) |
 | 85–86 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 87 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): crafted tiers rise with Armour Smithing (5 vs 100; Kenshi quality has a random spread) |
 | 88 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
@@ -57,13 +57,13 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 102 | PASS-live | core rate test + live launch 4 (Normal chances, m6 pg-40): 10 spawned slaves 9/73 items rolled (12%) vs 10 drifters 16/32 (50%) |
 | 103–104 | PASS-offline | core rate tests over 4,000 instances (slave/poor x0.2, matching specialist x1.35); 103 needed fix 2b14a4c; live data for 102 in config/pg-40 |
 | 105 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
-| 106 | NEEDS-SETUP | waits for harness KAH 17 `unload`/`reload`; scenario ready: `tests/ingame/pending-harness/pg-72-unload-reload.txt` |
+| 106 | PENDING-auto | `tests/ingame/auto-home/pg-72-unload-reload.txt` (harness 5798EDF5 `unload`/`reload`) |
 | 107 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
 | 108 | PENDING-auto | `tests/ingame/squin/pg-62-unique-npc.txt` (harness KAH 13 `unique=1`; census for the first unique NPC identical across save/load) |
 | 109–116 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 117 | PASS-live | LIVE_TEST_PROGRESS.md "Generic backpack live weight control - PASS" (rechecked in pg-04) |
 | 118–119 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
-| 120 | NEEDS-SETUP | waits for harness KAH 18 (weight of a pack in a chest / inside a pack); scenario ready: `tests/ingame/pending-harness/pg-73-pack-weight-edge.txt` |
+| 120 | PENDING-auto | `tests/ingame/auto-home/pg-73-pack-weight-edge.txt` (harness 5798EDF5 `packweight` inventory/ground/chest/nested) |
 | 121–122 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 123–124 | PASS-live | LIVE_TEST_PROGRESS.md "Persistence v2 live verification" + Phase 2 (restart) |
 | 125 | PASS-live | LIVE_TEST_PROGRESS.md Phase 1 live scan: no sidecar at the first launch, created safely |
@@ -71,7 +71,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 127–128 | PASS-live | `C:\KenshiTestRuns\m6\pg-31.out` (archive/test-run-2026-10-03-m5.md) 12/0 (launch 3); log "loaded affixes=3 legacyIgnored=1", no roll line |
 | 129–130 | PASS-live | ProfessionGear.log 2026-10-02 23:39: "loaded affixes=10157" (thousands of rows for items that no longer exist), normal startup, no errors |
 | 131 | PASS-live | `C:\KenshiTestRuns\m2\pg-06-persistence.out` (archive/test-run-2026-10-03-m2.md) 25/0 |
-| 132–133 | NEEDS-SETUP | harness commands for Kenshi import and new game (menu flows) |
+| 132–133 | PENDING-auto | `tests/ingame/auto-home/pg-58-newgame-import.txt` (harness 5798EDF5 `newgame`/`import`; 132 is a policy finding: IDs persist or import rerolls) |
 | 134 | PASS-live | `C:\KenshiTestRuns\m2\pg-06-persistence.out` (archive/test-run-2026-10-03-m2.md) 25/0 |
 | 135–141 | NEEDS-SHAY | tooltip text is not readable by the harness (ui lists widgets, not hover tooltips) |
 | 142–144 | PASS-live | `C:\KenshiTestRuns\scenarios\smoke.txt` 2026-10-02 23:47: Stobe + KenshiFP + PG + harness in one game (help lists fp_mode/pg_bonus/stobe_say; stobe_ping, fp_state, pg_bonus answer) |
@@ -116,7 +116,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 237 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 238 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
 | 239 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
-| 240 | NEEDS-SETUP | harness commands for Kenshi import and new game (menu flows) |
+| 240 | PENDING-auto | `tests/ingame/auto-home/pg-58-newgame-import.txt` (trader stock after newgame/import) |
 | 241–243 | PASS-live | LIVE_TEST_PROGRESS.md "Exact-ID harness + world-loot live results" |
 | 244 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 245 | PASS-live | `C:\KenshiTestRuns\m6\pg-41.out` (archive/test-run-2026-10-03-m5.md) launch 4: 30 world-loot Rattan Hats (tier 6, chance .96 x .5 = .48) rolled 15/30 = .50 |
@@ -124,7 +124,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 250 | NEEDS-SETUP | a ruin/chest loot fixture (unlooted world containers) |
 | 251–252 | PASS-offline | core unique/legendary tests; a live check needs a unique item instance in a fixture |
 | 253 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): high-quality crafted items roll |
-| 254 | NEEDS-SETUP | waits for harness KAH 19 `walktime` (`stat maxrunspeed` reads 0.0 standing); scenario ready: `tests/ingame/pending-harness/pg-74-walktime.txt` |
+| 254 | PENDING-auto | `tests/ingame/auto-home/pg-74-walktime.txt` (harness 5798EDF5 `runspeed`/`walktime`) |
 | 255 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 256 | NEEDS-SETUP | swim gear in the mod stack + a water route |
 | 257 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |

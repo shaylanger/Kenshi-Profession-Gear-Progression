@@ -2,8 +2,8 @@
 # covers: PG 50 (drop and pick up the same item: the same instance keeps the same roll)
 # fixture: auto-home
 # reset: fresh
-# needs: harness KAH 15 (`drop <npc> <item>`, `pickup <npc> <item|nearest>`; written against that spec before it was built:
-#   if the replies differ, only the `~` patterns on drop/pickup need changing); PG 7D80DBB3+; Forced + InGameTest
+# needs: harness 5798EDF5 (KAH 15-21): `drop <npc> <item>` (reply has the ground item #serial/index), `pickup <npc> <#serial/index>` ("(same instance)");
+#   PG 7D80DBB3+; Forced + InGameTest
 # verify: same key and affixes after Shay drops the hat and picks it up, and after Shay drops it and Malzin picks it up
 @wait-world
 @sleep 8
@@ -11,12 +11,14 @@ speed 0
 give Shay 2185-gamedata.base 1
 @set K pg_info Shay "Rattan Hat" ~ Rattan Hat key=(pgp\S+) equipped=0
 @set A pg_info Shay "Rattan Hat" ~ affixes=(.*)$
-drop Shay "Rattan Hat"
+@set G drop Shay "Rattan Hat" ~ dropped Rattan Hat x1 (#\d+/\d+) .*in_inventory=0
 ! pg_info Shay "Rattan Hat"
-pickup Shay "Rattan Hat"
+@sleep 2
+pickup Shay ${G} ~ \(same instance\)
 pg_info Shay "Rattan Hat" ~ Rattan Hat key=${K} equipped=0 tier=\d+ affixes=${A}$
 pg_check Shay "Rattan Hat" ~ valid=1
 # another character picks it up
-drop Shay "Rattan Hat"
-pickup Malzin nearest
+@set G2 drop Shay "Rattan Hat" ~ dropped Rattan Hat x1 (#\d+/\d+)
+@sleep 2
+pickup Malzin ${G2} ~ \(same instance\)
 pg_info Malzin "Rattan Hat" ~ Rattan Hat key=${K} equipped=[01] tier=\d+ affixes=${A}$

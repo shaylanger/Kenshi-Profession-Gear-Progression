@@ -114,15 +114,13 @@ Before: `set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty`; af
 3. `kenshi-ctl launch -Save kah-pg-collide`, run `auto-home/pg-57b-id-collision-check.txt`; `kenshi-ctl stop`.
 4. `make_id_collision.ps1 -Restore`; delete the save `kah-pg-collide`.
 
-### Waiting for harness commands (scenarios ready in `pending-harness/`, auto-home, Forced + InGameTest)
+### Harness 5798EDF5 rows (auto-home, Forced + InGameTest, fresh copy each; run on the 4080 rig)
 
-| KAH | File | Row |
+| File | Row | Note |
 |---|---|---|
-| 15 drop/pickup | `pending-harness/pg-70-drop-pickup.txt` | 50 |
-| 16 melee stat names | `pending-harness/pg-71-melee-stats.txt` | 84 |
-| 17 unload/reload | `pending-harness/pg-72-unload-reload.txt` | 106 |
-| 18 nested/unowned pack weight | `pending-harness/pg-73-pack-weight-edge.txt` | 120 |
-| 19 walktime | `pending-harness/pg-74-walktime.txt` | 254 |
-| 21 import/new game | not written yet (no command spec) | 132, 133, 240 |
-
-Written against the spec before the commands existed: forward the built command replies and the PG agent adjusts the `~` patterns.
+| `auto-home/pg-70-drop-pickup.txt` | 50 | |
+| `auto-home/pg-71-melee-stats.txt` | 84 | |
+| `auto-home/pg-72-unload-reload.txt` | 106 | |
+| `auto-home/pg-73-pack-weight-edge.txt` | 120 | |
+| `auto-home/pg-74-walktime.txt` | 254 | +x from Shay must be open for 40 m |
+| `auto-home/pg-58-newgame-import.txt` | 132, 133, 240 | throwaway: saves `kah-pg-import-src`, then New Game + Import; delete that save after; run last |

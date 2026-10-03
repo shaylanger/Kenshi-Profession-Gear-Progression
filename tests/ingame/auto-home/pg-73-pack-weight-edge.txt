@@ -1,0 +1,36 @@
+# id: PG-pack-weight-edge-73
+# covers: PG 120 (pack not worn by anyone / nested in another pack: the weight hook falls back to the vanilla result)
+# fixture: auto-home
+# reset: fresh
+# needs: harness 5798EDF5 (KAH 15-21) (`packweight <npc|building|ground> <pack>`: path=, raw=, total=, weight_as_item=, own_weight=); PG 7D80DBB3+;
+#   Forced + InGameTest (the rules make the plain Small Backpack an ore pack: worn, ore weighs 25%)
+# verify: worn with ore: total < raw (the PG reduction, control). Not worn (inventory), on the ground, in a chest and nested
+#   inside another pack: total = raw (no reduction anywhere the pack isn't worn).
+@wait-world
+@sleep 8
+speed 0
+give Malzin 576-gamedata.base 1
+packput Malzin "Small Backpack" 1866-gamedata.base 5
+pg_pack Malzin "Small Backpack" ~ equipped=1 .*applied_ratio=0\.250
+@set R packweight Malzin "Small Backpack" ~ raw=([\d.]+)
+@set TW packweight Malzin "Small Backpack" ~ (raw=[\d.]+ total=[\d.]+)
+@echo worn (control, total < raw): ${TW}
+# --- in the inventory, not worn ---
+unequip Malzin "Small Backpack" ~ -> main\)
+packweight Malzin "Small Backpack" ~ in_inventory.* raw=${R} total=${R} 
+# --- on the ground ---
+@set G drop Malzin "Small Backpack" ~ dropped Small Backpack x1 (#\d+/\d+)
+@sleep 2
+packweight ground "Small Backpack" ~ raw=${R} total=${R} 
+pickup Malzin ${G} ~ \(same instance\)
+# --- in a chest ---
+pg_store Malzin chest "Small Backpack" ~ stored in
+packweight chest "Small Backpack" ~ raw=${R} total=${R} 
+weight chest ~ inventory_weight=
+# --- nested: an ore pack with ore inside a worn Medium Backpack ---
+give Malzin 635-gamedata.base 1
+packput Malzin "Medium Backpack" 576-gamedata.base 1
+packput Malzin "Small Backpack" 1866-gamedata.base 5
+@set NW packweight Malzin "Small Backpack" ~ (path=.*)$
+@echo nested: ${NW}
+packweight Malzin "Small Backpack" ~ path=Medium Backpack > Small Backpack .* raw=([\d.]+) total=\1 
