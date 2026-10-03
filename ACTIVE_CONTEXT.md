@@ -1150,3 +1150,198 @@ Added:
 ### Test plan
 
 Master numbered plan now extends through **306**.
+
+
+---
+
+## CURRENT LIVE-TEST HANDOFF — 2026-10-02 22:32 CST
+
+This section is the authoritative resume snapshot for ProfessionGear live testing. Read it together with `LIVE_TEST_PROGRESS.md`, `TEST_PLAN.md`, and `LIVE_TEST_RUNBOOK.md` before doing new work.
+
+### Canonical repository / Git
+
+- Repo: `C:\KenshiModding\Kenshi-Profession-Gear-Progression`
+- GitHub: `https://github.com/shaylanger/Kenshi-Profession-Gear-Progression.git`
+- Branch: `main`
+- HEAD: `b107408a226d76b259edb80b58affec645ae2421`
+- `origin/main`: same commit at this checkpoint.
+- Latest committed history relevant to live fixes:
+  - `b107408 test: recover interrupted live progress`
+  - `a3bc5e4 fix: keep generic NPC gear role coherent`
+  - `3519b03 test: checkpoint live phases 1 and 2`
+  - `3f75982 feat: persist profession gear IDs in Kenshi saves`
+  - `2ba70ed fix: scan equipped inventory sections`
+  - `f1517ac fix: reject non-equippable profession items`
+  - `559e6e8 fix: use RE_Kenshi plugin entry contract`
+- Important: there are concurrent/uncommitted changes currently present in:
+  - `BALANCE_TEST_PLAN.md` (updates automation-harness integration docs),
+  - `LIVE_TEST_PROGRESS.md` (harness-move note + current live checkpoints).
+  Do not discard or overwrite these. Inspect before committing.
+
+### Installed/runtime state
+
+- Kenshi is currently **RUNNING and healthy** under RE_Kenshi.
+- Current harness state at checkpoint:
+  - `phase=world`
+  - save = `kah-crafting`
+  - last_saved = `Crafting base`
+  - paused = 1
+  - speed = 0.0
+  - squad = 2
+  - player = Shay
+- ProfessionGear mod is enabled in:
+  `D:\Steam\steamapps\common\Kenshi\data\mods.cfg`
+  as `ProfessionGearProgression.mod`.
+- Installed ProfessionGear DLL SHA256:
+  `DA9C28F13AE88088934A9AE54EDBAB23E0C6DAFB80347B9862B2B314F2968B6C`
+- Packaged DLL hash is identical, so installed build matches the tested package exactly.
+- Forced smoke-test config is currently active:
+  - Enabled=true
+  - AutoClassify=true
+  - VerboseLogging=true
+  - GlobalChance=100.0
+  - NpcRoleMultiplier=1.0
+  - PlayerCraftMultiplier=1.0
+  - PoorNpcMultiplier=1.0
+  - WorldLootMultiplier=1.0
+  - MaxAffixes=3
+- Do **not** interpret current item frequency as normal balance while forced config is active.
+
+### Automation harness moved out of Stobe
+
+The live-test harness is now a standalone repo:
+
+- `C:\KenshiModding\Kenshi-Automation-Harness`
+- Current known latest commit at checkpoint: `fbf4e20 docs: how to get real traders for the traders command`
+- There is an uncommitted change in `src\Commands.cpp`; do not overwrite/discard it.
+- `stobe-auto` remains the command-line interface/wrapper, but the commands are implemented by the standalone harness now.
+- Extension API/docs:
+  - `include\KenshiAutomationHarness.h`
+  - `docs\EXTENDING.md`
+  - `docs\COMMANDS.md`
+  - `AGENTS.md`
+- Historical references in older progress notes to Stobe `TestAutomation.cpp` are history; add/modify new automation commands in the standalone harness or register ProfessionGear-specific commands through its extension API.
+
+### Current numbered test-plan state
+
+- `TEST_PLAN.md` currently extends through test **320**.
+- Last counted summary before the new `kah-crafting` fixture appeared:
+  - **92 confirmed passed**
+  - **0 currently failing**
+  - **2 partial**
+  - **9 blocked by unavailable setup**
+  - **217 not yet tested**
+  - total numeric IDs counted = 320
+- Those counts are a checkpoint, not a permanent truth. The current `kah-crafting` / `Crafting base` fixture appears specifically intended to unblock the previously unavailable crafting setup, so re-evaluate the 9 blocked rows before repeating old assumptions.
+- The two known partial tests are:
+  - **219**: real `Character::isATrader()` source detection works, but naturally generated shop-stock ownership still needs proof.
+  - **237**: legal trader-source random distribution demonstrated, but broader natural shop-stock distribution is not yet fully sampled.
+
+### Live phases already established
+
+- Phase 1 startup/hooks: **PASS (AUTO)**.
+- Phase 2 equip-only/persistence core: **PASS (AUTO CORE)**.
+- Phase 3 crafting: historically blocked in `pg-context-base` because there was no real CraftingBuilding within 300m; current `kah-crafting` fixture may now unblock it. Do not mark PASS until actual craft tests run.
+- Phase 4 NPC context: key role paths PASS; broader matrix remains.
+- Phase 5 vendors: partial PASS; natural shop stock still pending.
+- Phase 6 world/exploration loot: core generation PASS; broader distribution remains.
+- Phase 7 backpacks: generic control PASS; specialist-pack live mechanics remain active work.
+- Phase 8 real job throughput: not completed.
+- Phase 9 utility gameplay: not completed.
+- Phase 10 normal rarity/distribution: not completed.
+- Phase 11 compatibility: not completed.
+- Phase 12 balance: not started; forced mode must be restored to Normal before meaningful rarity/balance conclusions.
+
+### Major live bugs found and fixed
+
+1. **Wrong RE_Kenshi plugin entry export**
+   - RE_Kenshi expects C++ mangled `?startPlugin@@YAXXZ`.
+   - Fixed and verified.
+
+2. **Non-equippable items received profession affixes**
+   - Live false positives included Chewing Tobacco, Bolts, First Aid Kits, Medical Supplies.
+   - Fixed by rejecting non-Gear/non-Container items before record generation.
+   - Tests 308–311 PASS live.
+
+3. **Equipped gear disappeared from original inventory scan**
+   - Equipped sections were not covered by `getAllItems()`-only logic.
+   - Fixed by scanning all character inventory sections.
+   - Tests 312–313 PASS live.
+
+4. **Runtime item handle identity broke across save/reload**
+   - Kenshi runtime `hand::toString()` changed after reload.
+   - Replaced persistence identity with serialized `ProfessionGearPersistentId` stored in item GameData during save/load.
+   - Same affix survives in-process reload and full Kenshi restart even with changed runtime handles.
+   - Tests 314–318 PASS live; legacy rows are ignored by v2 design (319).
+
+5. **Generic known-role NPC gear had incoherent second/third affixes**
+   - Real failure example: Farmer Rattan Hat rolled Farming + Armour Smithing + Robotics.
+   - Fixed so a generic item with a matching known NPC role narrows its roll pool to that role for the instance.
+   - Live Farmer -> Farming only; Researcher goggles -> Science only; Engineer -> Engineering only; Doctor -> Medic only.
+   - Tests 93, 95, 96, 97, 235, 236, 320 PASS.
+
+### Other confirmed live passes / evidence
+
+- tests 62–80 core equip-only/effective-stat path PASS for tested Engineering/Science samples.
+- test 123 save/reload persistence now PASS under persistent-ID v2.
+- 241 PASS: player-first-seen eligible item uses `world_loot` source.
+- 242 PASS: Rattan Hat world-loot roll stayed in generic-workwear pool.
+- 243 PASS: Square Goggles world-loot roll stayed in goggles legal pool.
+- 211 PASS: real runtime trader inventory can roll random legal profession stock.
+- 214 PASS at engine transfer level: trader-generated item preserved same affix moving merchant -> player.
+- 215 PASS: transferred merchant item gives no ProfessionGear bonus while carried/unequipped.
+- 216 PASS: transferred item activates stored affix when equipped.
+- 117 PASS: generic/thief backpack receives no specialist contents-weight reduction.
+- 299 PASS (weight-control side): generic pack has no specialist reduction.
+
+### Important harness capabilities currently available
+
+Through the standalone Kenshi Automation Harness / `stobe-auto` interface:
+- exact GameData `stringID` lookup,
+- inventory lookup across equipped sections,
+- `traders [radius]` using real runtime `isATrader()`,
+- `transfer <from> <to> <item>`,
+- `packput <npc> <pack> <item> [n]`,
+- `packweight <npc> <pack>`,
+- CONTAINER record support,
+- `craftfinish <npc> <item>` using a real nearby `CraftingBuilding::addFinishedCraftItem()` when one exists.
+
+### Immediate open investigations / next work
+
+1. **Crafting is now top priority.**
+   - Earlier `pg-context-base` had no CraftingBuilding within 300m, so tests 85–92 and 306 were correctly left pending.
+   - Current runtime is now on `kah-crafting` / `Crafting base`; first action is to verify a real CraftingBuilding exists and run `craftfinish` tests rather than assuming setup is still unavailable.
+
+2. **Specialist backpack live mechanics.**
+   - Current installed mod stack does not expose obvious Miner's/Medical/Tech specialist backpack base records.
+   - Runtime mechanic can be tested with a temporary exact test rule on a normal backpack, using known exact cargo IDs, then restore production rules.
+   - Known cargo IDs from live harness:
+     - Raw Iron: `1866-gamedata.base`
+     - Foodcube: `43959-rebirth.mod`
+     - Building Material: `580-gamedata.base`
+   - Generic pack control already PASS.
+
+3. **Natural shop-stock ownership/distribution.**
+   - True trader source works on real merchant Blamo.
+   - Need proof that naturally generated sellable stock resides on/flows through the same source path, not only harness-injected inventory.
+
+4. **Staff -> TOOL_FARMING classification.**
+   - A live Staff instance previously classified Farming.
+   - Do not accept this without reviewing actual name/description/type evidence; add regression/fix if accidental.
+
+5. **Real job throughput.**
+   - After core source mechanics are proven, run real Farming/Labouring/Science/Engineering/etc. throughput to verify Kenshi jobs consume the hooked effective stats.
+
+6. **Normal rarity and balance.**
+   - Restore normal config before measuring discovery frequency or balance.
+   - `BALANCE_TEST_PLAN.md` has an uncommitted update documenting integration with the standalone Kenshi Automation Harness. Preserve it.
+
+### Resume rule
+
+After every meaningful live test batch or discovered bug:
+1. archive logs/sidecar before restart when relevant,
+2. update `LIVE_TEST_PROGRESS.md`,
+3. update/add numbered rows in `TEST_PLAN.md` for newly discovered behavior,
+4. update this `ACTIVE_CONTEXT.md` if architecture/status materially changes,
+5. commit only files that belong to the completed change; never sweep in unrelated concurrent harness/balance edits.
+
