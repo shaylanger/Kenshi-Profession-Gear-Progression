@@ -2,8 +2,8 @@
 # covers: PG 212, 218, 219, 237, 239, 323, 324 (211, 214, 215 recheck through the real purchase path)
 # fixture: Trader
 # reset: fresh
-# needs: ProfessionGearProgression.dll FAA5B471 (shop storage scan + purchase hook); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
-# verify: ProfessionGear.log has "shop stock: trader=..." and "roll source=trader ... equipped=0" lines for storage items; if the purchase handed over a copy, "purchase: kept shop id=<RK>" (either way the bought item keeps RK and its affixes)
+# needs: ProfessionGearProgression.dll 59EFB4B1 (shop storage scan + purchase hook; armour is never a pack); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: ProfessionGear.log has "roll source=trader ... equipped=0" lines for storage items; if the purchase handed over a copy, "purchase: kept shop id=<RK>" (either way the bought item keeps RK and its affixes)
 @wait-world
 @sleep 8
 speed 0
@@ -18,22 +18,28 @@ fill "Shop Counter" 2185-gamedata.base 1 ~ \(1 of 1 fitted\)
 fill "Shop Counter" 2168-gamedata.base 2 ~ \(2 of 2 fitted\)
 fill "Shop Counter" 1168-gamedata.base 2 ~ \(2 of 2 fitted\)
 pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(?!none)
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ shop stock: trader=
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=0 tier=\d tags=WORKWEAR_GENERIC affixes=
 # 212: generic goggles in shop stock roll only from the goggles pool
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader .*name="Square Goggles" equipped=0 tier=\d tags=GOGGLES_GENERIC affixes=((Perception|Science|Engineering|Robotics|Turrets):[\d.]+,?)+\r?$
 @set RK pg_shop "${TR}" ~ Rattan Hat key=(pgp\S+)
 @set RA pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=([^\]]+)\]
 # --- 219 + 214 + 239: buy through the game's purchase path: the bought hat is the shop's record ---
-money Shay 5000
-trade Shay "${TR}" "Rattan Hat" ~ bought Rattan Hat from
-pg_info Shay "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
-pg_check Shay "Rattan Hat" ~ valid=1
-pg_bonus Shay farming ~ match=1
-trade Shay "${TR}" "Square Goggles" ~ bought Square Goggles from
-pg_check Shay "Square Goggles" ~ tags=GOGGLES_GENERIC .*valid=1
-trade Shay "${TR}" "Cloth Shirt" ~ bought Cloth Shirt from
-pg_check Shay "Cloth Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
+# Shay's bag is full in this fixture (run m12: no room for a hat or shirt): a recruited spare
+# character with an empty bag does the buying
+@set B_ID spawn "Drifter" Drifters near Shay dist 30 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
+setname ${B_ID} "PG Buyer" ~ -> PG Buyer
+recruit "PG Buyer"
+select Shay
+teleport "PG Buyer" Shay dist 3
+money "PG Buyer" 5000
+trade "PG Buyer" "${TR}" "Rattan Hat" ~ bought Rattan Hat from
+pg_info "PG Buyer" "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
+pg_check "PG Buyer" "Rattan Hat" ~ valid=1
+pg_bonus "PG Buyer" farming ~ match=1
+trade "PG Buyer" "${TR}" "Square Goggles" ~ bought Square Goggles from
+pg_check "PG Buyer" "Square Goggles" ~ tags=GOGGLES_GENERIC .*valid=1
+trade "PG Buyer" "${TR}" "Cloth Shirt" ~ bought Cloth Shirt from
+pg_check "PG Buyer" "Cloth Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
 # 237: stock statistics in this town (data), no illegal stats on anything bought
 pg_census ~ shop: records=[1-9]\d* rolled=[1-9]
 save kah-pg-trader
@@ -42,7 +48,7 @@ load kah-pg-trader
 @wait-world
 @sleep 8
 speed 0
-pg_info Shay "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
+pg_info "PG Buyer" "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
 # --- 218: gear a trader wears follows his own profession (Farming 100), not random stock:
 # re-roll Habul's worn Cloth Shirt (generic workwear) in its worn context
 setstat Habul farming 100

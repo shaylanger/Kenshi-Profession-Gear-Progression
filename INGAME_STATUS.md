@@ -1,8 +1,8 @@
 # Profession Gear Progression — in-game test status
 
-**Updated:** 2026-10-03 (after coordinator runs m2-m6). One row per `TEST_PLAN.md` ID (1–329 plus 16a–16c and 30a–30i = 341 rows).
+**Updated:** 2026-10-03 (after coordinator runs m2-m6). One row per `TEST_PLAN.md` ID (1–330 plus 16a–16c and 30a–30i = 342 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
-`tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll FAA5B471** (installed by the coordinator; runs m4-m6).
+`tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll 59EFB4B1** (FAA5B471 ran m4-m12).
 
 States: **PASS-offline** (core tests / build gates / source contracts), **PASS-live** (with evidence),
 **PENDING-auto** (a scenario file exists; the harness can run it without Shay), **NEEDS-SETUP**
@@ -13,11 +13,11 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 71 |
 | PASS-live | 161 |
-| PENDING-auto | 8 |
+| PENDING-auto | 9 |
 | NEEDS-SETUP | 65 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
-| total | 341 |
+| total | 342 |
 
 ## Rows
 
@@ -155,6 +155,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 327 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 328 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 329 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
+| 330 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` #pg_check Square Goggles (m12 found Square Goggles in shop stock tagged GOGGLES_GENERIC,PACK_TRADE with Athletics; fixed in 59EFB4B1, core test added) |
 
 ## Notes
 

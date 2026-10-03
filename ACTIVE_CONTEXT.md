@@ -23,7 +23,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **FAA5B471** (0.9.1-pretest). Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **59EFB4B1** (0.9.1-pretest; FAA5B471 installed for m4-m12). Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
   pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),

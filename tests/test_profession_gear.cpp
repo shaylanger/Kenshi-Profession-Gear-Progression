@@ -313,6 +313,12 @@ int main(){
     Check(nOther>N*0.5 && nOther<N*0.7,"unrelated NPC rolls near the tier chance");
   }
 
+  ItemDescriptor sqGoggles; sqGoggles.baseId="2168-gamedata.base"; sqGoggles.name="Square Goggles"; sqGoggles.armour=true;
+  sqGoggles.description="A simple eye protection for sandstorms, standard issue in the Traders Guild [Belt Slot]"; sqGoggles.slot="backpack";
+  {std::vector<ItemTag> x=Classify(sqGoggles,overrides,exclusions);Check(HasTag(x,TAG_GOGGLES_GENERIC)&&!HasTag(x,TAG_PACK_TRADE),"armour mentioning traders/backpack is never a trade pack (live Square Goggles)");}
+  ItemDescriptor minerHelmetPack; minerHelmetPack.baseId="mod.miner_helmet"; minerHelmetPack.name="Miner Helmet"; minerHelmetPack.armour=true; minerHelmetPack.slot="backpack";
+  {std::vector<ItemTag> x=Classify(minerHelmetPack,overrides,exclusions);Check(!HasTag(x,TAG_PACK_ORE),"armour in a backpack section is not an ore pack");}
+
   ItemDescriptor tobacco; tobacco.baseId="live.chewing_tobacco"; tobacco.name="Chewing Tobacco"; tobacco.description="Workers may chew these rags of tobacco"; tobacco.equippable=false;
   {std::vector<ItemTag> x=Classify(tobacco,overrides,exclusions); AffixRecord rr=RollAffixes(tobacco,RoleProfile(),RuleConfig(),x,"tobacco",7,false); Check(rr.affixes.empty(),"non-equippable tobacco never rolls profession affix");}
   ItemDescriptor bolts; bolts.baseId="live.bolts"; bolts.name="Bolts [Regulars]"; bolts.description="Regular crossbow ammunition"; bolts.equippable=false;

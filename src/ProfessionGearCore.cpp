@@ -305,26 +305,29 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   if (Has(n,"glove") && (Has(n,"work") || Has(n,"industrial"))) AddTag(out,TAG_GLOVES_WORK);
   if (Has(n,"boot") && (Has(n,"work") || Has(n,"industrial"))) AddTag(out,TAG_BOOTS_WORK);
   if (Has(n,"boot") && (Has(n,"travel") || Has(n,"scout") || Has(n,"runner"))) AddTag(out,TAG_BOOTS_TRAVEL);
+  // Armour and weapons are never backpacks, whatever their text says (live 2026-10-03: Square
+  // Goggles "standard issue in the Traders Guild" in shop storage got PACK_TRADE and rolled Athletics).
+  const bool canBePack=!item.armour && !item.weapon;
   const bool packLike=item.container || Has(n,"backpack") || Has(n," satchel") ||
                       Has(n," pack") || Has(n," bag") || Has(n,"basket");
   if (Has(n,"ore pack") || Has(n,"mining pack") ||
       (packLike && (HasWord(n,"miner") || HasWord(n,"miners") || HasWord(n,"mining"))))
-    AddTag(out,TAG_PACK_ORE);
+    { if (canBePack) AddTag(out,TAG_PACK_ORE); }
   if (Has(n,"crop pack") || Has(n,"farm pack") ||
       (packLike && (HasWord(n,"farmer") || HasWord(n,"farmers") || HasWord(n,"farmhand"))))
-    AddTag(out,TAG_PACK_CROP);
+    { if (canBePack) AddTag(out,TAG_PACK_CROP); }
   if (Has(n,"construction pack") || Has(n,"builder pack") ||
       (packLike && (strongEngineering || Has(n,"construction"))))
-    AddTag(out,TAG_PACK_CONSTRUCTION);
+    { if (canBePack) AddTag(out,TAG_PACK_CONSTRUCTION); }
   if (Has(n,"medical pack") || Has(n,"medic pack") ||
       (packLike && strongMedic))
-    AddTag(out,TAG_PACK_MEDICAL);
+    { if (canBePack) AddTag(out,TAG_PACK_MEDICAL); }
   if (Has(n,"trade pack") || Has(n,"caravan pack") ||
       ((Has(n,"trader's") || Has(n,"trader ") || HasWord(n,"traders")) && Has(n,"backpack")))
-    AddTag(out,TAG_PACK_TRADE);
+    { if (canBePack) AddTag(out,TAG_PACK_TRADE); }
   if (Has(n,"research pack") || Has(n,"tech pack") ||
       (packLike && (strongResearch || strongRobotics || Has(n,"tech "))))
-    AddTag(out,TAG_PACK_TECH);
+    { if (canBePack) AddTag(out,TAG_PACK_TECH); }
   if (Has(n,"hauling pack") || Has(n,"hauler pack") || Has(n,"cargo pack") ||
       Has(n,"porter pack") || Has(n,"load bearing") || Has(n,"load-bearing") ||
       Has(n,"cargo frame")) AddTag(out,TAG_PACK_HAULING);

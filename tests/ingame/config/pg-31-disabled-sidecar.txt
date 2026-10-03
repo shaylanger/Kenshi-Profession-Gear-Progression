@@ -2,7 +2,7 @@
 # covers: PG 127, 128, 150, 326 (319 recheck)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll FAA5B471; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode Disabled -Sidecar StartupTest (Enabled=false; the sidecar is replaced by tests\fixtures\profession_gear_affixes.startup-test.tsv, the old one is set aside)
+# needs: ProfessionGearProgression.dll 59EFB4B1; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode Disabled -Sidecar StartupTest (Enabled=false; the sidecar is replaced by tests\fixtures\profession_gear_affixes.startup-test.tsv, the old one is set aside)
 # verify: ProfessionGear.log: "config enabled=0", "loaded affixes=3 legacyIgnored=1" (3 valid pgp1 rows, 1 corrupt row skipped, 1 legacy runtime-handle row ignored, duplicate key = last row wins), all hooks still "hooked", and NO "roll source=" line during the whole launch
 @wait-world
 @sleep 8
