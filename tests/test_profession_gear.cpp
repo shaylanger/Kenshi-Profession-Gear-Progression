@@ -296,7 +296,7 @@ int main(){
   ItemDescriptor contextRags; contextRags.baseId="mod.worker_rags"; contextRags.name="Worker Rags"; contextRags.quality=.5f;
   std::vector<ItemTag> contextTags=Classify(contextRags,overrides,exclusions);
   AffixRecord farmerRags=RollAffixes(contextRags,farmer,cfg,contextTags,"farmer-rags",99,false);
-  Check(!farmerRags.affixes.empty()&&farmerRags.affixes[0].stat==STAT_FARMING,"generic workwear uses farmer context for first affix");
+  Check(farmerRags.affixes.size()==1&&farmerRags.affixes[0].stat==STAT_FARMING,"generic workwear narrows fully to farmer context");
   RoleProfile labourer; labourer.primary=STAT_LABOURING; labourer.wealth01=.7f;
   AffixRecord labourRags=RollAffixes(contextRags,labourer,cfg,contextTags,"labour-rags",99,false);
   Check(!labourRags.affixes.empty()&&labourRags.affixes[0].stat==STAT_LABOURING,"same workwear base uses labourer context on another instance");
@@ -331,7 +331,7 @@ int main(){
   std::vector<ItemTag> gTags=Classify(contextGoggles,overrides,exclusions);
   RoleProfile researcherCtx; researcherCtx.primary=STAT_SCIENCE; researcherCtx.wealth01=.7f;
   AffixRecord researchGoggles=RollAffixes(contextGoggles,researcherCtx,cfg,gTags,"research-goggles",77,false);
-  Check(!researchGoggles.affixes.empty()&&researchGoggles.affixes[0].stat==STAT_SCIENCE,"goggles use researcher context for first affix");
+  Check(researchGoggles.affixes.size()==1&&researchGoggles.affixes[0].stat==STAT_SCIENCE,"generic goggles narrow fully to researcher context");
   tags.clear();tags.push_back(TAG_TOOL_FARMING);
   AffixRecord a=RollAffixes(hoe,farmer,cfg,tags,"instance-a",1234,false);
   Check(!a.affixes.empty(),"forced roll produces affix");

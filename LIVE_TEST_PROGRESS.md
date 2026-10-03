@@ -426,3 +426,100 @@ Results:
 
 Phase 2 status: **PASS (AUTO CORE)**.
 Remaining Phase-2-only item: tooltip visual/readability/duplicate confirmation (SHAY/visual unless screenshot automation is sufficient).
+
+### Live non-equippable regression
+
+Forced-mode fresh-item tests:
+- **308 PASS** — Chewing Tobacco added to Shay; ProfessionGear log +0, sidecar +0.
+- **310 PASS** — Basic First Aid Kit added to Shay; ProfessionGear log +0, sidecar +0.
+- **311 PASS** — Medical Supplies added to Shay; ProfessionGear log +0, sidecar +0.
+- **309 PENDING** — Bolts [Regulars] command was swallowed by nested-shell quoting (`no data named: Bolts`), so this is harness invocation failure, not mod failure.
+
+Conclusion so far: non-Gear consumable/medical/trade items are correctly rejected before record generation under forced 100% eligibility mode.
+
+### Harness improvement planned for deterministic item tests
+
+Problem: `stobe-auto give/find` exact-matches display names, but the current UWE-heavy mod stack has many near-duplicate names (e.g. Rattan Hat variants), causing ambiguous test setup.
+
+Planned harness-only fix:
+- `FindData(...)` should first exact-match Kenshi `GameData::stringID`, then exact display name, then substring fallback.
+- This does not change gameplay behavior; it only makes automation deterministic.
+- After rebuild/install, remaining ProfessionGear tests can target known IDs such as `2185-gamedata.base` or `2168-gamedata.base` directly.
+
+### Harness deterministic item-ID support installed
+
+- Patched only `/root/STOBE-src/src/TestAutomation.cpp`.
+- `FindData(...)` now exact-matches `GameData::stringID` before display-name matching.
+- Rebuilt Stobe successfully.
+- Installed Stobe hash changed: `CE55092D -> 89045BBE`.
+- No unrelated STOBE files were intentionally edited by this test work.
+- Purpose: deterministic ProfessionGear automation in a mod stack with many duplicate/variant display names.
+
+### Exact-ID harness + world-loot live results
+
+Harness exact `GameData::stringID` lookup is confirmed working in live Kenshi.
+
+Results:
+- **309 PASS** — `95781-rebirth.mod` Bolts [Regulars] added to Shay under forced mode: ProfessionGear log +0, sidecar +0.
+- **241 PASS** — fresh eligible item injected to player is treated as `world_loot`, not player profession context.
+- **242 PASS** — `2185-gamedata.base` Rattan Hat generated `source=world_loot`, tag `WORKWEAR_GENERIC`, affix `Medic +22.7%`; exactly one new targeted record.
+- **243 PASS** — `2168-gamedata.base` Square Goggles generated `source=world_loot`, tag `GOGGLES_GENERIC`, affixes `Robotics +17.6%, Engineering +17.8%, Turrets +16.7%`; all are inside the legal goggles pool.
+
+Note: background streamed NPCs generated unrelated verbose lines during the goggles test, but the target world-loot record is unambiguous by base ID/source and sidecar identity.
+
+### Context-test nuance: player squad items intentionally use world-loot source
+
+Attempted role-bias setup by setting Malzin to Farming/Medic/Science 100 and injecting generic gear.
+Observed source remained `world_loot` because Malzin is a player character.
+This is expected from the current anti-player-bias rule: any previously unseen non-crafted item first observed on a player character clears role context and becomes world loot.
+
+This does **not** test NPC role bias. Tests 93–100 / 235–236 must use spawned non-player NPCs. No pass/fail assigned to those rows yet.
+
+### NPC context live finding — generic multi-affix coherence BUG
+
+Spawned non-player `Farmer` (Slowline #1499145472), forced Farming to 100, then added the exact same generic `2185-gamedata.base` Rattan Hat.
+
+Observed target roll:
+- source: `npc`
+- tags: `WORKWEAR_GENERIC`
+- tier: 6
+- affixes: `Farming +16.3%, Armour Smithing +19.5%, Robotics +20.2%`
+
+What passed:
+- role bias worked: first affix correctly followed Farming.
+
+What failed:
+- top-tier second/third affixes came from the entire broad generic-workwear pool, creating an incoherent Farmer item.
+
+Decision/fix required before further role testing:
+- when contextual generic gear has a matching NPC role, narrow the allowed roll pool to that role for that instance (or a deliberately related pool), so Farmer workwear stays Farming-focused.
+- trader/world-loot generic gear retains the broad random pool because it has no wearer role yet.
+
+Tests 93/235: **FAIL on coherence in current build; fix in progress**.
+
+### Contextual generic coherence fix — LIVE PASS
+
+After rebuilding/reinstalling the narrowed-pool fix:
+
+1. Spawned non-player Farmer `Barik`, Farming forced to 100.
+   - exact item: `2185-gamedata.base` Rattan Hat
+   - source: `npc`
+   - tags: `WORKWEAR_GENERIC`
+   - tier: 6
+   - affixes: **Farming +22.0% only**
+
+2. Spawned non-player Tech Hunter Researcher `Stinks`, Science forced to 100.
+   - exact item: `2168-gamedata.base` Square Goggles
+   - source: `npc`
+   - tags: `GOGGLES_GENERIC`
+   - tier: 6
+   - affixes: **Science +17.3% only**
+
+Results:
+- test 93 / generic farmer role path PASS
+- test 95 / researcher generic-goggle role path PASS
+- test 235 PASS for known-role workwear coherence
+- test 236 PASS for known-role goggles coherence
+- test 320 PASS live
+
+Trader/world-loot generic gear still keeps the broad legal pool when there is no wearer profession context.

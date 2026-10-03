@@ -420,6 +420,15 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
   if(contextualGeneric && !hasMatchingRole && !role.traderSource && !role.worldLootSource)
     return out;
 
+  // Generic fallback gear is broad only when there is no wearer profession context
+  // (e.g. trader stock or world loot). Once a real NPC role matches, keep the item
+  // coherent with that role instead of filling top-tier extra affixes from unrelated
+  // professions in the generic pool.
+  if(contextualGeneric && hasMatchingRole) {
+    pool.clear();
+    pool.push_back(role.primary);
+  }
+
   float chance=TierAffixChance(out.tier)*cfg.globalChance;
   if(role.worldLootSource) chance*=cfg.worldLootMultiplier;
   if(role.slave || role.wealth01<.15f) chance*=cfg.poorNpcMultiplier;

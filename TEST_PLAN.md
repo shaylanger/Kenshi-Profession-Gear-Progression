@@ -2,7 +2,7 @@
 
 **Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
 
-**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **319**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,217 core checks**; `verify_offline.bat` passes **19 required SDK/export symbol checks**; source-contract verification passes **6 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **320**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -449,3 +449,9 @@ Added after live test 123 proved Kenshi runtime item handles change across ordin
 | 317 | AUTO | Equipped affixed item save/reload | Same affix remains active after reload even though runtime handle changes |
 | 318 | AUTO | Full Kenshi process restart + reload | Persistent ID/affix survives process restart, not just in-process reload |
 | 319 | AUTO | Pre-v2 runtime-handle sidecar rows | Legacy rows are ignored; they cannot attach to unrelated new runtime items |
+
+## Section X — live contextual-generic coherence regression
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 320 | AUTO | Top-tier generic workwear/goggles on a known-role NPC | Matching NPC role narrows the generic roll pool; no unrelated second/third profession affixes are added |
