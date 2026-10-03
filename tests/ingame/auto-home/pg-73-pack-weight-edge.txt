@@ -22,7 +22,10 @@ packweight Malzin "Small Backpack" ~ in_inventory.* raw=${R} total=${R}
 @set G drop Malzin "Small Backpack" ~ dropped Small Backpack x1 (#\d+/\d+)
 @sleep 2
 packweight ground "Small Backpack" ~ raw=${R} total=${R} 
-pickup Malzin ${G} ~ \(same instance\)
+# the back slot is free, so the picked-up pack goes on her back (run m16-4080): unequip it again before storing
+pickup Malzin ${G} ~ picked up Small Backpack x1
+unequip Malzin "Small Backpack" ~ -> main\)
+pg_info Malzin "Small Backpack" ~ equipped=0
 # --- in a chest ---
 pg_store Malzin chest "Small Backpack" ~ stored in
 packweight chest "Small Backpack" ~ raw=${R} total=${R} 
