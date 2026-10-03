@@ -12,8 +12,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | State | Rows |
 |---|---|
 | PASS-offline | 71 |
-| PASS-live | 175 |
-| PENDING-auto | 31 |
+| PASS-live | 181 |
+| PENDING-auto | 25 |
 | NEEDS-SETUP | 30 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
@@ -81,7 +81,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 148 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 149 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 150 | PASS-live | `C:\KenshiTestRuns\m6\pg-31.out` (archive/test-run-2026-10-03-m5.md) 12/0 (launch 3); log "loaded affixes=3 legacyIgnored=1", no roll line |
-| 151–152 | PENDING-auto | `tests/ingame/auto-home/pg-15-crowd-frametime.txt` (harness `fps` worst_ms/avg with 100 and 300 spawned characters), run in launch 1 (PG on) and launch 3 (PG disabled) and compare |
+| 151–152 | PENDING-auto | `tests/ingame/auto-home/pg-15-crowd-frametime.txt` (harness `fps` worst_ms/avg with 100 and 300 spawned characters), run in launch 1 (PG on) and launch 3 (PG disabled) and compare. Launch 1 done: `C:\KenshiTestRuns\m16\pg\pg-15-crowd-frametime.out` 56/0 (DLL 7D80DBB3): baseline avg 57.5 fps, 100 spawned avg 56.8 worst 148 ms, 300 spawned avg 44.2 worst 155 ms; launch 3 (PG off) still to run |
 | 153–154 | PASS-live | `C:\KenshiTestRuns\m2\pg-01-startup-stability.out` (archive/test-run-2026-10-03-m2.md) 50/0 |
 | 155 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
 | 156 | PENDING-auto | `tests/ingame/auto-home/pg-09-soak.txt` (30 real min at 50x, Shay and Malzin protected) |
@@ -91,7 +91,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 177 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0 on DLL 7D80DBB3 + harness F946C881, Manual Stone Processor, 3 x 30 game min: output_progress A no gear 0.1042, B +50% Labouring (default build, JobOperateScaling on) 0.1599 (x1.53), C same gear with scaling off 0.1095 (x1.05, ~A). Jobs read the raw skill; the operate scaling makes equipped Labouring count. (m16 v4 on 10C19BAB: 0.1065 / 0.1123 / 0.1695; m13/m14 powered Stone Mine runs at machine rate) |
-| 178–183 | PENDING-auto | `tests/ingame/auto-home/pg-14-labouring-curve.txt` (first Section L data: raw Labouring 10-90 without gear, +10/+25/+100 one piece, 25+25 set; one 30 game min window per point; repeats for the final fit still to do) |
+| 178–183 | PASS-live | `C:\KenshiTestRuns\m16\pg\pg-14-labouring-curve.out` 119/6 (DLL 7D80DBB3; the 6 FAILs were the per-window stone top-up `fill` on a full machine, removed since; every window calls>0, state=NORMAL, stone 19-20). output_progress per 30 game min: no gear skill 10 0.0842, 25 0.0814, 50 0.0973, 75 0.1142, 90 0.1061 (avg amount/call 0.52 -> 0.70: skill counts weakly, ~5% window noise); skill 50 with +10% 0.1135 (x1.17 of L50), +25% 0.1222 (x1.26), +100% 0.2392 (x2.46), set 25+25 0.1502 (x1.54, like pg-12 B x1.53). Gear scales as designed; repeats for the final fit still to do |
 | 184 | PENDING-auto | `tests/ingame/full-base/pg-54-research.txt` (harness KAH 14 `research start/status`; Science 10/50/90, +50% Science, +50% Labouring control) |
 | 185 | NEEDS-SETUP | engineering benchmark (build/repair a fixed amount): no measurement command yet |
 | 186–187 | NEEDS-SETUP | robotics bench / cooking station exist in Testing-Save-Full-Base: names and a craftable item with materials come from `full-base/pg-50-fullbase-survey.txt`, then `tools/balance_driver.py` gets an entry |
@@ -164,7 +164,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 328 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 329 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 330 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
-| 331 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0: default build gives x1.53 work with +50% Labouring, `pg_jobscale off` returns to ~x1.05 (same run as 177). Labouring path (`ProductionBuilding::operate`) measured; the Farming path (`FarmBuilding::operate`, same scaling code) not measured live |
+| 331 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0: default build gives x1.53 work with +50% Labouring, `pg_jobscale off` returns to ~x1.05 (same run as 177). Labouring path (`ProductionBuilding::operate`) measured. Farming path (`FarmBuilding::operate`): `C:\KenshiTestRuns\m16\pg\pg-13-farm-operate.out` 51/1 on Home's Wheat Farm XL, scaled/amount A no gear 195.44/195.44 = 1.00, B +50% Farming 360.56/240.38 = 1.50, C scaling off 211.09/211.09 = 1.00 (the 1 FAIL was the fixed-time warm-up check: no farm call in the first 15 game min, now an `@until`) |
 
 ## Notes
 
