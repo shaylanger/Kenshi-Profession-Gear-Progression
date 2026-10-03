@@ -1,0 +1,75 @@
+# id: PG-config-normal-41
+# covers: PG 245
+# fixture: auto-home
+# reset: fresh
+# needs: same launch as pg-40-normal-distribution.txt (set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty)
+# verify: 245 = share of the 30 new "roll source=world_loot ... name="Rattan Hat"" lines in ProfessionGear.log with affixes != none, vs 0.5 x the tier chance (tier in each line; tier 0..6 -> .20 .30 .45 .60 .75 .88 .96)
+@wait-world
+@sleep 8
+speed 0
+# --- 245: 30 previously unseen hats, each first seen on Shay (world loot), roll at half the normal tier chance.
+# Each hat goes into the chest right after its roll so Shay's bag never fills.
+# Filler first: if Shay's head slot is free the Iron Hat takes it, so the test hats never get worn.
+give Shay 2227-chris_r.mod 1
+@set CH stash 2185-gamedata.base 1 near Shay ~ stashed 1/1 Rattan Hat in (.+?) \(
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+give Shay 2185-gamedata.base 1
+pg_store Shay "${CH}" "Rattan Hat" ~ stored
+@echo 245: count the 30 "roll source=world_loot ... name=\"Rattan Hat\"" lines in ProfessionGear.log, affixes=none vs rolled

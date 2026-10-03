@@ -1,0 +1,33 @@
+# id: PG-persistence-06
+# covers: PG 131, 134 (123, 316, 317 recheck)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: the same key and affix on both reloaded saves; ProfessionGear.log has "serialize item id=<K>" and, after each load, "restore item id=<K>" with a new runtime handle
+@wait-world
+@sleep 8
+speed 0
+setstat Malzin medic 50
+pg_clear Malzin ~ cleared affixes
+pg_force_affix Malzin "Black Cloth Shirt" medic 12 tier 3 ~ Black Cloth Shirt key=pgp\S+ equipped=1 tier=3 affixes=Medic:12
+@set K pg_info Malzin "Black Cloth Shirt" ~ key=(pgp\S+)
+pg_bonus Malzin medic ~ equipped_bonus=12% .*match=1
+# 134: several manual saves in a row (autosave is off under the harness)
+save kah-pg-persist-a
+save kah-pg-persist-b
+save kah-pg-persist-a
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ serialize item id=${K} 
+# 131: the same state under a second save name loads with the same identity and roll
+load kah-pg-persist-b
+@wait-world
+@sleep 8
+speed 0
+pg_info Malzin "Black Cloth Shirt" ~ key=${K} equipped=1 tier=3 affixes=Medic:12( |$)
+pg_bonus Malzin medic ~ equipped_bonus=12% .*match=1
+load kah-pg-persist-a
+@wait-world
+@sleep 8
+speed 0
+pg_info Malzin "Black Cloth Shirt" ~ key=${K} equipped=1 tier=3 affixes=Medic:12( |$)
+pg_bonus Malzin medic ~ equipped_bonus=12% .*match=1
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ restore item id=${K} runtime=

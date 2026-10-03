@@ -1,0 +1,128 @@
+# id: PG-equip-stats-02
+# covers: PG 48, 49, 57, 59, 60, 61, 62-80, 83, 148, 158, 254, 300, 312, 313 (and makes save kah-pg-stale for 298 in config/pg-30)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: every pg_bonus line says match=1 (hooked effective == vanilla effective x (1 + bonus), cap 150); CSV values of R0/R1 (maxrunspeed without/with +50% Athletics) show whether run speed follows the hooked Athletics (row 254: different = yes); save kah-pg-stale exists afterwards (used by config/pg-30)
+@wait-world
+@sleep 8
+speed 0
+# --- baseline: nothing active on Malzin ---
+pg_clear Malzin ~ Malzin: cleared affixes on \d+ of \d+ item\(s\)
+setstat Malzin farming 50
+pg_bonus Malzin farming ~ equipped_bonus=0% base=50\.00 .*match=1
+# 62: equip -> bonus; 80: base (unmodified) unchanged
+pg_force_affix Malzin "Iron Hat" farming 20 tier 4 ~ forced: Iron Hat key=pgp\S+ equipped=1 tier=4 affixes=Farming:20
+pg_bonus Malzin farming ~ equipped_bonus=20% base=50\.00 .*match=1
+stat Malzin farming ~ base=50
+# 63 + 48: unequip -> carried only -> exact baseline
+unequip Malzin "Iron Hat" ~ unequipped \(head -> main\) Iron Hat
+pg_info Malzin "Iron Hat" ~ equipped=0 tier=4 affixes=Farming:20
+pg_bonus Malzin farming ~ equipped_bonus=0% .*match=1
+# 49: re-equip -> the same roll is active again; 313: harness finds it in its equipment section
+equip Malzin "Iron Hat" ~ equipped Iron Hat .*equipped=1
+iteminfo Malzin "Iron Hat" ~ section=head equipped=1
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+# 158: rapid equip/unequip leaves no stale bonus
+unequip Malzin "Iron Hat"
+equip Malzin "Iron Hat"
+unequip Malzin "Iron Hat"
+equip Malzin "Iron Hat"
+unequip Malzin "Iron Hat"
+pg_bonus Malzin farming ~ equipped_bonus=0% .*match=1
+equip Malzin "Iron Hat"
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+# --- 64-77 (+ swimming, assassination, thievery): every profession/utility stat goes through the hook ---
+setstat Malzin labouring 40
+pg_force_affix Malzin "Iron Hat" labouring 15 tier 4 ~ affixes=Labouring:15
+pg_bonus Malzin labouring ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin science 40
+pg_force_affix Malzin "Iron Hat" science 15 tier 4 ~ affixes=Science:15
+pg_bonus Malzin science ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin engineering 40
+pg_force_affix Malzin "Iron Hat" engineering 15 tier 4 ~ affixes=Engineering:15
+pg_bonus Malzin engineering ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin robotics 40
+pg_force_affix Malzin "Iron Hat" robotics 15 tier 4 ~ affixes=Robotics:15
+pg_bonus Malzin robotics ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin medic 40
+pg_force_affix Malzin "Iron Hat" medic 15 tier 4 ~ affixes=Medic:15
+pg_bonus Malzin medic ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin weapon_smith 40
+pg_force_affix Malzin "Iron Hat" weapon_smithing 15 tier 4 ~ affixes=Weapon Smithing:15
+pg_bonus Malzin weapon_smithing ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin armour_smith 40
+pg_force_affix Malzin "Iron Hat" armour_smithing 15 tier 4 ~ affixes=Armour Smithing:15
+pg_bonus Malzin armour_smithing ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin crossbow_smith 40
+pg_force_affix Malzin "Iron Hat" crossbow_smithing 15 tier 4 ~ affixes=Crossbow Smithing:15
+pg_bonus Malzin crossbow_smithing ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin cooking 40
+pg_force_affix Malzin "Iron Hat" cooking 15 tier 4 ~ affixes=Cooking:15
+pg_bonus Malzin cooking ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin turrets 40
+pg_force_affix Malzin "Iron Hat" turrets 15 tier 4 ~ affixes=Turrets:15
+pg_bonus Malzin turrets ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin athletics 40
+pg_force_affix Malzin "Iron Hat" athletics 15 tier 4 ~ affixes=Athletics:15
+pg_bonus Malzin athletics ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin perception 40
+pg_force_affix Malzin "Iron Hat" perception 15 tier 4 ~ affixes=Perception:15
+pg_bonus Malzin perception ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin stealth 40
+pg_force_affix Malzin "Iron Hat" stealth 15 tier 4 ~ affixes=Stealth:15
+pg_bonus Malzin stealth ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin lockpicking 40
+pg_force_affix Malzin "Iron Hat" lockpicking 15 tier 4 ~ affixes=Lockpicking:15
+pg_bonus Malzin lockpicking ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin swimming 40
+pg_force_affix Malzin "Iron Hat" swimming 15 tier 4 ~ affixes=Swimming:15
+pg_bonus Malzin swimming ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin assassination 40
+pg_force_affix Malzin "Iron Hat" assassination 15 tier 4 ~ affixes=Assassination:15
+pg_bonus Malzin assassination ~ equipped_bonus=15% base=40\.00 .*match=1
+setstat Malzin thievery 40
+pg_force_affix Malzin "Iron Hat" thievery 15 tier 4 ~ affixes=Thievery:15
+pg_bonus Malzin thievery ~ equipped_bonus=15% base=40\.00 .*match=1
+# 254: run speed with +50% Athletics (data: R0 vs R1)
+setstat Malzin athletics 40
+pg_force_affix Malzin "Iron Hat" farming 1 tier 4 ~ affixes=Farming:1
+@set R0 stat Malzin maxrunspeed ~ effective=([\d.]+)
+pg_force_affix Malzin "Iron Hat" athletics 50 tier 6 ~ affixes=Athletics:50
+pg_bonus Malzin athletics ~ equipped_bonus=50% .*match=1
+@set R1 stat Malzin maxrunspeed ~ effective=([\d.]+)
+@echo maxrunspeed without/with +50% Athletics: ${R0} / ${R1}
+# --- 78: two pieces with the same stat add up once; 79: mixed pieces stay separate ---
+setstat Malzin farming 50
+setstat Malzin medic 50
+pg_force_affix Malzin "Iron Hat" farming 10 tier 4 ~ affixes=Farming:10
+pg_force_affix Malzin "Black Cloth Shirt" farming 10 tier 4 ~ Black Cloth Shirt key=pgp\S+ equipped=1 tier=4 affixes=Farming:10
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+pg_force_affix Malzin "Black Cloth Shirt" medic 5 tier 4 ~ affixes=Medic:5
+pg_bonus Malzin farming ~ equipped_bonus=10% .*match=1
+pg_bonus Malzin medic ~ equipped_bonus=5% .*match=1
+# 83: very high skill + gear clamps at 150; base stays the trained value
+setstat Malzin farming 140
+pg_force_affix Malzin "Iron Hat" farming 20 tier 6 ~ affixes=Farming:20
+pg_bonus Malzin farming ~ base=140\.00 .*effective=150\.00 expected=150\.00 match=1
+stat Malzin farming ~ base=140
+pg_clear Malzin ~ cleared affixes
+setstat Malzin farming 50
+# --- 57/59: ineligible items get no record ---
+pg_info Malzin "Chisa Katana" ~ record=none \(not eligible
+! pg_roll Malzin "Worn-out Shorts"
+# --- 60 + 148: exclusion rule (Straw Hat would be HEAD_FARMING/SCOUT_GEAR) ---
+give Malzin 575-gamedata.base 1
+pg_info Malzin "Straw Hat" ~ record=none \(not eligible
+# --- 61 + 300: override rule (Leather Vest -> TOOL_COOKING), verbose roll line with all fields ---
+give Malzin 2212-gamedata.base 1
+pg_info Malzin "Leather Vest" ~ Leather Vest key=pgp\S+ equipped=[01] tier=\d+ affixes=Cooking:[\d.]+( |$)
+pg_check Malzin "Leather Vest" ~ tags=TOOL_COOKING pool=Cooking .*valid=1
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot key=pgp\S+ baseId=2212-gamedata.base name="Leather Vest" equipped=[01] tier=\d tags=TOOL_COOKING affixes=Cooking:[\d.]+$
+# --- save for the stale-record test (298, config/pg-30): Malzin wears a world-loot Rattan Hat ---
+unequip Malzin "Iron Hat" ~ head -> main
+give Malzin 2185-gamedata.base 1
+pg_info Malzin "Rattan Hat" ~ equipped=1 tier=\d+ affixes=(?!none)[A-Za-z ]+:
+@set S pg_info Malzin "Rattan Hat" ~ affixes=([A-Za-z ]+):
+pg_bonus Malzin "${S}" ~ equipped_bonus=[1-9][\d.]*% .*match=1
+save kah-pg-stale

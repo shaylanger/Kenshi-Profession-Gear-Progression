@@ -415,6 +415,8 @@ int main(){
   Check(!ParseRecord("x\t\t1\t1:10",parsed),"reject empty base id");
   Check(!ParseRecord("x\ty\t99\t1:10",parsed),"reject invalid tier");
   Check(ParseRecord("x\ty\t1\t",parsed)&&parsed.affixes.empty(),"parse empty affix record");
+  Check(ParseRecord("x\ty\t1\t\r",parsed)&&parsed.affixes.empty()&&parsed.tier==1,"parse empty affix record with CRLF line end (live sidecar)");
+  Check(ParseRecord("x\ty\t2\t10:8.5\r",parsed)&&parsed.affixes.size()==1&&Eq(parsed.affixes[0].percent,8.5f),"parse affix record with CRLF line end");
 
   std::vector<AffixRecord> rs;
   AffixRecord r1;r1.affixes.push_back(Affix(STAT_FARMING,5));rs.push_back(r1);

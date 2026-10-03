@@ -1,0 +1,42 @@
+# id: PG-job-path-08
+# covers: PG 81, 82, 177 (first points: Labouring 50 vs 50 + 50% gear on a real mining job; the Phase 8 "do jobs read the hooked stat" proof)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: CSV: mined per hour without gear = Q1-Q0, with +50% Labouring = Q2-Q1 (the clock starts after Malzin reached the mine); ratio > ~1.1 means the mining job reads the hooked effective Labouring, ~1.0 means it reads the raw stat (then a direct hook is needed). B0 -> B1 shows base Labouring XP; 82 = after removing the gear base is still B1 (bonus not baked in)
+@wait-world
+@sleep 8
+speed 0
+hunger Malzin 280
+building "Stone Mine" ~ product=
+clearjobs Malzin
+pg_clear Malzin ~ cleared affixes
+setstat Malzin labouring 50
+@set B0 pg_bonus Malzin labouring ~ equipped_bonus=0% base=([\d.]+) .*match=1
+job Malzin "Stone Mine" ~ at Stone Mine
+# walk there and start working
+speed 10
+@wait-game 15 600
+speed 0
+@set Q0 building "Stone Mine" ~ qty=(\d+)
+time ~ game_hours=
+speed 10
+@wait-game 60 900
+speed 0
+@set Q1 building "Stone Mine" ~ qty=(\d+)
+time ~ game_hours=
+# the same job with +50% Labouring gear
+pg_force_affix Malzin "Black Cloth Shirt" labouring 50 tier 6 ~ affixes=Labouring:50
+pg_bonus Malzin labouring ~ equipped_bonus=50% .*match=1
+speed 10
+@wait-game 60 900
+speed 0
+@set Q2 building "Stone Mine" ~ qty=(\d+)
+time ~ game_hours=
+@echo stone mined: no gear ${Q0} -> ${Q1}, +50% Labouring ${Q1} -> ${Q2}
+# 81: XP still goes to the stored (base) skill while geared; 82: removing the gear leaves the trained base
+@set B1 pg_bonus Malzin labouring ~ base=([\d.]+)
+pg_bonus Malzin labouring ~ base=(?!${B0} )[\d.]+
+pg_clear Malzin ~ cleared affixes
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=${B1} .*match=1
+clearjobs Malzin

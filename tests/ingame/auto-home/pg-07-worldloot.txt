@@ -1,0 +1,41 @@
+# id: PG-worldloot-07
+# covers: PG 213, 246, 247, 248, 249 (241 recheck)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: 248: items in a chest have no record before pickup (generation happens at pickup, documented); 249: grep ProfessionGear.log for 'roll source=world_loot .*name="Square Goggles"' right after the fixture load (Shay's pre-existing goggles did not inherit her profession)
+@wait-world
+@sleep 8
+speed 0
+# --- 248 + 213 + 241: chest loot is unrolled until picked up, then rolls as world loot ---
+@set CH stash 2185-gamedata.base 1 near Shay ~ stashed 1/1 Rattan Hat in (.+?) \(
+pg_building "${CH}" "Rattan Hat" ~ Rattan Hat key=- equipped=0 record=none
+pg_take Shay "${CH}" "Rattan Hat" ~ took from .* to Shay: Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(?!none)
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=0 tier=\d tags=WORKWEAR_GENERIC affixes=
+pg_check Shay "Rattan Hat" ~ valid=1
+# --- 246: put back / pick up again three times: never rerolls ---
+@set K pg_info Shay "Rattan Hat" ~ key=(pgp\S+)
+@set A pg_info Shay "Rattan Hat" ~ affixes=(\S+)
+pg_store Shay "${CH}" "Rattan Hat" ~ key=${K}
+pg_take Shay "${CH}" "Rattan Hat" ~ key=${K} equipped=0 tier=\d+ affixes=${A}
+pg_store Shay "${CH}" "Rattan Hat" ~ key=${K}
+pg_take Shay "${CH}" "Rattan Hat" ~ key=${K} equipped=0 tier=\d+ affixes=${A}
+pg_store Shay "${CH}" "Rattan Hat" ~ key=${K}
+pg_take Shay "${CH}" "Rattan Hat" ~ key=${K} equipped=0 tier=\d+ affixes=${A}
+# --- 247: world loot does not follow the finder's profession (Shay Farming 100, Malzin Science 100) ---
+setstat Shay farming 100
+setstat Malzin science 100
+stash 1168-gamedata.base 3 near Shay ~ stashed 3/3 Cloth Shirt
+pg_take Shay "${CH}" "Cloth Shirt" ~ took
+pg_take Shay "${CH}" "Cloth Shirt" ~ took
+pg_take Shay "${CH}" "Cloth Shirt" ~ took
+stash 2168-gamedata.base 5 near Shay ~ stashed 5/5 Square Goggles
+pg_take Malzin "${CH}" "Square Goggles" ~ took
+pg_take Malzin "${CH}" "Square Goggles" ~ took
+pg_take Malzin "${CH}" "Square Goggles" ~ took
+pg_take Malzin "${CH}" "Square Goggles" ~ took
+pg_take Malzin "${CH}" "Square Goggles" ~ took
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot .*name="Cloth Shirt" .*affixes=(?!Farming)[A-Z]
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot .*name="Square Goggles" .*affixes=(?!Science)[A-Z]
+# --- 249: Shay's pre-existing goggles from the save (first seen on a player): legal goggles pool, no player bias ---
+pg_check Shay "Square Goggles" ~ tags=GOGGLES_GENERIC .*valid=1

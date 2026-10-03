@@ -1,0 +1,42 @@
+# id: PG-craft-10
+# covers: PG 85, 86, 88, 90, 91, 92, 306
+# fixture: Crafting base
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); bench outputs empty (fresh fixture)
+# verify: ProfessionGear.log has one "roll source=crafted" line per eligible craft, tier = the finished item's quality (pg_check expected_tier); none for the First Aid Kit
+@wait-world
+@sleep 8
+speed 0
+# crafter context: Shay's best profession skill is Armour Smithing
+setstat Shay armour_smith 100
+# --- 85 + 90 + 306: the game's finish step runs first, then the item rolls once from its final quality, in the crafter's profession ---
+craftfinish Shay "Rag Shirt" at "Clothing Bench" ~ output 0 -> 1
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted key=pgp\S+ baseId=\S+ name="Rag Shirt" equipped=0 tier=\d tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+$
+pg_building "Clothing Bench" "Rag Shirt" ~ listed=1: \[Rag Shirt key=pgp\S+ equipped=0 tier=\d+ affixes=Armour Smithing:
+# --- 86: a second identical craft gets its own record ---
+craftfinish Shay "Rag Shirt" at "Clothing Bench" ~ output 1 -> 2
+pg_building "Clothing Bench" "Rag Shirt" ~ listed=2: \[Rag Shirt key=(pgp\S+) .*\[Rag Shirt key=(?!\1 )pgp\S+
+# --- 88: an ineligible craft gets no record ---
+craftfinish Malzin "Basic First Aid Kit" at "Medical" ~ output 0 -> 1
+pg_building "Medical" "Basic First Aid Kit" ~ Basic First Aid Kit key=- equipped=0 record=none
+# --- 306: the record matches the finished item (tier from final quality, cap, range, pool) ---
+pg_take Malzin "Clothing Bench" "Rag Shirt" ~ took from Clothing Bench to Malzin: Rag Shirt key=pgp\S+
+@set C1 pg_info Malzin "Rag Shirt" ~ key=(pgp\S+)
+@set CA pg_info Malzin "Rag Shirt" ~ affixes=(Armour Smithing:[\d.]+)
+pg_check Malzin "Rag Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
+# --- 91: crafted item works at once when worn ---
+setstat Malzin armour_smith 40
+# free the shirt slots (a step fails harmlessly if that shirt is not worn in this fixture)
+unequip Malzin "Black Cloth Shirt"
+unequip Malzin "Black Rag Shirt"
+equip Malzin "Rag Shirt" ~ equipped Rag Shirt .*equipped=1
+pg_info Malzin "Rag Shirt" ~ key=${C1} equipped=1
+pg_bonus Malzin armour_smithing ~ equipped_bonus=[1-9][\d.]*% base=40\.00 .*match=1
+# --- 92: crafted item keeps its exact roll through save/reload ---
+save kah-pg-craft
+load kah-pg-craft
+@wait-world
+@sleep 8
+speed 0
+pg_info Malzin "Rag Shirt" ~ key=${C1} equipped=1 tier=\d+ affixes=${CA}( |$)
+pg_bonus Malzin armour_smithing ~ equipped_bonus=[1-9][\d.]*% .*match=1

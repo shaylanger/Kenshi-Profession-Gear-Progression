@@ -1,0 +1,63 @@
+# id: PG-startup-01
+# covers: PG 42, 43, 142, 143, 144, 153, 154, 157
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC (install-dll.ps1 ProfessionGear); before the launch: Kenshi-Profession-Gear-Progression\set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# verify: ProfessionGear.log (recreated at launch) starts with "Profession Gear Progression 0.9.1-pretest starting", a config line with globalChance=100 overrides=8 exclusions=1, 15 "hooked" lines (incl. ?buyItem@Inventory) and "harness: connected, 13 commands"; the log stays well under 1 MB after the 10 idle game minutes; kenshi-ctl health = ok at the end
+@wait-world
+@sleep 8
+speed 0
+# 142-144: Stobe, KenshiFP and ProfessionGear commands are all registered in one game
+help ~ pg_census
+help ~ pg_loot
+help ~ stobe_say
+help ~ fp_mode
+stobe_ping ~ speaker=
+fp_state ~ fp_mode=0
+hunger Shay 250
+hunger Malzin 250
+# baseline: a forced affix on Malzin's worn Iron Hat
+pg_clear Malzin ~ Malzin: cleared affixes on \d+ of \d+ item\(s\)
+setstat Malzin farming 50
+pg_force_affix Malzin "Iron Hat" farming 20 tier 4 ~ forced: Iron Hat key=pgp\S+ equipped=1 tier=4 affixes=Farming:20
+pg_bonus Malzin farming ~ equipped_bonus=20% base=50\.00 .*match=1
+# 42: idle 10 game minutes at 10x
+speed 10
+@wait-game 10 600
+speed 0
+status ~ phase=world .*paused=1
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+# 43: 50x, 1x, pause: no duplicate generation, bonus unchanged
+speed 50
+@sleep 15
+speed 1
+@sleep 3
+speed 0
+status ~ phase=world .*paused=1
+pg_info Malzin "Iron Hat" ~ tier=4 affixes=Farming:20( |$)
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+# 153: many eligible items in one inventory (20 Cloth Shirts roll as world loot), stat lookup stays correct
+give Malzin 1168-gamedata.base 20
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+# 154: repeated stat queries (each must answer, no deadlock)
+pg_bonus Malzin farming ~ match=1
+pg_bonus Malzin farming ~ match=1
+pg_bonus Malzin farming ~ match=1
+pg_bonus Malzin farming ~ match=1
+pg_bonus Malzin farming ~ match=1
+stat Malzin farming ~ base=50
+stat Malzin farming ~ base=50
+stat Malzin farming ~ base=50
+pg_bonus Malzin farming ~ match=1
+pg_bonus Malzin farming ~ match=1
+# 157: a fight while profession gear is worn
+spawn "Hungry Bandit" Drifters near Malzin dist 30 count 1 ~ spawned 1/1
+@set D chars 120 ~ Hungry Bandit (#\d+) \[Drifters\]
+fight Malzin ${D} ~ fight \(factions set to -100\)
+speed 2
+@sleep 15
+speed 0
+status ~ phase=world
+hp ${D} ~ worst=
+pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ harness: forced Iron Hat

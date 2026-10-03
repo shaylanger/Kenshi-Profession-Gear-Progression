@@ -1,0 +1,58 @@
+# id: PG-identity-03
+# covers: PG 47, 51, 52, 53, 54, 55, 56, 58, 146, 159, 230, 273
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: K1/K2 in the CSV differ; every pg_check says valid=1 (tier from the item's quality, affix count within the tier cap, magnitudes inside the tier range, stats inside the item's legal pool: 54-56)
+@wait-world
+@sleep 8
+speed 0
+# --- 53: two identical base items get independent records (Shay's head is taken, hats go to her bag) ---
+give Shay 2185-gamedata.base 1
+@set K1 pg_info Shay "Rattan Hat" ~ Rattan Hat key=(pgp\S+) equipped=0
+@set A1 pg_info Shay "Rattan Hat" ~ affixes=(\S+)
+pg_check Shay "Rattan Hat" ~ tags=WORKWEAR_GENERIC .*valid=1
+# 51: the same item moves to a squadmate with its roll
+pg_loot Shay Malzin "Rattan Hat" ~ looted from Shay to Malzin: Rattan Hat key=${K1} equipped=0 tier=\d+ affixes=${A1}
+give Shay 2185-gamedata.base 1
+@set K2 pg_info Shay "Rattan Hat" ~ Rattan Hat key=(pgp\S+)
+pg_info Shay "Rattan Hat" ~ key=(?!${K1} )pgp\S+
+pg_check Shay "Rattan Hat" ~ valid=1
+# 47: repeated scans never reroll
+@sleep 3
+pg_info Malzin "Rattan Hat" ~ key=${K1} equipped=[01] tier=\d+ affixes=${A1}( |$)
+# --- 52: into storage and back, same instance and roll ---
+pg_store Malzin chest "Rattan Hat" ~ stored in .* from Malzin: Rattan Hat key=${K1} .*affixes=${A1}
+pg_building chest "Rattan Hat" ~ Rattan Hat key=${K1} equipped=0 tier=\d+ affixes=${A1}
+pg_take Malzin chest "Rattan Hat" ~ took from .* to Malzin: Rattan Hat key=${K1} equipped=0 tier=\d+ affixes=${A1} \|
+# --- 159: rapid hand-overs leave no stale bonus (Malzin's worn Wooden Sandals, forced Athletics +10) ---
+setstat Malzin athletics 40
+pg_force_affix Malzin "Wooden Sandals" athletics 10 tier 4 ~ Wooden Sandals key=pgp\S+ equipped=1 tier=4 affixes=Athletics:10
+pg_bonus Malzin athletics ~ equipped_bonus=10% .*match=1
+@set SB0 pg_bonus Shay athletics ~ equipped_bonus=([\d.]+)%
+pg_loot Malzin Shay "Wooden Sandals" ~ looted from Malzin to Shay: Wooden Sandals key=pgp\S+ equipped=0
+pg_bonus Malzin athletics ~ equipped_bonus=0% .*match=1
+pg_bonus Shay athletics ~ equipped_bonus=${SB0}% .*match=1
+pg_loot Shay Malzin "Wooden Sandals" ~ equipped=0 tier=4 affixes=Athletics:10
+pg_loot Malzin Shay "Wooden Sandals" ~ affixes=Athletics:10
+pg_loot Shay Malzin "Wooden Sandals" ~ affixes=Athletics:10
+pg_bonus Shay athletics ~ equipped_bonus=${SB0}% .*match=1
+pg_bonus Malzin athletics ~ equipped_bonus=0% .*match=1
+equip Malzin "Wooden Sandals" ~ equipped Wooden Sandals .*equipped=1
+pg_bonus Malzin athletics ~ equipped_bonus=10% .*match=1
+# --- 58 + 273 + 230: stackable / non-gear items never get a record, even with quantity 1 ---
+give Malzin 1866-gamedata.base 5
+pg_info Malzin "Raw Iron" ~ record=none \(not eligible
+give Malzin 95781-rebirth.mod 1
+pg_info Malzin "Bolts [Regulars]" ~ record=none \(not eligible
+give Malzin 46982-Newwworld.mod 1
+pg_info Malzin "Hoe" ~ record=none \(not eligible
+# --- 146: mod-added goggles (UWE Square Goggles (alt)) classify as generic goggles only ---
+give Malzin 5008368-Universal Wasteland Expansion.mod 1
+pg_check Malzin "Square Goggles (alt)" ~ tags=GOGGLES_GENERIC pool=Perception,Science,Engineering,Robotics,Turrets .*valid=1
+# --- 54-56: rule check on everything Malzin and Shay wear that has a record ---
+pg_check Malzin "Black Cloth Shirt" ~ valid=1
+pg_check Malzin "Black Rag Shirt" ~ valid=1
+pg_check Shay "Ninja Rags" ~ valid=1
+pg_check Shay "Wooden Sandals (colored)" ~ valid=1
+pg_check Shay "Square Goggles" ~ tags=GOGGLES_GENERIC .*valid=1

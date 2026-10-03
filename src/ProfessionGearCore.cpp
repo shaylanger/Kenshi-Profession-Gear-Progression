@@ -535,7 +535,12 @@ std::string SerializeRecord(const AffixRecord& r) {
   return s.str();
 }
 
-bool ParseRecord(const std::string& line, AffixRecord& out) {
+bool ParseRecord(const std::string& rawLine, AffixRecord& out) {
+  // The sidecar is written in text mode (CRLF on Windows) and read back with getline, which
+  // keeps the CR. Without this, every record with no affix ("key<TAB>base<TAB>tier<TAB><CR>")
+  // failed to parse, was dropped at load, and its item rolled again in the next session.
+  std::string line=rawLine;
+  while(!line.empty() && (line[line.size()-1]=='\r' || line[line.size()-1]=='\n')) line.erase(line.size()-1);
   std::vector<std::string> f; size_t st=0;
   for(;;){size_t p=line.find('\t',st);if(p==std::string::npos){f.push_back(line.substr(st));break;}f.push_back(line.substr(st,p-st));st=p+1;}
   if(f.size()!=4 || f[0].empty() || f[1].empty()) return false;

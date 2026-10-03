@@ -1,0 +1,19 @@
+# id: PG-config-disabled-31
+# covers: PG 127, 128, 150 (319 recheck)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode Disabled -Sidecar StartupTest (Enabled=false; the sidecar is replaced by tests\fixtures\profession_gear_affixes.startup-test.tsv, the old one is set aside)
+# verify: ProfessionGear.log: "config enabled=0", "loaded affixes=3 legacyIgnored=1" (3 valid pgp1 rows, 1 corrupt row skipped, 1 legacy runtime-handle row ignored, duplicate key = last row wins), all hooks still "hooked", and NO "roll source=" line during the whole launch
+@wait-world
+@sleep 8
+speed 0
+help ~ pg_bonus
+# 150: hooks stay safe, nothing rolls, no stat effect
+give Shay 2185-gamedata.base 1
+pg_info Shay "Rattan Hat" ~ affixes=none|record=none
+pg_force_affix Malzin "Iron Hat" farming 20 tier 4 ~ affixes=Farming:20
+pg_bonus Malzin farming ~ equipped_bonus=0% .*match=1
+speed 2
+@sleep 5
+speed 0
+status ~ phase=world

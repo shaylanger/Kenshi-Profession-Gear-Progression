@@ -1,0 +1,24 @@
+# id: PG-config-normal-40
+# covers: PG 102, 126, 237 (normal chances)
+# fixture: Trader
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (shipped chances, roll logging on, empty sidecar; after this launch: set_test_mode.ps1 -Sidecar Restore -Mode Forced -Rules InGameTest, or -Mode Normal -Rules Normal to leave testing)
+# verify: ProfessionGear.log "loaded affixes=0 legacyIgnored=0" (126, empty sidecar); 102 = rolled share on the 10 spawned slaves vs the 10 spawned drifters (slaves ~0.2x); 237 = shop stock rolls per stat across this town's shops
+@wait-world
+@sleep 8
+speed 0
+# --- 237: natural stock of every trader here, normal chances ---
+@set TR traders 300 ~ ^\d+ traders within [\d.]+: (.+?) #\d+
+pg_shop "${TR}" ~ trader=1
+pg_shop Erisila
+pg_shop Keys
+pg_shop Yuit
+pg_shop Iflem
+pg_shop Habul
+pg_census ~ shop: records=\d+
+# --- 102: slaves get special gear far less often than ordinary NPCs (same chances otherwise) ---
+spawn "Slave" Slaves near Shay dist 80 count 10 ~ spawned
+spawn "Drifter" Drifters near Shay dist 80 count 10 ~ spawned
+@sleep 3
+pg_census Slaves ~ npc: records=\d+
+pg_census Drifters ~ npc: records=\d+

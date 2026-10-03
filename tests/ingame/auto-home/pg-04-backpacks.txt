@@ -1,0 +1,88 @@
+# id: PG-backpacks-04
+# covers: PG 109-119, 121, 122, 147, 255, 257, 272, 281, 282, 291, 292, 299 (117 recheck)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch: the rules make plain vanilla backpacks the specialist packs; Traders Backpack Medium is a trade pack by name)
+# verify: pg_pack: content_ratio = the specialist share math, applied_ratio = hooked_total / vanilla_total (must equal content_ratio while worn, 1.000 when not worn); CSV W_EQ < W_UN (Malzin's carried weight is lower while the ore pack is worn: the game's character weight uses the hooked pack total, 292/122)
+@wait-world
+@sleep 8
+speed 0
+# --- ore pack (Small Backpack): empty, ore only, mixed, not worn ---
+give Malzin 576-gamedata.base 1
+pg_pack Malzin "Small Backpack" ~ tags=PACK_ORE equipped=1 items=0 .*applied_ratio=1\.000
+packput Malzin "Small Backpack" 1866-gamedata.base 5
+pg_pack Malzin "Small Backpack" ~ tags=PACK_ORE equipped=1 items=\d+ .*content_ratio=0\.250 .*applied_ratio=0\.250
+@set W_EQ pg_pack Malzin "Small Backpack" ~ char_weight=([\d.]+)
+packput Malzin "Small Backpack" 43959-rebirth.mod 2
+@set CR pg_pack Malzin "Small Backpack" ~ content_ratio=(0\.\d{3})
+pg_pack Malzin "Small Backpack" ~ content_ratio=0\.(?!250)\d{3} .*applied_ratio=${CR} 
+unequip Malzin "Small Backpack" ~ -> main\)
+pg_pack Malzin "Small Backpack" ~ equipped=0 .*applied_ratio=1\.000
+@set W_UN pg_pack Malzin "Small Backpack" ~ char_weight=([\d.]+)
+@echo Malzin carried weight with the ore pack worn / not worn: ${W_EQ} / ${W_UN}
+pg_store Malzin chest "Small Backpack" ~ stored in
+# --- PACK_CROP (Medium Backpack) ---
+give Malzin 635-gamedata.base 1
+pg_pack Malzin "Medium Backpack" ~ tags=PACK_CROP equipped=1 items=0
+packput Malzin "Medium Backpack" 1913-gamedata.base 5
+pg_pack Malzin "Medium Backpack" ~ tags=PACK_CROP equipped=1 items=\d+ .*content_ratio=0\.300 .*applied_ratio=0\.300
+unequip Malzin "Medium Backpack" ~ -> main\)
+pg_pack Malzin "Medium Backpack" ~ equipped=0 .*applied_ratio=1\.000
+pg_store Malzin chest "Medium Backpack" ~ stored in
+# --- PACK_CONSTRUCTION (Large Backpack) ---
+give Malzin 1012-gamedata.base 1
+pg_pack Malzin "Large Backpack" ~ tags=PACK_CONSTRUCTION equipped=1 items=0
+packput Malzin "Large Backpack" 580-gamedata.base 5
+pg_pack Malzin "Large Backpack" ~ tags=PACK_CONSTRUCTION equipped=1 items=\d+ .*content_ratio=0\.350 .*applied_ratio=0\.350
+unequip Malzin "Large Backpack" ~ -> main\)
+pg_pack Malzin "Large Backpack" ~ equipped=0 .*applied_ratio=1\.000
+pg_store Malzin chest "Large Backpack" ~ stored in
+# --- PACK_MEDICAL (Medium Backpack (colored)) ---
+give Malzin 1286-gamedata.base 1
+pg_pack Malzin "Medium Backpack (colored)" ~ tags=PACK_MEDICAL equipped=1 items=0
+packput Malzin "Medium Backpack (colored)" 1435-gamedata.base 5
+pg_pack Malzin "Medium Backpack (colored)" ~ tags=PACK_MEDICAL equipped=1 items=\d+ .*content_ratio=0\.350 .*applied_ratio=0\.350
+unequip Malzin "Medium Backpack (colored)" ~ -> main\)
+pg_pack Malzin "Medium Backpack (colored)" ~ equipped=0 .*applied_ratio=1\.000
+pg_store Malzin chest "Medium Backpack (colored)" ~ stored in
+# --- PACK_TECH (Shopkeepers Backpack) ---
+give Malzin 910-gamedata.base 1
+pg_pack Malzin "Shopkeepers Backpack" ~ tags=PACK_TECH equipped=1 items=0
+packput Malzin "Shopkeepers Backpack" 43951-rebirth.mod 5
+pg_pack Malzin "Shopkeepers Backpack" ~ tags=PACK_TECH equipped=1 items=\d+ .*content_ratio=0\.350 .*applied_ratio=0\.350
+unequip Malzin "Shopkeepers Backpack" ~ -> main\)
+pg_pack Malzin "Shopkeepers Backpack" ~ equipped=0 .*applied_ratio=1\.000
+pg_store Malzin chest "Shopkeepers Backpack" ~ stored in
+# --- PACK_HAULING (Old Traders backpack small) ---
+give Malzin 1019-gamedata.base 1
+pg_pack Malzin "Old Traders backpack small" ~ tags=PACK_HAULING equipped=1 items=0
+packput Malzin "Old Traders backpack small" 43959-rebirth.mod 5
+pg_pack Malzin "Old Traders backpack small" ~ tags=PACK_HAULING equipped=1 items=\d+ .*content_ratio=0\.750 .*applied_ratio=0\.750
+unequip Malzin "Old Traders backpack small" ~ -> main\)
+pg_pack Malzin "Old Traders backpack small" ~ equipped=0 .*applied_ratio=1\.000
+pg_store Malzin chest "Old Traders backpack small" ~ stored in
+# --- construction pack also takes Iron Plates (113) ---
+give Malzin 1012-gamedata.base 1
+packput Malzin "Large Backpack" 42159-gamedata.base 3
+pg_pack Malzin "Large Backpack" ~ tags=PACK_CONSTRUCTION equipped=1 .*content_ratio=0\.350 .*applied_ratio=0\.350
+unequip Malzin "Large Backpack"
+pg_store Malzin chest "Large Backpack" ~ stored in
+# --- trade pack: vanilla stack bonus x3 stays vanilla, trade goods at 0.55, the rest unchanged (116, 121, 122, 257, 272) ---
+give Malzin 1498-gamedata.base 1
+pg_pack Malzin "Traders Backpack Medium" ~ tags=PACK_TRADE equipped=1
+packput Malzin "Traders Backpack Medium" 585-gamedata.base 6
+pg_pack Malzin "Traders Backpack Medium" ~ content_ratio=0\.550 vanilla_total=[\d.]+ hooked_total=[\d.]+ applied_ratio=0\.550
+packput Malzin "Traders Backpack Medium" 43959-rebirth.mod 2
+@set TR pg_pack Malzin "Traders Backpack Medium" ~ content_ratio=(0\.\d{3})
+pg_pack Malzin "Traders Backpack Medium" ~ content_ratio=0\.(?!550)\d{3} .*applied_ratio=${TR}
+unequip Malzin "Traders Backpack Medium"
+pg_store Malzin chest "Traders Backpack Medium" ~ stored in
+# --- generic control: Small Thieves Backpack gets no specialist reduction, may roll Athletics (117, 281, 299) ---
+give Malzin 1288-gamedata.base 1
+packput Malzin "Small Thieves Backpack" 580-gamedata.base 3
+pg_pack Malzin "Small Thieves Backpack" ~ tags=THIEF_GEAR,PACK_GENERIC equipped=1 .*content_ratio=1\.000 .*applied_ratio=1\.000
+pg_check Malzin "Small Thieves Backpack" ~ pool=.*Athletics.* valid=1
+# --- 282: a specialist pack is not also a generic pack; 147: a mod-added pack made a hauling pack by exact rule ---
+pg_pack Shay "Medium Backpack" ~ base=5066412-Universal Wasteland Expansion\.mod tags=PACK_HAULING equipped=1
+packput Shay "Medium Backpack" 43959-rebirth.mod 1
+pg_pack Shay "Medium Backpack" ~ tags=PACK_HAULING equipped=1 .*content_ratio=0\.750 .*applied_ratio=0\.750
