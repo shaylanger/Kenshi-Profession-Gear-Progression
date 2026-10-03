@@ -24,8 +24,8 @@ Before: `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (sidecar kept).
 | 9 | auto-home | `auto-home/pg-09-soak.txt` (30 real minutes at 50x; optional, last) | fresh |
 | 10 | Crafting base | `crafting-base/pg-10-craftfinish.txt` | fresh |
 | 11 | Crafting base | `crafting-base/pg-11-real-craft.txt` | fresh |
-| 12 | Crafting base | `crafting-base/pg-21-shop-stock.txt` (Apothecary Abia's shop) | fresh |
-| 13 | Trader | `trader/pg-20-shop-stock.txt` (diagnostic only: where the Trade Ninjas keep stock) | fresh |
+| 12 | Trader | `trader/pg-21-shop-stock.txt` (Habul's shop) | fresh |
+| 13 | Trader | `trader/pg-20-shop-stock.txt` (diagnostic only, optional) | fresh |
 
 Every file in this launch needs a fresh fixture (they change Malzin's/Shay's gear and stats).
 Saves made: `kah-pg-stale`, `kah-pg-npc`, `kah-pg-persist-a/b`, `kah-pg-craft`, `kah-pg-midcraft`,

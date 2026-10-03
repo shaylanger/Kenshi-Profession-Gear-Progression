@@ -1,27 +1,24 @@
 # id: PG-shop-21
 # covers: PG 212, 218, 219, 237, 239, 323, 324 (211, 214, 215 recheck through the real purchase path)
-# fixture: Crafting base
+# fixture: Trader
 # reset: fresh
 # needs: ProfessionGearProgression.dll FAA5B471 (shop storage scan + purchase hook); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: ProfessionGear.log has "shop stock: trader=..." and "roll source=trader ... equipped=0" lines for storage items; if the purchase handed over a copy, "purchase: kept shop id=<RK>" (either way the bought item keeps RK and its affixes)
 @wait-world
 @sleep 8
 speed 0
-# Apothecary Abia keeps her stock in shop storage (Old Wooden Barrel etc.); Shay goes next to her
-teleport Shay "Apothecary Abia" dist 12
-@set TR traders 60 ~ (Apothecary Abia)
-# diagnostic: her faction's buildings with an inventory around her
-buildings 80 near "${TR}" ~ buildings within
+# Habul (Trade Ninjas) keeps stock in shop counters/barrels 11-55 from him (run m3); Apothecary Abia has none
+teleport Shay Habul dist 6
+@set TR traders 40 ~ (Habul)
+buildings 60 near Habul ~ Shop Counter
 # --- 219: the shop's own storage (natural stock) is scanned as trader stock ---
 pg_shop "${TR}" ~ trader=1 storages=[1-9]
-@set SB pg_shop "${TR}" ~ \|\| (.+?) \(items=
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ shop stock: trader=
-# put known generic stock into that storage (if this storage only takes food etc., these fail: then use the
-# storage pg_shop lists with clothing in it, or report the storage names)
-fill "${SB}" 2185-gamedata.base 1 ~ \(1 of 1 fitted\)
-fill "${SB}" 2168-gamedata.base 2 ~ \(2 of 2 fitted\)
-fill "${SB}" 1168-gamedata.base 2 ~ \(2 of 2 fitted\)
+# put known generic stock on his shop counter (nearest to Shay = Habul's, 11 from him)
+fill "Shop Counter" 2185-gamedata.base 1 ~ \(1 of 1 fitted\)
+fill "Shop Counter" 2168-gamedata.base 2 ~ \(2 of 2 fitted\)
+fill "Shop Counter" 1168-gamedata.base 2 ~ \(2 of 2 fitted\)
 pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(?!none)
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ shop stock: trader=
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=0 tier=\d tags=WORKWEAR_GENERIC affixes=
 # 212: generic goggles in shop stock roll only from the goggles pool
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader .*name="Square Goggles" equipped=0 tier=\d tags=GOGGLES_GENERIC affixes=((Perception|Science|Engineering|Robotics|Turrets):[\d.]+,?)+\r?$
@@ -46,7 +43,7 @@ load kah-pg-trader
 @sleep 8
 speed 0
 pg_info Shay "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
-# --- 218: gear a trader wears follows her own profession (Farming 100), not random stock.
-# Abia wears a "Rag Loincloth (colored) [alt]" (generic workwear); pg_roll re-rolls it in its worn context
-setstat "${TR}" farming 100
-pg_roll "${TR}" "Rag Loincloth" ~ rolled: Rag Loincloth\S* .*equipped=1 tier=\d+ affixes=Farming:[\d.]+$
+# --- 218: gear a trader wears follows his own profession (Farming 100), not random stock:
+# re-roll Habul's worn Cloth Shirt (generic workwear) in its worn context
+setstat Habul farming 100
+pg_roll Habul "Cloth Shirt" ~ rolled: Cloth Shirt key=pgp\S+ equipped=1 tier=\d+ affixes=Farming:[\d.]+$
