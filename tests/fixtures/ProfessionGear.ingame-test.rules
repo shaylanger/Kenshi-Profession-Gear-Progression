@@ -20,3 +20,5 @@ tag|1019-gamedata.base|PACK_HAULING
 exclude|575-gamedata.base
 # Override (test 61): Leather Vest has no profession semantics; the rule makes it cooking gear.
 tag|2212-gamedata.base|TOOL_COOKING
+# Mod-added backpack made a specialist by exact rule (test 147): UWE "Medium Backpack" (Shay wears one).
+tag|5066412-Universal Wasteland Expansion.mod|PACK_HAULING

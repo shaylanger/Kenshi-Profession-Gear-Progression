@@ -946,7 +946,11 @@ int KahTake(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   const int qty=item->quantity>0?item->quantity:1;
   Item* moved=from->removeItemDontDestroy_returnsItem(item,qty,false);
   if(!moved){ r->append(r,"remove from the building failed"); return KAH_ERROR; }
-  if(!to->addItem(moved,qty,false,false)){
+  // Main inventory first (never auto-equipped), as a player drag into the bag does.
+  InventorySection* main=0;
+  try { main=to->getSection("main"); } catch (...) {}
+  bool added=main?main->addItem(moved,qty):false;
+  if(!added && !to->addItem(moved,qty,false,false)){
     from->addItem(moved,qty,false,false);
     r->append(r,(c->getName()+" has no room; item left in "+b->getName()).c_str());
     return KAH_ERROR;
@@ -1032,11 +1036,45 @@ int KahCheck(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   return problems.empty()?KAH_OK:KAH_ERROR;
 }
 
-// pg_census [radius]: records of items on loaded characters and in trader shop storage, by owner
-// class (player/npc/trader/shop) and stat. Data for the distribution rows (220-228, 237, 250).
+// pg_loot <from npc> <to npc> <item>: move the same item instance between characters, equipped or
+// not (looting a body, handing over worn gear). Lands in the target's main inventory.
+int KahLoot(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<4){ r->append(r,"usage: pg_loot <from npc> <to npc> <item>"); return KAH_ERROR; }
+  Character* from=KahFindCharacter(argv[1]);
+  Character* to=KahFindCharacter(argv[2]);
+  if(!from || !to){ r->append(r,(std::string("no character named: ")+(from?argv[2]:argv[1])).c_str()); return KAH_ERROR; }
+  Item* item=KahFindItem(from,argv[3]);
+  if(!item){ r->append(r,(from->getName()+" has no item matching: "+argv[3]).c_str()); return KAH_ERROR; }
+  Inventory* fi=from->getInventory();
+  Inventory* ti=to->getInventory();
+  if(!fi || !ti){ r->append(r,"missing inventory"); return KAH_ERROR; }
+  const std::string before=KahRecordText(item);
+  const int qty=item->quantity>0?item->quantity:1;
+  Item* moved=fi->removeItemDontDestroy_returnsItem(item,qty,false);
+  if(!moved){ r->append(r,"remove failed"); return KAH_ERROR; }
+  InventorySection* main=0;
+  try { main=ti->getSection("main"); } catch (...) {}
+  bool added=main?main->addItem(moved,qty):false;
+  if(!added) added=ti->addItem(moved,qty,false,false);
+  if(!added){
+    fi->addItem(moved,qty,false,false);
+    r->append(r,(to->getName()+" has no room; item returned to "+from->getName()).c_str());
+    return KAH_ERROR;
+  }
+  RebuildCharacterBonusCache(from);
+  RebuildCharacterBonusCache(to);
+  Log("harness: looted "+KahRecordText(moved)+" from "+from->getName()+" to "+to->getName());
+  r->append(r,("looted from "+from->getName()+" to "+to->getName()+": "+KahRecordText(moved)+" | before: "+before).c_str());
+  return KAH_OK;
+}
+
+// pg_census [name filter]: records of items on loaded characters (whose name contains the filter)
+// and in trader shop storage, by owner class (player/npc/trader/shop) and stat. Data for the
+// distribution rows (102-104, 220-228, 237, 245).
 int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   GameWorld* world=KahWorld();
   if(!world){ r->append(r,"no world"); return KAH_ERROR; }
+  const std::string filter=argc>=2?PGP::Lower(argv[1]):std::string();
   const char* classes[4]={"player","npc","trader","shop"};
   int recs[4]={0,0,0,0}, rolled[4]={0,0,0,0}, multi[4]={0,0,0,0};
   std::map<PGP::ProfessionStat,int> stats[4];
@@ -1046,6 +1084,11 @@ int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
     for(ogre_unordered_set<Character*>::type::const_iterator ci=chars.begin();ci!=chars.end();++ci){
       Character* c=*ci;
       if(!c) continue;
+      if(!filter.empty()){
+        std::string n;
+        try { n=PGP::Lower(c->getName()); } catch (...) { continue; }
+        if(n.find(filter)==std::string::npos) continue;
+      }
       int cls=1;
       try { if(c->isPlayerCharacter()) cls=0; else if(c->isATrader()) cls=2; } catch (...) {}
       std::vector<Inventory*> invs;
@@ -1078,6 +1121,7 @@ int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
     }
   } catch (...) {}
   std::ostringstream ss;
+  if(!filter.empty()) ss<<"filter=\""<<filter<<"\" ";
   for(int k=0;k<4;++k){
     ss<<(k?" || ":"")<<classes[k]<<": records="<<recs[k]<<" rolled="<<rolled[k]<<" multi="<<multi[k];
     for(std::map<PGP::ProfessionStat,int>::const_iterator s=stats[k].begin();s!=stats[k].end();++s)
@@ -1141,9 +1185,10 @@ void KahTick() {
        +g_kah.registerCommand("pg_pack","pg_pack <npc> <pack>",KahPack,0)
        +g_kah.registerCommand("pg_store","pg_store <npc> <building> <item>",KahStore,0)
        +g_kah.registerCommand("pg_check","pg_check <npc> <item>",KahCheck,0)
-       +g_kah.registerCommand("pg_census","pg_census",KahCensus,0);
+       +g_kah.registerCommand("pg_census","pg_census [name filter]",KahCensus,0)
+       +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot)";
   Log(ss.str());
 }
 
