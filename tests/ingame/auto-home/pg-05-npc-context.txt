@@ -2,7 +2,7 @@
 # covers: PG 94, 98, 99, 100, 105, 107, 228 (93/95/96/97/235/236/320 recheck)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: the @log lines show source=npc and a single affix of the NPC's own profession on generic workwear/goggles; after kill + loot and after save/reload the hat keeps its key and affix (105, 107)
 @wait-world
 @sleep 8

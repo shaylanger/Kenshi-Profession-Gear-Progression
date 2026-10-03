@@ -2,7 +2,8 @@
 # covers: PG 85, 86, 88, 90, 91, 92, 306
 # fixture: Crafting base
 # reset: fresh
-# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); bench outputs empty (fresh fixture)
+# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); bench outputs empty (fresh fixture)
+# needs fix 159C552F (craft hook rolls the item that reaches the bench output)
 # verify: ProfessionGear.log has one "roll source=crafted" line per eligible craft, tier = the finished item's quality (pg_check expected_tier); none for the First Aid Kit
 @wait-world
 @sleep 8
@@ -13,17 +14,17 @@ setstat Shay armour_smith 100
 craftfinish Shay "Rag Shirt" at "Clothing Bench" ~ output 0 -> 1
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted key=pgp\S+ baseId=\S+ name="Rag Shirt" equipped=0 tier=\d tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+\r?$
 pg_building "Clothing Bench" "Rag Shirt" ~ listed=1: \[Rag Shirt key=pgp\S+ equipped=0 tier=\d+ affixes=Armour Smithing:
-# --- 86: a second identical craft gets its own record ---
-craftfinish Shay "Rag Shirt" at "Clothing Bench" ~ output 1 -> 2
-pg_building "Clothing Bench" "Rag Shirt" ~ listed=2: \[Rag Shirt key=(pgp\S+) .*\[Rag Shirt key=(?!\1 )pgp\S+
+# --- 306: the record matches the finished item (tier from final quality, cap, range, pool); the same instance moves to Malzin ---
+@set C1 pg_building "Clothing Bench" "Rag Shirt" ~ Rag Shirt key=(pgp\S+)
+pg_take Malzin "Clothing Bench" "Rag Shirt" ~ took from Clothing Bench to Malzin: Rag Shirt key=${C1} equipped=0 tier=\d+ affixes=Armour Smithing:
+@set CA pg_info Malzin "Rag Shirt" ~ affixes=(Armour Smithing:[\d.]+)
+pg_check Malzin "Rag Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
+# --- 86: a second identical craft (the output holds one shirt, so after taking the first) gets its own record ---
+craftfinish Shay "Rag Shirt" at "Clothing Bench" ~ output 0 -> 1
+pg_building "Clothing Bench" "Rag Shirt" ~ listed=1: \[Rag Shirt key=(?!${C1} )pgp\S+ equipped=0 tier=\d+ affixes=Armour Smithing:
 # --- 88: an ineligible craft gets no record ---
 craftfinish Malzin "Basic First Aid Kit" at "Medical" ~ output 0 -> 1
 pg_building "Medical" "Basic First Aid Kit" ~ Basic First Aid Kit key=- equipped=0 record=none
-# --- 306: the record matches the finished item (tier from final quality, cap, range, pool) ---
-pg_take Malzin "Clothing Bench" "Rag Shirt" ~ took from Clothing Bench to Malzin: Rag Shirt key=pgp\S+
-@set C1 pg_info Malzin "Rag Shirt" ~ key=(pgp\S+)
-@set CA pg_info Malzin "Rag Shirt" ~ affixes=(Armour Smithing:[\d.]+)
-pg_check Malzin "Rag Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
 # --- 91: crafted item works at once when worn ---
 setstat Malzin armour_smith 40
 # free the shirt slots (a step fails harmlessly if that shirt is not worn in this fixture)

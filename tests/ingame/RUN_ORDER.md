@@ -1,6 +1,6 @@
 # PG in-game run order (for the coordinator)
 
-Build: `out\ProfessionGearProgression.dll` **475B9508** (`install-dll.ps1 ProfessionGear`, Kenshi closed).
+Build: `out\ProfessionGearProgression.dll` **159C552F** (`install-dll.ps1 ProfessionGear`, Kenshi closed).
 All config switches are done with Kenshi closed:
 `powershell -File C:\KenshiModding\Kenshi-Profession-Gear-Progression\set_test_mode.ps1 ...`
 (it refuses while Kenshi runs). Logs to keep before every relaunch: `ProfessionGear.log` and
@@ -24,7 +24,8 @@ Before: `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (sidecar kept).
 | 9 | auto-home | `auto-home/pg-09-soak.txt` (30 real minutes at 50x; optional, last) | fresh |
 | 10 | Crafting base | `crafting-base/pg-10-craftfinish.txt` | fresh |
 | 11 | Crafting base | `crafting-base/pg-11-real-craft.txt` | fresh |
-| 12 | Trader | `trader/pg-20-shop-stock.txt` | fresh |
+| 12 | Crafting base | `crafting-base/pg-21-shop-stock.txt` (Apothecary Abia's shop) | fresh |
+| 13 | Trader | `trader/pg-20-shop-stock.txt` (diagnostic only: where the Trade Ninjas keep stock) | fresh |
 
 Every file in this launch needs a fresh fixture (they change Malzin's/Shay's gear and stats).
 Saves made: `kah-pg-stale`, `kah-pg-npc`, `kah-pg-persist-a/b`, `kah-pg-craft`, `kah-pg-midcraft`,

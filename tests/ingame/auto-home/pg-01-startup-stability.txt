@@ -2,7 +2,7 @@
 # covers: PG 42, 43, 142, 143, 144, 153, 154, 157
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 475B9508 (install-dll.ps1 ProfessionGear); before the launch: Kenshi-Profession-Gear-Progression\set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 159C552F (install-dll.ps1 ProfessionGear); before the launch: Kenshi-Profession-Gear-Progression\set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # verify: ProfessionGear.log (recreated at launch) starts with "Profession Gear Progression 0.9.1-pretest starting", a config line with globalChance=100 overrides=8 exclusions=1, 15 "hooked" lines (incl. ?buyItem@Inventory) and "harness: connected, 13 commands"; the log stays well under 1 MB after the 10 idle game minutes; kenshi-ctl health = ok at the end
 @wait-world
 @sleep 8

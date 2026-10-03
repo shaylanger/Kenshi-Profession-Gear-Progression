@@ -2,7 +2,8 @@
 # covers: PG 87, 90, 160, 253 (59, 232 live recheck with a crafted weapon)
 # fixture: Crafting base
 # reset: fresh
-# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# Shay takes the finished shirts (Malzin's bag is full in this fixture)
 # verify: CSV T1 (armour smith 5) vs the second craft's tier (armour smith 100): higher skill -> higher quality -> higher tier (87); exactly one record for the craft saved mid-progress (160); grep ProfessionGear.log: one "roll source=crafted" per Rag Shirt, none for the Katana
 @wait-world
 @sleep 8
@@ -11,17 +12,17 @@ hunger Malzin 280
 clearjobs Malzin
 blueprint "Rag Shirt"
 benches 150 crafts ~ Clothing Bench .*Rag Shirt
-give Malzin 584-gamedata.base 10
+give Malzin 584-gamedata.base 3
 # --- low-skill craft ---
 setstat Malzin armour_smith 5
 craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
 speed 10
 @until 400 benches 150 ~ out 6x6: \[Rag Shirt
 speed 0
-pg_take Malzin "Clothing Bench" "Rag Shirt" ~ took from Clothing Bench to Malzin: Rag Shirt key=pgp\S+
-@set T1 pg_check Malzin "Rag Shirt" ~ tier=(\d+)
-pg_check Malzin "Rag Shirt" ~ valid=1
-pg_store Malzin "General Camp Storage Chest" "Rag Shirt" ~ stored
+pg_take Shay "Clothing Bench" "Rag Shirt" ~ took from Clothing Bench to Shay: Rag Shirt key=pgp\S+
+@set T1 pg_check Shay "Rag Shirt" ~ tier=(\d+)
+pg_check Shay "Rag Shirt" ~ valid=1
+pg_store Shay "General Camp Storage Chest" "Rag Shirt" ~ stored
 # --- high-skill craft: higher quality tier (87), crafter's profession pool (90), high-quality items take part (253) ---
 setstat Malzin armour_smith 100
 craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
@@ -29,15 +30,15 @@ speed 10
 @until 400 benches 150 ~ out 6x6: \[Rag Shirt
 speed 0
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted .*name="Rag Shirt" .*tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+\r?$
-pg_take Malzin "Clothing Bench" "Rag Shirt" ~ took
-pg_check Malzin "Rag Shirt" ~ tier=(?!${T1} )\d+ .*valid=1
-pg_store Malzin "General Camp Storage Chest" "Rag Shirt" ~ stored
+pg_take Shay "Clothing Bench" "Rag Shirt" ~ took
+pg_check Shay "Rag Shirt" ~ tier=(?!${T1} )\d+ .*valid=1
+pg_store Shay "General Camp Storage Chest" "Rag Shirt" ~ stored
 # --- 160: save while a craft is in progress, reload, finish: the item rolls once ---
+give Malzin 584-gamedata.base 1
 craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
-speed 1
-@sleep 4
+speed 2
+@until 120 benches 150 ~ Clothing Bench [^|]*queue=1 \(first: Rag Shirt[^|]* [1-9]\d*%
 speed 0
-benches 150 ~ Clothing Bench [^|]*queue=1
 save kah-pg-midcraft
 @sleep 8
 load kah-pg-midcraft
@@ -51,7 +52,8 @@ pg_building "Clothing Bench" "Rag Shirt" ~ listed=1: \[Rag Shirt key=pgp\S+ equi
 research "Basic Weapon Smithing"
 research "Basic Weapon Grades"
 research "Katanas"
-give Malzin "Iron Plates" 10
+# Malzin's bag is full in this fixture: plates go straight into the bench input
+fill "Weapon Smith" "Iron Plates" 2 ~ fitted
 clearjobs Malzin
 craft Malzin Katana at "Weapon Smith" ~ queued 1x
 speed 10

@@ -1,51 +1,16 @@
-# id: PG-shop-20
-# covers: PG 212, 218, 219, 237, 239, 323, 324 (211, 214, 215 recheck through the real purchase path)
+# id: PG-shop-20-diag
+# covers: PG 219 (diagnostic: where do the Trade Ninjas keep their stock?)
 # fixture: Trader
 # reset: fresh
-# needs: ProfessionGearProgression.dll 475B9508 (shop storage scan + purchase hook); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
-# verify: ProfessionGear.log has "shop stock: trader=..." and "roll source=trader ... equipped=0" lines for storage items; if the purchase handed over a copy, "purchase: kept shop id=<RK>" (either way the bought item keeps RK and its affixes)
+# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: send the CSV to the PG agent: launch 1 found storages=0 for Erisila (no building of her faction within 30 holds stock), so the shop scan rule (faction storage within 30) misses this shop; the buildings list shows names, factions and distances to decide the rule
 @wait-world
 @sleep 8
 speed 0
-@set TR traders 300 ~ ^\d+ traders within [\d.]+: (.+?) #\d+
-# --- 219: the shop's own storage (natural stock) is scanned as trader stock ---
-pg_shop "${TR}" ~ trader=1 storages=[1-9]
-@set SB pg_shop "${TR}" ~ \|\| (.+?) \(items=
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ shop stock: trader=
-# put known generic stock into that storage (if this storage only takes food etc., these fail: then use the
-# storage pg_shop lists with clothing in it, or report the storage names)
-fill "${SB}" 2185-gamedata.base 1 ~ \(1 of 1 fitted\)
-fill "${SB}" 2168-gamedata.base 2 ~ \(2 of 2 fitted\)
-fill "${SB}" 1168-gamedata.base 2 ~ \(2 of 2 fitted\)
-pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(?!none)
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=0 tier=\d tags=WORKWEAR_GENERIC affixes=
-# 212: generic goggles in shop stock roll only from the goggles pool
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader .*name="Square Goggles" equipped=0 tier=\d tags=GOGGLES_GENERIC affixes=((Perception|Science|Engineering|Robotics|Turrets):[\d.]+,?)+\r?$
-@set RK pg_shop "${TR}" ~ Rattan Hat key=(pgp\S+)
-@set RA pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(\S+)
-# --- 219 + 214 + 239: buy through the game's purchase path: the bought hat is the shop's record ---
-money Shay 5000
-trade Shay "${TR}" "Rattan Hat" ~ bought Rattan Hat from
-pg_info Shay "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
-pg_check Shay "Rattan Hat" ~ valid=1
-pg_bonus Shay farming ~ match=1
-trade Shay "${TR}" "Square Goggles" ~ bought Square Goggles from
-pg_check Shay "Square Goggles" ~ tags=GOGGLES_GENERIC .*valid=1
-trade Shay "${TR}" "Cloth Shirt" ~ bought Cloth Shirt from
-pg_check Shay "Cloth Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
-# 237: stock statistics in this town (data), no illegal stats on anything bought
-pg_census ~ shop: records=[1-9]\d* rolled=[1-9]
-save kah-pg-trader
-@sleep 8
-load kah-pg-trader
-@wait-world
-@sleep 8
-speed 0
-pg_info Shay "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
-# --- 218: gear a trader wears follows her own profession (Farming 100), not random stock.
-# give never auto-equips, so: give, equip, then pg_roll re-rolls the worn shirt in its worn context
-# (if her shirt slot is taken the equip step fails: then 218 stays open)
-setstat "${TR}" farming 100
-give "${TR}" 1168-gamedata.base 1
-equip "${TR}" "Cloth Shirt" ~ equipped Cloth Shirt .*equipped=1
-pg_roll "${TR}" "Cloth Shirt" ~ rolled: Cloth Shirt key=pgp\S+ equipped=1 tier=\d+ affixes=Farming:[\d.]+$
+traders 300 ~ traders within
+pg_shop Erisila ~ trader=1
+shopstock Erisila ~ trader=1
+buildings 60 near Erisila ~ buildings within
+shopstock Habul ~ trader=1
+buildings 60 near Habul ~ buildings within
+pg_census ~ shop: records=

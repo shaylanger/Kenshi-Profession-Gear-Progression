@@ -22,7 +22,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Built, not installed:** `out\ProfessionGearProgression.dll` **475B9508** (0.9.1-pretest).
+- **Built, not installed:** `out\ProfessionGearProgression.dll` **159C552F** (0.9.1-pretest).
   Installed: D667F5EE. Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
@@ -35,7 +35,8 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   storage within 30) is scanned as trader stock; `Inventory::buyItem` hook keeps the shop record on
   a bought copy; records of items that are not eligible now give no bonus/tooltip (kept in the
   sidecar; forced ones stay active); poor-NPC suppression now really applies (best skill < 12);
-  Enabled=false creates no records; sidecar rows with no affix survive a restart (CRLF bug: 2,629
+  Enabled=false creates no records; the craft hook rolls the item that actually reaches the bench
+  output (launch 1: the passed Item* was another instance; row 329); sidecar rows with no affix survive a restart (CRLF bug: 2,629
   rows were dropped at every load). Regression rows 321-328 in TEST_PLAN.md.
 - **Open (needs the coordinator's run):** all PENDING-auto rows; the job-path proof (pg-08: does
   mining read the hooked Labouring?) decides whether a direct job hook is needed.

@@ -1316,11 +1316,34 @@ Item* HookBuyItem(Inventory* inv,Item* item,RootObject* sendingTo) {
 void HookCraft(CraftingBuilding* b,Item* item) {
   Character* crafter=0;
   try { crafter=b?b->whosCrafting.getCharacter():0; } catch (...) {}
+  Inventory* out=0;
+  try { out=b?b->getInventory():0; } catch (...) {}
+  std::set<Item*> before;
+  if(out){
+    std::vector<Item*> v;
+    CollectCharacterInventoryItems(out,v);
+    before.insert(v.begin(),v.end());
+  }
 
   // Kenshi must finish the item first so ProfessionGear reads the final quality/model.
   if(g_craftOrig) g_craftOrig(b,item);
 
-  if(item) EnsureRecord(item,crafter,true);
+  // The item that reaches the bench output is not always the Item* passed in (live 2026-10-03:
+  // the passed item rolled at tier 6 while the output held another instance of tier 2, which
+  // was later picked up unbound and rolled as world loot). Roll every new item in the output,
+  // with its final quality, as crafted by the bench's worker.
+  int rolled=0;
+  if(out){
+    std::vector<Item*> after;
+    CollectCharacterInventoryItems(out,after);
+    for(size_t k=0;k<after.size();++k)
+      if(after[k] && !before.count(after[k])){
+        ++rolled;
+        EnsureRecord(after[k],crafter,true);
+      }
+  }
+  // Nothing new in the output (e.g. it was full): fall back to the passed item.
+  if(!rolled && item) EnsureRecord(item,crafter,true);
   if(crafter) RebuildCharacterBonusCache(crafter);
   SaveDb();
 }

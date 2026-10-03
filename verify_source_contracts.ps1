@@ -12,7 +12,7 @@ function Require-Ordered([string]$scopeStart,[string]$first,[string]$second,[str
   Write-Host "OK      $label"
 }
 
-Require-Ordered "void HookCraft" "if(g_craftOrig) g_craftOrig(b,item);" "if(item) EnsureRecord(item,crafter,true);" "craft final-quality ordering"
+Require-Ordered "void HookCraft" "if(g_craftOrig) g_craftOrig(b,item);" "EnsureRecord(after[k],crafter,true);" "craft final-quality ordering (new output items rolled after the game finishes)"
 
 if($text -notmatch [regex]::Escape("if (!pack || !pack->isEquipped) return base;")){
   throw "Source contract failed: specialist backpack equip-only guard"

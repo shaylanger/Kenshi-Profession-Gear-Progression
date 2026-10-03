@@ -1,9 +1,9 @@
 # Profession Gear Progression — in-game test status
 
-**Updated:** 2026-10-03. One row per `TEST_PLAN.md` ID (1–328 plus 16a–16c and 30a–30i = 340 rows).
+**Updated:** 2026-10-03. One row per `TEST_PLAN.md` ID (1–329 plus 16a–16c and 30a–30i = 341 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
 `tests/ingame/RUN_ORDER.md`) and fixes. Build for these scenarios: **ProfessionGearProgression.dll
-475B9508** (repo HEAD at the time of writing; installed is still D667F5EE).
+159C552F** (repo HEAD at the time of writing; installed is still D667F5EE).
 
 States: **PASS-offline** (core tests / build gates / source contracts), **PASS-live** (with evidence),
 **PENDING-auto** (a scenario file exists; the harness can run it without Shay), **NEEDS-SETUP**
@@ -14,11 +14,11 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 73 |
 | PASS-live | 62 |
-| PENDING-auto | 106 |
+| PENDING-auto | 107 |
 | NEEDS-SETUP | 63 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
-| total | 340 |
+| total | 341 |
 
 ## Rows
 
@@ -95,20 +95,20 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
-| 212 | PENDING-auto | `tests/ingame/trader/pg-20-shop-stock.txt` (219/237 were PARTIAL; fix d3ac3dc scans shop storage) |
+| 212 | PENDING-auto | `tests/ingame/crafting-base/pg-21-shop-stock.txt` (Apothecary Abia; 219/237 were PARTIAL; fix d3ac3dc scans shop storage; Trade Ninjas diagnostic in trader/pg-20) |
 | 213 | PENDING-auto | `tests/ingame/auto-home/pg-07-worldloot.txt` |
 | 214–216 | PASS-live | LIVE_TEST_PROGRESS.md "Trader item transfer / purchase-style identity - LIVE PASS" |
 | 217 | NEEDS-SETUP | a trader restock trigger (game restock timer or a harness restock command) |
-| 218–219 | PENDING-auto | `tests/ingame/trader/pg-20-shop-stock.txt` (219/237 were PARTIAL; fix d3ac3dc scans shop storage) |
+| 218–219 | PENDING-auto | `tests/ingame/crafting-base/pg-21-shop-stock.txt` (Apothecary Abia; 219/237 were PARTIAL; fix d3ac3dc scans shop storage; Trade Ninjas diagnostic in trader/pg-20) |
 | 220–227 | NEEDS-SETUP | fixtures/teleports next to several shop types (clothing/armour, tech, bar/cook, smith, doctor) + a Normal-mode pg_census per shop |
 | 228 | PENDING-auto | `tests/ingame/auto-home/pg-05-npc-context.txt` |
 | 229 | NEEDS-SETUP | an equippable mod hoe/sickle/pickaxe weapon on a character: the harness cannot create weapons; needs a craftable recipe (ArkWeaponPack Sickle/Pickaxe) or a fixture NPC carrying one |
 | 230 | PENDING-auto | `tests/ingame/auto-home/pg-03-identity.txt` |
 | 231–234 | PASS-offline | classifier corpus tests (ordinary/legendary weapons, profession-named weapons); 59/232 rechecked live in pg-02, pg-11 |
 | 235–236 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
-| 237 | PENDING-auto | `tests/ingame/trader/pg-20-shop-stock.txt` (219/237 were PARTIAL; fix d3ac3dc scans shop storage) |
+| 237 | PENDING-auto | `tests/ingame/crafting-base/pg-21-shop-stock.txt` (Apothecary Abia; 219/237 were PARTIAL; fix d3ac3dc scans shop storage; Trade Ninjas diagnostic in trader/pg-20) |
 | 238 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
-| 239 | PENDING-auto | `tests/ingame/trader/pg-20-shop-stock.txt` (219/237 were PARTIAL; fix d3ac3dc scans shop storage) |
+| 239 | PENDING-auto | `tests/ingame/crafting-base/pg-21-shop-stock.txt` (Apothecary Abia; 219/237 were PARTIAL; fix d3ac3dc scans shop storage; Trade Ninjas diagnostic in trader/pg-20) |
 | 240 | NEEDS-SETUP | harness commands for Kenshi import and new game (menu flows) |
 | 241–243 | PASS-live | LIVE_TEST_PROGRESS.md "Exact-ID harness + world-loot live results" |
 | 244 | PENDING-auto | `tests/ingame/config/pg-30-autoclassify-off.txt` (own launch: -Mode AutoClassifyOff) |
@@ -149,11 +149,12 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 320 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
 | 321 | PENDING-auto | `tests/ingame/config/pg-30-autoclassify-off.txt` (own launch: -Mode AutoClassifyOff) |
 | 322 | PASS-offline | core regressions added 2026-10-03 (bd6643c, 2b14a4c) |
-| 323–324 | PENDING-auto | `tests/ingame/trader/pg-20-shop-stock.txt` (219/237 were PARTIAL; fix d3ac3dc scans shop storage) |
+| 323–324 | PENDING-auto | `tests/ingame/crafting-base/pg-21-shop-stock.txt` (Apothecary Abia; 219/237 were PARTIAL; fix d3ac3dc scans shop storage; Trade Ninjas diagnostic in trader/pg-20) |
 | 325 | PASS-offline | core regressions added 2026-10-03 (bd6643c, 2b14a4c) |
 | 326 | PENDING-auto | `tests/ingame/config/pg-31-disabled-sidecar.txt` (own launch: -Mode Disabled -Sidecar StartupTest) |
 | 327 | PENDING-auto | `tests/ingame/config/pg-30-autoclassify-off.txt` (own launch: -Mode AutoClassifyOff) |
 | 328 | PENDING-auto | `tests/ingame/auto-home/pg-04-backpacks.txt` (needs -Rules InGameTest) |
+| 329 | PENDING-auto | `tests/ingame/crafting-base/pg-10-craftfinish.txt` (fix 159C552F: launch 1 showed the crafted roll landing on the wrong instance) |
 
 ## Notes
 

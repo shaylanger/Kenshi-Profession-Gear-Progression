@@ -2,7 +2,7 @@
 
 **Status:** installed for testing; the coordinator session runs the game. Per-row state: `INGAME_STATUS.md`; in-game scenarios: `tests/ingame/` (`RUN_ORDER.md`).
 
-**Current offline automation:** `run_tests.bat` passes **5,236 core checks**; `verify_offline.bat` passes **21 required SDK/export symbol checks**; source-contract verification passes **9 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **328**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,236 core checks**; `verify_offline.bat` passes **21 required SDK/export symbol checks**; source-contract verification passes **9 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **329**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -468,3 +468,4 @@ Added after live test 123 proved Kenshi runtime item handles change across ordin
 | 326 | AUTO | Enabled=false | No record is created from any path (scan, test commands, crafting) |
 | 327 | AUTO | Item with an old record that is not eligible now (rule change, AutoClassify off, old classifier) | Record kept in the sidecar, gives no bonus and no tooltip; harness-forced records stay active |
 | 328 | AUTO | Vanilla "Traders Backpack Medium/Large", "Old Traders backpack" | Trade pack (PACK_TRADE), not generic |
+| 329 | AUTO | Craft whose finished item in the bench output is another instance than the one passed to `addFinishedCraftItem` | The item in the output gets the crafted roll (crafter context, final quality); nothing is left unbound to roll later as world loot |
