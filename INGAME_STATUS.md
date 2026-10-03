@@ -13,8 +13,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 71 |
 | PASS-live | 171 |
-| PENDING-auto | 23 |
-| NEEDS-SETUP | 42 |
+| PENDING-auto | 27 |
+| NEEDS-SETUP | 38 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
 | total | 343 |
@@ -31,7 +31,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 45 | PASS-live | LIVE_TEST_PROGRESS.md Phase 2: sidecar reloaded after a full Kenshi restart (318) |
 | 46–48 | PASS-live | LIVE_TEST_PROGRESS.md "Phase 2 equipped-section rerun" + "Phase 2 - equip-only + persistence core PASS" |
 | 49 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
-| 50 | NEEDS-SETUP | harness drop-to-ground + pick-up commands (storage moves exist: pg_store/pg_take, used for 52/246) |
+| 50 | NEEDS-SETUP | waits for harness KAH 15 `drop`/`pickup`; scenario ready: `tests/ingame/pending-harness/pg-70-drop-pickup.txt` |
 | 51–56 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 57 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 58 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
@@ -43,11 +43,11 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 80 | PASS-live | LIVE_TEST_PROGRESS.md Phase 2 + `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) (all 17 stats match=1) |
 | 81–82 | PASS-live | `C:\KenshiTestRuns\m4\pg-08-job-path.out` (archive/test-run-2026-10-03-m4.md) 39/0: base Labouring 50.00 -> 50.43 while geared (+50%), unchanged by removing the gear |
 | 83 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
-| 84 | NEEDS-SETUP | harness `stat` has no melee attack/defence/dodge/toughness names (code passes unmapped stats through unchanged) |
+| 84 | NEEDS-SETUP | waits for harness KAH 16 melee stat names; scenario ready: `tests/ingame/pending-harness/pg-71-melee-stats.txt` |
 | 85–86 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 87 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): crafted tiers rise with Armour Smithing (5 vs 100; Kenshi quality has a random spread) |
 | 88 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
-| 89 | NEEDS-SETUP | a way to force a critical-success craft (or many weapon crafts with a known crit chance) |
+| 89 | PENDING-auto | `tests/ingame/full-base/pg-56-critical-craft.txt` (needs PG D7A60E49: test-only `pg_force_critical on` hooks CraftingBuilding::calculateCriticalChance -> 1.0; real Sickle craft normal vs forced critical) |
 | 90–92 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 93 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
 | 94 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
@@ -57,13 +57,13 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 102 | PASS-live | core rate test + live launch 4 (Normal chances, m6 pg-40): 10 spawned slaves 9/73 items rolled (12%) vs 10 drifters 16/32 (50%) |
 | 103–104 | PASS-offline | core rate tests over 4,000 instances (slave/poor x0.2, matching specialist x1.35); 103 needed fix 2b14a4c; live data for 102 in config/pg-40 |
 | 105 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
-| 106 | NEEDS-SETUP | a reliable stream-out/in trigger for one NPC (unload command, or a fixture + teleport distance known to unload) |
+| 106 | NEEDS-SETUP | waits for harness KAH 17 `unload`/`reload`; scenario ready: `tests/ingame/pending-harness/pg-72-unload-reload.txt` |
 | 107 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
-| 108 | NEEDS-SETUP | a named/unique NPC: Testing-Save-Squin may have one, but neither `chars` nor PG shows isUnique: needs a harness `unique` flag in `where`/`chars` (harness helper), then pg_info twice across save/load |
+| 108 | PENDING-auto | `tests/ingame/squin/pg-62-unique-npc.txt` (harness KAH 13 `unique=1`; census for the first unique NPC identical across save/load) |
 | 109–116 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 117 | PASS-live | LIVE_TEST_PROGRESS.md "Generic backpack live weight control - PASS" (rechecked in pg-04) |
 | 118–119 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
-| 120 | NEEDS-SETUP | a weight readout for a pack that is nested or not owned by a character |
+| 120 | NEEDS-SETUP | waits for harness KAH 18 (weight of a pack in a chest / inside a pack); scenario ready: `tests/ingame/pending-harness/pg-73-pack-weight-edge.txt` |
 | 121–122 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 123–124 | PASS-live | LIVE_TEST_PROGRESS.md "Persistence v2 live verification" + Phase 2 (restart) |
 | 125 | PASS-live | LIVE_TEST_PROGRESS.md Phase 1 live scan: no sidecar at the first launch, created safely |
@@ -92,7 +92,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 177 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0 on DLL 7D80DBB3 + harness F946C881, Manual Stone Processor, 3 x 30 game min: output_progress A no gear 0.1042, B +50% Labouring (default build, JobOperateScaling on) 0.1599 (x1.53), C same gear with scaling off 0.1095 (x1.05, ~A). Jobs read the raw skill; the operate scaling makes equipped Labouring count. (m16 v4 on 10C19BAB: 0.1065 / 0.1123 / 0.1695; m13/m14 powered Stone Mine runs at machine rate) |
 | 178–183 | PENDING-auto | `tests/ingame/auto-home/pg-14-labouring-curve.txt` (first Section L data: raw Labouring 10-90 without gear, +10/+25/+100 one piece, 25+25 set; one 30 game min window per point; repeats for the final fit still to do) |
-| 184 | NEEDS-SETUP | research bench exists (Testing-Save-Full-Base) but the harness can only complete a research, not start one: needs a harness `research start <name>` (or a save with research in progress); ResearchBuilding::operate is not hooked by PG |
+| 184 | PENDING-auto | `tests/ingame/full-base/pg-54-research.txt` (harness KAH 14 `research start/status`; Science 10/50/90, +50% Science, +50% Labouring control) |
 | 185 | NEEDS-SETUP | engineering benchmark (build/repair a fixed amount): no measurement command yet |
 | 186–187 | NEEDS-SETUP | robotics bench / cooking station exist in Testing-Save-Full-Base: names and a craftable item with materials come from `full-base/pg-50-fullbase-survey.txt`, then `tools/balance_driver.py` gets an entry |
 | 188 | PENDING-auto | `tests/ingame/full-base/pg-52-balance-weapon-smithing.txt` (generated by `tools/balance_driver.py`: Sickle crafts per 10 game min at skill 10/50/90, +50% own stat, +50% Labouring control, 3 repeats) |
@@ -124,14 +124,14 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 250 | NEEDS-SETUP | a ruin/chest loot fixture (unlooted world containers) |
 | 251–252 | PASS-offline | core unique/legendary tests; a live check needs a unique item instance in a fixture |
 | 253 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): high-quality crafted items roll |
-| 254 | NEEDS-SETUP | pg-02 ran (m2-m4) but harness `stat maxrunspeed` reads 0.0 with and without +50% Athletics (standing/paused): needs a speed readout while running or a timed walk |
+| 254 | NEEDS-SETUP | waits for harness KAH 19 `walktime` (`stat maxrunspeed` reads 0.0 standing); scenario ready: `tests/ingame/pending-harness/pg-74-walktime.txt` |
 | 255 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 256 | NEEDS-SETUP | swim gear in the mod stack + a water route |
 | 257 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 258–271 | DEFERRED | by design (Shay): FCS profession items and selective stacking are later goals |
 | 272 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 273 | PASS-live | LIVE_TEST_PROGRESS.md 309 (Bolts) + 308-311; rechecked in pg-03 |
-| 274 | NEEDS-SETUP | a save whose item carries a persistent ID that the sidecar holds for another base item |
+| 274 | PENDING-auto | `tests/ingame/auto-home/pg-57a-id-collision-setup.txt` -> Kenshi closed: `tools/make_id_collision.ps1 -Key <K>` (sidecar row gets another base ID + marker 3:77) -> `pg-57b-id-collision-check.txt` on kah-pg-collide -> `make_id_collision.ps1 -Restore` |
 | 275–276 | PASS-live | implicit in every live run (per-character bonus with several characters, inventory callbacks under heavy moves, sidecar atomic replace); the failure path of 279 is offline only |
 | 277 | NEEDS-SHAY | tooltip text is not readable by the harness (ui lists widgets, not hover tooltips) |
 | 278 | PASS-offline | core config clamp tests, source contract (double start), classifier corpus, package/installer verifiers |

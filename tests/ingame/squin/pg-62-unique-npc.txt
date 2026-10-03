@@ -1,0 +1,28 @@
+# id: PG-unique-npc-62
+# covers: PG 108 (a named/unique NPC: stable records, no duplication across save/load)
+# fixture: Testing-Save-Squin (squad Beak + Kint)
+# reset: fresh
+# needs: harness 6BA59614+ (KAH 13: `unique=1` in character lines), PG 7D80DBB3+; any mode (Forced gives more records)
+# design: the first unique NPC within 300 m; PG's census for that name before and after a save/load must be identical
+#   (same records/rolled/multi counts per class: nothing duplicated or rerolled). No unique NPC in range = the @set fails:
+#   then row 108 stays "needs setup (no unique NPC near Squin's start)".
+# verify: npc and trader counts identical after the reload (strict), U printed; records > 0 means the NPC carries eligible gear (else the row passes weakly: note it)
+@wait-world
+@sleep 8
+speed 0
+protect Beak on
+protect Kint on
+select Beak
+@set U chars 300 ~ (?:within [\d.]+: |\| )([^|#]+?) #\d+/\d+ [^|]*unique=1
+where "${U}" ~ unique=1
+@set CN pg_census "${U}" ~ (npc: records=\d+ rolled=\d+ multi=\d+)
+@set CT pg_census "${U}" ~ (trader: records=\d+ rolled=\d+ multi=\d+)
+save kah-pg-unique
+@sleep 8
+load kah-pg-unique
+@wait-world
+@sleep 8
+speed 0
+pg_census "${U}" ~ ${CN} 
+pg_census "${U}" ~ ${CT} 
+@echo unique NPC ${U}: ${CN} / ${CT}

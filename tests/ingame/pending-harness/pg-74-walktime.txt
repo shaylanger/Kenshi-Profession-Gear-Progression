@@ -1,0 +1,25 @@
+# id: PG-walktime-74
+# covers: PG 254 (Athletics footwear: real movement speed uses the effective stat; the base skill is not changed)
+# fixture: auto-home
+# reset: fresh
+# needs: harness KAH 19 (`walktime <npc> <dist>`: the npc runs <dist> m in a straight line, the reply gives the game
+#   seconds taken; assumed `seconds=<s>`); PG 7D80DBB3+; Forced + InGameTest
+# verify: time with +50% Athletics < time without (3 runs each, echoed); `stat Malzin athletics` base unchanged at the end
+@wait-world
+@sleep 8
+speed 0
+health Malzin 100
+hunger Malzin 280
+pg_clear Malzin ~ cleared affixes
+setstat Malzin athletics 30
+@set T1 walktime Malzin 60 ~ (seconds=[\d.]+)
+@set T2 walktime Malzin 60 ~ (seconds=[\d.]+)
+@set T3 walktime Malzin 60 ~ (seconds=[\d.]+)
+pg_force_affix Malzin "Black Cloth Shirt" athletics 50 tier 6 ~ affixes=Athletics:50
+pg_bonus Malzin athletics ~ equipped_bonus=50% .*match=1
+@set G1 walktime Malzin 60 ~ (seconds=[\d.]+)
+@set G2 walktime Malzin 60 ~ (seconds=[\d.]+)
+@set G3 walktime Malzin 60 ~ (seconds=[\d.]+)
+stat Malzin athletics ~ base=3[01].
+@echo no gear: ${T1} ${T2} ${T3}
+@echo +50% Athletics: ${G1} ${G2} ${G3}

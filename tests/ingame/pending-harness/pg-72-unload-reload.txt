@@ -1,0 +1,22 @@
+# id: PG-unload-reload-72
+# covers: PG 106 (an NPC streams out and back in: their item does not reroll)
+# fixture: auto-home
+# reset: fresh
+# needs: harness KAH 17 (`unload <npc>`, `reload <npc>`; the npc keeps its name/handle or gets a new one printed by reload);
+#   PG 7D80DBB3+; Forced + InGameTest
+# verify: same key + affixes after reload; ProfessionGear.log shows `restore item id=<K>` (not a new roll for that hat)
+@wait-world
+@sleep 8
+speed 0
+@set N spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${N} "PG Stream" ~ -> PG Stream
+give "PG Stream" 2185-gamedata.base 1
+@set K pg_info "PG Stream" "Rattan Hat" ~ Rattan Hat key=(pgp\S+)
+@set A pg_info "PG Stream" "Rattan Hat" ~ affixes=(.*)$
+unload "PG Stream"
+@sleep 5
+reload "PG Stream"
+@sleep 5
+where "PG Stream" ~ PG Stream
+pg_info "PG Stream" "Rattan Hat" ~ Rattan Hat key=${K} equipped=[01] tier=\d+ affixes=${A}$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ restore item id=${K} 

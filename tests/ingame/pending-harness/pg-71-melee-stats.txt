@@ -1,0 +1,27 @@
+# id: PG-melee-stats-71
+# covers: PG 84 (combat stats unrelated to professions are unchanged by profession affixes)
+# fixture: auto-home
+# reset: fresh
+# needs: harness KAH 16 (melee stat names in `stat`: assumed melee_attack, melee_defence, dodge, toughness, strength,
+#   unarmed; rename here if KAH 16 uses other names); PG 7D80DBB3+; Forced + InGameTest
+# verify: each combat stat reads exactly the same (base and effective) with no affixes and with big profession affixes on 2 items
+@wait-world
+@sleep 8
+speed 0
+health Malzin 100
+pg_clear Malzin ~ cleared affixes
+@set S1 stat Malzin melee_attack ~ (base=\S+ .*)$
+@set S2 stat Malzin melee_defence ~ (base=\S+ .*)$
+@set S3 stat Malzin dodge ~ (base=\S+ .*)$
+@set S4 stat Malzin toughness ~ (base=\S+ .*)$
+@set S5 stat Malzin strength ~ (base=\S+ .*)$
+@set S6 stat Malzin unarmed ~ (base=\S+ .*)$
+pg_force_affix Malzin "Iron Hat" labouring 100 farming 100 medic 100 tier 6 ~ affixes=
+pg_force_affix Malzin "Black Cloth Shirt" athletics 100 turrets 100 science 100 tier 6 ~ affixes=
+pg_bonus Malzin labouring ~ equipped_bonus=100% .*match=1
+stat Malzin melee_attack ~ ${S1}$
+stat Malzin melee_defence ~ ${S2}$
+stat Malzin dodge ~ ${S3}$
+stat Malzin toughness ~ ${S4}$
+stat Malzin strength ~ ${S5}$
+stat Malzin unarmed ~ ${S6}$

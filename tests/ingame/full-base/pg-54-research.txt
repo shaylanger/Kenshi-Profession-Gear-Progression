@@ -1,0 +1,84 @@
+# id: PG-research-54
+# covers: PG 184 (Science: research speed vs raw skill and vs +50% Science gear, with a Labouring control)
+# fixture: Testing-Save-Full-Base (squad Beaks + Avarek; research bench)
+# reset: fresh
+# needs: harness 6BA59614+ (KAH 14 `research start|status`), PG 7D80DBB3+; Forced + InGameTest
+# design: Avarek researches at the bench; 5 windows of 10 game min at 10x: Science 10 / 50 / 90 without gear, Science 50
+#   with +50% Science, Science 50 with +50% Labouring (control). progress (0..1) of the queued tech is read before/after.
+#   The tech: "Research Bench II" is a guess; if `research start` refuses it, pick another from `find research` that
+#   is not done yet (the reply says why) and tell the PG agent.
+# verify: progress rises in every window (else no power/bench level: see `research status` desk_level/benches);
+#   gain grows with Science; +50% Science vs the Science 50 window shows whether research reads the hooked stat
+#   (ResearchBuilding::operate is not scaled by PG); Labouring control = no change.
+@wait-world
+@sleep 8
+speed 0
+protect Beaks on
+protect Avarek on
+hunger Avarek 280
+select Beaks
+clearjobs Avarek
+research status
+research start "Research Bench II" ~ queue=[1-9]
+give Avarek "Iron Hat" 1
+equip Avarek "Iron Hat"
+job Avarek "Research" radius 500
+speed 10
+@wait-game 5 600
+speed 0
+# --- s10 ---
+setstat Avarek science 10
+pg_clear Avarek ~ cleared affixes
+@set P0 research status ~ progress=([\d.]+)
+speed 10
+@wait-game 10 900
+speed 0
+@set P1 research status ~ progress=([\d.]+)
+@echo RES,184,science,10,0,600,${P0},${P1},none,s10
+hunger Avarek 280
+# --- s50 ---
+setstat Avarek science 50
+pg_clear Avarek ~ cleared affixes
+@set P0 research status ~ progress=([\d.]+)
+speed 10
+@wait-game 10 900
+speed 0
+@set P1 research status ~ progress=([\d.]+)
+@echo RES,184,science,50,0,600,${P0},${P1},none,s50
+hunger Avarek 280
+# --- s90 ---
+setstat Avarek science 90
+pg_clear Avarek ~ cleared affixes
+@set P0 research status ~ progress=([\d.]+)
+speed 10
+@wait-game 10 900
+speed 0
+@set P1 research status ~ progress=([\d.]+)
+@echo RES,184,science,90,0,600,${P0},${P1},none,s90
+hunger Avarek 280
+# --- s50_sci50 ---
+setstat Avarek science 50
+pg_clear Avarek ~ cleared affixes
+pg_force_affix Avarek "Iron Hat" science 50 tier 6 ~ affixes=
+pg_bonus Avarek science ~ equipped_bonus=50% .*match=1
+@set P0 research status ~ progress=([\d.]+)
+speed 10
+@wait-game 10 900
+speed 0
+@set P1 research status ~ progress=([\d.]+)
+@echo RES,184,science,50,50,600,${P0},${P1},science,s50_sci50
+hunger Avarek 280
+# --- s50_lab50 ---
+setstat Avarek science 50
+pg_clear Avarek ~ cleared affixes
+pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
+pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
+@set P0 research status ~ progress=([\d.]+)
+speed 10
+@wait-game 10 900
+speed 0
+@set P1 research status ~ progress=([\d.]+)
+@echo RES,184,science,50,50,600,${P0},${P1},labouring,s50_lab50
+hunger Avarek 280
+research status
+clearjobs Avarek

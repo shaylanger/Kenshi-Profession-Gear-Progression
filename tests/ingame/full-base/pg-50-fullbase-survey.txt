@@ -28,6 +28,7 @@ buildings 500 robot
 buildings 500 farm
 buildings 500 oven
 buildings 500 stove
+research status
 benches 500 crafts
 building "Turret" 500
 find research Utility

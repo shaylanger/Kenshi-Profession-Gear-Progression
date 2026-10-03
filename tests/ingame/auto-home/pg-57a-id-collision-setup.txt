@@ -1,0 +1,23 @@
+# id: PG-id-collision-57a
+# covers: PG 274 part 1 of 2 (an item whose saved persistent ID the sidecar later holds for a different base item)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3 or later; set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# steps (coordinator):
+#   1. run this file; note the key from the @echo line (K=pgp...)
+#   2. stop Kenshi (kenshi-ctl stop), then:
+#      powershell -File C:\KenshiModding\Kenshi-Profession-Gear-Progression\tools\make_id_collision.ps1 -Key <K>
+#      (sidecar row K gets another base ID and the marker affix 3:77; the original row is kept for -Restore)
+#   3. launch with the save kah-pg-collide (kenshi-ctl launch -Save kah-pg-collide), run pg-57b-id-collision-check.txt
+#   4. stop Kenshi, make_id_collision.ps1 -Restore, delete the save kah-pg-collide
+@wait-world
+@sleep 8
+speed 0
+health Malzin 100
+pg_clear Malzin ~ cleared affixes
+pg_force_affix Malzin "Black Cloth Shirt" medic 12 tier 3 ~ Black Cloth Shirt key=pgp\S+ equipped=1 tier=3 affixes=Medic:12
+@set K pg_info Malzin "Black Cloth Shirt" ~ key=(pgp\S+)
+save kah-pg-collide
+@sleep 8
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ serialize item id=${K} 
+@echo K=${K}

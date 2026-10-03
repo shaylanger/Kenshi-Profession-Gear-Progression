@@ -97,6 +97,12 @@ struct OperateStats {
 };
 std::map<Building*, OperateStats> g_operateStats;
 bool g_jobOperateScaling = true;   // default on since run m16 (row 177)
+// Row 89 (TEST ONLY, off by default, never read from the ini): pg_force_critical on makes
+// CraftingBuilding::calculateCriticalChance answer 1.0, so the next real craft is a critical
+// success and the roll can be checked against the better finished quality.
+bool g_forceCritical = false;
+typedef float (*CritChanceFn)(CraftingBuilding*, Character*);
+CritChanceFn g_critChanceOrig = 0;
 
 std::string IntStr(long long v) { std::ostringstream s; s<<v; return s.str(); }
 float HookInventoryWeight(Inventory* inv);
@@ -1253,6 +1259,14 @@ int KahJobScale(const char*,int argc,const char* const* argv,KAH_Reply* r,void*)
   return KAH_OK;
 }
 
+// pg_force_critical on|off: every craft is a critical success while on (TEST ONLY, row 89).
+int KahForceCritical(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_forceCritical=(v=="on"||v=="1"||v=="true"); }
+  Log(std::string("harness: forceCritical=")+(g_forceCritical?"1":"0"));
+  r->append(r,(std::string("forceCritical=")+(g_forceCritical?"1":"0")+(g_critChanceOrig?"":" (hook missing)")).c_str());
+  return g_critChanceOrig?KAH_OK:KAH_ERROR;
+}
+
 void KahTick() {
   if(g_kahConnected) return;
   DWORD now=GetTickCount();
@@ -1274,9 +1288,10 @@ void KahTick() {
        +g_kah.registerCommand("pg_census","pg_census [name filter]",KahCensus,0)
        +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0)
        +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
-       +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0);
+       +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)
+       +g_kah.registerCommand("pg_force_critical","pg_force_critical on|off (TEST ONLY: every craft is a critical success)",KahForceCritical,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical)";
   Log(ss.str());
 }
 
@@ -1391,6 +1406,15 @@ void HookProductionOperate(Building* b, Character* who, float amount) {
   RecordOperate(b,who,amount,scaled,out);
 }
 
+float HookCritChance(CraftingBuilding* b, Character* smith) {
+  const float vanilla=g_critChanceOrig?g_critChanceOrig(b,smith):0.0f;
+  if(!g_forceCritical) return vanilla;
+  std::ostringstream ss; ss<<"force critical: chance "<<vanilla<<" -> 1";
+  try { if(smith) ss<<" smith="<<smith->getName(); if(b) ss<<" bench="<<b->getName(); } catch (...) {}
+  Log(ss.str());
+  return 1.0f;
+}
+
 void HookFarmOperate(Building* b, Character* who, float amount) {
   const float scaled=amount*OperateScale(b,who,PGP::STAT_FARMING);
   if(g_farmOperateOrig) g_farmOperateOrig(b,who,scaled);
@@ -1491,6 +1515,7 @@ void InstallHooks() {
   HookSymbol(lib,"?buyItem@Inventory@@QEAAPEAVItem@@PEAV2@PEAVRootObject@@@Z",(void*)HookBuyItem,(void**)&g_buyItemOrig);
   HookSymbol(lib,"?operate@ProductionBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookProductionOperate,(void**)&g_productionOperateOrig);
   HookSymbol(lib,"?operate@FarmBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookFarmOperate,(void**)&g_farmOperateOrig);
+  HookSymbol(lib,"?calculateCriticalChance@CraftingBuilding@@QEAAMPEAVCharacter@@@Z",(void*)HookCritChance,(void**)&g_critChanceOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);
   HookSymbol(lib,"?getTooltipData1@Armour@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipArmour,(void**)&g_tipArmourOrig);
   HookSymbol(lib,"?getTooltipData1@ContainerItem@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipContainer,(void**)&g_tipContainerOrig);

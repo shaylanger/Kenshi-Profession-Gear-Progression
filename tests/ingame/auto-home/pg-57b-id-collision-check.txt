@@ -1,0 +1,16 @@
+# id: PG-id-collision-57b
+# covers: PG 274 part 2 of 2 (base-ID mismatch invalidates the stale record and rerolls safely)
+# fixture: the save kah-pg-collide from pg-57a, after tools/make_id_collision.ps1 -Key <K> (see pg-57a's steps)
+# reset: none (load kah-pg-collide)
+# needs: ProfessionGearProgression.dll 7D80DBB3 or later; same mode as 57a
+# verify: ProfessionGear.log has "persistent-id collision/reuse: rebound runtime=... newId=pgp... baseId=<the shirt's base>";
+#   the shirt now has a NEW key, no marker affix (:77), and pg_check reports no base_mismatch. The tampered record is
+#   never applied to the shirt (no 77% bonus anywhere on Malzin).
+@wait-world
+@sleep 8
+speed 0
+status ~ save=kah-pg-collide
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ persistent-id collision/reuse: rebound runtime=\S+ newId=pgp\S+ baseId=\S+
+pg_info Malzin "Black Cloth Shirt" ~ key=pgp\S+ equipped=1 tier=\d+ affixes=(?!\S*:77(,| |$))
+pg_check Malzin "Black Cloth Shirt" ~ ^(?!.*base_mismatch)
+pg_bonus Malzin medic ~ equipped_bonus=(?!77%)\d+

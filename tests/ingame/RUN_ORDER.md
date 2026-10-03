@@ -1,6 +1,6 @@
 # PG in-game run order (for the coordinator)
 
-Build: `out\ProfessionGearProgression.dll` **7D80DBB3** (`install-dll.ps1 ProfessionGear`, Kenshi closed).
+Build: `out\ProfessionGearProgression.dll` **D7A60E49** (7D80DBB3 + test-only `pg_force_critical`, row 89) (`install-dll.ps1 ProfessionGear`, Kenshi closed).
 All config switches are done with Kenshi closed:
 `powershell -File C:\KenshiModding\Kenshi-Profession-Gear-Progression\set_test_mode.ps1 ...`
 (it refuses while Kenshi runs). Logs to keep before every relaunch: `ProfessionGear.log` and
@@ -91,6 +91,8 @@ PG commands (`pg_*`) take character names only, not `#serial/index` handles.
 | 3 | `full-base/pg-52-balance-weapon-smithing.txt` (generated) | 188 | 11 x 10 game min at 10x, ~12 min |
 | 4 | `full-base/pg-53-balance-armour-smithing.txt` (generated; needs a Clothing bench) | 189 | ~12 min |
 | 5 | `full-base/pg-55-turret.txt` (diagnostic) | 192 | 3 min at 1x |
+| 6 | `full-base/pg-54-research.txt` (harness KAH 14) | 184 | 5 x 10 game min, ~6 min |
+| 7 | `full-base/pg-56-critical-craft.txt` (**PG D7A60E49**: `pg_force_critical`) | 89 | ~3 min |
 
 Fresh copy per file (they research, craft and change skills). Balance data:
 `python3 tools/balance_driver.py csv <out files> > balance.csv` then `python3 tools/analyze_balance.py balance.csv`.
@@ -103,3 +105,24 @@ Before: `set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty`; af
 |---|---|---|---|
 | 1 | `squin/pg-60-squin-shops.txt` (first load of a fresh copy = the measured distribution) | 220-227 (218/219 recheck) | 2 min |
 | 2 | `squin/pg-61-squin-restock.txt` | 217 | ~60 real min at 50x |
+| 3 | `squin/pg-62-unique-npc.txt` (harness KAH 13) | 108 | 1 min + a save/load |
+
+### Row 274 (two launches, auto-home, Forced + InGameTest)
+
+1. Launch auto-home, run `auto-home/pg-57a-id-collision-setup.txt`; note `K=pgp...` from its @echo; `kenshi-ctl stop`.
+2. `powershell -File C:\KenshiModding\Kenshi-Profession-Gear-Progression\tools\make_id_collision.ps1 -Key <K>`
+3. `kenshi-ctl launch -Save kah-pg-collide`, run `auto-home/pg-57b-id-collision-check.txt`; `kenshi-ctl stop`.
+4. `make_id_collision.ps1 -Restore`; delete the save `kah-pg-collide`.
+
+### Waiting for harness commands (scenarios ready in `pending-harness/`, auto-home, Forced + InGameTest)
+
+| KAH | File | Row |
+|---|---|---|
+| 15 drop/pickup | `pending-harness/pg-70-drop-pickup.txt` | 50 |
+| 16 melee stat names | `pending-harness/pg-71-melee-stats.txt` | 84 |
+| 17 unload/reload | `pending-harness/pg-72-unload-reload.txt` | 106 |
+| 18 nested/unowned pack weight | `pending-harness/pg-73-pack-weight-edge.txt` | 120 |
+| 19 walktime | `pending-harness/pg-74-walktime.txt` | 254 |
+| 21 import/new game | not written yet (no command spec) | 132, 133, 240 |
+
+Written against the spec before the commands existed: forward the built command replies and the PG agent adjusts the `~` patterns.

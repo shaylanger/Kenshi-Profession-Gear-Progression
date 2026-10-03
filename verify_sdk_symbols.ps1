@@ -12,6 +12,7 @@ $required = @(
   "?update@PlayerInterface@@QEAAXXZ",
   "?getStat@CharStats@@QEBAMW4StatsEnumerated@@_N@Z",
   "?addFinishedCraftItem@CraftingBuilding@@QEAAXPEAVItem@@@Z",
+  "?calculateCriticalChance@CraftingBuilding@@QEAAMPEAVCharacter@@@Z",
   "?getTotalWeight@Inventory@@QEAAMXZ",
   "?_sectionAddItemCallback@Inventory@@UEAAXPEAVItem@@@Z",
   "?_sectionRemoveItemCallback@Inventory@@UEAAXPEAVItem@@@Z",

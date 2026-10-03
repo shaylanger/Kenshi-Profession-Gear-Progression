@@ -1,0 +1,44 @@
+# id: PG-critical-craft-56
+# covers: PG 89 (critical-success craft: the actual finished quality drives the tier)
+# fixture: Testing-Save-Full-Base (squad Beaks + Avarek; weapon smith)
+# reset: fresh
+# needs: ProfessionGearProgression.dll D7A60E49 or later (`pg_force_critical`, hook on CraftingBuilding::calculateCriticalChance),
+#   harness 08AB6BF0; set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# design: two REAL Sickle crafts by Avarek at weapon smithing 10 (low quality): first normal, then with pg_force_critical on.
+#   A critical success makes the game pick a better weapon grade (getCriticalSuccessWeapon), so the second roll line must
+#   show the better finished quality and a tier at least as high.
+# verify (ProfessionGear.log of this run): `force critical: chance <vanilla> -> 1 smith=Avarek` appears only after `on`;
+#   two `roll source=crafted ... name="...Sickle..."` lines; the second (critical) has tier >= the first, and its tier is the
+#   one pg_check's rule gives for the better grade (row 89 PASS). `messages` may also show the game's critical note.
+@wait-world
+@sleep 8
+speed 0
+protect Beaks on
+protect Avarek on
+hunger Avarek 280
+select Beaks
+clearjobs Avarek
+pg_force_critical off ~ forceCritical=0$
+research "Basic Weapon Smithing"
+research "Basic Weapon Grades"
+research "Utility Weapons"
+benches 500 crafts ~ Weapon[^|]*Sickle
+setstat Avarek weapon_smith 10
+# --- normal craft ---
+give Avarek "Iron Plates" 10
+craft Avarek "Sickle" at "Weapon" ~ queued 1x
+speed 10
+@until 400 benches 500 ~ Weapon[^|]*queue=0
+speed 0
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" equipped=0 tier=\d
+# --- forced critical craft ---
+pg_force_critical on ~ forceCritical=1$
+give Avarek "Iron Plates" 10
+craft Avarek "Sickle" at "Weapon" ~ queued 1x
+speed 10
+@until 400 benches 500 ~ Weapon[^|]*queue=0
+speed 0
+pg_force_critical off ~ forceCritical=0$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ force critical: chance [\d.e-]+ -> 1 smith=Avarek
+messages 10
+clearjobs Avarek
