@@ -22,6 +22,8 @@ $required = @(
   '?getSection@Inventory@@QEBAPEAVInventorySection@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z',
   "?isATrader@Character@@QEBA_NXZ",
   "?isPlayerCharacter@Character@@QEBA_NXZ",
+  "?operate@ProductionBuilding@@UEAAXPEAVCharacter@@M@Z",
+  "?operate@FarmBuilding@@UEAAXPEAVCharacter@@M@Z",
   "?buyItem@Inventory@@QEAAPEAVItem@@PEAV2@PEAVRootObject@@@Z",
   '?getObjectsWithinSphere@GameWorld@@QEAAXAEAV?$lektor@PEAVRootObject@@@@AEBVVector3@Ogre@@MW4itemType@@HPEAVRootObject@@@Z',
   "?getTooltipData1@InventoryItemBase",

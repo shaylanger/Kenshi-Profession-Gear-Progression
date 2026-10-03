@@ -23,7 +23,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **59EFB4B1** (0.9.1-pretest; installed, runs m13+). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **05E41322** built (0.9.1-pretest; 59EFB4B1 installed for m13). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
   pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),
@@ -38,8 +38,16 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   Enabled=false creates no records; the craft hook rolls the item that actually reaches the bench
   output (launch 1: the passed Item* was another instance; row 329); sidecar rows with no affix survive a restart (CRLF bug: 2,629
   rows were dropped at every load). Regression rows 321-328 in TEST_PLAN.md.
-- **Open:** only the optional soak (pg-09). The job-path proof (does mining read the hooked
-  Labouring?) is still unanswered: row 177 needs a production counter (NEEDS-SETUP).
+- **Open:** row 177 job-path proof. m13 (Stone Mine, 2 game h per window) gave 0.47 vs 0.48 stone/h
+  without/with +50% Labouring, but only 1 whole stone per window: inconclusive. Build 05E41322 hooks
+  `ProductionBuilding::operate` and `FarmBuilding::operate` (every worker tick: building, worker,
+  amount): `pg_operate <building> [reset]` reports calls, summed amount, fractional output gain, and
+  `JobOperateScaling` (ini, or `pg_jobscale on|off` at run time, default off) multiplies the worker's
+  amount by (1 + equipped Labouring / Farming bonus). pg-12 v2 compares A no gear / B +50% / C +50% with
+  scaling. If B ~ A and C > A: the job reads the raw skill and scaling becomes the default fix.
+  Also note: vanilla effective stats of Malzin are ~31% of base (Farming 140 -> 42.8, Labouring 50 ->
+  15.5): some game modifier; the PG bonus multiplies that vanilla effective value.
+  Optional: the soak (pg-09).
 - **Open engineering (not started):** balance measurement driver (rows 161-199), the NEEDS-SETUP
   harness commands listed in INGAME_STATUS.md (drop/pickup, combat stat names, import/new game,
   restock, unload trigger).

@@ -2,7 +2,7 @@
 # covers: PG 219 (diagnostic: where do the Trade Ninjas keep their stock?)
 # fixture: Trader
 # reset: fresh
-# needs: ProfessionGearProgression.dll 59EFB4B1; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 05E41322; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: send the CSV to the PG agent: launch 1 found storages=0 for Erisila (no building of her faction within 30 holds stock), so the shop scan rule (faction storage within 30) misses this shop; the buildings list shows names, factions and distances to decide the rule
 @wait-world
 @sleep 8

@@ -12,6 +12,8 @@
 #include <core/Functions.h>
 #include <kenshi/Building/Building.h>
 #include <kenshi/Building/CraftingBuilding.h>
+#include <kenshi/Building/FarmBuilding.h>
+#include <kenshi/Building/ProductionBuilding.h>
 #include <kenshi/Character.h>
 #include <kenshi/CharStats.h>
 #include <kenshi/Faction.h>
@@ -57,6 +59,7 @@ typedef void (*InventoryUpdateFn)(Inventory*, Item*, int);
 typedef GameData* (*ItemSerialiseInventoryFn)(Item*, GameDataContainer*, GameData*);
 typedef void (*ItemLoadInventoryFn)(Item*, GameDataContainer*, GameData*);
 typedef Item* (*InventoryBuyItemFn)(Inventory*, Item*, RootObject*);
+typedef void (*OperateFn)(Building*, Character*, float);
 
 PlayerUpdateFn g_playerUpdateOrig = 0;
 GetStatFn g_getStatOrig = 0;
@@ -73,6 +76,18 @@ InventoryUpdateFn g_inventoryUpdateOrig = 0;
 ItemSerialiseInventoryFn g_itemSerialiseInventoryOrig = 0;
 ItemLoadInventoryFn g_itemLoadInventoryOrig = 0;
 InventoryBuyItemFn g_buyItemOrig = 0;
+OperateFn g_productionOperateOrig = 0;
+OperateFn g_farmOperateOrig = 0;
+
+// Job path (row 177). Every worker tick calls Building::operate(worker, amount). Test 177 showed a
+// +50% hooked Labouring did not change Stone Mine output, so production may read the raw skill.
+// Diagnostics per building (calls, summed amount, output before/after) answer that, and
+// JobOperateScaling (ini, or pg_jobscale at run time) multiplies the worker's amount by
+// (1 + equipped bonus of the job's stat): Labouring for production machines and mines,
+// Farming for farms. Default off until the in-game A/B decides.
+struct OperateStats { unsigned long calls; double amount; double scaledAmount; float outputStart; float outputLast; std::string worker; std::string name; };
+std::map<Building*, OperateStats> g_operateStats;
+bool g_jobOperateScaling = false;
 
 std::string IntStr(long long v) { std::ostringstream s; s<<v; return s.str(); }
 float HookInventoryWeight(Inventory* inv);
@@ -1178,6 +1193,38 @@ int KahPack(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   return KAH_OK;
 }
 
+// pg_operate <building> [reset]: worker ticks on a production building/farm since the last reset.
+int KahOperate(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<2){ r->append(r,"usage: pg_operate <building> [reset]"); return KAH_ERROR; }
+  float dist=0;
+  Building* b=KahFindBuilding(argv[1],dist);
+  if(!b){ r->append(r,(std::string("no building with an inventory matching '")+argv[1]+"' within 300").c_str()); return KAH_ERROR; }
+  const bool reset=argc>=3 && PGP::Lower(argv[2])=="reset";
+  float out=0, progress=0;
+  try { ProductionBuilding* pb=dynamic_cast<ProductionBuilding*>(b); if(pb) out=pb->getOutput(); } catch (...) {}
+  try { UseableStuff* u=dynamic_cast<UseableStuff*>(b); if(u) progress=u->progressBarLevel; } catch (...) {}
+  EnterCriticalSection(&g_lock);
+  OperateStats o=g_operateStats[b];
+  if(reset) g_operateStats.erase(b);
+  LeaveCriticalSection(&g_lock);
+  std::ostringstream ss;
+  ss.setf(std::ios::fixed); ss.precision(4);
+  ss<<b->getName()<<" calls="<<o.calls<<" amount="<<o.amount<<" scaled_amount="<<o.scaledAmount
+    <<" avg_amount="<<(o.calls?o.amount/o.calls:0.0)<<" output_start="<<o.outputStart<<" output_now="<<out
+    <<" output_gain="<<(o.calls?out-o.outputStart:0.0f)<<" progress="<<progress<<" worker="<<(o.worker.empty()?"-":o.worker)
+    <<" scaling="<<(g_jobOperateScaling?1:0)<<(reset?" (reset)":"");
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
+}
+
+// pg_jobscale on|off: switch JobOperateScaling at run time (TEST ONLY).
+int KahJobScale(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_jobOperateScaling=(v=="on"||v=="1"||v=="true"); }
+  Log(std::string("harness: jobOperateScaling=")+(g_jobOperateScaling?"1":"0"));
+  r->append(r,(std::string("jobOperateScaling=")+(g_jobOperateScaling?"1":"0")).c_str());
+  return KAH_OK;
+}
+
 void KahTick() {
   if(g_kahConnected) return;
   DWORD now=GetTickCount();
@@ -1197,9 +1244,11 @@ void KahTick() {
        +g_kah.registerCommand("pg_store","pg_store <npc> <building> <item>",KahStore,0)
        +g_kah.registerCommand("pg_check","pg_check <npc> <item>",KahCheck,0)
        +g_kah.registerCommand("pg_census","pg_census [name filter]",KahCensus,0)
-       +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0);
+       +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0)
+       +g_kah.registerCommand("pg_operate","pg_operate <building> [reset]",KahOperate,0)
+       +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale)";
   Log(ss.str());
 }
 
@@ -1286,6 +1335,35 @@ void HookInventoryRemove(Inventory* inv,Item* item) {
 void HookInventoryUpdate(Inventory* inv,Item* item,int amount) {
   if(g_inventoryUpdateOrig) g_inventoryUpdateOrig(inv,item,amount);
   RefreshInventoryOwner(inv);
+}
+
+float OperateScale(Building* b, Character* who, PGP::ProfessionStat st) {
+  if(!g_cfg.enabled || !g_jobOperateScaling || !who) return 1.0f;
+  const float pct=EquippedBonus(who,st);
+  return pct==0.0f ? 1.0f : 1.0f+pct/100.0f;
+}
+
+void RecordOperate(Building* b, Character* who, float amount, float scaled, float outputNow) {
+  EnterCriticalSection(&g_lock);
+  OperateStats& o=g_operateStats[b];
+  if(o.calls==0){ o.outputStart=outputNow; try { o.name=b->getName(); } catch (...) {} }
+  ++o.calls; o.amount+=amount; o.scaledAmount+=scaled; o.outputLast=outputNow;
+  LeaveCriticalSection(&g_lock);
+  if(who && o.worker.empty()){ try { o.worker=who->getName(); } catch (...) {} }
+}
+
+void HookProductionOperate(Building* b, Character* who, float amount) {
+  const float scaled=amount*OperateScale(b,who,PGP::STAT_LABOURING);
+  if(g_productionOperateOrig) g_productionOperateOrig(b,who,scaled);
+  float out=0; try { ProductionBuilding* pb=dynamic_cast<ProductionBuilding*>(b); if(pb) out=pb->getOutput(); } catch (...) {}
+  RecordOperate(b,who,amount,scaled,out);
+}
+
+void HookFarmOperate(Building* b, Character* who, float amount) {
+  const float scaled=amount*OperateScale(b,who,PGP::STAT_FARMING);
+  if(g_farmOperateOrig) g_farmOperateOrig(b,who,scaled);
+  float out=0; try { ProductionBuilding* pb=dynamic_cast<ProductionBuilding*>(b); if(pb) out=pb->getOutput(); } catch (...) {}
+  RecordOperate(b,who,amount,scaled,out);
 }
 
 // A purchase may hand the buyer a copy of the shop item instead of the same instance. The copy
@@ -1379,6 +1457,8 @@ void InstallHooks() {
   HookSymbol(lib,"?serialiseInInventory@Item@@UEAAPEAVGameData@@PEAVGameDataContainer@@PEAV2@@Z",(void*)HookItemSerialiseInInventory,(void**)&g_itemSerialiseInventoryOrig);
   HookSymbol(lib,"?loadFromSerialiseInInventory@Item@@UEAAXPEAVGameDataContainer@@PEAVGameData@@@Z",(void*)HookItemLoadFromSerialiseInInventory,(void**)&g_itemLoadInventoryOrig);
   HookSymbol(lib,"?buyItem@Inventory@@QEAAPEAVItem@@PEAV2@PEAVRootObject@@@Z",(void*)HookBuyItem,(void**)&g_buyItemOrig);
+  HookSymbol(lib,"?operate@ProductionBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookProductionOperate,(void**)&g_productionOperateOrig);
+  HookSymbol(lib,"?operate@FarmBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookFarmOperate,(void**)&g_farmOperateOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);
   HookSymbol(lib,"?getTooltipData1@Armour@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipArmour,(void**)&g_tipArmourOrig);
   HookSymbol(lib,"?getTooltipData1@ContainerItem@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipContainer,(void**)&g_tipContainerOrig);
@@ -1405,6 +1485,7 @@ void LoadConfig() {
     else if(k=="poornpcmultiplier") g_cfg.poorNpcMultiplier=(float)atof(v.c_str());
     else if(k=="worldlootmultiplier") g_cfg.worldLootMultiplier=(float)atof(v.c_str());
     else if(k=="maxaffixes") g_cfg.maxAffixes=atoi(v.c_str());
+    else if(k=="joboperatescaling") g_jobOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
   }
   PGP::NormalizeConfig(g_cfg);
 }
@@ -1465,6 +1546,7 @@ __declspec(dllexport) void startPlugin() {
       <<" poorNpcMultiplier="<<g_cfg.poorNpcMultiplier
       <<" worldLootMultiplier="<<g_cfg.worldLootMultiplier
       <<" maxAffixes="<<g_cfg.maxAffixes
+      <<" jobOperateScaling="<<(g_jobOperateScaling?1:0)
       <<" overrides="<<(unsigned long)g_overrides.size()
       <<" exclusions="<<(unsigned long)g_exclusions.size();
     Log(ss.str());

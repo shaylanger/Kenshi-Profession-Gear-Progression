@@ -2,7 +2,7 @@
 # covers: PG 85, 86, 88, 90, 91, 92, 306
 # fixture: Crafting base
 # reset: fresh
-# needs: ProfessionGearProgression.dll 59EFB4B1; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); bench outputs empty (fresh fixture)
+# needs: ProfessionGearProgression.dll 05E41322; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); bench outputs empty (fresh fixture)
 # needs fix FAA5B471 (craft hook rolls the item that reaches the bench output)
 # verify: ProfessionGear.log has one "roll source=crafted" line per eligible craft, tier = the finished item's quality (pg_check expected_tier); none for the First Aid Kit
 @wait-world

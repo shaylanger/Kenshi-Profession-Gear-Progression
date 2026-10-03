@@ -2,7 +2,7 @@
 # covers: PG 149, 244, 298, 321, 327
 # fixture: auto-home (the file then loads kah-pg-stale, made by auto-home/pg-02-equip-stats.txt in the main launch)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 59EFB4B1; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode AutoClassifyOff -Rules InGameTest (AutoClassify=false, WorldLootMultiplier=0; sidecar from the main launch kept)
+# needs: ProfessionGearProgression.dll 05E41322; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode AutoClassifyOff -Rules InGameTest (AutoClassify=false, WorldLootMultiplier=0; sidecar from the main launch kept)
 # verify: ProfessionGear.log config line has autoClassify=0 worldLootMultiplier=0 overrides=8
 @wait-world
 @sleep 8

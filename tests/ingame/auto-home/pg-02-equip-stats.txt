@@ -2,7 +2,7 @@
 # covers: PG 48, 49, 57, 59, 60, 61, 62-80, 83, 148, 158, 254, 300, 312, 313 (and makes save kah-pg-stale for 298 in config/pg-30)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 59EFB4B1; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 05E41322; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: every pg_bonus line says match=1 (hooked effective == vanilla effective x (1 + bonus), cap 150); CSV values of R0/R1 (maxrunspeed without/with +50% Athletics) show whether run speed follows the hooked Athletics (row 254: different = yes); save kah-pg-stale exists afterwards (used by config/pg-30)
 @wait-world
 @sleep 8
