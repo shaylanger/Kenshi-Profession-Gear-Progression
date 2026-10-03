@@ -26,11 +26,12 @@ setstat Malzin farming 50
 pg_bonus Malzin farming ~ equipped_bonus=0% base=50\.00 .*match=1
 job Malzin "Wheat Farm" radius 1000 ~ Wheat Farm
 pg_jobscale on ~ jobOperateScaling=1
-# warm-up: she walks over and starts tending
+# warm-up: she walks over and starts tending. m16: after a fixed 15 game min the farm hook had not fired yet
+# (calls=0), then fired ~10 per game min in every window, so wait for the first call (max 300 s real = ~50 game min at 10x).
 speed 10
 @wait-game 15 900
+@until 300 pg_operate "Wheat Farm" radius 100 near Malzin ~ calls=[1-9]
 speed 0
-pg_operate "Wheat Farm" radius 100 near Malzin ~ calls=[1-9]
 # --- A: no Farming gear ---
 @set GA0 building "Wheat Farm" 1000 ~ (grown=[\d.]+ died=[\d.]+)
 pg_operate "Wheat Farm" reset radius 100 near Malzin ~ \(reset\)
