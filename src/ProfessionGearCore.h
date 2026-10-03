@@ -166,6 +166,9 @@ float AggregatePercent(const std::vector<AffixRecord>& records,
 float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
                          float hardCap);
 
+// 0..1 wealth/competence from the NPC's best profession skill; < 0.15 (best skill < 12) = poor.
+float WealthFromBestSkill(float bestSkill);
+
 float SpecialistPackItemWeightMultiplier(const std::vector<ItemTag>& packTags,
                                          const std::string& itemName,
                                          const std::string& itemBaseId,

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <map>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -274,6 +275,20 @@ int main(){
   {std::vector<ItemTag> x=Classify(tradersPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_TRADE)&&!HasTag(x,TAG_PACK_GENERIC),"vanilla Traders Backpack is a trade pack");}
   ItemDescriptor oldTradersPack; oldTradersPack.baseId="1019-gamedata.base"; oldTradersPack.name="Old Traders backpack small"; oldTradersPack.container=true;
   {std::vector<ItemTag> x=Classify(oldTradersPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_TRADE),"vanilla Old Traders backpack is a trade pack");}
+
+  Check(Eq(WealthFromBestSkill(0),0)&&Eq(WealthFromBestSkill(-5),0),"no skill is poor");
+  Check(WealthFromBestSkill(5)<.15f&&WealthFromBestSkill(11.9f)<.15f,"very low skill counts as poor");
+  Check(WealthFromBestSkill(12)>=.15f&&WealthFromBestSkill(40)>=.15f,"ordinary skill is not poor");
+  Check(Eq(WealthFromBestSkill(80),1)&&Eq(WealthFromBestSkill(100),1),"skill 80+ is full wealth");
+  {
+    ItemDescriptor hat; hat.baseId="poor.hat"; hat.name="Worker Rags"; hat.quality=.5f; hat.armour=true;
+    std::vector<ItemTag> ht=Classify(hat,overrides,exclusions);
+    RuleConfig half; half.globalChance=1.0f; half.poorNpcMultiplier=0.0f;
+    RoleProfile poorNpc; poorNpc.primary=STAT_FARMING; poorNpc.wealth01=WealthFromBestSkill(5);
+    int poorRolls=0;
+    for(int i=0;i<200;++i){ std::ostringstream k; k<<"poor-"<<i; if(!RollAffixes(hat,poorNpc,half,ht,k.str(),(unsigned)i,false).affixes.empty()) ++poorRolls; }
+    Check(poorRolls==0,"very low-skill NPC gear is suppressed by PoorNpcMultiplier");
+  }
 
   ItemDescriptor tobacco; tobacco.baseId="live.chewing_tobacco"; tobacco.name="Chewing Tobacco"; tobacco.description="Workers may chew these rags of tobacco"; tobacco.equippable=false;
   {std::vector<ItemTag> x=Classify(tobacco,overrides,exclusions); AffixRecord rr=RollAffixes(tobacco,RoleProfile(),RuleConfig(),x,"tobacco",7,false); Check(rr.affixes.empty(),"non-equippable tobacco never rolls profession affix");}

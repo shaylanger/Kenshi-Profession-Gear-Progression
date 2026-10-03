@@ -14,6 +14,7 @@
 #include <kenshi/Building/CraftingBuilding.h>
 #include <kenshi/Character.h>
 #include <kenshi/CharStats.h>
+#include <kenshi/Faction.h>
 #include <kenshi/GameWorld.h>
 #include <kenshi/GameData.h>
 #include <kenshi/Gear.h>
@@ -297,7 +298,7 @@ PGP::RoleProfile RoleFor(Character* c) {
       float v=g_getStatOrig?g_getStatOrig(s,a[i].k,true):s->getStat(a[i].k,true);
       if(v>best){best=v;r.primary=a[i].p;}
     }
-    r.wealth01=best<=0?0.15f:(best>=80?1.0f:0.2f+best/100.0f*.8f);
+    r.wealth01=PGP::WealthFromBestSkill(best);
     r.unique=c->isUnique();
   } catch (...) {}
   return r;
@@ -383,6 +384,13 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
         role.worldLootSource=true;
       }
     } catch (...) {}
+  }
+
+  // Poverty describes the NPC who wears/carries the gear. Shop stock, world loot and crafted
+  // items are not judged by the shopkeeper's, finder's or crafter's own skills.
+  if(role.worldLootSource || crafted || (role.traderSource && !d.equipped)){
+    role.wealth01=0.5f;
+    role.slave=false;
   }
 
   unsigned int seed=PGP::Hash32(key+"|"+d.baseId);
@@ -1068,7 +1076,7 @@ int KahLoot(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   return KAH_OK;
 }
 
-// pg_census [name filter]: records of items on loaded characters (whose name contains the filter)
+// pg_census [filter]: records of items on loaded characters (whose name or faction contains the filter)
 // and in trader shop storage, by owner class (player/npc/trader/shop) and stat. Data for the
 // distribution rows (102-104, 220-228, 237, 245).
 int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
@@ -1085,9 +1093,10 @@ int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
       Character* c=*ci;
       if(!c) continue;
       if(!filter.empty()){
-        std::string n;
+        std::string n, f;
         try { n=PGP::Lower(c->getName()); } catch (...) { continue; }
-        if(n.find(filter)==std::string::npos) continue;
+        try { Faction* fac=c->getFaction(); if(fac) f=PGP::Lower(fac->getName()); } catch (...) {}
+        if(n.find(filter)==std::string::npos && f.find(filter)==std::string::npos) continue;
       }
       int cls=1;
       try { if(c->isPlayerCharacter()) cls=0; else if(c->isATrader()) cls=2; } catch (...) {}

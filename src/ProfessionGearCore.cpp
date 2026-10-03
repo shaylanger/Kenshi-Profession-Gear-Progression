@@ -487,6 +487,14 @@ float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
   return result;
 }
 
+float WealthFromBestSkill(float bestSkill) {
+  // Was 0.2 + best*0.8/100 (never below 0.2), so the poor-NPC multiplier (wealth < 0.15) only
+  // ever applied to slaves. Now linear up to skill 80: best skill below 12 counts as poor.
+  if (bestSkill <= 0.0f) return 0.0f;
+  if (bestSkill >= 80.0f) return 1.0f;
+  return bestSkill / 80.0f;
+}
+
 static bool HasTagCore(const std::vector<ItemTag>& tags, ItemTag tag) {
   return std::find(tags.begin(), tags.end(), tag) != tags.end();
 }
