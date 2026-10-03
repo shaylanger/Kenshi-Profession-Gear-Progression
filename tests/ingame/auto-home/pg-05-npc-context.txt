@@ -2,7 +2,7 @@
 # covers: PG 94, 98, 99, 100, 105, 107, 228 (93/95/96/97/235/236/320 recheck)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: the @log lines show source=npc and a single affix of the NPC's own profession on generic workwear/goggles; after kill + loot and after save/reload the hat keeps its key and affix (105, 107)
 @wait-world
 @sleep 8
@@ -12,42 +12,42 @@ speed 0
 setname ${MN_ID} "PG Miner" ~ -> PG Miner
 setstat "PG Miner" labouring 100
 give "PG Miner" 2185-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Labouring:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Labouring:[\d.]+\r?$
 pg_check "PG Miner" "Rattan Hat" ~ valid=1
 # --- Weapon Smithing context ---
 @set SM_ID spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
 setname ${SM_ID} "PG Smith" ~ -> PG Smith
 setstat "PG Smith" weapon_smith 100
 give "PG Smith" 2185-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Weapon Smithing:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Weapon Smithing:[\d.]+\r?$
 pg_check "PG Smith" "Rattan Hat" ~ valid=1
 # --- Cooking context ---
 @set CK_ID spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
 setname ${CK_ID} "PG Cook" ~ -> PG Cook
 setstat "PG Cook" cooking 100
 give "PG Cook" 2185-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Cooking:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Cooking:[\d.]+\r?$
 pg_check "PG Cook" "Rattan Hat" ~ valid=1
 # --- Turrets context ---
 @set TU_ID spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
 setname ${TU_ID} "PG Gunner" ~ -> PG Gunner
 setstat "PG Gunner" turrets 100
 give "PG Gunner" 2168-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2168-gamedata.base name="Square Goggles" equipped=[01] tier=\d tags=\S+ affixes=Turrets:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2168-gamedata.base name="Square Goggles" equipped=[01] tier=\d tags=\S+ affixes=Turrets:[\d.]+\r?$
 pg_check "PG Gunner" "Square Goggles" ~ valid=1
 # --- Farming context ---
 @set FA_ID spawn "Farmer" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
 setname ${FA_ID} "PG Farmer" ~ -> PG Farmer
 setstat "PG Farmer" farming 100
 give "PG Farmer" 2185-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Farming:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=2185-gamedata.base name="Rattan Hat" equipped=[01] tier=\d tags=\S+ affixes=Farming:[\d.]+\r?$
 pg_check "PG Farmer" "Rattan Hat" ~ valid=1
 # --- Medic context ---
 @set DO_ID spawn "Doctor /GENNAME/" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
 setname ${DO_ID} "PG Doctor" ~ -> PG Doctor
 setstat "PG Doctor" medic 100
 give "PG Doctor" 1168-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=1168-gamedata.base name="Cloth Shirt" equipped=[01] tier=\d tags=\S+ affixes=Medic:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc key=pgp\S+ baseId=1168-gamedata.base name="Cloth Shirt" equipped=[01] tier=\d tags=\S+ affixes=Medic:[\d.]+\r?$
 pg_check "PG Doctor" "Cloth Shirt" ~ valid=1
 # --- 105: kill the farmer, loot the hat: same record ---
 @set FK pg_info "PG Farmer" "Rattan Hat" ~ key=(pgp\S+)

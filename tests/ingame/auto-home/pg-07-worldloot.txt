@@ -2,7 +2,7 @@
 # covers: PG 213, 246, 247, 248, 249 (241 recheck)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: 248: items in a chest have no record before pickup (generation happens at pickup, documented); 249: grep ProfessionGear.log for 'roll source=world_loot .*name="Square Goggles"' right after the fixture load (Shay's pre-existing goggles did not inherit her profession)
 @wait-world
 @sleep 8

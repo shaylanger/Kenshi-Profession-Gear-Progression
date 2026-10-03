@@ -289,6 +289,29 @@ int main(){
     for(int i=0;i<200;++i){ std::ostringstream k; k<<"poor-"<<i; if(!RollAffixes(hat,poorNpc,half,ht,k.str(),(unsigned)i,false).affixes.empty()) ++poorRolls; }
     Check(poorRolls==0,"very low-skill NPC gear is suppressed by PoorNpcMultiplier");
   }
+  {
+    // Tests 102-104 as rates over many instances with the shipped multipliers (GlobalChance 1).
+    ItemDescriptor hoe2; hoe2.baseId="rate.hoe"; hoe2.name="Iron Hoe"; hoe2.quality=.5f;
+    std::vector<ItemTag> ft; ft.push_back(TAG_TOOL_FARMING);
+    RuleConfig shipped;  // defaults: npcRole 1.35, poor 0.20
+    RoleProfile specialist; specialist.primary=STAT_FARMING; specialist.wealth01=.7f;
+    RoleProfile other; other.primary=STAT_MEDIC; other.wealth01=.7f;
+    RoleProfile slave=other; slave.slave=true;
+    RoleProfile poor=other; poor.wealth01=WealthFromBestSkill(4);
+    int nSpec=0,nOther=0,nSlave=0,nPoor=0; const int N=4000;
+    for(int i=0;i<N;++i){
+      std::ostringstream k; k<<"rate-"<<i;
+      if(!RollAffixes(hoe2,specialist,shipped,ft,k.str(),(unsigned)i,false).affixes.empty()) ++nSpec;
+      if(!RollAffixes(hoe2,other,shipped,ft,k.str(),(unsigned)i,false).affixes.empty()) ++nOther;
+      if(!RollAffixes(hoe2,slave,shipped,ft,k.str(),(unsigned)i,false).affixes.empty()) ++nSlave;
+      if(!RollAffixes(hoe2,poor,shipped,ft,k.str(),(unsigned)i,false).affixes.empty()) ++nPoor;
+    }
+    // tier 3 chance .60: specialist .81 (x1.35), other .60, slave/poor .12 (x0.20)
+    Check(nSpec>nOther*1.2,"104 matching specialist rolls more often than an unrelated NPC");
+    Check(nSlave<nOther*0.3,"102 slave gear is strongly suppressed");
+    Check(nPoor<nOther*0.3,"103 very low-skill NPC gear is strongly suppressed");
+    Check(nOther>N*0.5 && nOther<N*0.7,"unrelated NPC rolls near the tier chance");
+  }
 
   ItemDescriptor tobacco; tobacco.baseId="live.chewing_tobacco"; tobacco.name="Chewing Tobacco"; tobacco.description="Workers may chew these rags of tobacco"; tobacco.equippable=false;
   {std::vector<ItemTag> x=Classify(tobacco,overrides,exclusions); AffixRecord rr=RollAffixes(tobacco,RoleProfile(),RuleConfig(),x,"tobacco",7,false); Check(rr.affixes.empty(),"non-equippable tobacco never rolls profession affix");}

@@ -1,8 +1,8 @@
 # id: PG-backpacks-04
-# covers: PG 109-119, 121, 122, 147, 255, 257, 272, 281, 282, 291, 292, 299 (117 recheck)
+# covers: PG 109-116, 118, 119, 121, 122, 147, 255, 257, 272, 281, 282, 291, 292, 299, 328 (117 recheck)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch: the rules make plain vanilla backpacks the specialist packs; Traders Backpack Medium is a trade pack by name)
+# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch: the rules make plain vanilla backpacks the specialist packs; Traders Backpack Medium is a trade pack by name)
 # verify: pg_pack: content_ratio = the specialist share math, applied_ratio = hooked_total / vanilla_total (must equal content_ratio while worn, 1.000 when not worn); CSV W_EQ < W_UN (Malzin's carried weight is lower while the ore pack is worn: the game's character weight uses the hooked pack total, 292/122)
 @wait-world
 @sleep 8

@@ -2,7 +2,7 @@
 # covers: PG 48, 49, 57, 59, 60, 61, 62-80, 83, 148, 158, 254, 300, 312, 313 (and makes save kah-pg-stale for 298 in config/pg-30)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: every pg_bonus line says match=1 (hooked effective == vanilla effective x (1 + bonus), cap 150); CSV values of R0/R1 (maxrunspeed without/with +50% Athletics) show whether run speed follows the hooked Athletics (row 254: different = yes); save kah-pg-stale exists afterwards (used by config/pg-30)
 @wait-world
 @sleep 8
@@ -118,7 +118,7 @@ pg_info Malzin "Straw Hat" ~ record=none \(not eligible
 give Malzin 2212-gamedata.base 1
 pg_info Malzin "Leather Vest" ~ Leather Vest key=pgp\S+ equipped=[01] tier=\d+ affixes=Cooking:[\d.]+( |$)
 pg_check Malzin "Leather Vest" ~ tags=TOOL_COOKING pool=Cooking .*valid=1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot key=pgp\S+ baseId=2212-gamedata.base name="Leather Vest" equipped=[01] tier=\d tags=TOOL_COOKING affixes=Cooking:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot key=pgp\S+ baseId=2212-gamedata.base name="Leather Vest" equipped=[01] tier=\d tags=TOOL_COOKING affixes=Cooking:[\d.]+\r?$
 # --- save for the stale-record test (298, config/pg-30): Malzin wears a world-loot Rattan Hat ---
 unequip Malzin "Iron Hat" ~ head -> main
 give Malzin 2185-gamedata.base 1

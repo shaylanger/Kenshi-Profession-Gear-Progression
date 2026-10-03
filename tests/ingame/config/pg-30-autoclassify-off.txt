@@ -1,8 +1,8 @@
 # id: PG-config-autoclassify-off-30
-# covers: PG 149, 244, 298
+# covers: PG 149, 244, 298, 321, 327
 # fixture: auto-home (the file then loads kah-pg-stale, made by auto-home/pg-02-equip-stats.txt in the main launch)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode AutoClassifyOff -Rules InGameTest (AutoClassify=false, WorldLootMultiplier=0; sidecar from the main launch kept)
+# needs: ProfessionGearProgression.dll 475B9508; OWN LAUNCH with, before it: set_test_mode.ps1 -Mode AutoClassifyOff -Rules InGameTest (AutoClassify=false, WorldLootMultiplier=0; sidecar from the main launch kept)
 # verify: ProfessionGear.log config line has autoClassify=0 worldLootMultiplier=0 overrides=8
 @wait-world
 @sleep 8
@@ -15,15 +15,17 @@ speed 0
 @set S pg_info Malzin "Rattan Hat" ~ affixes=([A-Za-z ]+):
 pg_info Malzin "Rattan Hat" ~ equipped=1 tier=\d+ affixes=[A-Za-z ]+:[\d.]+.*\(not eligible for affixes\)
 pg_bonus Malzin "${S}" ~ equipped_bonus=0% .*match=1
+# --- 321: a record with no affix (Black Cloth Shirt, cleared in pg-02) survived the restart (CRLF sidecar fix) ---
+pg_info Malzin "Black Cloth Shirt" ~ key=pgp\S+ equipped=1 tier=\d+ affixes=none
 # --- 149: items with an explicit rule tag still take part (Leather Vest -> TOOL_COOKING on a cook NPC) ---
 @set N_ID spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
 setname ${N_ID} "PG Cook" ~ -> PG Cook
 setstat "PG Cook" cooking 100
 give "PG Cook" 2212-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc .*baseId=2212-gamedata.base name="Leather Vest" .*tags=TOOL_COOKING affixes=Cooking:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=npc .*baseId=2212-gamedata.base name="Leather Vest" .*tags=TOOL_COOKING affixes=Cooking:[\d.]+\r?$
 give "PG Cook" 2185-gamedata.base 1
 pg_info "PG Cook" "Rattan Hat" ~ record=none \(not eligible
 # --- 244: WorldLootMultiplier=0: contextless world loot never rolls, even a rule-tagged item ---
 give Shay 2212-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot .*baseId=2212-gamedata.base name="Leather Vest" .*affixes=none$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=world_loot .*baseId=2212-gamedata.base name="Leather Vest" .*affixes=none\r?$
 pg_info Shay "Leather Vest" ~ tier=\d+ affixes=none

@@ -20,6 +20,9 @@
 > and the `kah run` scenario runner. Shay's "Crafting base" save (benches in the Hub) unblocks
 > Phase 3 / tests 85-92 and 306. Fixture details: `C:\KenshiTestFixtures\FIXTURES.md` (local).
 
+> **Since 2026-10-03:** the coordinator session runs all in-game tests; per-row status lives in
+> `INGAME_STATUS.md`, scenarios in `tests/ingame/` (`RUN_ORDER.md`). This file keeps the history.
+
 ## Resume instructions for another agent
 
 1. Read this file, ACTIVE_CONTEXT.md, LIVE_TEST_RUNBOOK.md, and recent git diff/log.

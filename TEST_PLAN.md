@@ -1,8 +1,8 @@
 # Profession Gear Progression — Full Test Plan
 
-**Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
+**Status:** installed for testing; the coordinator session runs the game. Per-row state: `INGAME_STATUS.md`; in-game scenarios: `tests/ingame/` (`RUN_ORDER.md`).
 
-**Current offline automation:** `run_tests.bat` passes **5,217 core checks**; `verify_offline.bat` passes **19 required SDK/export symbol checks**; source-contract verification passes **6 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **320**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,236 core checks**; `verify_offline.bat` passes **21 required SDK/export symbol checks**; source-contract verification passes **9 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **328**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -455,3 +455,16 @@ Added after live test 123 proved Kenshi runtime item handles change across ordin
 | ID | Automation | Test | Expected |
 |---|---|---|---|
 | 320 | AUTO | Top-tier generic workwear/goggles on a known-role NPC | Matching NPC role narrows the generic roll pool; no unrelated second/third profession affixes are added |
+
+## Section Y — 2026-10-03 offline review fixes (regression rows)
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 321 | AUTO | Sidecar row with no affix, CRLF line end, full restart | Record loads (not dropped), item does not roll again |
+| 322 | AUTO | Weapon whose only profession word is flavour description (Staff "poor farmers", Bardiche "slay thieves", Ronin Hatchet "robotic tools") | No profession tag; weapons classify by name only (Scythe by name = farming) |
+| 323 | AUTO | Natural shop stock in the trader's faction storage within 30 | Scanned as trader stock (source=trader, random legal pool), records exist before purchase |
+| 324 | AUTO | Purchase through `Inventory::buyItem` hands the buyer a copy | Copy keeps the shop item's persistent ID and affixes; no world-loot reroll |
+| 325 | AUTO | NPC whose best profession skill is below 12 | Counts as poor (PoorNpcMultiplier); shop stock / world loot / crafted items are not judged by the owner's skills |
+| 326 | AUTO | Enabled=false | No record is created from any path (scan, test commands, crafting) |
+| 327 | AUTO | Item with an old record that is not eligible now (rule change, AutoClassify off, old classifier) | Record kept in the sidecar, gives no bonus and no tooltip; harness-forced records stay active |
+| 328 | AUTO | Vanilla "Traders Backpack Medium/Large", "Old Traders backpack" | Trade pack (PACK_TRADE), not generic |

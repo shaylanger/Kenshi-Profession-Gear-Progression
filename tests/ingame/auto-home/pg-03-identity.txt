@@ -2,7 +2,7 @@
 # covers: PG 47, 51, 52, 53, 54, 55, 56, 58, 146, 159, 230, 273
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: K1/K2 in the CSV differ; every pg_check says valid=1 (tier from the item's quality, affix count within the tier cap, magnitudes inside the tier range, stats inside the item's legal pool: 54-56)
 @wait-world
 @sleep 8

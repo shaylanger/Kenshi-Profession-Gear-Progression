@@ -2,7 +2,50 @@
 
 **Last updated:** 2026-10-02
 **Purpose:** Live handoff file. Update this file every implementation turn before finishing so another agent can continue without reconstructing state.
-**Hard constraint:** DO NOT install, copy, enable, or otherwise apply this mod to the Kenshi game directory until Shay explicitly authorizes it.
+
+## CURRENT STATE — 2026-10-03 (read this first; everything below is history)
+
+**Workflow (since 2026-10-02, `C:\KenshiModding\testing\README.md`):** one **coordinator** session
+runs Kenshi for every feature (STOBE, KenshiFP, PG, REL, harness) and owns installs, fixtures and
+`MASTER_TEST_PLAN.md`. The **PG agent** owns this repo only: builds/tests offline, writes in-game
+scenario files, fixes the bugs the coordinator sends, commits + pushes, and reports
+"ready: <commit>, <dll hash>". The PG agent never launches Kenshi, never installs, never touches the
+game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=shaylanger commit`
+(the repo-local email is wrong) and push after each commit.
+
+- **Per-row status:** `INGAME_STATUS.md` (340 rows: 73 PASS-offline, 62 PASS-live, 106 PENDING-auto,
+  63 NEEDS-SETUP, 10 NEEDS-SHAY, 26 DEFERRED).
+- **Scenarios:** `tests/ingame/` (auto-home, crafting-base, trader, config) + `tests/ingame/RUN_ORDER.md`
+  (4 launches: main Forced+InGameTest rules, AutoClassifyOff, Disabled+startup sidecar, NormalVerbose).
+  Format: `stobe-auto run --help`; header per `testing/README.md`.
+- **Test configs:** `set_test_mode.ps1 -Mode Forced|Normal|NormalVerbose|AutoClassifyOff|Disabled
+  -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
+  InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
+  Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
+- **Built, not installed:** `out\ProfessionGearProgression.dll` **475B9508** (0.9.1-pretest).
+  Installed: D667F5EE. Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
+  pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
+  pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),
+  pg_building, pg_take, pg_store (move item instances building <-> character), pg_loot (move worn
+  or body items between characters), pg_pack (backpack vanilla vs hooked weight, ratios),
+  pg_census [name|faction filter] (records by owner class and stat).
+- **Fixed 2026-10-03:** weapons classified by name only (Staff "poor farmers" -> no Farming; Scythe
+  is farming); vanilla Traders backpacks are trade packs; natural shop stock (trader faction
+  storage within 30) is scanned as trader stock; `Inventory::buyItem` hook keeps the shop record on
+  a bought copy; records of items that are not eligible now give no bonus/tooltip (kept in the
+  sidecar; forced ones stay active); poor-NPC suppression now really applies (best skill < 12);
+  Enabled=false creates no records; sidecar rows with no affix survive a restart (CRLF bug: 2,629
+  rows were dropped at every load). Regression rows 321-328 in TEST_PLAN.md.
+- **Open (needs the coordinator's run):** all PENDING-auto rows; the job-path proof (pg-08: does
+  mining read the hooked Labouring?) decides whether a direct job hook is needed.
+- **Open engineering (not started):** balance measurement driver (rows 161-199), the NEEDS-SETUP
+  harness commands listed in INGAME_STATUS.md (drop/pickup, combat stat names, import/new game,
+  restock, unload trigger).
+- `D:\Steam\steamapps\common\Kenshi\mods\_ProfessionGearBackups\` (7 dated copies from 2026-10-02
+  19:10-20:30): nothing in it is needed (old DLLs rebuildable from git; sidecars are v1 or a subset
+  of the live v2 sidecar; logs are summarized in LIVE_TEST_PROGRESS.md and archived under
+  out\test-runs). Leave deleting it to the coordinator/Shay.
 
 ## Project locations
 

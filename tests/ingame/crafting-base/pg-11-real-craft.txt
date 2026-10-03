@@ -2,7 +2,7 @@
 # covers: PG 87, 90, 160, 253 (59, 232 live recheck with a crafted weapon)
 # fixture: Crafting base
 # reset: fresh
-# needs: ProfessionGearProgression.dll 4D02CDFC; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 475B9508; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: CSV T1 (armour smith 5) vs the second craft's tier (armour smith 100): higher skill -> higher quality -> higher tier (87); exactly one record for the craft saved mid-progress (160); grep ProfessionGear.log: one "roll source=crafted" per Rag Shirt, none for the Katana
 @wait-world
 @sleep 8
@@ -28,7 +28,7 @@ craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
 speed 10
 @until 400 benches 150 ~ out 6x6: \[Rag Shirt
 speed 0
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted .*name="Rag Shirt" .*tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+$
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted .*name="Rag Shirt" .*tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+\r?$
 pg_take Malzin "Clothing Bench" "Rag Shirt" ~ took
 pg_check Malzin "Rag Shirt" ~ tier=(?!${T1} )\d+ .*valid=1
 pg_store Malzin "General Camp Storage Chest" "Rag Shirt" ~ stored
