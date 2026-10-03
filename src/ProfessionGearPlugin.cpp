@@ -861,11 +861,15 @@ int KahBonus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   return KAH_OK;
 }
 
-// Nearest building within 300 of the first player character whose name contains `name`.
-Building* KahFindBuilding(const std::string& name, float& dist) {
+// Nearest building within `radius` (default 300) of `anchor` (default: the first player
+// character) whose name contains `name`.
+Building* KahFindBuilding(const std::string& name, float& dist, float radius=300.0f, Character* anchor=0) {
   GameWorld* world=KahWorld();
-  if(!world || !world->player || world->player->playerCharacters.size()==0) return 0;
-  Character* anchor=world->player->playerCharacters[0];
+  if(!world) return 0;
+  if(!anchor){
+    if(!world->player || world->player->playerCharacters.size()==0) return 0;
+    anchor=world->player->playerCharacters[0];
+  }
   if(!anchor) return 0;
   static lektor<RootObject*> nearby;   // reused: lektor has no destructor
   nearby.clear();
@@ -873,7 +877,7 @@ Building* KahFindBuilding(const std::string& name, float& dist) {
   Building* best=0;
   try {
     const Ogre::Vector3 pos=anchor->getPosition();
-    world->getObjectsWithinSphere(nearby,pos,300.0f,BUILDING,512,0);
+    world->getObjectsWithinSphere(nearby,pos,radius,BUILDING,512,0);
     for(uint32_t i=0;i<nearby.size();++i){
       Building* b=dynamic_cast<Building*>(nearby.stuff[i]);
       if(!b || !b->getInventory()) continue;
@@ -1195,11 +1199,20 @@ int KahPack(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
 
 // pg_operate <building> [reset]: worker ticks on a production building/farm since the last reset.
 int KahOperate(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
-  if(argc<2){ r->append(r,"usage: pg_operate <building> [reset]"); return KAH_ERROR; }
+  if(argc<2){ r->append(r,"usage: pg_operate <building> [reset] [radius <m>] [near <npc>]"); return KAH_ERROR; }
+  bool reset=false; float radius=300.0f; Character* anchor=0;
+  for(int i=2;i<argc;++i){
+    const std::string a=PGP::Lower(argv[i]);
+    if(a=="reset") reset=true;
+    else if(a=="radius" && i+1<argc) radius=(float)atof(argv[++i]);
+    else if(a=="near" && i+1<argc){
+      anchor=KahFindCharacter(argv[++i]);
+      if(!anchor){ r->append(r,(std::string("no character named: ")+argv[i]).c_str()); return KAH_ERROR; }
+    }
+  }
   float dist=0;
-  Building* b=KahFindBuilding(argv[1],dist);
-  if(!b){ r->append(r,(std::string("no building with an inventory matching '")+argv[1]+"' within 300").c_str()); return KAH_ERROR; }
-  const bool reset=argc>=3 && PGP::Lower(argv[2])=="reset";
+  Building* b=KahFindBuilding(argv[1],dist,radius,anchor);
+  if(!b){ std::ostringstream e; e<<"no building with an inventory matching '"<<argv[1]<<"' within "<<radius; r->append(r,e.str().c_str()); return KAH_ERROR; }
   float out=0, progress=0;
   try { ProductionBuilding* pb=dynamic_cast<ProductionBuilding*>(b); if(pb) out=pb->getOutput(); } catch (...) {}
   try { UseableStuff* u=dynamic_cast<UseableStuff*>(b); if(u) progress=u->progressBarLevel; } catch (...) {}
@@ -1245,7 +1258,7 @@ void KahTick() {
        +g_kah.registerCommand("pg_check","pg_check <npc> <item>",KahCheck,0)
        +g_kah.registerCommand("pg_census","pg_census [name filter]",KahCensus,0)
        +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0)
-       +g_kah.registerCommand("pg_operate","pg_operate <building> [reset]",KahOperate,0)
+       +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0);
   g_kah.log("ProfessionGear: test commands registered");
   std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale)";

@@ -2,7 +2,7 @@
 # covers: PG 87, 90, 160, 253 
 # fixture: Crafting base
 # reset: fresh
-# needs: ProfessionGearProgression.dll 05E41322; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll E57B9E8E; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # note: in a real craft the worker hauls the finished item away at once (run m3: the bench output stayed empty, queue went to 0), so the rolls are checked in ProfessionGear.log, which the craft hook writes at completion
 # verify: ProfessionGear.log: Armour Smithing 5 -> "roll source=crafted ... name="Rag Shirt" ... tier=0..2", Armour Smithing 100 -> Armour Smithing affix (90); 87/253: compare the tiers of the crafted lines (skill 5 vs 100; Kenshi's quality has a random spread: m3 gave 0 vs 4, m4 0 vs 1 then 4); after the mid-craft save/load exactly ONE more "roll source=crafted ... Rag Shirt" line (160)
 @wait-world

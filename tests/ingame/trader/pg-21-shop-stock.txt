@@ -2,7 +2,7 @@
 # covers: PG 212, 218, 219, 237, 239, 323, 324 (211, 214, 215 recheck through the real purchase path)
 # fixture: Trader
 # reset: fresh
-# needs: ProfessionGearProgression.dll 05E41322 (shop storage scan + purchase hook; armour is never a pack); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll E57B9E8E (shop storage scan + purchase hook; armour is never a pack); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: ProfessionGear.log has "roll source=trader ... equipped=0" lines for storage items; if the purchase handed over a copy, "purchase: kept shop id=<RK>" (either way the bought item keeps RK and its affixes)
 @wait-world
 @sleep 8
