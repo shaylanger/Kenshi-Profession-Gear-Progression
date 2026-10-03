@@ -21,6 +21,7 @@ Before: `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (sidecar kept).
 | 6 | auto-home | `auto-home/pg-06-persistence.txt` | fresh |
 | 7 | auto-home | `auto-home/pg-07-worldloot.txt` | fresh |
 | 8 | auto-home | `auto-home/pg-08-job-path.txt` (~2.5 game hours at 10x) | fresh |
+| 8b | auto-home | `auto-home/pg-12-job-throughput.txt` (row 177, ~4.5 game hours at 10x; needs harness C5804B0C) | fresh |
 | 9 | auto-home | `auto-home/pg-09-soak.txt` (30 real minutes at 50x; optional, last) | fresh |
 | 10 | Crafting base | `crafting-base/pg-10-craftfinish.txt` | fresh |
 | 11 | Crafting base | `crafting-base/pg-11-real-craft.txt` | fresh |

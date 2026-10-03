@@ -1,0 +1,45 @@
+# id: PG-job-throughput-12
+# covers: PG 177 (Labouring 50: no gear vs +50% Labouring gear on the real Stone Mine job; the Phase 8 "do jobs read the hooked stat" proof)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 59EFB4B1; harness C5804B0C (`produced`, `teleport <npc> building`, `building/job ... radius`); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# verify: CSV RA (no gear) vs RB (+50% Labouring) per_game_hour, equal game time (2 h each). RB noticeably higher than RA (>= ~1.1x) = PASS: the mining job reads the hooked effective Labouring. RB ~ RA = the job reads the raw stat (then PG needs a direct job hook). Both numbers go into INGAME_STATUS row 177.
+@wait-world
+@sleep 8
+speed 0
+health Malzin 100
+health Shay 100
+hunger Malzin 280
+hunger Shay 280
+teleport Shay building "Stone Mine" dist 20
+teleport Malzin building "Stone Mine" dist 8
+building "Stone Mine" 1000 ~ product=
+clearjobs Malzin
+pg_clear Malzin ~ cleared affixes
+setstat Malzin labouring 50
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=50\.00 .*match=1
+job Malzin "Stone Mine" radius 1000 ~ Stone Mine
+# warm-up: she walks over and starts working
+speed 10
+@wait-game 15 900
+# --- A: no Labouring gear, 2 game hours ---
+speed 0
+produced "Stone Mine" reset radius 1000 ~ produced=
+speed 10
+@wait-game 120 1800
+speed 0
+@set RA produced "Stone Mine" radius 1000 ~ per_game_hour=([\d.]+)
+produced "Stone Mine" radius 1000 ~ produced=[1-9]
+hunger Malzin 280
+# --- B: +50% Labouring on her worn shirt, same job, 2 game hours ---
+pg_force_affix Malzin "Black Cloth Shirt" labouring 50 tier 6 ~ affixes=Labouring:50
+pg_bonus Malzin labouring ~ equipped_bonus=50% base=50\.\d\d .*match=1
+produced "Stone Mine" reset radius 1000 ~ produced=
+speed 10
+@wait-game 120 1800
+speed 0
+@set RB produced "Stone Mine" radius 1000 ~ per_game_hour=([\d.]+)
+produced "Stone Mine" radius 1000 ~ produced=[1-9]
+@echo stone per game hour: A (no gear) ${RA}, B (+50% Labouring) ${RB}
+pg_bonus Malzin labouring ~ match=1
+clearjobs Malzin

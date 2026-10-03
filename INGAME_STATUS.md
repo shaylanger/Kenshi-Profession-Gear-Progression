@@ -13,8 +13,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 71 |
 | PASS-live | 169 |
-| PENDING-auto | 1 |
-| NEEDS-SETUP | 65 |
+| PENDING-auto | 2 |
+| NEEDS-SETUP | 64 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
 | total | 342 |
@@ -90,7 +90,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
-| 177 | NEEDS-SETUP | job-path proof ran (m4 pg-08 39/0) but `building "Stone Mine"` qty is the output buffer (0 -> 0 -> 1 over 2 h): needs a production counter (units produced per game hour) or a job whose output stays put |
+| 177 | PENDING-auto | `tests/ingame/auto-home/pg-12-job-throughput.txt` (harness `produced` counter, C5804B0C): stone per game hour without vs with +50% Labouring |
 | 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
