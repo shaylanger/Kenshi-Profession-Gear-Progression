@@ -12,8 +12,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | State | Rows |
 |---|---|
 | PASS-offline | 71 |
-| PASS-live | 171 |
-| PENDING-auto | 35 |
+| PASS-live | 175 |
+| PENDING-auto | 31 |
 | NEEDS-SETUP | 30 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
@@ -31,7 +31,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 45 | PASS-live | LIVE_TEST_PROGRESS.md Phase 2: sidecar reloaded after a full Kenshi restart (318) |
 | 46–48 | PASS-live | LIVE_TEST_PROGRESS.md "Phase 2 equipped-section rerun" + "Phase 2 - equip-only + persistence core PASS" |
 | 49 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
-| 50 | PENDING-auto | `tests/ingame/auto-home/pg-70-drop-pickup.txt` (harness 5798EDF5 `drop`/`pickup`) |
+| 50 | PASS-live | `C:\KenshiTestRuns\m16-4080\pg-70-drop-pickup.out` 16/0 (harness 5798EDF5): same key + affixes after drop/pickup, also picked up by another character |
 | 51–56 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 57 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 58 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
@@ -43,7 +43,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 80 | PASS-live | LIVE_TEST_PROGRESS.md Phase 2 + `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) (all 17 stats match=1) |
 | 81–82 | PASS-live | `C:\KenshiTestRuns\m4\pg-08-job-path.out` (archive/test-run-2026-10-03-m4.md) 39/0: base Labouring 50.00 -> 50.43 while geared (+50%), unchanged by removing the gear |
 | 83 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
-| 84 | PENDING-auto | `tests/ingame/auto-home/pg-71-melee-stats.txt` (harness 5798EDF5 combat stat names) |
+| 84 | PASS-live | `C:\KenshiTestRuns\m16-4080\pg-71-melee-stats.out` 26/0: combat stats identical with +100% profession affixes on two items |
 | 85–86 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 87 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): crafted tiers rise with Armour Smithing (5 vs 100; Kenshi quality has a random spread) |
 | 88 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
@@ -57,7 +57,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 102 | PASS-live | core rate test + live launch 4 (Normal chances, m6 pg-40): 10 spawned slaves 9/73 items rolled (12%) vs 10 drifters 16/32 (50%) |
 | 103–104 | PASS-offline | core rate tests over 4,000 instances (slave/poor x0.2, matching specialist x1.35); 103 needed fix 2b14a4c; live data for 102 in config/pg-40 |
 | 105 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
-| 106 | PENDING-auto | `tests/ingame/auto-home/pg-72-unload-reload.txt` (harness 5798EDF5 `unload`/`reload`) |
+| 106 | PASS-live | `C:\KenshiTestRuns\m16-4080\pg-72-unload-reload.out` 14/0: same key + affixes after unload/reload, restored not rerolled |
 | 107 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
 | 108 | PENDING-auto | `tests/ingame/squin/pg-62-unique-npc.txt` (harness KAH 13 `unique=1`; census for the first unique NPC identical across save/load) |
 | 109–116 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
@@ -131,7 +131,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 258–271 | DEFERRED | by design (Shay): FCS profession items and selective stacking are later goals |
 | 272 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 273 | PASS-live | LIVE_TEST_PROGRESS.md 309 (Bolts) + 308-311; rechecked in pg-03 |
-| 274 | PENDING-auto | `tests/ingame/auto-home/pg-57a-id-collision-setup.txt` -> Kenshi closed: `tools/make_id_collision.ps1 -Key <K>` (sidecar row gets another base ID + marker 3:77) -> `pg-57b-id-collision-check.txt` on kah-pg-collide -> `make_id_collision.ps1 -Restore` |
+| 274 | PASS-live | `C:\KenshiTestRuns\m16-4080\pg-57a-id-collision-setup.out` 11/0 + `pg-57b-id-collision-check.out` 8/0 (4080 rig, PG D7A60E49): sidecar row with another base ID -> rebound to a new key, no marker affix, no base_mismatch, no stale Medic bonus |
 | 275–276 | PASS-live | implicit in every live run (per-character bonus with several characters, inventory callbacks under heavy moves, sidecar atomic replace); the failure path of 279 is offline only |
 | 277 | NEEDS-SHAY | tooltip text is not readable by the harness (ui lists widgets, not hover tooltips) |
 | 278 | PASS-offline | core config clamp tests, source contract (double start), classifier corpus, package/installer verifiers |
