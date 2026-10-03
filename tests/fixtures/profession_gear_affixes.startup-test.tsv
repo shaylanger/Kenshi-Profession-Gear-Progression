@@ -1,0 +1,8 @@
+# Profession Gear Progression v2 persistent-item-id
+# Tests 126-128 sidecar fixture: 3 valid rows, 1 corrupt row, 1 legacy row, 1 duplicate key.
+pgp1-test-1	2185-gamedata.base	3	10:8.5
+pgp1-test-2	2168-gamedata.base	6	2:20.0,3:18.0
+this line is corrupt
+pgp1-test-3	1168-gamedata.base	1	
+53665-2180541952-0-0-3	2168-gamedata.base	1	9:3.0
+pgp1-test-1	2185-gamedata.base	4	10:12.0

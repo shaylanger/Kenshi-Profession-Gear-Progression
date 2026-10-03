@@ -10,6 +10,7 @@
 #include <vector>
 
 #include <core/Functions.h>
+#include <kenshi/Building/Building.h>
 #include <kenshi/Building/CraftingBuilding.h>
 #include <kenshi/Character.h>
 #include <kenshi/CharStats.h>
@@ -31,6 +32,8 @@ PGP::RuleConfig g_cfg;
 std::map<std::string, PGP::AffixRecord> g_records;
 std::map<std::string, std::string> g_runtimeItemIds;
 std::map<std::string, std::map<PGP::ProfessionStat, float> > g_bonusCache;
+std::set<std::string> g_forcedKeys;           // records set by pg_force_affix (test only, kept active)
+std::map<std::string, DWORD> g_shopScanTick;  // trader handle -> last shop-storage scan
 LONG g_persistentIdCounter = 0;
 const char* kPersistentIdField = "ProfessionGearPersistentId";
 bool g_refreshingInventory = false;
@@ -52,6 +55,7 @@ typedef void (*InventoryAddRemoveFn)(Inventory*, Item*);
 typedef void (*InventoryUpdateFn)(Inventory*, Item*, int);
 typedef GameData* (*ItemSerialiseInventoryFn)(Item*, GameDataContainer*, GameData*);
 typedef void (*ItemLoadInventoryFn)(Item*, GameDataContainer*, GameData*);
+typedef Item* (*InventoryBuyItemFn)(Inventory*, Item*, RootObject*);
 
 PlayerUpdateFn g_playerUpdateOrig = 0;
 GetStatFn g_getStatOrig = 0;
@@ -67,6 +71,10 @@ InventoryAddRemoveFn g_inventoryRemoveOrig = 0;
 InventoryUpdateFn g_inventoryUpdateOrig = 0;
 ItemSerialiseInventoryFn g_itemSerialiseInventoryOrig = 0;
 ItemLoadInventoryFn g_itemLoadInventoryOrig = 0;
+InventoryBuyItemFn g_buyItemOrig = 0;
+
+std::string IntStr(long long v) { std::ostringstream s; s<<v; return s.str(); }
+float HookInventoryWeight(Inventory* inv);
 
 void Log(const std::string& s) {
   std::ofstream f(g_logPath.c_str(), std::ios::app);
@@ -223,6 +231,24 @@ std::vector<PGP::ItemTag> TagsFor(const PGP::ItemDescriptor& item) {
   if(it!=g_overrides.end()) return it->second;
   if(!g_cfg.autoClassify) return std::vector<PGP::ItemTag>();
   return PGP::Classify(item,g_overrides,g_exclusions);
+}
+
+// An item can carry a record from an older build or older rules (e.g. a Staff that rolled Farming
+// before weapons were classified by name, or an item excluded by a later rule, or AutoClassify
+// turned off). Such records stay in the sidecar (nothing is destroyed) but give no bonus and no
+// tooltip while the item is not eligible now. Harness-forced records (test only) stay active.
+bool ItemCurrentlyEligible(Item* item,const std::string& key) {
+  if(!item) return false;
+  if(!key.empty()){
+    EnterCriticalSection(&g_lock);
+    const bool forced=g_forcedKeys.count(key)!=0;
+    LeaveCriticalSection(&g_lock);
+    if(forced) return true;
+  }
+  PGP::ItemDescriptor d=Describe(item);
+  if(!d.equippable || d.legendary || d.stackable) return false;
+  if(g_exclusions.count(PGP::Lower(d.baseId))) return false;
+  return !TagsFor(d).empty();
 }
 
 PGP::RoleProfile RoleFor(Character* c) {
@@ -404,7 +430,7 @@ void RebuildCharacterBonusCache(Character* c) {
     Item* item=items[i];
     if(!item || !item->isEquipped) continue;
     const std::string itemId=PersistentItemId(item,false);
-    if(!itemId.empty()) equippedIds.push_back(itemId);
+    if(!itemId.empty() && ItemCurrentlyEligible(item,itemId)) equippedIds.push_back(itemId);
   }
   EnterCriticalSection(&g_lock);
   for(size_t i=0;i<equippedIds.size();++i){
@@ -428,6 +454,70 @@ void ProcessCharacter(Character* c) {
   CollectCharacterInventoryItems(inv,items);
   for(size_t i=0;i<items.size();++i) if(items[i]) EnsureRecord(items[i],c,false);
   RebuildCharacterBonusCache(c);
+}
+
+// ---- Natural shop stock ----------------------------------------------------
+// Kenshi keeps most shop stock in storage of the trader's faction next to her (barrels, weapon
+// cabinets, shelves), not in her own inventory. The character scan never saw it, so a bought item
+// was first seen on the player and rolled as world loot, and shop tooltips showed nothing.
+// Storage of the trader's faction within 30 of a trader is scanned as trader stock (every 10 s per
+// trader). Same rule as the harness "shopstock" command.
+const float kShopRadius = 30.0f;
+const DWORD kShopScanMs = 10000;
+
+void CollectShopStorages(GameWorld* world, Character* trader, std::vector<Building*>& out) {
+  out.clear();
+  if(!world || !trader) return;
+  // One reused result list: lektor has no destructor, a fresh one per call would leak its buffer.
+  static lektor<RootObject*> nearby;
+  nearby.clear();
+  Faction* fac=0;
+  try {
+    fac=trader->getFaction();
+    world->getObjectsWithinSphere(nearby,trader->getPosition(),kShopRadius,BUILDING,256,0);
+  } catch (...) { return; }
+  for(uint32_t i=0;i<nearby.size();++i){
+    Building* b=dynamic_cast<Building*>(nearby.stuff[i]);
+    if(!b) continue;
+    try { if(b->getFaction()!=fac || !b->getInventory()) continue; } catch (...) { continue; }
+    out.push_back(b);
+  }
+}
+
+// Returns the number of eligible stock items seen; force = ignore the 10 s throttle.
+size_t ProcessTraderShop(GameWorld* world, Character* c, bool force) {
+  if(!g_cfg.enabled || !world || !c) return 0;
+  bool trader=false;
+  try { trader=c->isATrader(); } catch (...) {}
+  if(!trader) return 0;
+  std::string key;
+  try { key=c->getHandle().toString(); } catch (...) { return 0; }
+  const DWORD now=GetTickCount();
+  EnterCriticalSection(&g_lock);
+  std::map<std::string,DWORD>::iterator t=g_shopScanTick.find(key);
+  if(!force && t!=g_shopScanTick.end() && now-t->second<kShopScanMs){ LeaveCriticalSection(&g_lock); return 0; }
+  g_shopScanTick[key]=now;
+  const size_t before=g_records.size();
+  LeaveCriticalSection(&g_lock);
+
+  std::vector<Building*> shops;
+  CollectShopStorages(world,c,shops);
+  size_t eligible=0;
+  for(size_t s=0;s<shops.size();++s){
+    std::vector<Item*> items;
+    try { CollectCharacterInventoryItems(shops[s]->getInventory(),items); } catch (...) { continue; }
+    for(size_t i=0;i<items.size();++i) if(items[i] && EnsureRecord(items[i],c,false)) ++eligible;
+  }
+  EnterCriticalSection(&g_lock);
+  const size_t after=g_records.size();
+  LeaveCriticalSection(&g_lock);
+  if(g_cfg.verboseLogging && after>before){
+    std::ostringstream ss;
+    ss<<"shop stock: trader=\""<<c->getName()<<"\" storages="<<(unsigned long)shops.size()
+      <<" eligible="<<(unsigned long)eligible<<" new_records="<<(unsigned long)(after-before);
+    Log(ss.str());
+  }
+  return eligible;
 }
 
 float EquippedBonus(Character* c, PGP::ProfessionStat stat) {
@@ -465,6 +555,7 @@ void AppendTip(InventoryItemBase* base,Ogre::vector<StringPair>::type& lines) {
   for(size_t i=0;i<lines.size();++i) if(lines[i].s1=="Profession Gear") return;
   std::string key=PersistentItemId(item,false);
   if(key.empty()) return;
+  if(!ItemCurrentlyEligible(item,key)) return;
   const std::string baseId=current.baseId;
   EnterCriticalSection(&g_lock);
   std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(key);
@@ -643,6 +734,7 @@ int KahForce(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   rec.baseId=BaseId(item);
   rec.tier=tier>=0?tier:(it!=g_records.end()?it->second.tier:0);
   g_records[key]=rec;
+  g_forcedKeys.insert(key);
   g_dirty=true;
   LeaveCriticalSection(&g_lock);
   RebuildCharacterBonusCache(c);
@@ -704,6 +796,293 @@ int KahBonus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   return KAH_OK;
 }
 
+// Nearest building within 300 of the first player character whose name contains `name`.
+Building* KahFindBuilding(const std::string& name, float& dist) {
+  GameWorld* world=KahWorld();
+  if(!world || !world->player || world->player->playerCharacters.size()==0) return 0;
+  Character* anchor=world->player->playerCharacters[0];
+  if(!anchor) return 0;
+  static lektor<RootObject*> nearby;   // reused: lektor has no destructor
+  nearby.clear();
+  const std::string wanted=PGP::Lower(name);
+  Building* best=0;
+  try {
+    const Ogre::Vector3 pos=anchor->getPosition();
+    world->getObjectsWithinSphere(nearby,pos,300.0f,BUILDING,512,0);
+    for(uint32_t i=0;i<nearby.size();++i){
+      Building* b=dynamic_cast<Building*>(nearby.stuff[i]);
+      if(!b || !b->getInventory()) continue;
+      if(PGP::Lower(b->getName()).find(wanted)==std::string::npos) continue;
+      const float d=b->getPosition().distance(pos);
+      if(!best || d<dist){ best=b; dist=d; }
+    }
+  } catch (...) {}
+  return best;
+}
+
+// Items of an inventory with a ProfessionGear record or an eligible tag; read only (no new rolls).
+std::string KahInventoryRecords(Inventory* inv,const std::string& filter,int& shown,int& total) {
+  std::vector<Item*> items;
+  CollectCharacterInventoryItems(inv,items);
+  const std::string wanted=PGP::Lower(filter);
+  std::string out;
+  shown=0; total=(int)items.size();
+  for(size_t i=0;i<items.size();++i){
+    Item* item=items[i];
+    if(!item) continue;
+    std::string n;
+    try { n=PGP::Lower(item->getName()); } catch (...) { continue; }
+    if(!wanted.empty() && n.find(wanted)==std::string::npos && PGP::Lower(BaseId(item))!=wanted) continue;
+    if(wanted.empty() && PersistentItemId(item,false).empty()) continue;  // list only known items
+    out+=" ["+KahRecordText(item)+"]";
+    ++shown;
+  }
+  return out;
+}
+
+// pg_shop <trader>: scan the trader's shop storage now and list the stock records.
+int KahShop(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<2){ r->append(r,"usage: pg_shop <trader>"); return KAH_ERROR; }
+  Character* c=KahFindCharacter(argv[1]);
+  if(!c){ r->append(r,(std::string("no character named: ")+argv[1]).c_str()); return KAH_ERROR; }
+  GameWorld* world=KahWorld();
+  bool trader=false;
+  try { trader=c->isATrader(); } catch (...) {}
+  const size_t eligible=ProcessTraderShop(world,c,true);
+  std::vector<Building*> shops;
+  CollectShopStorages(world,c,shops);
+  std::ostringstream ss;
+  ss<<c->getName()<<" trader="<<(trader?1:0)<<" storages="<<(unsigned long)shops.size()
+    <<" eligible_stock="<<(unsigned long)eligible;
+  std::string body;
+  for(size_t s=0;s<shops.size();++s){
+    int shown=0,total=0;
+    std::string list=KahInventoryRecords(shops[s]->getInventory(),"",shown,total);
+    body+=" || "+shops[s]->getName()+" (items="+IntStr(total)+"):"+list;
+  }
+  r->append(r,(ss.str()+body).c_str());
+  return trader?KAH_OK:KAH_ERROR;
+}
+
+// pg_building <building> [item]: records of items in a building (bench output, storage).
+int KahBuilding(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<2){ r->append(r,"usage: pg_building <building name> [item]"); return KAH_ERROR; }
+  float dist=0;
+  Building* b=KahFindBuilding(argv[1],dist);
+  if(!b){ r->append(r,(std::string("no building with an inventory matching '")+argv[1]+"' within 300").c_str()); return KAH_ERROR; }
+  int shown=0,total=0;
+  const std::string list=KahInventoryRecords(b->getInventory(),argc>=3?argv[2]:"",shown,total);
+  std::ostringstream ss;
+  ss<<b->getName()<<" dist="<<(int)dist<<" items="<<total<<" listed="<<shown<<":"<<list;
+  r->append(r,ss.str().c_str());
+  return (argc>=3 && shown==0)?KAH_ERROR:KAH_OK;
+}
+
+// pg_take <npc> <building> <item>: move the same item instance from a building to the npc.
+int KahTake(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<4){ r->append(r,"usage: pg_take <npc> <building> <item>"); return KAH_ERROR; }
+  Character* c=KahFindCharacter(argv[1]);
+  if(!c){ r->append(r,(std::string("no character named: ")+argv[1]).c_str()); return KAH_ERROR; }
+  float dist=0;
+  Building* b=KahFindBuilding(argv[2],dist);
+  if(!b){ r->append(r,(std::string("no building with an inventory matching '")+argv[2]+"' within 300").c_str()); return KAH_ERROR; }
+  Inventory* from=b->getInventory();
+  Inventory* to=c->getInventory();
+  if(!from || !to){ r->append(r,"missing inventory"); return KAH_ERROR; }
+  std::vector<Item*> items;
+  CollectCharacterInventoryItems(from,items);
+  const std::string wanted=PGP::Lower(argv[3]);
+  Item* item=0;
+  for(size_t i=0;i<items.size() && !item;++i){
+    if(!items[i]) continue;
+    std::string n;
+    try { n=PGP::Lower(items[i]->getName()); } catch (...) { continue; }
+    if(n==wanted || PGP::Lower(BaseId(items[i]))==wanted) item=items[i];
+  }
+  for(size_t i=0;i<items.size() && !item;++i)
+    if(items[i] && PGP::Lower(items[i]->getName()).find(wanted)!=std::string::npos) item=items[i];
+  if(!item){ r->append(r,(b->getName()+" has no item matching: "+argv[3]).c_str()); return KAH_ERROR; }
+  const std::string before=KahRecordText(item);
+  const int qty=item->quantity>0?item->quantity:1;
+  Item* moved=from->removeItemDontDestroy_returnsItem(item,qty,false);
+  if(!moved){ r->append(r,"remove from the building failed"); return KAH_ERROR; }
+  if(!to->addItem(moved,qty,false,false)){
+    from->addItem(moved,qty,false,false);
+    r->append(r,(c->getName()+" has no room; item left in "+b->getName()).c_str());
+    return KAH_ERROR;
+  }
+  RebuildCharacterBonusCache(c);
+  Log("harness: took "+KahRecordText(moved)+" from "+b->getName()+" to "+c->getName());
+  r->append(r,("took from "+b->getName()+" to "+c->getName()+": "+KahRecordText(moved)+
+               " | before: "+before).c_str());
+  return KAH_OK;
+}
+
+// pg_store <npc> <building> <item>: move the same (unequipped) item instance into a building.
+int KahStore(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<4){ r->append(r,"usage: pg_store <npc> <building> <item>"); return KAH_ERROR; }
+  Character* c; Item* item;
+  const char* args[3]={argv[0],argv[1],argv[3]};
+  if(!KahNpcItem(3,args,r,c,item,true)) return KAH_ERROR;
+  if(item->isEquipped){ r->append(r,("refusing to store an equipped item: "+KahRecordText(item)).c_str()); return KAH_ERROR; }
+  float dist=0;
+  Building* b=KahFindBuilding(argv[2],dist);
+  if(!b){ r->append(r,(std::string("no building with an inventory matching '")+argv[2]+"' within 300").c_str()); return KAH_ERROR; }
+  Inventory* from=c->getInventory();
+  Inventory* to=b->getInventory();
+  if(!from || !to){ r->append(r,"missing inventory"); return KAH_ERROR; }
+  const std::string before=KahRecordText(item);
+  const int qty=item->quantity>0?item->quantity:1;
+  Item* moved=from->removeItemDontDestroy_returnsItem(item,qty,false);
+  if(!moved){ r->append(r,"remove from the character failed"); return KAH_ERROR; }
+  if(!to->addItem(moved,qty,false,false)){
+    from->addItem(moved,qty,false,false);
+    r->append(r,(b->getName()+" has no room; item stays with "+c->getName()).c_str());
+    return KAH_ERROR;
+  }
+  RebuildCharacterBonusCache(c);
+  Log("harness: stored "+KahRecordText(moved)+" from "+c->getName()+" in "+b->getName());
+  r->append(r,("stored in "+b->getName()+" from "+c->getName()+": "+KahRecordText(moved)+" | before: "+before).c_str());
+  return KAH_OK;
+}
+
+// pg_check <npc> <item>: the item's record obeys the rules (tier from quality/grade, affix count
+// cap, magnitudes inside the tier range, stats inside the item's legal pool).
+int KahCheck(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  Character* c; Item* item;
+  if(!KahNpcItem(argc,argv,r,c,item,true)) return KAH_ERROR;
+  const std::string key=PersistentItemId(item,false);
+  PGP::AffixRecord rec;
+  bool found=false, forced=false;
+  EnterCriticalSection(&g_lock);
+  std::map<std::string,PGP::AffixRecord>::const_iterator it=key.empty()?g_records.end():g_records.find(key);
+  if(it!=g_records.end()){ rec=it->second; found=true; }
+  forced=!key.empty() && g_forcedKeys.count(key)!=0;
+  LeaveCriticalSection(&g_lock);
+  if(!found){ r->append(r,(KahRecordText(item)+" valid=0 problems=no_record").c_str()); return KAH_ERROR; }
+  PGP::ItemDescriptor d=Describe(item);
+  std::vector<PGP::ItemTag> tags=TagsFor(d);
+  std::vector<PGP::ProfessionStat> pool=PGP::AllowedStats(tags);
+  const int expectedTier=PGP::ProgressionTier(d);
+  int cap=PGP::TierAffixCap(rec.tier);
+  if(cap>g_cfg.maxAffixes) cap=g_cfg.maxAffixes;
+  float lo=0,hi=0; PGP::TierRange(rec.tier,lo,hi);
+  std::string problems;
+  if(rec.baseId!=d.baseId) problems+=" base_mismatch";
+  if(rec.tier!=expectedTier) problems+=" tier_mismatch(expected "+IntStr(expectedTier)+")";
+  if((int)rec.affixes.size()>cap) problems+=" too_many_affixes(cap "+IntStr(cap)+")";
+  std::set<int> seen;
+  for(size_t i=0;i<rec.affixes.size();++i){
+    const PGP::Affix& a=rec.affixes[i];
+    if(std::find(pool.begin(),pool.end(),a.stat)==pool.end()) problems+=" illegal_stat("+PGP::StatName(a.stat)+")";
+    if(a.percent<lo-0.051f || a.percent>hi+0.051f) problems+=" out_of_range("+PGP::StatName(a.stat)+")";
+    if(!seen.insert((int)a.stat).second) problems+=" duplicate_stat("+PGP::StatName(a.stat)+")";
+  }
+  if(forced) problems.clear();  // harness-forced records are test values, not rolls
+  std::ostringstream ss;
+  ss<<KahRecordText(item)<<" expected_tier="<<expectedTier<<" quality="<<d.quality<<" range="<<lo<<"-"<<hi
+    <<" cap="<<cap<<" tags=";
+  for(size_t i=0;i<tags.size();++i) ss<<(i?",":"")<<PGP::TagName(tags[i]);
+  if(tags.empty()) ss<<"none";
+  ss<<" pool=";
+  for(size_t i=0;i<pool.size();++i) ss<<(i?",":"")<<PGP::StatName(pool[i]);
+  ss<<" forced="<<(forced?1:0)<<" valid="<<(problems.empty()?1:0);
+  if(!problems.empty()) ss<<" problems="<<problems;
+  r->append(r,ss.str().c_str());
+  return problems.empty()?KAH_OK:KAH_ERROR;
+}
+
+// pg_census [radius]: records of items on loaded characters and in trader shop storage, by owner
+// class (player/npc/trader/shop) and stat. Data for the distribution rows (220-228, 237, 250).
+int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  GameWorld* world=KahWorld();
+  if(!world){ r->append(r,"no world"); return KAH_ERROR; }
+  const char* classes[4]={"player","npc","trader","shop"};
+  int recs[4]={0,0,0,0}, rolled[4]={0,0,0,0}, multi[4]={0,0,0,0};
+  std::map<PGP::ProfessionStat,int> stats[4];
+  std::set<Item*> counted;
+  try {
+    const ogre_unordered_set<Character*>::type& chars=world->getCharacterUpdateList();
+    for(ogre_unordered_set<Character*>::type::const_iterator ci=chars.begin();ci!=chars.end();++ci){
+      Character* c=*ci;
+      if(!c) continue;
+      int cls=1;
+      try { if(c->isPlayerCharacter()) cls=0; else if(c->isATrader()) cls=2; } catch (...) {}
+      std::vector<Inventory*> invs;
+      invs.push_back(c->getInventory());
+      std::vector<int> invCls(1,cls);
+      if(cls==2){
+        std::vector<Building*> shops;
+        CollectShopStorages(world,c,shops);
+        for(size_t s=0;s<shops.size();++s){ invs.push_back(shops[s]->getInventory()); invCls.push_back(3); }
+      }
+      for(size_t v=0;v<invs.size();++v){
+        std::vector<Item*> items;
+        CollectCharacterInventoryItems(invs[v],items);
+        for(size_t i=0;i<items.size();++i){
+          if(!items[i] || !counted.insert(items[i]).second) continue;
+          const std::string key=PersistentItemId(items[i],false);
+          if(key.empty()) continue;
+          EnterCriticalSection(&g_lock);
+          std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(key);
+          if(it!=g_records.end()){
+            const int k=invCls[v];
+            ++recs[k];
+            if(!it->second.affixes.empty()) ++rolled[k];
+            if(it->second.affixes.size()>1) ++multi[k];
+            for(size_t a=0;a<it->second.affixes.size();++a) ++stats[k][it->second.affixes[a].stat];
+          }
+          LeaveCriticalSection(&g_lock);
+        }
+      }
+    }
+  } catch (...) {}
+  std::ostringstream ss;
+  for(int k=0;k<4;++k){
+    ss<<(k?" || ":"")<<classes[k]<<": records="<<recs[k]<<" rolled="<<rolled[k]<<" multi="<<multi[k];
+    for(std::map<PGP::ProfessionStat,int>::const_iterator s=stats[k].begin();s!=stats[k].end();++s)
+      ss<<" "<<PGP::StatName(s->first)<<"="<<s->second;
+  }
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
+}
+
+// pg_pack <npc> <pack>: the backpack's ProfessionGear weight math, vanilla vs hooked.
+int KahPack(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  Character* c; Item* item;
+  if(!KahNpcItem(argc,argv,r,c,item,true)) return KAH_ERROR;
+  ContainerItem* pack=dynamic_cast<ContainerItem*>(item);
+  if(!pack){ r->append(r,(item->getName()+" is not a container item").c_str()); return KAH_ERROR; }
+  Inventory* inv=pack->getInventory();
+  if(!inv){ r->append(r,"backpack inventory unavailable"); return KAH_ERROR; }
+  PGP::ItemDescriptor pd=Describe(pack);
+  std::vector<PGP::ItemTag> tags=TagsFor(pd);
+  float raw=0, adjusted=0;
+  int count=0;
+  const lektor<Item*>& contents=inv->getAllItems();
+  for(unsigned int i=0;i<contents.size();++i){
+    if(!contents[i]) continue;
+    const float w=contents[i]->getItemWeight();
+    raw+=w; ++count;
+    adjusted+=w*PGP::SpecialistPackItemWeightMultiplier(tags,contents[i]->getName(),BaseId(contents[i]),contents[i]->isTradeItem);
+  }
+  inv->recalculateTotalWeight();
+  const float vanilla=g_inventoryWeightOrig?g_inventoryWeightOrig(inv):0.0f;
+  const float hooked=HookInventoryWeight(inv);
+  float charWeight=0;
+  try { Inventory* ci=c->getInventory(); if(ci){ ci->recalculateTotalWeight(); charWeight=ci->getTotalWeight(); } } catch (...) {}
+  std::ostringstream ss;
+  ss<<c->getName()<<" pack="<<pack->getName()<<" base="<<pd.baseId<<" tags=";
+  for(size_t i=0;i<tags.size();++i) ss<<(i?",":"")<<PGP::TagName(tags[i]);
+  if(tags.empty()) ss<<"none";
+  ss.setf(std::ios::fixed); ss.precision(3);
+  ss<<" equipped="<<(pack->isEquipped?1:0)<<" items="<<count<<" raw="<<raw
+    <<" content_ratio="<<(raw>0?adjusted/raw:1.0f)<<" vanilla_total="<<vanilla<<" hooked_total="<<hooked
+    <<" applied_ratio="<<(vanilla>0?hooked/vanilla:1.0f)<<" char_weight="<<charWeight;
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
+}
+
 void KahTick() {
   if(g_kahConnected) return;
   DWORD now=GetTickCount();
@@ -715,9 +1094,16 @@ void KahTick() {
        +g_kah.registerCommand("pg_force_affix","pg_force_affix <npc> <item> <stat> <pct> [<stat> <pct>...] [tier n]",KahForce,0)
        +g_kah.registerCommand("pg_clear","pg_clear <npc> [item]",KahClear,0)
        +g_kah.registerCommand("pg_roll","pg_roll <npc> <item>",KahRoll,0)
-       +g_kah.registerCommand("pg_bonus","pg_bonus <npc> <stat>",KahBonus,0);
+       +g_kah.registerCommand("pg_bonus","pg_bonus <npc> <stat>",KahBonus,0)
+       +g_kah.registerCommand("pg_shop","pg_shop <trader>",KahShop,0)
+       +g_kah.registerCommand("pg_building","pg_building <building> [item]",KahBuilding,0)
+       +g_kah.registerCommand("pg_take","pg_take <npc> <building> <item>",KahTake,0)
+       +g_kah.registerCommand("pg_pack","pg_pack <npc> <pack>",KahPack,0)
+       +g_kah.registerCommand("pg_store","pg_store <npc> <building> <item>",KahStore,0)
+       +g_kah.registerCommand("pg_check","pg_check <npc> <item>",KahCheck,0)
+       +g_kah.registerCommand("pg_census","pg_census",KahCensus,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census)";
   Log(ss.str());
 }
 
@@ -736,7 +1122,10 @@ void HookPlayerUpdate(PlayerInterface* p) {
   if(world){
     try {
       const ogre_unordered_set<Character*>::type& chars=world->getCharacterUpdateList();
-      for(ogre_unordered_set<Character*>::type::const_iterator i=chars.begin();i!=chars.end();++i) ProcessCharacter(*i);
+      for(ogre_unordered_set<Character*>::type::const_iterator i=chars.begin();i!=chars.end();++i){
+        ProcessCharacter(*i);
+        ProcessTraderShop(world,*i,false);
+      }
     } catch (...) {}
   }
   SaveDb();
@@ -803,6 +1192,33 @@ void HookInventoryUpdate(Inventory* inv,Item* item,int amount) {
   RefreshInventoryOwner(inv);
 }
 
+// A purchase may hand the buyer a copy of the shop item instead of the same instance. The copy
+// would be first seen on the player and roll again as world loot; give it the shop item's
+// persistent ID (and drop the record the copy got during the purchase) so the affix the shop
+// showed is the affix the buyer gets.
+Item* HookBuyItem(Inventory* inv,Item* item,RootObject* sendingTo) {
+  const std::string shopId=item?PersistentItemId(item,false):std::string();
+  Item* bought=g_buyItemOrig?g_buyItemOrig(inv,item,sendingTo):0;
+  if(!bought || bought==item || shopId.empty() || !g_cfg.enabled) return bought;
+  try {
+    const std::string newId=PersistentItemId(bought,false);
+    if(newId==shopId) return bought;
+    EnterCriticalSection(&g_lock);
+    if(!newId.empty() && newId!=shopId) g_records.erase(newId);
+    g_dirty=true;
+    LeaveCriticalSection(&g_lock);
+    BindPersistentItemId(bought,shopId);
+    Character* buyer=dynamic_cast<Character*>(sendingTo);
+    if(buyer) RebuildCharacterBonusCache(buyer);
+    if(g_cfg.verboseLogging)
+      Log(std::string("purchase: kept shop id=")+shopId+" for bought copy runtime="+RuntimeItemKey(bought)+
+          (newId.empty()?"":" (dropped copy record "+newId+")"));
+  } catch (...) {
+    Log("exception keeping persistent id on purchase");
+  }
+  return bought;
+}
+
 void HookCraft(CraftingBuilding* b,Item* item) {
   Character* crafter=0;
   try { crafter=b?b->whosCrafting.getCharacter():0; } catch (...) {}
@@ -843,6 +1259,7 @@ void InstallHooks() {
   HookSymbol(lib,"?_sectionUpdateItemCallback@Inventory@@UEAAXPEAVItem@@H@Z",(void*)HookInventoryUpdate,(void**)&g_inventoryUpdateOrig);
   HookSymbol(lib,"?serialiseInInventory@Item@@UEAAPEAVGameData@@PEAVGameDataContainer@@PEAV2@@Z",(void*)HookItemSerialiseInInventory,(void**)&g_itemSerialiseInventoryOrig);
   HookSymbol(lib,"?loadFromSerialiseInInventory@Item@@UEAAXPEAVGameDataContainer@@PEAVGameData@@@Z",(void*)HookItemLoadFromSerialiseInInventory,(void**)&g_itemLoadInventoryOrig);
+  HookSymbol(lib,"?buyItem@Inventory@@QEAAPEAVItem@@PEAV2@PEAVRootObject@@@Z",(void*)HookBuyItem,(void**)&g_buyItemOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);
   HookSymbol(lib,"?getTooltipData1@Armour@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipArmour,(void**)&g_tipArmourOrig);
   HookSymbol(lib,"?getTooltipData1@ContainerItem@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipContainer,(void**)&g_tipContainerOrig);
@@ -915,7 +1332,7 @@ __declspec(dllexport) void startPlugin() {
   g_dbPath=g_dir+"\\profession_gear_affixes.tsv";
   g_logPath=g_dir+"\\ProfessionGear.log";
   DeleteFileA(g_logPath.c_str());
-  Log("Profession Gear Progression 0.9.0-pretest starting");
+  Log("Profession Gear Progression 0.9.1-pretest starting");
   LoadConfig();
   LoadRules();
   {

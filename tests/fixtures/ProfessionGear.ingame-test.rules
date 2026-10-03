@@ -1,0 +1,22 @@
+# In-game test rules (TEST ONLY). Installed by: set_test_mode.ps1 -Rules InGameTest
+# Restore the shipped rules with: set_test_mode.ps1 -Rules Normal
+# Comments must be on their own line (a trailing comment would break the tag list).
+#
+# Specialist packs on plain vanilla backpacks (no specialist pack records exist in this mod stack).
+# Small Backpack -> ore pack
+tag|576-gamedata.base|PACK_ORE
+# Medium Backpack -> crop pack
+tag|635-gamedata.base|PACK_CROP
+# Large Backpack -> construction pack
+tag|1012-gamedata.base|PACK_CONSTRUCTION
+# Medium Backpack (colored) -> medical pack
+tag|1286-gamedata.base|PACK_MEDICAL
+# Shopkeepers Backpack -> tech pack
+tag|910-gamedata.base|PACK_TECH
+# Old Traders backpack small -> hauling pack
+tag|1019-gamedata.base|PACK_HAULING
+#
+# Exclusion (tests 60, 148, 298): Straw Hat would classify HEAD_FARMING,SCOUT_GEAR.
+exclude|575-gamedata.base
+# Override (test 61): Leather Vest has no profession semantics; the rule makes it cooking gear.
+tag|2212-gamedata.base|TOOL_COOKING

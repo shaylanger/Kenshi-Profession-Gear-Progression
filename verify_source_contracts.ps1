@@ -41,4 +41,17 @@ if($text -notmatch [regex]::Escape('?serialiseInInventory@Item@@UEAAPEAVGameData
 }
 Write-Host "OK      item save/load hooks installed"
 
-Write-Host "Source contract verification passed: 6 checks"
+Require-Ordered "void HookPlayerUpdate" "ProcessCharacter(*i);" "ProcessTraderShop(world,*i,false);" "trader shop storage scanned with the character scan"
+
+if($text -notmatch [regex]::Escape('?buyItem@Inventory@@QEAAPEAVItem@@PEAV2@PEAVRootObject@@@Z') -or
+   $text -notmatch [regex]::Escape('BindPersistentItemId(bought,shopId);')){
+  throw "Source contract failed: purchase does not keep the shop item's persistent ID"
+}
+Write-Host "OK      purchase keeps the shop item's persistent ID"
+
+if($text -notmatch [regex]::Escape('if(!itemId.empty() && ItemCurrentlyEligible(item,itemId)) equippedIds.push_back(itemId);')){
+  throw "Source contract failed: stale/ineligible records still count toward equipped bonuses"
+}
+Write-Host "OK      stale/ineligible records give no equipped bonus"
+
+Write-Host "Source contract verification passed: 9 checks"
