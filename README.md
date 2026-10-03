@@ -84,7 +84,7 @@ Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tier
 
 ## Design audit
 
-`DESIGN_IMPLEMENTATION_AUDIT.md` maps Shay's full design/context to the current implementation, live-proof requirements, balance work, and explicitly deferred roadmap items.
+`DESIGN_IMPLEMENTATION_AUDIT.md` maps the full design/context to the current implementation, live-proof requirements, balance work, and explicitly deferred roadmap items.
 
 ## Roadmap
 
