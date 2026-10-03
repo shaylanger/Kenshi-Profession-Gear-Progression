@@ -250,6 +250,31 @@ int main(){
   ItemDescriptor mineralMask; mineralMask.baseId="mod.mineral_mask"; mineralMask.name="Mineral Dust Mask"; mineralMask.armour=true;
   Check(!HasTag(Classify(mineralMask,overrides,exclusions),TAG_TOOL_MINING),"mineral does not false-match miner");
 
+  // Live false positive (2026-10-02): rebirth.mod "Staff" (52302) became TOOL_FARMING because its
+  // description says "Popular with poor farmers". Weapon descriptions are flavour; names decide.
+  ItemDescriptor staff; staff.baseId="52302-rebirth.mod"; staff.name="Staff"; staff.weapon=true; staff.weaponLevel=20;
+  staff.description="-Length 23\nPopular with poor farmers, pacifists and drifters.  It's usually seen as a weapon for those who can't afford a blade.";
+  Check(Classify(staff,overrides,exclusions).empty(),"staff with farmer flavour description gets no profession tag");
+  ItemDescriptor bardiche; bardiche.baseId="55394-ArkWeaponPack.mod"; bardiche.name="Bardiche"; bardiche.weapon=true; bardiche.weaponLevel=30;
+  bardiche.description="Good weapon for guards, either to slay thieves or to take on armoured opponents.";
+  Check(Classify(bardiche,overrides,exclusions).empty(),"bardiche 'slay thieves' description is not thief gear");
+  ItemDescriptor hatchet; hatchet.baseId="2757887-WeaponExpansion_Ronin.mod"; hatchet.name="Ronin Hatchet"; hatchet.weapon=true; hatchet.weaponLevel=30;
+  hatchet.description="Drawing inspiration from some of the more commonly found robotic tools.";
+  Check(Classify(hatchet,overrides,exclusions).empty(),"weapon description mentioning robotics is not a robotics tool");
+  ItemDescriptor scythe; scythe.baseId="55416-ArkWeaponPack.mod"; scythe.name="Scythe"; scythe.weapon=true; scythe.weaponLevel=30;
+  scythe.description="Harvesting tool, might work on people.";
+  {std::vector<ItemTag> x=Classify(scythe,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"scythe weapon is a farming tool by name");}
+  ItemDescriptor farmerSwordDesc; farmerSwordDesc.baseId="mod.farmers_sword_desc"; farmerSwordDesc.name="Farmer's Sword"; farmerSwordDesc.weapon=true; farmerSwordDesc.weaponLevel=40;
+  farmerSwordDesc.description="An ordinary blade.";
+  {std::vector<ItemTag> x=Classify(farmerSwordDesc,overrides,exclusions);Check(HasTag(x,TAG_TOOL_FARMING),"farmer-named weapon still farming with plain description");}
+  ItemDescriptor doctorCoat; doctorCoat.baseId="mod.coat"; doctorCoat.name="Long Coat"; doctorCoat.armour=true;
+  doctorCoat.description="Favoured by field medics.";
+  {std::vector<ItemTag> x=Classify(doctorCoat,overrides,exclusions);Check(HasTag(x,TAG_TOOL_MEDIC),"armour description still classifies (non-weapon)");}
+  ItemDescriptor tradersPack; tradersPack.baseId="1498-gamedata.base"; tradersPack.name="Traders Backpack Medium"; tradersPack.container=true;
+  {std::vector<ItemTag> x=Classify(tradersPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_TRADE)&&!HasTag(x,TAG_PACK_GENERIC),"vanilla Traders Backpack is a trade pack");}
+  ItemDescriptor oldTradersPack; oldTradersPack.baseId="1019-gamedata.base"; oldTradersPack.name="Old Traders backpack small"; oldTradersPack.container=true;
+  {std::vector<ItemTag> x=Classify(oldTradersPack,overrides,exclusions);Check(HasTag(x,TAG_PACK_TRADE),"vanilla Old Traders backpack is a trade pack");}
+
   ItemDescriptor tobacco; tobacco.baseId="live.chewing_tobacco"; tobacco.name="Chewing Tobacco"; tobacco.description="Workers may chew these rags of tobacco"; tobacco.equippable=false;
   {std::vector<ItemTag> x=Classify(tobacco,overrides,exclusions); AffixRecord rr=RollAffixes(tobacco,RoleProfile(),RuleConfig(),x,"tobacco",7,false); Check(rr.affixes.empty(),"non-equippable tobacco never rolls profession affix");}
   ItemDescriptor bolts; bolts.baseId="live.bolts"; bolts.name="Bolts [Regulars]"; bolts.description="Regular crossbow ammunition"; bolts.equippable=false;

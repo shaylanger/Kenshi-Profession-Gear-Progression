@@ -224,10 +224,15 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
   std::map<std::string,std::vector<ItemTag> >::const_iterator it = overrides.find(id);
   if (it != overrides.end()) return it->second;
   if (item.legendary) return out;
-  const std::string n = Lower(item.name+" "+item.description+" "+item.category+" "+item.slot);
+  // Weapons are classified from their name only. Weapon descriptions are flavour text about who
+  // carries them ("popular with poor farmers", "to slay thieves"), which made an ordinary Staff a
+  // Farming tool live. Armour/clothing/packs keep using the description.
+  const std::string n = Lower(item.name+" "+(item.weapon?std::string():item.description)+" "+
+                              item.category+" "+item.slot);
 
   const bool strongFarming =
       HasWord(n,"hoe") || HasWord(n,"sickle") || HasWord(n,"pitchfork") ||
+      HasWord(n,"scythe") || HasWord(n,"scythes") ||
       HasWord(n,"farmer") || HasWord(n,"farmers") || HasWord(n,"farmhand") ||
       Has(n,"farm tool") || Has(n,"agricultural") || Has(n,"harvesting");
   const bool strongMining =
@@ -315,7 +320,8 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
       (packLike && strongMedic))
     AddTag(out,TAG_PACK_MEDICAL);
   if (Has(n,"trade pack") || Has(n,"caravan pack") ||
-      ((Has(n,"trader's") || Has(n,"trader ")) && Has(n,"backpack"))) AddTag(out,TAG_PACK_TRADE);
+      ((Has(n,"trader's") || Has(n,"trader ") || HasWord(n,"traders")) && Has(n,"backpack")))
+    AddTag(out,TAG_PACK_TRADE);
   if (Has(n,"research pack") || Has(n,"tech pack") ||
       (packLike && (strongResearch || strongRobotics || Has(n,"tech "))))
     AddTag(out,TAG_PACK_TECH);
