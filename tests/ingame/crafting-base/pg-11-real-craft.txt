@@ -2,39 +2,35 @@
 # covers: PG 87, 90, 160, 253 (59, 232 live recheck with a crafted weapon)
 # fixture: Crafting base
 # reset: fresh
-# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
-# Shay takes the finished shirts (Malzin's bag is full in this fixture)
-# verify: CSV T1 (armour smith 5) vs the second craft's tier (armour smith 100): higher skill -> higher quality -> higher tier (87); exactly one record for the craft saved mid-progress (160); grep ProfessionGear.log: one "roll source=crafted" per Rag Shirt, none for the Katana
+# needs: ProfessionGearProgression.dll FAA5B471; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# note: in a real craft the worker hauls the finished item away at once (run m3: the bench output stayed empty, queue went to 0), so the rolls are checked in ProfessionGear.log, which the craft hook writes at completion
+# verify: ProfessionGear.log: Armour Smithing 5 -> "roll source=crafted ... name="Rag Shirt" ... tier=0..2", Armour Smithing 100 -> tier 3..6 with Armour Smithing (87, 90, 253); after the mid-craft save/load exactly ONE more "roll source=crafted ... Rag Shirt" line (160); no "roll source=crafted" line for the Katana (59/232)
 @wait-world
 @sleep 8
 speed 0
+health Malzin 100
 hunger Malzin 280
 clearjobs Malzin
 blueprint "Rag Shirt"
 benches 150 crafts ~ Clothing Bench .*Rag Shirt
 give Malzin 584-gamedata.base 3
-# --- low-skill craft ---
+# --- low-skill craft -> low quality tier ---
 setstat Malzin armour_smith 5
 craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
 speed 10
-@until 400 benches 150 ~ out 6x6: \[Rag Shirt
+@until 400 benches 150 ~ Clothing Bench dist=[\d.]+ queue=0
 speed 0
-pg_take Shay "Clothing Bench" "Rag Shirt" ~ took from Clothing Bench to Shay: Rag Shirt key=pgp\S+
-@set T1 pg_check Shay "Rag Shirt" ~ tier=(\d+)
-pg_check Shay "Rag Shirt" ~ valid=1
-pg_store Shay "General Camp Storage Chest" "Rag Shirt" ~ stored
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted key=pgp\S+ baseId=\S+ name="Rag Shirt" equipped=0 tier=[0-2] tags=WORKWEAR_GENERIC affixes=
 # --- high-skill craft: higher quality tier (87), crafter's profession pool (90), high-quality items take part (253) ---
+give Malzin 584-gamedata.base 3
 setstat Malzin armour_smith 100
 craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
 speed 10
-@until 400 benches 150 ~ out 6x6: \[Rag Shirt
+@until 400 benches 150 ~ Clothing Bench dist=[\d.]+ queue=0
 speed 0
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted .*name="Rag Shirt" .*tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+\r?$
-pg_take Shay "Clothing Bench" "Rag Shirt" ~ took
-pg_check Shay "Rag Shirt" ~ tier=(?!${T1} )\d+ .*valid=1
-pg_store Shay "General Camp Storage Chest" "Rag Shirt" ~ stored
-# --- 160: save while a craft is in progress, reload, finish: the item rolls once ---
-give Malzin 584-gamedata.base 1
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=crafted key=pgp\S+ baseId=\S+ name="Rag Shirt" equipped=0 tier=[3-6] tags=WORKWEAR_GENERIC affixes=Armour Smithing:[\d.]+(,[A-Za-z ]+:[\d.]+)*\r?$
+# --- 160: save while a craft is in progress, reload, finish: the item rolls once (count in the log) ---
+give Malzin 584-gamedata.base 3
 craft Malzin "Rag Shirt" at "Clothing Bench" ~ queued 1x
 speed 2
 @until 120 benches 150 ~ Clothing Bench [^|]*queue=1 \(first: Rag Shirt[^|]* [1-9]\d*%
@@ -44,20 +40,21 @@ save kah-pg-midcraft
 load kah-pg-midcraft
 @wait-world
 @sleep 8
-speed 10
-@until 400 benches 150 ~ out 6x6: \[Rag Shirt
 speed 0
-pg_building "Clothing Bench" "Rag Shirt" ~ listed=1: \[Rag Shirt key=pgp\S+ equipped=0 tier=\d+ affixes=
-# --- crafted ordinary weapon: same hook, no profession record ---
+@echo 160: from here on exactly one "roll source=crafted ... Rag Shirt" line may appear
+give Malzin 584-gamedata.base 2
+speed 10
+@until 400 benches 150 ~ Clothing Bench dist=[\d.]+ queue=0
+speed 0
+# --- crafted ordinary weapon: same hook, no profession record (check the log: no crafted Katana line) ---
 research "Basic Weapon Smithing"
 research "Basic Weapon Grades"
 research "Katanas"
 # Malzin's bag is full in this fixture: plates go straight into the bench input
-fill "Weapon Smith" "Iron Plates" 2 ~ fitted
+fill "Weapon Smith" "Iron Plates" 10 ~ fitted
 clearjobs Malzin
 craft Malzin Katana at "Weapon Smith" ~ queued 1x
 speed 10
-@until 400 benches 150 ~ out 10x2: \[Katana
+@until 600 benches 150 ~ Weapon Smith dist=[\d.]+ queue=0
 speed 0
-pg_building "Weapon Smith" "Katana" ~ Katana key=- equipped=0 record=none
 clearjobs Malzin

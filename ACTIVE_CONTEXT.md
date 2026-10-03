@@ -22,7 +22,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Built, not installed:** `out\ProfessionGearProgression.dll` **159C552F** (0.9.1-pretest).
+- **Built, not installed:** `out\ProfessionGearProgression.dll` **FAA5B471** (0.9.1-pretest).
   Installed: D667F5EE. Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
@@ -32,7 +32,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   pg_census [name|faction filter] (records by owner class and stat).
 - **Fixed 2026-10-03:** weapons classified by name only (Staff "poor farmers" -> no Farming; Scythe
   is farming); vanilla Traders backpacks are trade packs; natural shop stock (trader faction
-  storage within 30) is scanned as trader stock; `Inventory::buyItem` hook keeps the shop record on
+  storage within 60) is scanned as trader stock; `Inventory::buyItem` hook keeps the shop record on
   a bought copy; records of items that are not eligible now give no bonus/tooltip (kept in the
   sidecar; forced ones stay active); poor-NPC suppression now really applies (best skill < 12);
   Enabled=false creates no records; the craft hook rolls the item that actually reaches the bench

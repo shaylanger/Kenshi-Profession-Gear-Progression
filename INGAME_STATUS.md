@@ -3,7 +3,7 @@
 **Updated:** 2026-10-03. One row per `TEST_PLAN.md` ID (1–329 plus 16a–16c and 30a–30i = 341 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
 `tests/ingame/RUN_ORDER.md`) and fixes. Build for these scenarios: **ProfessionGearProgression.dll
-159C552F** (repo HEAD at the time of writing; installed is still D667F5EE).
+FAA5B471** (repo HEAD at the time of writing; installed is still D667F5EE).
 
 States: **PASS-offline** (core tests / build gates / source contracts), **PASS-live** (with evidence),
 **PENDING-auto** (a scenario file exists; the harness can run it without Shay), **NEEDS-SETUP**
@@ -154,7 +154,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 326 | PENDING-auto | `tests/ingame/config/pg-31-disabled-sidecar.txt` (own launch: -Mode Disabled -Sidecar StartupTest) |
 | 327 | PENDING-auto | `tests/ingame/config/pg-30-autoclassify-off.txt` (own launch: -Mode AutoClassifyOff) |
 | 328 | PENDING-auto | `tests/ingame/auto-home/pg-04-backpacks.txt` (needs -Rules InGameTest) |
-| 329 | PENDING-auto | `tests/ingame/crafting-base/pg-10-craftfinish.txt` (fix 159C552F: launch 1 showed the crafted roll landing on the wrong instance) |
+| 329 | PENDING-auto | `tests/ingame/crafting-base/pg-10-craftfinish.txt` (fix FAA5B471: launch 1 showed the crafted roll landing on the wrong instance) |
 
 ## Notes
 

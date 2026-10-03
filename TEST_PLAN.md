@@ -462,7 +462,7 @@ Added after live test 123 proved Kenshi runtime item handles change across ordin
 |---|---|---|---|
 | 321 | AUTO | Sidecar row with no affix, CRLF line end, full restart | Record loads (not dropped), item does not roll again |
 | 322 | AUTO | Weapon whose only profession word is flavour description (Staff "poor farmers", Bardiche "slay thieves", Ronin Hatchet "robotic tools") | No profession tag; weapons classify by name only (Scythe by name = farming) |
-| 323 | AUTO | Natural shop stock in the trader's faction storage within 30 | Scanned as trader stock (source=trader, random legal pool), records exist before purchase |
+| 323 | AUTO | Natural shop stock in the trader's faction storage within 60 | Scanned as trader stock (source=trader, random legal pool), records exist before purchase |
 | 324 | AUTO | Purchase through `Inventory::buyItem` hands the buyer a copy | Copy keeps the shop item's persistent ID and affixes; no world-loot reroll |
 | 325 | AUTO | NPC whose best profession skill is below 12 | Counts as poor (PoorNpcMultiplier); shop stock / world loot / crafted items are not judged by the owner's skills |
 | 326 | AUTO | Enabled=false | No record is created from any path (scan, test commands, crafting) |

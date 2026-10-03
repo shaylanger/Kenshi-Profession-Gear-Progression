@@ -2,7 +2,7 @@
 # covers: PG 48, 49, 57, 59, 60, 61, 62-80, 83, 148, 158, 254, 300, 312, 313 (and makes save kah-pg-stale for 298 in config/pg-30)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll FAA5B471; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: every pg_bonus line says match=1 (hooked effective == vanilla effective x (1 + bonus), cap 150); CSV values of R0/R1 (maxrunspeed without/with +50% Athletics) show whether run speed follows the hooked Athletics (row 254: different = yes); save kah-pg-stale exists afterwards (used by config/pg-30)
 @wait-world
 @sleep 8
@@ -106,10 +106,12 @@ pg_bonus Malzin farming ~ equipped_bonus=20% .*match=1
 pg_force_affix Malzin "Black Cloth Shirt" medic 5 tier 4 ~ affixes=Medic:5
 pg_bonus Malzin farming ~ equipped_bonus=10% .*match=1
 pg_bonus Malzin medic ~ equipped_bonus=5% .*match=1
-# 83: very high skill + gear clamps at 150; base stays the trained value
+# 83: very high skill + gear clamps at 150; base stays the trained value.
+# The game's own modifiers keep vanilla effective Farming far below base here (run m3: base 140 -> 42.84),
+# so a +400% test affix is used to cross the cap
 setstat Malzin farming 140
-pg_force_affix Malzin "Iron Hat" farming 20 tier 6 ~ affixes=Farming:20
-pg_bonus Malzin farming ~ base=140\.00 .*effective=150\.00 expected=150\.00 match=1
+pg_force_affix Malzin "Iron Hat" farming 400 tier 6 ~ affixes=Farming:400
+pg_bonus Malzin farming ~ equipped_bonus=400% base=140\.00 vanilla_effective=(3[1-9]|[4-9]\d|1\d\d)\.\d\d effective=150\.00 expected=150\.00 match=1
 stat Malzin farming ~ base=140
 pg_clear Malzin ~ cleared affixes
 setstat Malzin farming 50

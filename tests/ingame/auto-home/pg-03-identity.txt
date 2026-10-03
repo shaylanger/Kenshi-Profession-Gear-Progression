@@ -2,7 +2,7 @@
 # covers: PG 47, 51, 52, 53, 54, 55, 56, 58, 146, 159, 230, 273
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 159C552F; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll FAA5B471; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: K1/K2 in the CSV differ; every pg_check says valid=1 (tier from the item's quality, affix count within the tier cap, magnitudes inside the tier range, stats inside the item's legal pool: 54-56)
 @wait-world
 @sleep 8
@@ -10,7 +10,7 @@ speed 0
 # --- 53: two identical base items get independent records (Shay's head is taken, hats go to her bag) ---
 give Shay 2185-gamedata.base 1
 @set K1 pg_info Shay "Rattan Hat" ~ Rattan Hat key=(pgp\S+) equipped=0
-@set A1 pg_info Shay "Rattan Hat" ~ affixes=(\S+)
+@set A1 pg_info Shay "Rattan Hat" ~ affixes=(.*)$
 pg_check Shay "Rattan Hat" ~ tags=WORKWEAR_GENERIC .*valid=1
 # 51: the same item moves to a squadmate with its roll
 pg_loot Shay Malzin "Rattan Hat" ~ looted from Shay to Malzin: Rattan Hat key=${K1} equipped=0 tier=\d+ affixes=${A1}
@@ -49,7 +49,7 @@ give Malzin 46982-Newwworld.mod 1
 pg_info Malzin "Hoe" ~ record=none \(not eligible
 # --- 146: mod-added goggles (UWE Square Goggles (alt)) classify as generic goggles only ---
 give Malzin "5008368-Universal Wasteland Expansion.mod" 1
-pg_check Malzin "Square Goggles (alt)" ~ tags=GOGGLES_GENERIC pool=Perception,Science,Engineering,Robotics,Turrets .*valid=1
+@until 10 pg_check Malzin "Square Goggles (alt)" ~ tags=GOGGLES_GENERIC pool=Perception,Science,Engineering,Robotics,Turrets .*valid=1
 # --- 54-56: rule check on everything Malzin and Shay wear that has a record ---
 pg_check Malzin "Black Cloth Shirt" ~ valid=1
 pg_check Malzin "Black Rag Shirt" ~ valid=1

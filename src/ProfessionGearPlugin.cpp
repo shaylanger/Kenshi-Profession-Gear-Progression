@@ -492,9 +492,11 @@ void ProcessCharacter(Character* c) {
 // Kenshi keeps most shop stock in storage of the trader's faction next to her (barrels, weapon
 // cabinets, shelves), not in her own inventory. The character scan never saw it, so a bought item
 // was first seen on the player and rolled as world loot, and shop tooltips showed nothing.
-// Storage of the trader's faction within 30 of a trader is scanned as trader stock (every 10 s per
+// Storage of the trader's faction within 60 of a trader is scanned as trader stock (every 10 s per
 // trader). Same rule as the harness "shopstock" command.
-const float kShopRadius = 30.0f;
+// 60, not 30: traders walk around their shop; live 2026-10-03 the Trade Ninjas' shop counters and
+// barrels were 11-55 from the trader and Apothecary Abia had nothing of her faction within 30.
+const float kShopRadius = 60.0f;
 const DWORD kShopScanMs = 10000;
 
 void CollectShopStorages(GameWorld* world, Character* trader, std::vector<Building*>& out) {
