@@ -2,7 +2,7 @@
 # covers: PG 81, 82, 177 (first points: Labouring 50 vs 50 + 50% gear on a real mining job; the Phase 8 "do jobs read the hooked stat" proof)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll E57B9E8E; harness teleport <npc> building <name> [dist m]; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 10C19BAB; harness teleport <npc> building <name> [dist m]; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # verify: CSV: mined per hour without gear = Q1-Q0, with +50% Labouring = Q2-Q1 (the clock starts after Malzin reached the mine); ratio > ~1.1 means the mining job reads the hooked effective Labouring, ~1.0 means it reads the raw stat (then a direct hook is needed). B0 -> B1 shows base Labouring XP; 82 = after removing the gear base is still B1 (bonus not baked in)
 @wait-world
 @sleep 8

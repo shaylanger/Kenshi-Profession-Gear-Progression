@@ -2,7 +2,7 @@
 # covers: PG 156
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll E57B9E8E; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); run it last in the auto-home block (30 real minutes = ~25 game hours at 50x); a raid on Home can happen: on a combat/knockout alert pause, save logs, note it and reload
+# needs: ProfessionGearProgression.dll 10C19BAB; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); run it last in the auto-home block (30 real minutes = ~25 game hours at 50x); a raid on Home can happen: on a combat/knockout alert pause, save logs, note it and reload
 # verify: kenshi-ctl health = ok during and after; ProfessionGear.log size after the soak (no runaway growth); the forced bonus is unchanged at the end
 @wait-world
 @sleep 8

@@ -1,6 +1,6 @@
 # PG in-game run order (for the coordinator)
 
-Build: `out\ProfessionGearProgression.dll` **E57B9E8E** (`install-dll.ps1 ProfessionGear`, Kenshi closed).
+Build: `out\ProfessionGearProgression.dll` **10C19BAB** (`install-dll.ps1 ProfessionGear`, Kenshi closed).
 All config switches are done with Kenshi closed:
 `powershell -File C:\KenshiModding\Kenshi-Profession-Gear-Progression\set_test_mode.ps1 ...`
 (it refuses while Kenshi runs). Logs to keep before every relaunch: `ProfessionGear.log` and

@@ -85,7 +85,15 @@ OperateFn g_farmOperateOrig = 0;
 // JobOperateScaling (ini, or pg_jobscale at run time) multiplies the worker's amount by
 // (1 + equipped bonus of the job's stat): Labouring for production machines and mines,
 // Farming for farms. Default off until the in-game A/B decides.
-struct OperateStats { unsigned long calls; double amount; double scaledAmount; float outputStart; float outputLast; std::string worker; std::string name; };
+// Explicit constructor: VS2010 does not zero the POD members of a struct with std::string members
+// on map::operator[] (live m15: calls ~2^32, output_start garbage).
+struct OperateStats {
+  unsigned long long calls; double amount; double scaledAmount;
+  float outputStart; float outputLast; double outputProgress; bool hasLast;
+  std::string worker; std::string name;
+  OperateStats() : calls(0), amount(0), scaledAmount(0), outputStart(0), outputLast(0),
+                   outputProgress(0), hasLast(false) {}
+};
 std::map<Building*, OperateStats> g_operateStats;
 bool g_jobOperateScaling = false;
 
@@ -1217,14 +1225,20 @@ int KahOperate(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) 
   try { ProductionBuilding* pb=dynamic_cast<ProductionBuilding*>(b); if(pb) out=pb->getOutput(); } catch (...) {}
   try { UseableStuff* u=dynamic_cast<UseableStuff*>(b); if(u) progress=u->progressBarLevel; } catch (...) {}
   EnterCriticalSection(&g_lock);
-  OperateStats o=g_operateStats[b];
-  if(reset) g_operateStats.erase(b);
+  std::map<Building*,OperateStats>::const_iterator oi=g_operateStats.find(b);
+  OperateStats o=(oi!=g_operateStats.end())?oi->second:OperateStats();
+  if(reset){
+    OperateStats fresh;                // baseline = the output right now
+    fresh.outputStart=out; fresh.outputLast=out; fresh.hasLast=true; fresh.name=o.name;
+    g_operateStats[b]=fresh;
+  }
   LeaveCriticalSection(&g_lock);
   std::ostringstream ss;
   ss.setf(std::ios::fixed); ss.precision(4);
   ss<<b->getName()<<" calls="<<o.calls<<" amount="<<o.amount<<" scaled_amount="<<o.scaledAmount
     <<" avg_amount="<<(o.calls?o.amount/o.calls:0.0)<<" output_start="<<o.outputStart<<" output_now="<<out
-    <<" output_gain="<<(o.calls?out-o.outputStart:0.0f)<<" progress="<<progress<<" worker="<<(o.worker.empty()?"-":o.worker)
+    <<" output_gain="<<(o.calls?out-o.outputStart:0.0f)<<" output_progress="<<o.outputProgress
+    <<" progress_per_call="<<(o.calls?o.outputProgress/(double)o.calls:0.0)<<" progress="<<progress<<" worker="<<(o.worker.empty()?"-":o.worker)
     <<" scaling="<<(g_jobOperateScaling?1:0)<<(reset?" (reset)":"");
   r->append(r,ss.str().c_str());
   return KAH_OK;
@@ -1359,7 +1373,11 @@ float OperateScale(Building* b, Character* who, PGP::ProfessionStat st) {
 void RecordOperate(Building* b, Character* who, float amount, float scaled, float outputNow) {
   EnterCriticalSection(&g_lock);
   OperateStats& o=g_operateStats[b];
-  if(o.calls==0){ o.outputStart=outputNow; try { o.name=b->getName(); } catch (...) {} }
+  if(!o.hasLast){ o.outputStart=outputNow; o.outputLast=outputNow; o.hasLast=true; try { o.name=b->getName(); } catch (...) {} }
+  // getOutput() is the progress of the unit being made; when a unit completes it drops back.
+  // Sum the forward progress so whole units and fractions both count.
+  if(outputNow>=o.outputLast) o.outputProgress+=outputNow-o.outputLast;
+  else o.outputProgress+=outputNow+(1.0f-o.outputLast>0.0f?1.0f-o.outputLast:0.0f);
   ++o.calls; o.amount+=amount; o.scaledAmount+=scaled; o.outputLast=outputNow;
   LeaveCriticalSection(&g_lock);
   if(who && o.worker.empty()){ try { o.worker=who->getName(); } catch (...) {} }

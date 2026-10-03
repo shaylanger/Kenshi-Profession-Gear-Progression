@@ -23,7 +23,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **E57B9E8E** built (0.9.1-pretest; 59EFB4B1 installed for m13). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **10C19BAB** built (0.9.1-pretest; 59EFB4B1 installed for m13). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
   pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),
@@ -39,7 +39,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   output (launch 1: the passed Item* was another instance; row 329); sidecar rows with no affix survive a restart (CRLF bug: 2,629
   rows were dropped at every load). Regression rows 321-328 in TEST_PLAN.md.
 - **Open:** row 177 job-path proof. m13 (Stone Mine, 2 game h per window) gave 0.47 vs 0.48 stone/h
-  without/with +50% Labouring, but only 1 whole stone per window: inconclusive. Build E57B9E8E hooks
+  without/with +50% Labouring, but only 1 whole stone per window: inconclusive. Build 10C19BAB hooks
   `ProductionBuilding::operate` and `FarmBuilding::operate` (every worker tick: building, worker,
   amount): `pg_operate <building> [reset]` reports calls, summed amount, fractional output gain, and
   `JobOperateScaling` (ini, or `pg_jobscale on|off` at run time, default off) multiplies the worker's
@@ -47,6 +47,8 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   scaling. If B ~ A and C > A: the job reads the raw skill and scaling becomes the default fix.
   m14: the powered Stone Mine stayed at 0.47-0.48/h in all three windows (machine rate, and
   pg_operate could not find it: fixed with `radius`/`near`); v3 uses the Manual Stone Processor.
+  m15 v3: counters uninitialised (VS2010 struct value-init bug: explicit constructor now) and window
+  A ran out of stone; v4 (10C19BAB) = 3 x 30 game min, output_progress counts fractional units.
   Also note: vanilla effective stats of Malzin are ~31% of base (Farming 140 -> 42.8, Labouring 50 ->
   15.5): some game modifier; the PG bonus multiplies that vanilla effective value.
   Optional: the soak (pg-09).

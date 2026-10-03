@@ -2,9 +2,10 @@
 # covers: PG 177 (Labouring 50: no gear vs +50% Labouring gear on a worker-driven job; the Phase 8 "do jobs read the hooked stat" proof)
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll E57B9E8E (pg_operate radius/near + operate hooks); harness with `produced`, `teleport <npc> building`, `building/job ... radius`; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# needs: ProfessionGearProgression.dll 10C19BAB (pg_operate counters fixed, output_progress); harness with `produced`, `teleport <npc> building`, `building/job ... radius`; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
 # history: m13 + m14 used the powered Stone Mine: 0.47-0.48 stone/h in every window, also with operate scaling on. A powered mine runs at the machine's own rate (output_rate=0.1), the worker does not drive it: not a skill benchmark. v3 uses the worker-driven Manual Stone Processor (Raw Stone -> Building Materials).
-# verify: three equal 2-game-hour windows: A no gear, B +50% Labouring (scaling off), C +50% with JobOperateScaling on. Compare pg_operate per window: calls (> 0 proves the worker drove the machine), avg_amount, output_gain (fractional output). B > A = the job reads the hooked stat (row 177 PASS, no job hook needed). B ~ A and C ~ 1.5 x A = the job reads the raw skill: operate scaling is the fix. calls=0 or C ~ A = this machine is not worker-driven either: row 177 NEEDS-SETUP.
+# history v3 (m15): counters were uninitialised (VS2010 struct init bug, fixed) and the processor ran out of Raw Stone in window A (Malzin's bag was full: give 0/10), so A/B/C were not comparable. Raw summed amount per game minute: A 6.6, B 7.3, C 7.4 (C scaled 11.1).
+# verify: three equal 30-game-minute windows (20 Raw Stone last ~2 game hours, so no starvation): A no gear, B +50% Labouring (scaling off), C +50% with JobOperateScaling on. Compare pg_operate per window: calls, avg_amount (does the worker's per-tick amount rise with hooked Labouring?) and output_progress (units of Building Material made, fractions included). B > A = the job reads the hooked stat (row 177 PASS, no job hook needed). B ~ A and C ~ 1.5 x A = the job reads the raw skill: operate scaling is the fix. calls=0 or C ~ A = this machine is not worker-driven either: row 177 NEEDS-SETUP.
 @wait-world
 @sleep 8
 speed 0
@@ -31,31 +32,29 @@ pg_operate "Manual Stone Processor" radius 100 near Malzin ~ calls=[1-9]
 # --- A: no Labouring gear ---
 pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
 speed 10
-@wait-game 120 1800
+@wait-game 30 900
 speed 0
-@set OA pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=\d+ amount=[\d.]+ .*output_gain=-?[\d.]+)
-building "Manual Stone Processor" 1000 ~ full=0
+@set OA pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=\d+ amount=[\d.]+ scaled_amount=[\d.]+ avg_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ full=0 .*state=NORMAL
 hunger Malzin 280
-give Malzin "Raw Stone" 10
 # --- B: +50% Labouring gear, no operate scaling ---
 pg_force_affix Malzin "Black Cloth Shirt" labouring 50 tier 6 ~ affixes=Labouring:50
 pg_bonus Malzin labouring ~ equipped_bonus=50% base=50\.\d\d .*match=1
 pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
 speed 10
-@wait-game 120 1800
+@wait-game 30 900
 speed 0
-@set OB pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=\d+ amount=[\d.]+ .*output_gain=-?[\d.]+)
-building "Manual Stone Processor" 1000 ~ full=0
+@set OB pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=\d+ amount=[\d.]+ scaled_amount=[\d.]+ avg_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ full=0 .*state=NORMAL
 hunger Malzin 280
-give Malzin "Raw Stone" 10
 # --- C: +50% Labouring gear with JobOperateScaling on ---
 pg_jobscale on ~ jobOperateScaling=1
 pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
 speed 10
-@wait-game 120 1800
+@wait-game 30 900
 speed 0
-@set OC pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=\d+ amount=[\d.]+ .*output_gain=-?[\d.]+)
-building "Manual Stone Processor" 1000 ~ full=0
+@set OC pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=\d+ amount=[\d.]+ scaled_amount=[\d.]+ avg_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ full=0 .*state=NORMAL
 pg_jobscale off ~ jobOperateScaling=0
 @echo A (no gear): ${OA}
 @echo B (+50% Labouring): ${OB}

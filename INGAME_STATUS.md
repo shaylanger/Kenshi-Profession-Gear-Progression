@@ -2,7 +2,7 @@
 
 **Updated:** 2026-10-03 (after coordinator runs m2-m13). One row per `TEST_PLAN.md` ID (1–330 plus 16a–16c and 30a–30i = 342 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
-`tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll E57B9E8E** (FAA5B471 ran m4-m12).
+`tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll 10C19BAB** (FAA5B471 ran m4-m12).
 
 States: **PASS-offline** (core tests / build gates / source contracts), **PASS-live** (with evidence),
 **PENDING-auto** (a scenario file exists; the harness can run it without Shay), **NEEDS-SETUP**
@@ -90,7 +90,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
-| 177 | PENDING-auto | `tests/ingame/auto-home/pg-12-job-throughput.txt` v3 (DLL E57B9E8E, Manual Stone Processor). m13/m14 on the powered Stone Mine: 0.47-0.48 stone per game hour in all windows (no gear, +50% Labouring, +50% with operate scaling): a powered mine runs at the machine rate, not a skill benchmark. If the manual processor is not worker-driven either: NEEDS-SETUP |
+| 177 | PENDING-auto | `tests/ingame/auto-home/pg-12-job-throughput.txt` v4 (DLL 10C19BAB, Manual Stone Processor, 3 x 30 game min). m13/m14 powered Stone Mine: 0.47-0.48 stone/h in all windows (machine rate, not a skill benchmark). m15 v3: pg_operate counters uninitialised (fixed) and window A ran out of stone; summed worker amount per game minute A 6.6 / B 7.3 / C 7.4: inconclusive |
 | 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
