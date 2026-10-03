@@ -23,7 +23,7 @@ pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(?!none)
 # 212: generic goggles in shop stock roll only from the goggles pool
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader .*name="Square Goggles" equipped=0 tier=\d tags=GOGGLES_GENERIC affixes=((Perception|Science|Engineering|Robotics|Turrets):[\d.]+,?)+\r?$
 @set RK pg_shop "${TR}" ~ Rattan Hat key=(pgp\S+)
-@set RA pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(\S+)
+@set RA pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=([^\]]+)\]
 # --- 219 + 214 + 239: buy through the game's purchase path: the bought hat is the shop's record ---
 money Shay 5000
 trade Shay "${TR}" "Rattan Hat" ~ bought Rattan Hat from

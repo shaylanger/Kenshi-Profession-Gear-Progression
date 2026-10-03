@@ -12,8 +12,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | State | Rows |
 |---|---|
 | PASS-offline | 71 |
-| PASS-live | 158 |
-| PENDING-auto | 11 |
+| PASS-live | 161 |
+| PENDING-auto | 8 |
 | NEEDS-SETUP | 65 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
@@ -45,7 +45,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 83 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 84 | NEEDS-SETUP | harness `stat` has no melee attack/defence/dodge/toughness names (code passes unmapped stats through unchanged) |
 | 85–86 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
-| 87 | PENDING-auto | `tests/ingame/crafting-base/pg-11-real-craft.txt` (87: m3/m4 crafted tiers 0 at skill 5 vs 1-4 at skill 100) |
+| 87 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): crafted tiers rise with Armour Smithing (5 vs 100; Kenshi quality has a random spread) |
 | 88 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 89 | NEEDS-SETUP | a way to force a critical-success craft (or many weapon crafts with a known crit chance) |
 | 90–92 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
@@ -88,7 +88,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 157 | PASS-live | `C:\KenshiTestRuns\m2\pg-01-startup-stability.out` (archive/test-run-2026-10-03-m2.md) 50/0 |
 | 158 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
-| 160 | PENDING-auto | `tests/ingame/crafting-base/pg-11-real-craft.txt` (87: m3/m4 crafted tiers 0 at skill 5 vs 1-4 at skill 100) |
+| 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 177 | NEEDS-SETUP | job-path proof ran (m4 pg-08 39/0) but `building "Stone Mine"` qty is the output buffer (0 -> 0 -> 1 over 2 h): needs a production counter (units produced per game hour) or a job whose output stays put |
 | 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
@@ -115,7 +115,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 246–249 | PASS-live | `C:\KenshiTestRuns\m4\pg-07-worldloot.out` (archive/test-run-2026-10-03-m4.md) 31/0 |
 | 250 | NEEDS-SETUP | a ruin/chest loot fixture (unlooted world containers) |
 | 251–252 | PASS-offline | core unique/legendary tests; a live check needs a unique item instance in a fixture |
-| 253 | PENDING-auto | `tests/ingame/crafting-base/pg-11-real-craft.txt` (87: m3/m4 crafted tiers 0 at skill 5 vs 1-4 at skill 100) |
+| 253 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): high-quality crafted items roll |
 | 254 | NEEDS-SETUP | pg-02 ran (m2-m4) but harness `stat maxrunspeed` reads 0.0 with and without +50% Athletics (standing/paused): needs a speed readout while running or a timed walk |
 | 255 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 256 | NEEDS-SETUP | swim gear in the mod stack + a water route |

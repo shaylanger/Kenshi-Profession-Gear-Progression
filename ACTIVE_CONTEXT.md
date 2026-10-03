@@ -13,8 +13,8 @@ scenario files, fixes the bugs the coordinator sends, commits + pushes, and repo
 game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=shaylanger commit`
 (the repo-local email is wrong) and push after each commit.
 
-- **Per-row status:** `INGAME_STATUS.md` (341 rows after runs m2-m6: 71 PASS-offline, 158 PASS-live,
-  11 PENDING-auto (pg-11 real craft, trader/pg-21 shop, pg-09 soak), 65 NEEDS-SETUP, 10 NEEDS-SHAY,
+- **Per-row status:** `INGAME_STATUS.md` (341 rows after runs m2-m9: 71 PASS-offline, 161 PASS-live,
+  8 PENDING-auto (trader/pg-21 shop, waiting for a harness trade fix; pg-09 soak), 65 NEEDS-SETUP, 10 NEEDS-SHAY,
   26 DEFERRED). Normal-chance measurements are at the end of that file.
 - **Scenarios:** `tests/ingame/` (auto-home, crafting-base, trader, config) + `tests/ingame/RUN_ORDER.md`
   (4 launches: main Forced+InGameTest rules, AutoClassifyOff, Disabled+startup sidecar, NormalVerbose).
