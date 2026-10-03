@@ -262,7 +262,7 @@ Store results as CSV so they can be processed automatically.
 
 ## Automation integration
 
-Once live installation/testing is authorized, add ProfessionGear-specific scenario commands to the existing Kenshi test inbox or a standalone test bridge, rather than requiring Shay to time jobs manually.
+Once live installation/testing is authorized, add ProfessionGear-specific scenario commands rather than requiring Shay to time jobs manually: the ProfessionGear plugin can register them in the Kenshi Automation Harness at run time (`C:\KenshiModding\Kenshi-Automation-Harness`, `include/KenshiAutomationHarness.h`, `docs/EXTENDING.md`); they then show up in `stobe-auto help` and run through `stobe-auto <command>`.
 
 Needed operations:
 - load fixture

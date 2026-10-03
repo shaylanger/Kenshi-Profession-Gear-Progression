@@ -5,6 +5,21 @@
 **Canonical technical plan:** TEST_PLAN.md (through test 307)
 **Player/phase plan:** LIVE_TEST_RUNBOOK.md
 
+> **Harness moved (2026-10-02):** the test commands used below (`stobe-auto iteminfo/equip/unequip/
+> traders/transfer/packput/packweight/craftfinish/...`) no longer live in Stobe's `TestAutomation.cpp`.
+> They are in the standalone Kenshi Automation Harness mod (`C:\KenshiModding\Kenshi-Automation-Harness`,
+> `src/Commands.cpp`; reference `docs/COMMANDS.md`, agent notes `AGENTS.md`). `stobe-auto` works
+> as before (it now wraps the harness client) and needs the harness on (`stobe-say on`). Add new test
+> commands in the harness repo, or register ProfessionGear-specific ones from the ProfessionGear plugin
+> through the harness extension API (`include/KenshiAutomationHarness.h`, `docs/EXTENDING.md`).
+> Mentions of `TestAutomation.cpp` further down are history.
+> **Since 2026-10-02 (late):** the plugin registers `pg_info`, `pg_force_affix <npc> <item> <stat> <pct>
+> [... ] [tier n]`, `pg_clear <npc> [item]`, `pg_roll <npc> <item>`, `pg_bonus <npc> <stat>` (validated in
+> game); the harness has `craft <npc> <item> at <bench>` (real crafting, `research` to unlock),
+> `craftfinish` (fixed: it really completes a craft now), `benches`, `job`, `fill`, `time`/`wait-game`
+> and the `kah run` scenario runner. Shay's "Crafting base" save (benches in the Hub) unblocks
+> Phase 3 / tests 85-92 and 306. Fixture details: `C:\KenshiTestFixtures\FIXTURES.md` (local).
+
 ## Resume instructions for another agent
 
 1. Read this file, ACTIVE_CONTEXT.md, LIVE_TEST_RUNBOOK.md, and recent git diff/log.
@@ -754,3 +769,18 @@ Next exact live work:
 
 The run that ended before this recovery did not leave a new Kenshi crash dump. RE_Kenshi rendered normally and ProfessionGear loaded all hooks. Treat the stopped process as harness/tool-session termination unless new evidence shows otherwise.
 
+
+### Resume live batch — crafting fixture probe
+
+`pg-context-base` loaded successfully and harness health was good.
+
+`craftfinish Shay 2309-clothes_v1.mod` returned:
+- `no CraftingBuilding within 300`
+
+Disposition:
+- harness failed safely as designed,
+- no ProfessionGear pass/fail assigned,
+- Phase 3 / tests 85–92 and 306 remain **PENDING FOR VALID CRAFTING FIXTURE**,
+- do not fabricate a craft pass without a real CraftingBuilding.
+
+Next: continue prepared specialist-pack/container batch.
