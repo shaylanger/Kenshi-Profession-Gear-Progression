@@ -1,6 +1,6 @@
 # Profession Gear Progression — in-game test status
 
-**Updated:** 2026-10-03 (after coordinator runs m2-m13). One row per `TEST_PLAN.md` ID (1–331 plus 16a–16c and 30a–30i = 343 rows).
+**Updated:** 2026-10-03 (after coordinator runs m2-m16). One row per `TEST_PLAN.md` ID (1–331 plus 16a–16c and 30a–30i = 343 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
 `tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll 7D80DBB3** (FAA5B471 ran m4-m12).
 
@@ -12,8 +12,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | State | Rows |
 |---|---|
 | PASS-offline | 71 |
-| PASS-live | 169 |
-| PENDING-auto | 3 |
+| PASS-live | 171 |
+| PENDING-auto | 1 |
 | NEEDS-SETUP | 64 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
@@ -89,9 +89,9 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 158 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
-| 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
-| 177 | PENDING-auto | FIXED, recheck pending: `tests/ingame/auto-home/pg-12-job-throughput.txt` v5 (DLL 7D80DBB3). m16 v4 (Manual Stone Processor, 30 game min windows): no gear output_progress 0.1065, +50% hooked Labouring 0.1123 (x1.05: the job reads the raw skill), +50% with JobOperateScaling 0.1695 (x1.59). Scaling is now on by default (ini JobOperateScaling=true); v5 expects gear ~x1.5 with the default build. (m13/m14: powered Stone Mine runs at machine rate) |
-| 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
+| 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
+| 177 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0 on DLL 7D80DBB3 + harness F946C881, Manual Stone Processor, 3 x 30 game min: output_progress A no gear 0.1042, B +50% Labouring (default build, JobOperateScaling on) 0.1599 (x1.53), C same gear with scaling off 0.1095 (x1.05, ~A). Jobs read the raw skill; the operate scaling makes equipped Labouring count. (m16 v4 on 10C19BAB: 0.1065 / 0.1123 / 0.1695; m13/m14 powered Stone Mine runs at machine rate) |
+| 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
 | 212 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
@@ -156,7 +156,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 328 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 329 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 330 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
-| 331 | PENDING-auto | `tests/ingame/auto-home/pg-12-job-throughput.txt` v5 (same run as 177) |
+| 331 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0: default build gives x1.53 work with +50% Labouring, `pg_jobscale off` returns to ~x1.05 (same run as 177). Labouring path (`ProductionBuilding::operate`) measured; the Farming path (`FarmBuilding::operate`, same scaling code) not measured live |
 
 ## Notes
 

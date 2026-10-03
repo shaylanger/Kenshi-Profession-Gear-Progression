@@ -38,7 +38,8 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   Enabled=false creates no records; the craft hook rolls the item that actually reaches the bench
   output (launch 1: the passed Item* was another instance; row 329); sidecar rows with no affix survive a restart (CRLF bug: 2,629
   rows were dropped at every load). Regression rows 321-328 in TEST_PLAN.md.
-- **Open:** row 177 job-path proof. m13 (Stone Mine, 2 game h per window) gave 0.47 vs 0.48 stone/h
+- **Done (m16, row 177 + 331 PASS-live):** job-path proof. pg-12 v5 on 7D80DBB3: A no gear 0.1042, B +50%
+  Labouring (scaling on by default) 0.1599 (x1.53), C scaling off 0.1095 (~A). History: m13 (Stone Mine, 2 game h per window) gave 0.47 vs 0.48 stone/h
   without/with +50% Labouring, but only 1 whole stone per window: inconclusive. Build 10C19BAB hooks
   `ProductionBuilding::operate` and `FarmBuilding::operate` (every worker tick: building, worker,
   amount): `pg_operate <building> [reset]` reports calls, summed amount, fractional output gain, and
