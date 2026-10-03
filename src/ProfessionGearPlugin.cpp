@@ -306,15 +306,41 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
   return p;
 }
 
+void CollectCharacterInventoryItems(Inventory* inv,std::vector<Item*>& out) {
+  out.clear();
+  if(!inv) return;
+  std::set<Item*> seen;
+  try {
+    lektor<InventorySection*>& sections=inv->getAllSections();
+    for(unsigned int si=0;si<sections.size();++si){
+      InventorySection* section=sections[si];
+      if(!section) continue;
+      const Ogre::vector<InventorySection::SectionItem>::type& items=section->getItems();
+      for(size_t ii=0;ii<items.size();++ii){
+        Item* item=items[ii].item;
+        if(item && seen.insert(item).second) out.push_back(item);
+      }
+    }
+  } catch (...) {}
+
+  // Defensive fallback for inventories/mods that do not expose every section normally.
+  try {
+    const lektor<Item*>& all=inv->getAllItems();
+    for(unsigned int i=0;i<all.size();++i)
+      if(all[i] && seen.insert(all[i]).second) out.push_back(all[i]);
+  } catch (...) {}
+}
+
 void RebuildCharacterBonusCache(Character* c) {
   if(!c) return;
   Inventory* inv=0;
   try { inv=c->getInventory(); } catch (...) { return; }
   if(!inv) return;
   std::map<PGP::ProfessionStat,float> totals;
-  const lektor<Item*>& items=inv->getAllItems();
+  std::vector<Item*> items;
+  CollectCharacterInventoryItems(inv,items);
   EnterCriticalSection(&g_lock);
-  for(unsigned int i=0;i<items.size();++i){
+  for(size_t i=0;i<items.size();++i){
     Item* item=items[i];
     if(!item || !item->isEquipped) continue;
     std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(ItemKey(item));
@@ -333,8 +359,9 @@ void ProcessCharacter(Character* c) {
   Inventory* inv=0;
   try { inv=c->getInventory(); } catch (...) { return; }
   if(!inv) return;
-  const lektor<Item*>& items=inv->getAllItems();
-  for(unsigned int i=0;i<items.size();++i) if(items[i]) EnsureRecord(items[i],c,false);
+  std::vector<Item*> items;
+  CollectCharacterInventoryItems(inv,items);
+  for(size_t i=0;i<items.size();++i) if(items[i]) EnsureRecord(items[i],c,false);
   RebuildCharacterBonusCache(c);
 }
 

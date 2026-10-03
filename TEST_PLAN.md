@@ -2,7 +2,7 @@
 
 **Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
 
-**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **311**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **313**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -425,3 +425,13 @@ These rows were added from the first forced live scan on 2026-10-02.
 | 309 | AUTO | Bolts [Regulars] / ammunition | Non-equippable ammo never receives ProfessionGear record/tooltip |
 | 310 | AUTO | Basic/Standard First Aid Kit / Splint Kit | Medical consumables are not treated as equipable Medic gear |
 | 311 | AUTO | Medical Supplies / research-related trade item | Non-equippable supplies cannot roll Science/Robotics/Medic affixes |
+
+
+## Section V — equipped-section inventory regression
+
+These rows were added from the first Phase 2 live equip test on 2026-10-02.
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 312 | AUTO | Equipped belt/armour/weapon/backpack item leaves Inventory::getAllItems() | ProfessionGear still discovers the item by scanning all character inventory sections and applies its affix while equipped |
+| 313 | AUTO | Harness item lookup after equip | stobe-auto iteminfo/unequip finds items in equipped sections, not only the main inventory list |

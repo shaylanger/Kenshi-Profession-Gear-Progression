@@ -128,3 +128,176 @@ Next:
 3. add regression fixtures for the exact live false positives,
 4. rebuild/reinstall forced test build,
 5. delete contaminated sidecar and rerun Phase 1.
+
+
+### Non-equippable classifier fix checkpoint
+
+- Added explicit runtime eligibility: only `Gear` subclasses or `ContainerItem` may create ProfessionGear records.
+- Non-equippable consumables/resources now fail before persistence/tooltips.
+- Added tests 308–311 from live false positives.
+- Offline suite now: **5,217 checks PASS**, build OK, 17/17 symbols, 3/3 source contracts, package verified.
+- Fresh package installed; forced config restored.
+- Contaminated ProfessionGear sidecar/log from failed first scan deleted.
+- Commit/push: `f1517ac fix: reject non-equippable profession items`.
+- Next: rerun Phase 1 and verify Chewing Tobacco, Bolts, First Aid/Splint kits and Medical Supplies produce no ProfessionGear records.
+
+
+### Phase 1 corrected-build rerun — PASS
+
+Corrected build `f1517ac` launched into the same fixture successfully.
+
+Live verification:
+- world reached `phase=world`,
+- all 12 ProfessionGear hooks loaded,
+- harness health remained OK,
+- previous live false positives are gone:
+  - no Chewing Tobacco record,
+  - no Bolts [Regulars] record,
+  - no First Aid/Splint Kit record,
+  - no Medical Supplies record.
+- fresh sidecar contains only 1 eligible record plus header at this checkpoint:
+  - `Square Goggles` -> `GOGGLES_GENERIC`, tier 1, Turrets +3%.
+- persistence file generation works.
+- startup/load/pause/speed behavior had already passed and remained stable after the rebuild.
+
+**Phase 1 status: PASS on corrected build.**
+Tests 308–311 also pass live for the observed fixture sample.
+
+Next: Phase 2 automation — determine available inventory/equip/stat harness commands, then exercise carried vs equipped behavior and persistence.
+
+
+### Phase 2 live failure — equipped items missing from current cache scan
+
+Controlled test:
+- Square Goggles persisted roll: Turrets +3%.
+- Set Shay Turrets base to 50.
+- Before equipping, effective Turrets = 46.1 (existing vanilla gear penalty/interaction).
+- Harness `equip Shay "Square Goggles"` succeeded and reported section=belt, equipped=1.
+- Immediately after equip:
+  - harness `iteminfo` could no longer find Square Goggles via `Inventory::getAllItems()`,
+  - ProfessionGear effective Turrets remained 46.1 instead of increasing.
+
+Root-cause hypothesis strongly supported:
+- Stobe harness `FindInventoryItem` scans `Inventory::getAllItems()`.
+- ProfessionGear `RebuildCharacterBonusCache` also scans `Inventory::getAllItems()`.
+- In live Kenshi, equipped belt gear is no longer in that collection.
+- Therefore ProfessionGear likely misses equipped section items entirely and cannot activate their affixes.
+
+**Phase 2 status: FAILED / implementation fix required.**
+
+Next:
+1. inspect Inventory section APIs and live section names,
+2. rebuild cache by scanning actual equipped sections/items,
+3. add regression/live tests,
+4. update harness item lookup if needed for automated unequip,
+5. rebuild/reinstall and rerun Phase 2.
+
+
+### Equipped-section fix build/install checkpoint
+
+ProfessionGear changes prepared:
+- added `CollectCharacterInventoryItems()`,
+- scans every `InventorySection` via `getAllSections()` + `section->getItems()`,
+- falls back to `getAllItems()` defensively,
+- `ProcessCharacter()` now generates records for top-level items across main + equipped sections,
+- `RebuildCharacterBonusCache()` now sees belt/armour/weapon/backpack equipped items.
+
+Stobe harness patch prepared:
+- `/root/STOBE-src/src/TestAutomation.cpp::FindInventoryItem` now scans all inventory sections instead of only `getAllItems()`,
+- this is required so automated `iteminfo/equip/unequip` can find gear after equip.
+
+Important repo note:
+- `/root/STOBE-src` currently contains many unrelated modified/untracked files from ongoing STOBE work.
+- Do **not** bulk-stage/commit that repo for this harness patch.
+- TestAutomation.cpp is currently untracked in that repo; preserve it as part of the active test harness state.
+- Installed Stobe test DLL after this patch: **BE903ED2**.
+
+Build/install:
+- Stobe build: BUILD OK.
+- ProfessionGear core: 5,217 checks PASS.
+- ProfessionGear DLL: BUILD OK.
+- SDK/export verification: 17/17 PASS.
+- Package verification: PASS.
+- Fresh ProfessionGear package installed with forced config.
+- ProfessionGear sidecar/log absent before next launch (clean run).
+
+Next exact action: launch auto-home and rerun Square Goggles Turrets base/effective -> equip -> effective -> unequip -> effective, plus verify already-equipped Ninja Rags/Wooden Sandals now generate records.
+
+
+### Phase 2 equipped-section rerun — core equip-only PASS
+
+Corrected section-scanning build + Stobe harness patch live results:
+
+Fixture evidence:
+- already-equipped `Wooden Sandals (colored)` generated record while equipped:
+  - tags BOOTS_TRAVEL
+  - Perception +18.6%, Athletics +23.2%
+- already-equipped `Ninja Rags` generated record while equipped:
+  - tags STEALTH_GEAR, THIEF_GEAR
+  - Stealth +5.8%
+- previous non-equippable false positives remained absent.
+- confirms test 312 discovery path is working.
+
+Controlled Square Goggles test:
+- persisted roll in this run: **Engineering +5.3%**
+- item before equip: section=main, equipped=0
+- set Shay Engineering base to 50.0
+- unequipped effective Engineering: **20.7** (vanilla/mod equipment penalties already applied)
+- equip command succeeded; item moved to section=belt, equipped=1
+- harness `iteminfo` still found it in equipped section (test 313 PASS)
+- equipped effective Engineering: **21.8**
+- 20.7 × 1.053 = 21.7971, matching observed 21.8
+- unequip succeeded
+- effective Engineering returned exactly to **20.7**
+
+Conclusions:
+- ProfessionGear percentage composes on top of Kenshi's existing effective value.
+- carrying/unequipped item gives zero ProfessionGear bonus.
+- equipping applies exactly one expected bonus.
+- unequipping removes it.
+- tests 62–80 core equip-only path PASS for Engineering sample.
+- tests 312–313 PASS live.
+
+Phase 2 remaining before full pass:
+- save/reload exact roll/identity,
+- tooltip visual duplicate/readability is still visual-only unless screenshot automation can confirm it.
+
+
+### Harness nuance during Phase 2 persistence setup
+
+After the successful equip -> unequip test:
+- `unequip Shay "Square Goggles"` set `equipped=0`,
+- but the item remained in inventory section `belt`,
+- a subsequent `equip` call failed while it was still in the belt section.
+
+This appears to be a Stobe test-harness inventory-placement nuance, not a ProfessionGear bonus failure:
+- ProfessionGear correctly removed the bonus when `isEquipped` became false.
+- For persistence testing, reload a fresh `auto-home` fixture so the goggles begin in `main`, then equip once and save while equipped.
+
+Potential harness improvement later: make `unequip` move the item back to a valid non-equip section, or add a `moveitem` helper.
+
+
+### Phase 2 persistence — HARD FAIL confirmed
+
+Exact same-save reload test:
+- before loading `pg-phase2-equipped`:
+  - Square Goggles handle = `53665-2180541952-0-0-3`
+  - equipped=1
+- after loading the exact save `pg-phase2-equipped`:
+  - Square Goggles handle = `57407-1135864320-0-0-3`
+  - equipped=1
+- Engineering base remained 50 from the saved state.
+- ProfessionGear Engineering bonus did **not** survive; effective remained 20.7.
+
+Conclusion:
+- Kenshi runtime `hand::toString()` is not stable across ordinary save/reload.
+- Current sidecar keying by runtime hand is invalid for persistence.
+- Test 123 (save/reload same save) FAILS.
+- Tests 124/131/132 are blocked until item identity is redesigned.
+- Do not proceed to later gameplay/balance phases until persistence is fixed.
+
+Next investigation:
+1. instrument harness item info with raw hand fields,
+2. inspect `Item::persistant`, proper owner, and inventory-owner handles across reload,
+3. determine whether any built-in serialized identity survives,
+4. if none does, implement sidecar reconciliation based on stable item fingerprint + owner/section/position metadata or hook serialization to persist a custom ID.
