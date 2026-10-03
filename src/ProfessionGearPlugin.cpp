@@ -339,7 +339,7 @@ void LoadDb() {
 }
 
 PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
-  if(!item) return 0;
+  if(!item || !g_cfg.enabled) return 0;   // Enabled=false: no new records from any path
   PGP::ItemDescriptor d=Describe(item);
   const bool explicitlyExcluded=g_exclusions.count(PGP::Lower(d.baseId))!=0;
   const bool forceIneligible=!d.equippable || d.legendary || d.stackable || explicitlyExcluded;
