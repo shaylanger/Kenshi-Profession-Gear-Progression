@@ -64,12 +64,13 @@ give Shay 2185-gamedata.base 1
 pg_store Shay "${CH}" "Rattan Hat" ~ stored
 give Shay 2185-gamedata.base 1
 pg_store Shay "${CH}" "Rattan Hat" ~ stored
+# the chest is full after ~28 hats (run m6): the last 4 go to Malzin
 give Shay 2185-gamedata.base 1
-pg_store Shay "${CH}" "Rattan Hat" ~ stored
+pg_loot Shay Malzin "Rattan Hat" ~ looted
 give Shay 2185-gamedata.base 1
-pg_store Shay "${CH}" "Rattan Hat" ~ stored
+pg_loot Shay Malzin "Rattan Hat" ~ looted
 give Shay 2185-gamedata.base 1
-pg_store Shay "${CH}" "Rattan Hat" ~ stored
+pg_loot Shay Malzin "Rattan Hat" ~ looted
 give Shay 2185-gamedata.base 1
-pg_store Shay "${CH}" "Rattan Hat" ~ stored
+pg_loot Shay Malzin "Rattan Hat" ~ looted
 @echo 245: count the 30 "roll source=world_loot ... name=\"Rattan Hat\"" lines in ProfessionGear.log, affixes=none vs rolled

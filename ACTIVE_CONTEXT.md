@@ -13,8 +13,9 @@ scenario files, fixes the bugs the coordinator sends, commits + pushes, and repo
 game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=shaylanger commit`
 (the repo-local email is wrong) and push after each commit.
 
-- **Per-row status:** `INGAME_STATUS.md` (340 rows: 73 PASS-offline, 62 PASS-live, 106 PENDING-auto,
-  63 NEEDS-SETUP, 10 NEEDS-SHAY, 26 DEFERRED).
+- **Per-row status:** `INGAME_STATUS.md` (341 rows after runs m2-m6: 71 PASS-offline, 158 PASS-live,
+  11 PENDING-auto (pg-11 real craft, trader/pg-21 shop, pg-09 soak), 65 NEEDS-SETUP, 10 NEEDS-SHAY,
+  26 DEFERRED). Normal-chance measurements are at the end of that file.
 - **Scenarios:** `tests/ingame/` (auto-home, crafting-base, trader, config) + `tests/ingame/RUN_ORDER.md`
   (4 launches: main Forced+InGameTest rules, AutoClassifyOff, Disabled+startup sidecar, NormalVerbose).
   Format: `stobe-auto run --help`; header per `testing/README.md`.
@@ -22,8 +23,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Built, not installed:** `out\ProfessionGearProgression.dll` **FAA5B471** (0.9.1-pretest).
-  Installed: D667F5EE. Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **FAA5B471** (0.9.1-pretest). Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
   pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),

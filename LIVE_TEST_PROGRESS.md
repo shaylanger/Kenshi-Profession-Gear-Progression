@@ -787,3 +787,13 @@ Disposition:
 - do not fabricate a craft pass without a real CraftingBuilding.
 
 Next: continue prepared specialist-pack/container batch.
+
+## Coordinator runs m2-m6 (2026-10-03, builds 475B9508 -> FAA5B471)
+
+Run by the coordinator from `tests/ingame/` (outputs `C:\KenshiTestRuns\m2..m6\`, logs
+`C:\KenshiModding\archive\test-run-2026-10-03-m*.md`). Final passes: pg-01 50/0, pg-02 115/0,
+pg-03 44/0, pg-04 69/0, pg-05 54/0, pg-06 25/0, pg-07 31/0, pg-08 39/0, pg-10 29/0, pg-30 21/0,
+pg-31 12/0, pg-40 16/0, pg-41 65/1 (chest full, fixed). Bugs found and fixed on the way:
+crafted roll on the wrong instance (row 329, 159C552F), shop storage radius 30 -> 60 (1da2eb0).
+Open: pg-11 (real crafting), trader/pg-21 (shop stock + purchase), pg-09 soak; measurement gaps
+for 177 (mine output counter) and 254 (run speed readout). Row states: `INGAME_STATUS.md`.
