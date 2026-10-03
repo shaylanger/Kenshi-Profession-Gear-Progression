@@ -21,7 +21,7 @@ Before: `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (sidecar kept).
 | 6 | auto-home | `auto-home/pg-06-persistence.txt` | fresh |
 | 7 | auto-home | `auto-home/pg-07-worldloot.txt` | fresh |
 | 8 | auto-home | `auto-home/pg-08-job-path.txt` (~2.5 game hours at 10x) | fresh |
-| 8b | auto-home | `auto-home/pg-12-job-throughput.txt` (row 177, ~4.5 game hours at 10x; needs harness C5804B0C) | fresh |
+| 8b | auto-home | `auto-home/pg-12-job-throughput.txt` (row 177 v5: 15 min warm-up + 3 x 30 game min at 10x; needs harness F946C881; expect output_progress B ~ 1.5 x A, C ~ A) | fresh |
 | 9 | auto-home | `auto-home/pg-09-soak.txt` (30 real minutes at 50x; optional, last) | fresh |
 | 10 | Crafting base | `crafting-base/pg-10-craftfinish.txt` | fresh |
 | 11 | Crafting base | `crafting-base/pg-11-real-craft.txt` | fresh |
@@ -64,3 +64,9 @@ After launch 4: `set_test_mode.ps1 -Sidecar Restore` plus either `-Mode Forced -
 
 Launches 2-4 are short (one or two files each). If launches are expensive, launch 1 alone covers
 95 of the 106 PENDING-auto rows.
+
+## Regression after harness F946C881 (character handles are now `#serial/index`)
+
+Same launch as above, fresh fixture each: pg-01...08, pg-10, pg-11, pg-21 (pg-12 first if time is short).
+The files that capture handles (pg-01 `chars`, pg-05 and pg-21 `spawn`, pg-30 `spawn`) already capture
+`#\d+(?:/\d+)?`, so they pass the exact `#serial/index` form on.
