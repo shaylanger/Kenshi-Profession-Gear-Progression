@@ -408,7 +408,8 @@ AffixRecord RollAffixes(const ItemDescriptor& item,const RoleProfile& role,
                         const RuleConfig& cfg,const std::vector<ItemTag>& tags,
                         const std::string& key,unsigned int seed,bool crafted) {
   AffixRecord out; out.instanceKey=key; out.baseId=item.baseId; out.tier=ProgressionTier(item);
-  if(!cfg.enabled || item.stackable || item.legendary || (item.weapon && role.unique && item.weaponLevel>=70) || tags.empty()) return out;
+  if(!cfg.enabled || !item.equippable || item.stackable || item.legendary ||
+     (item.weapon && role.unique && item.weaponLevel>=70) || tags.empty()) return out;
   std::vector<ProfessionStat> pool=AllowedStats(tags);
   if(pool.empty()) return out;
   const bool contextualGeneric =

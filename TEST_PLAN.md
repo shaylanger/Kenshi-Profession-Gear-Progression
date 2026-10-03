@@ -2,7 +2,7 @@
 
 **Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
 
-**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **307**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **311**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -413,3 +413,15 @@ These tests correspond to approved future goals so roadmap work is not left as u
 | ID | Automation | Test | Expected |
 |---|---|---|---|
 | 307 | AUTO | Native plugin entry export | DLL exports C++-mangled `?startPlugin@@YAXXZ`; plain `extern "C" startPlugin` is rejected because RE_Kenshi resolves the mangled C++ symbol |
+
+
+## Section U — live non-equippable false-positive regression
+
+These rows were added from the first forced live scan on 2026-10-02.
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 308 | AUTO | Chewing Tobacco / ordinary consumable with work-related description words | Non-Gear/non-ContainerItem is rejected before record generation |
+| 309 | AUTO | Bolts [Regulars] / ammunition | Non-equippable ammo never receives ProfessionGear record/tooltip |
+| 310 | AUTO | Basic/Standard First Aid Kit / Splint Kit | Medical consumables are not treated as equipable Medic gear |
+| 311 | AUTO | Medical Supplies / research-related trade item | Non-equippable supplies cannot roll Science/Robotics/Medic affixes |

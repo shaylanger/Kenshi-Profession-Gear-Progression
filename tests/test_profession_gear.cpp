@@ -250,6 +250,15 @@ int main(){
   ItemDescriptor mineralMask; mineralMask.baseId="mod.mineral_mask"; mineralMask.name="Mineral Dust Mask"; mineralMask.armour=true;
   Check(!HasTag(Classify(mineralMask,overrides,exclusions),TAG_TOOL_MINING),"mineral does not false-match miner");
 
+  ItemDescriptor tobacco; tobacco.baseId="live.chewing_tobacco"; tobacco.name="Chewing Tobacco"; tobacco.description="Workers may chew these rags of tobacco"; tobacco.equippable=false;
+  {std::vector<ItemTag> x=Classify(tobacco,overrides,exclusions); AffixRecord rr=RollAffixes(tobacco,RoleProfile(),RuleConfig(),x,"tobacco",7,false); Check(rr.affixes.empty(),"non-equippable tobacco never rolls profession affix");}
+  ItemDescriptor bolts; bolts.baseId="live.bolts"; bolts.name="Bolts [Regulars]"; bolts.description="Regular crossbow ammunition"; bolts.equippable=false;
+  {std::vector<ItemTag> x=Classify(bolts,overrides,exclusions); AffixRecord rr=RollAffixes(bolts,RoleProfile(),RuleConfig(),x,"bolts",7,false); Check(rr.affixes.empty(),"non-equippable bolts never roll profession affix");}
+  ItemDescriptor firstAid; firstAid.baseId="209-gamedata.base"; firstAid.name="Basic First Aid Kit"; firstAid.equippable=false;
+  {std::vector<ItemTag> x=Classify(firstAid,overrides,exclusions); AffixRecord rr=RollAffixes(firstAid,RoleProfile(),RuleConfig(),x,"aid",7,false); Check(rr.affixes.empty(),"non-equippable first aid kit never rolls profession affix");}
+  ItemDescriptor medicalSupplies; medicalSupplies.baseId="582-gamedata.base"; medicalSupplies.name="Medical Supplies"; medicalSupplies.equippable=false;
+  {std::vector<ItemTag> x=Classify(medicalSupplies,overrides,exclusions); AffixRecord rr=RollAffixes(medicalSupplies,RoleProfile(),RuleConfig(),x,"medsup",7,false); Check(rr.affixes.empty(),"non-equippable medical supplies never roll profession affix");}
+
   Check(Eq(EffectiveStatValue(50,20,false,150),60),"effective stat percent");
   Check(EffectiveStatValue(50,20,true,150)==50,"unmodified bypass");
   Check(EffectiveStatValue(140,20,false,150)==150,"effective stat cap");

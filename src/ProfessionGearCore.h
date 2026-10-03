@@ -86,12 +86,13 @@ struct ItemDescriptor {
   int weaponLevel;
   bool equipped;
   bool stackable;
+  bool equippable;
   bool container;
   bool weapon;
   bool armour;
   bool robotLimb;
   bool legendary;
-  ItemDescriptor() : quality(0.0f), weaponLevel(-1), equipped(false), stackable(false), container(false), weapon(false), armour(false), robotLimb(false), legendary(false) {}
+  ItemDescriptor() : quality(0.0f), weaponLevel(-1), equipped(false), stackable(false), equippable(true), container(false), weapon(false), armour(false), robotLimb(false), legendary(false) {}
 };
 
 struct RoleProfile {

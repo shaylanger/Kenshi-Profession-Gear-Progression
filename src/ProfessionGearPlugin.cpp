@@ -100,6 +100,7 @@ PGP::ItemDescriptor Describe(Item* item) {
   d.armour=(armour!=0);
   d.robotLimb=(limb!=0);
   d.container=(container!=0);
+  d.equippable=(gear!=0 || container!=0);
   if(d.weapon) d.category="weapon";
   else if(d.armour) d.category="armour";
   else if(d.robotLimb) d.category="robot_limb";
@@ -232,7 +233,7 @@ PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
   if(key.empty()) return 0;
   PGP::ItemDescriptor d=Describe(item);
   const bool explicitlyExcluded=g_exclusions.count(PGP::Lower(d.baseId))!=0;
-  const bool forceIneligible=d.legendary || d.stackable || explicitlyExcluded;
+  const bool forceIneligible=!d.equippable || d.legendary || d.stackable || explicitlyExcluded;
   EnterCriticalSection(&g_lock);
   std::map<std::string,PGP::AffixRecord>::iterator existing=g_records.find(key);
   if(forceIneligible){
@@ -368,7 +369,7 @@ void AppendTip(InventoryItemBase* base,Ogre::vector<StringPair>::type& lines) {
   Item* item=dynamic_cast<Item*>(base);
   if(!item) return;
   PGP::ItemDescriptor current=Describe(item);
-  if(current.legendary || current.stackable || g_exclusions.count(PGP::Lower(current.baseId))) return;
+  if(!current.equippable || current.legendary || current.stackable || g_exclusions.count(PGP::Lower(current.baseId))) return;
   for(size_t i=0;i<lines.size();++i) if(lines[i].s1=="Profession Gear") return;
   std::string key=ItemKey(item);
   const std::string baseId=current.baseId;
