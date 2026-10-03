@@ -1,0 +1,57 @@
+# id: PG-turret-55
+# covers: PG 192 (Turrets response, diagnostic first pass)
+# fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has turrets)
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0 (`protect`, `relation`); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# design: Avarek mans the nearest turret (its own job). Per point a fresh "Hungry Bandit" (Drifters) is spawned 40 m
+#   past the turret and made hostile (`relation` -100: the Drifters faction vs the player), then 45 real seconds at speed 1;
+#   the dummy's worst body part % is read. Points: Turrets 10 / 90 without gear, Turrets 10 with +50% Turrets gear.
+# verify (diagnostic): the turret fires (dummy worst < 100 or KO/DEAD in at least one point). If it does, worse hp at 90 and at
+#   10+gear than at 10 = the turret reads the hooked stat. If the turret never fires (target out of arc, no ammo), send
+#   the .out to the PG agent. Squad members are protected; spawned dummies are never next to the squad.
+@wait-world
+@sleep 8
+speed 0
+protect Beaks on
+protect Avarek on
+select Beaks
+clearjobs Avarek
+@set TX buildings 500 turret ~ pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set TY buildings 500 turret ~ pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set TZ buildings 500 turret ~ pos=[-\d.]+,[-\d.]+,([-\d.]+)
+@echo turret at ${TX} ${TY} ${TZ}
+job Avarek "Turret" radius 500
+give Avarek "Iron Hat" 1
+equip Avarek "Iron Hat"
+pg_clear Avarek ~ cleared affixes
+speed 1
+@sleep 20
+# --- Turrets 10, no gear ---
+setstat Avarek turrets 10
+@set D1 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+relation ${D1} -100
+@sleep 45
+@set H1 hp ${D1} ~ (worst=[\d.]+%?[^|]*)
+kill ${D1}
+# --- Turrets 90, no gear ---
+setstat Avarek turrets 90
+@set D2 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+relation ${D2} -100
+@sleep 45
+@set H2 hp ${D2} ~ (worst=[\d.]+%?[^|]*)
+kill ${D2}
+# --- Turrets 10 with +50% Turrets gear ---
+setstat Avarek turrets 10
+pg_force_affix Avarek "Iron Hat" turrets 50 tier 6 ~ affixes=Turrets:50
+pg_bonus Avarek turrets ~ equipped_bonus=50% .*match=1
+@set D3 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+relation ${D3} -100
+@sleep 45
+@set H3 hp ${D3} ~ (worst=[\d.]+%?[^|]*)
+relation ${D3} 0
+kill ${D3}
+speed 0
+@echo Turrets 10: ${H1}
+@echo Turrets 90: ${H2}
+@echo Turrets 10 + 50% gear: ${H3}
+clearjobs Avarek

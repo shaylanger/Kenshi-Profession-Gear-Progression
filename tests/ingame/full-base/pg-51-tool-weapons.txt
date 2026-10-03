@@ -1,0 +1,33 @@
+# id: PG-tool-weapons-51
+# covers: PG 145 (a mod-added tool weapon auto-classifies and rolls), PG 229 (UWE Sickle-type tool: the affix counts only while equipped)
+# fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has a weapon smith)
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0; set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# design: research the UWE utility weapons, craft one Sickle through the bench's real finish step (craftfinish), take it
+#   from the bench output, then carried / equipped / unequipped with a forced Farming 20 affix.
+# verify: 145 = the crafted Sickle's roll line has tags TOOL_FARMING; 229 = pg_bonus farming 0% carried, 20% equipped, 0% unequipped.
+@wait-world
+@sleep 8
+speed 0
+protect Beaks on
+protect Avarek on
+hunger Avarek 280
+select Beaks
+clearjobs Avarek
+research "Basic Weapon Smithing"
+research "Basic Weapon Grades"
+research "Utility Weapons"
+benches 500 crafts ~ Weapon[^|]*Sickle
+setstat Avarek weapon_smith 50
+craftfinish Avarek Sickle at "Weapon" ~ output \d+ -> \d+
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" .*tags=\S*TOOL_FARMING
+pg_take Avarek "Weapon" "Sickle" ~ to Avarek: [^|]*Sickle key=pgp\S+ equipped=0
+pg_force_affix Avarek "Sickle" farming 20 tier 4 ~ affixes=Farming:20
+# 229: carried only -> no bonus
+pg_bonus Avarek farming ~ equipped_bonus=0% .*match=1
+equip Avarek "Sickle"
+pg_info Avarek "Sickle" ~ equipped=1 tier=4 affixes=Farming:20
+pg_bonus Avarek farming ~ equipped_bonus=20% .*match=1
+unequip Avarek "Sickle"
+pg_info Avarek "Sickle" ~ equipped=0 tier=4 affixes=Farming:20
+pg_bonus Avarek farming ~ equipped_bonus=0% .*match=1

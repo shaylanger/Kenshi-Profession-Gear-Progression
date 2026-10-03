@@ -1,0 +1,82 @@
+# id: PG-squin-shops-60
+# covers: PG 220-227 (shop stock by trader type: Farming, Labouring, Medic, Engineering, Science, Robotics, Cooking, Smithing), 218/219 recheck
+# fixture: Testing-Save-Squin (squad Beak + Kint), FIRST load of a fresh kah copy (every item rolls now)
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0. OWN LAUNCH with normal chances, before it:
+#   set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (the shipped distribution is what these rows measure;
+#   afterwards set_test_mode.ps1 -Sidecar Restore). Don't save the master or the copy before this run.
+# design: `traders 300` lists up to 40 traders; the file takes the first 12 by position (T1..T12; a missing position just
+#   fails that step: fine). Per trader: pg_shop (stock + affixes per item) and pg_census <trader name> (records per class
+#   and stat). Trader names say the shop type (Bartender, Armour Smith, ...). PG commands take names only (no #handles):
+#   two traders with the same name both resolve to the first.
+# verify: per row 220-227: which trader types exist in Squin and how many eligible items roll each profession stat
+#   (pg_census `shop` class). Types with no shop in Squin -> "needs setup (no <type> shop in Squin)". 218: the traders'
+#   own worn gear rolls from their role (pg_census `trader` class, ProfessionGear.log roll lines with source=trader...).
+@wait-world
+@sleep 8
+speed 0
+protect Beak on
+protect Kint on
+select Beak
+traders 300 ~ traders within
+@set T1 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){0}([^|#]+?) #\d+/\d+ \[
+@set H1 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){0}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T1}" ~ trader=1 storages=
+pg_census "${T1}"
+@echo trader 1: ${T1} ${H1}
+@set T2 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){1}([^|#]+?) #\d+/\d+ \[
+@set H2 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){1}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T2}" ~ trader=1 storages=
+pg_census "${T2}"
+@echo trader 2: ${T2} ${H2}
+@set T3 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){2}([^|#]+?) #\d+/\d+ \[
+@set H3 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){2}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T3}" ~ trader=1 storages=
+pg_census "${T3}"
+@echo trader 3: ${T3} ${H3}
+@set T4 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){3}([^|#]+?) #\d+/\d+ \[
+@set H4 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){3}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T4}" ~ trader=1 storages=
+pg_census "${T4}"
+@echo trader 4: ${T4} ${H4}
+@set T5 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){4}([^|#]+?) #\d+/\d+ \[
+@set H5 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){4}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T5}" ~ trader=1 storages=
+pg_census "${T5}"
+@echo trader 5: ${T5} ${H5}
+@set T6 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){5}([^|#]+?) #\d+/\d+ \[
+@set H6 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){5}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T6}" ~ trader=1 storages=
+pg_census "${T6}"
+@echo trader 6: ${T6} ${H6}
+@set T7 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){6}([^|#]+?) #\d+/\d+ \[
+@set H7 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){6}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T7}" ~ trader=1 storages=
+pg_census "${T7}"
+@echo trader 7: ${T7} ${H7}
+@set T8 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){7}([^|#]+?) #\d+/\d+ \[
+@set H8 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){7}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T8}" ~ trader=1 storages=
+pg_census "${T8}"
+@echo trader 8: ${T8} ${H8}
+@set T9 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){8}([^|#]+?) #\d+/\d+ \[
+@set H9 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){8}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T9}" ~ trader=1 storages=
+pg_census "${T9}"
+@echo trader 9: ${T9} ${H9}
+@set T10 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){9}([^|#]+?) #\d+/\d+ \[
+@set H10 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){9}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T10}" ~ trader=1 storages=
+pg_census "${T10}"
+@echo trader 10: ${T10} ${H10}
+@set T11 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){10}([^|#]+?) #\d+/\d+ \[
+@set H11 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){10}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T11}" ~ trader=1 storages=
+pg_census "${T11}"
+@echo trader 11: ${T11} ${H11}
+@set T12 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){11}([^|#]+?) #\d+/\d+ \[
+@set H12 traders 300 ~ traders within [\d.]+: (?:[^|]*\| ){11}[^|#]+? (#\d+/\d+) \[
+pg_shop "${T12}" ~ trader=1 storages=
+pg_census "${T12}"
+@echo trader 12: ${T12} ${H12}
+pg_census

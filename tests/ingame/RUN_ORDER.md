@@ -74,3 +74,32 @@ Launches 2-4 are short (one or two files each). If launches are expensive, launc
 Same launch as above, fresh fixture each: pg-01...08, pg-10, pg-11, pg-21 (pg-12 first if time is short).
 The files that capture handles (pg-01 `chars`, pg-05 and pg-21 `spawn`, pg-30 `spawn`) already capture
 `#\d+(?:/\d+)?`, so they pass the exact `#serial/index` form on.
+
+## New fixtures (2026-10-03, made on the 4080 without our plugins; squads are NOT Shay/Malzin)
+
+Copy each master to a `kah-*` copy (`relaunch.ps1 -Fixture <name> -Copy <kah-name>`); don't save during the smoke
+load. The first load rolls every item PG hasn't seen: check ProfessionGear.log as `full-base/pg-50-fullbase-survey.txt`
+describes (roll count, no exceptions, health ok after 2 min). Never `build "Biofuel Distillery"` (crash).
+PG commands (`pg_*`) take character names only, not `#serial/index` handles.
+
+### Launch 5 — Testing-Save-Full-Base (Beaks + Avarek), Forced + InGameTest
+
+| Order | File | Rows | Time |
+|---|---|---|---|
+| 1 | `full-base/pg-50-fullbase-survey.txt` (send the .out to the PG agent: bench/turret names) | load test | 1 min |
+| 2 | `full-base/pg-51-tool-weapons.txt` | 145, 229 | 2 min |
+| 3 | `full-base/pg-52-balance-weapon-smithing.txt` (generated) | 188 | 11 x 10 game min at 10x, ~12 min |
+| 4 | `full-base/pg-53-balance-armour-smithing.txt` (generated; needs a Clothing bench) | 189 | ~12 min |
+| 5 | `full-base/pg-55-turret.txt` (diagnostic) | 192 | 3 min at 1x |
+
+Fresh copy per file (they research, craft and change skills). Balance data:
+`python3 tools/balance_driver.py csv <out files> > balance.csv` then `python3 tools/analyze_balance.py balance.csv`.
+
+### Launch 6 — Testing-Save-Squin (Beak + Kint), NormalVerbose + Normal rules + empty sidecar
+
+Before: `set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty`; after: `-Sidecar Restore`.
+
+| Order | File | Rows | Time |
+|---|---|---|---|
+| 1 | `squin/pg-60-squin-shops.txt` (first load of a fresh copy = the measured distribution) | 220-227 (218/219 recheck) | 2 min |
+| 2 | `squin/pg-61-squin-restock.txt` | 217 | ~60 real min at 50x |

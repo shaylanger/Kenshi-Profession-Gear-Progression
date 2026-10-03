@@ -32,7 +32,6 @@ spawn "Drifter" Drifters near Shay dist 180 count 10 ~ spawned 10/10
 spawn "Drifter" Drifters near Shay dist 190 count 10 ~ spawned 10/10
 spawn "Drifter" Drifters near Shay dist 200 count 10 ~ spawned 10/10
 @sleep 15
-@set N100 chars 400 ~ ^(\d+) within
 fps reset
 @sleep 60
 @set F100 fps ~ (avg=[\d.]+ min=[\d.]+ worst_ms=[\d.]+)
@@ -57,7 +56,6 @@ spawn "Drifter" Drifters near Shay dist 185 count 10 ~ spawned 10/10
 spawn "Drifter" Drifters near Shay dist 195 count 10 ~ spawned 10/10
 spawn "Drifter" Drifters near Shay dist 205 count 10 ~ spawned 10/10
 @sleep 15
-@set N300 chars 400 ~ ^(\d+) within
 fps reset
 @sleep 60
 @set F300 fps ~ (avg=[\d.]+ min=[\d.]+ worst_ms=[\d.]+)
@@ -65,5 +63,5 @@ speed 0
 status ~ phase=world
 where Shay ~ Shay
 @echo baseline: ${F0}
-@echo ${N100} characters within 400: ${F100}
-@echo ${N300} characters within 400: ${F300}
+@echo 100 spawned (chars lists at most 40): ${F100}
+@echo 300 spawned: ${F300}

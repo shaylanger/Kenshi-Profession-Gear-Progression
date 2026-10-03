@@ -1,0 +1,47 @@
+# id: PG-squin-restock-61
+# covers: PG 217 (trader restock: new instances may roll, surviving instances never reroll)
+# fixture: Testing-Save-Squin (squad Beak + Kint)
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0; any mode (Forced + InGameTest gives more rolled items to compare)
+# design: take the first trader that has eligible stock, note the first rolled item's key + affixes and the whole pg_shop
+#   listing, then 2 game days at 50x (~58 real min) with the squad protected, then the listing again.
+# verify: (strict) if the noted key is still in stock its affixes are unchanged; (diagnostic, compare the two pg_shop
+#   listings in the .out) restock happened = keys that were not there before. If the listing didn't change at all, the
+#   game didn't restock in 2 days: tell the PG agent (longer wait or leaving the town is needed).
+@wait-world
+@sleep 8
+speed 0
+protect Beak on
+protect Kint on
+select Beak
+@set T traders 300 ~ traders within [\d.]+: ([^|#]+?) #\d+/\d+ \[
+pg_shop "${T}" ~ trader=1 storages=[1-9]
+@set K pg_shop "${T}" ~ key=(pgp\S+) equipped=\d tier=\d+ affixes=(?!none)
+@set A pg_shop "${T}" ~ key=${K} equipped=\d tier=\d+ affixes=([^\]]+)\]
+@set E0 pg_shop "${T}" ~ (eligible_stock=\d+)
+@echo before: trader ${T} ${E0}, watched ${K} = ${A}
+hunger Beak 300
+hunger Kint 300
+speed 50
+@wait-game 720 1100
+speed 0
+hunger Beak 300
+hunger Kint 300
+speed 50
+@wait-game 720 1100
+speed 0
+hunger Beak 300
+hunger Kint 300
+speed 50
+@wait-game 720 1100
+speed 0
+hunger Beak 300
+hunger Kint 300
+speed 50
+@wait-game 720 1100
+speed 0
+speed 0
+pg_shop "${T}" ~ trader=1
+@set E1 pg_shop "${T}" ~ (eligible_stock=\d+)
+pg_shop "${T}" ~ ^(?![\s\S]*key=${K} equipped=\d tier=\d+ affixes=(?!${A}\]))
+@echo after 2 game days: ${E1} (before ${E0})

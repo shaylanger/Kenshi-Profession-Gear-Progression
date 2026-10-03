@@ -1,0 +1,36 @@
+# id: PG-fullbase-survey-50
+# covers: PG load test on a save made without PG (every item rolls on first load); building/bench names for pg-51..55
+# fixture: Testing-Save-Full-Base (squad Beaks + Avarek), right after the coordinator's smoke load (do not save before this)
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0; set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# verify (ProfessionGear.log of this launch, before any relaunch):
+#   - one `loaded affixes=<n>` line (n = sidecar rows from earlier runs) and `config enabled=1`
+#   - many `roll source=` lines written while the save loaded (every eligible item is new to PG): note the count
+#     (grep -c "^roll source=") and the time from the load to `KAH: autoload` / wait-world (harness.log) vs auto-home
+#   - `restore item` lines ~0 for this save (no item carries a PG id yet)
+#   - no `exception`, `missing symbol`, `failed to atomically replace` lines
+#   - after the first `save`: `serialize item id=` lines; the sidecar profession_gear_affixes.tsv grows by about the roll count
+#   - kenshi-ctl health = ok 2+ minutes after the load
+# Send the PG agent this file's .out: the bench/turret/research names below set the names in pg-51..55.
+@wait-world
+@sleep 8
+speed 0
+status ~ phase=world
+chars 60 ~ Beaks
+chars 60 ~ Avarek
+where Beaks ~ Nameless
+where Avarek ~ Nameless
+buildings 500 bench
+buildings 500 smith
+buildings 500 turret
+buildings 500 research
+buildings 500 robot
+buildings 500 farm
+buildings 500 oven
+buildings 500 stove
+benches 500 crafts
+building "Turret" 500
+find research Utility
+pg_census Nameless ~ player
+pg_census
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ .*
