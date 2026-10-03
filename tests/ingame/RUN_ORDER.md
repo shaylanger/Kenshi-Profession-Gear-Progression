@@ -22,7 +22,10 @@ Before: `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (sidecar kept).
 | 7 | auto-home | `auto-home/pg-07-worldloot.txt` | fresh |
 | 8 | auto-home | `auto-home/pg-08-job-path.txt` (~2.5 game hours at 10x) | fresh |
 | 8b | auto-home | `auto-home/pg-12-job-throughput.txt` (row 177 v5: 15 min warm-up + 3 x 30 game min at 10x; needs harness F946C881; expect output_progress B ~ 1.5 x A, C ~ A) | fresh |
-| 9 | auto-home | `auto-home/pg-09-soak.txt` (30 real minutes at 50x; optional, last) | fresh |
+| 8c | auto-home | `auto-home/pg-13-farm-operate.txt` (row 331 Farming half: wheat farm A/B/C x 30 game min at 10x; scaled_amount/amount 1.0 / ~1.5 / 1.0) | fresh |
+| 8d | auto-home | `auto-home/pg-14-labouring-curve.txt` (rows 178-183: 9 x 30 game min at 10x, ~30 real min; numbers only, see its verify line) | fresh |
+| 8e | auto-home | `auto-home/pg-15-crowd-frametime.txt` (rows 151-152: ~5 real min at speed 1, 300 spawned Drifters; run again in launch 3) | fresh |
+| 9 | auto-home | `auto-home/pg-09-soak.txt` (row 156: 30 real minutes at 50x = ~25 game hours, Shay/Malzin protected; last) | fresh |
 | 10 | Crafting base | `crafting-base/pg-10-craftfinish.txt` | fresh |
 | 11 | Crafting base | `crafting-base/pg-11-real-craft.txt` | fresh |
 | 12 | Trader | `trader/pg-21-shop-stock.txt` (Habul's shop) | fresh |
@@ -47,6 +50,7 @@ Before: `set_test_mode.ps1 -Mode Disabled -Sidecar StartupTest` (launch 1's side
 | Order | Fixture | File | Reset |
 |---|---|---|---|
 | 1 | auto-home | `config/pg-31-disabled-sidecar.txt` | fresh |
+| 2 | auto-home | `auto-home/pg-15-crowd-frametime.txt` (PG disabled: the comparison run for rows 151-152) | fresh |
 
 Check `ProfessionGear.log` for `loaded affixes=3 legacyIgnored=1` and no `roll source=` line.
 

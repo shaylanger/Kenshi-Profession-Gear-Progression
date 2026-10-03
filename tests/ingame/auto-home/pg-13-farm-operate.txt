@@ -1,0 +1,67 @@
+# id: PG-farm-operate-13
+# covers: PG 331 Farming half (FarmBuilding::operate gets the equipped Farming bonus), PG 161 (Farming baseline at skill 50, first data point)
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3 (JobOperateScaling on by default); harness 08AB6BF0 (`protect`, `fill`, `job ... radius`); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# design: same as pg-12 but on Home's wheat farm. A no gear, B +50% Farming (scaling on), C same gear with scaling off.
+#   pg_operate on a farm reports calls/amount/scaled_amount (output_progress stays 0: a farm has no production output);
+#   `building` shows farm[grown=...]. Malzin's base Farming is set to 50 (fixture base is 140, near the 150 cap).
+# verify: calls > 0 in every window (the farm hook fires). scaled_amount / amount = 1.00 in A, ~1.50 in B, 1.00 in C
+#   (row 331 Farming PASS). grown rises faster in B than in A/C if the game uses the scaled amount (echoed, diagnostic;
+#   a full-grown or dead crop makes grown useless: then only the ratio counts).
+@wait-world
+@sleep 8
+speed 0
+protect Shay on
+protect Malzin on
+hunger Malzin 280
+hunger Shay 280
+teleport Shay building "Wheat Farm" dist 20
+teleport Malzin building "Wheat Farm" dist 6
+building "Wheat Farm" 1000 ~ farm\[grown=
+fill "Wheat Farm" Water 40 radius 1000
+clearjobs Malzin
+pg_clear Malzin ~ cleared affixes
+setstat Malzin farming 50
+pg_bonus Malzin farming ~ equipped_bonus=0% base=50\.00 .*match=1
+job Malzin "Wheat Farm" radius 1000 ~ Wheat Farm
+pg_jobscale on ~ jobOperateScaling=1
+# warm-up: she walks over and starts tending
+speed 10
+@wait-game 15 900
+speed 0
+pg_operate "Wheat Farm" radius 100 near Malzin ~ calls=[1-9]
+# --- A: no Farming gear ---
+@set GA0 building "Wheat Farm" 1000 ~ (grown=[\d.]+ died=[\d.]+)
+pg_operate "Wheat Farm" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set OA pg_operate "Wheat Farm" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+)
+@set GA1 building "Wheat Farm" 1000 ~ (grown=[\d.]+ died=[\d.]+)
+hunger Malzin 280
+fill "Wheat Farm" Water 40 radius 1000
+# --- B: +50% Farming gear, default build (scaling on) ---
+pg_force_affix Malzin "Black Cloth Shirt" farming 50 tier 6 ~ affixes=Farming:50
+pg_bonus Malzin farming ~ equipped_bonus=50% base=5\d\.\d\d .*match=1
+pg_operate "Wheat Farm" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set OB pg_operate "Wheat Farm" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+)
+@set GB1 building "Wheat Farm" 1000 ~ (grown=[\d.]+ died=[\d.]+)
+hunger Malzin 280
+fill "Wheat Farm" Water 40 radius 1000
+# --- C (control): same gear, scaling off ---
+pg_jobscale off ~ jobOperateScaling=0
+pg_operate "Wheat Farm" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set OC pg_operate "Wheat Farm" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+)
+@set GC1 building "Wheat Farm" 1000 ~ (grown=[\d.]+ died=[\d.]+)
+pg_jobscale on ~ jobOperateScaling=1
+@echo A (no gear): ${OA} | farm ${GA0} -> ${GA1}
+@echo B (+50% Farming, scaling on): ${OB} | farm -> ${GB1}
+@echo C (+50%, scaling off): ${OC} | farm -> ${GC1}
+clearjobs Malzin

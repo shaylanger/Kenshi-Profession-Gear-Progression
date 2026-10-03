@@ -2,11 +2,14 @@
 # covers: PG 156
 # fixture: auto-home
 # reset: fresh
-# needs: ProfessionGearProgression.dll 7D80DBB3; set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); run it last in the auto-home block (30 real minutes = ~25 game hours at 50x); a raid on Home can happen: on a combat/knockout alert pause, save logs, note it and reload
+# needs: ProfessionGearProgression.dll 7D80DBB3; harness 08AB6BF0 (protect); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch); run it last in the auto-home block (30 real minutes = ~25 game hours at 50x); a raid on Home can happen: on a combat/knockout alert pause, save logs, note it and reload
 # verify: kenshi-ctl health = ok during and after; ProfessionGear.log size after the soak (no runaway growth); the forced bonus is unchanged at the end
 @wait-world
 @sleep 8
 speed 0
+# a raid on Home must not end the soak (harness 08AB6BF0)
+protect Shay on
+protect Malzin on
 hunger Shay 300
 hunger Malzin 300
 pg_force_affix Malzin "Black Cloth Shirt" farming 20 tier 4 ~ affixes=Farming:20

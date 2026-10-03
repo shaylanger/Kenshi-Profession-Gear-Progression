@@ -13,8 +13,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 |---|---|
 | PASS-offline | 71 |
 | PASS-live | 171 |
-| PENDING-auto | 1 |
-| NEEDS-SETUP | 64 |
+| PENDING-auto | 9 |
+| NEEDS-SETUP | 56 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
 | total | 343 |
@@ -81,17 +81,18 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 148 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 149 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 150 | PASS-live | `C:\KenshiTestRuns\m6\pg-31.out` (archive/test-run-2026-10-03-m5.md) 12/0 (launch 3); log "loaded affixes=3 legacyIgnored=1", no roll line |
-| 151–152 | NEEDS-SETUP | a frame-time or PG scan-duration metric (spawning 100/300 NPCs works; "visible hitch" otherwise needs Shay) |
+| 151–152 | PENDING-auto | `tests/ingame/auto-home/pg-15-crowd-frametime.txt` (harness `fps` worst_ms/avg with 100 and 300 spawned characters), run in launch 1 (PG on) and launch 3 (PG disabled) and compare |
 | 153–154 | PASS-live | `C:\KenshiTestRuns\m2\pg-01-startup-stability.out` (archive/test-run-2026-10-03-m2.md) 50/0 |
 | 155 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
-| 156 | PENDING-auto | `tests/ingame/auto-home/pg-09-soak.txt` |
+| 156 | PENDING-auto | `tests/ingame/auto-home/pg-09-soak.txt` (30 real min at 50x, Shay and Malzin protected) |
 | 157 | PASS-live | `C:\KenshiTestRuns\m2\pg-01-startup-stability.out` (archive/test-run-2026-10-03-m2.md) 50/0 |
 | 158 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 160 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): one crafted roll for the craft saved mid-progress |
 | 161–176 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 177 | PASS-live | `C:\KenshiTestRuns\m16\pg-12-job-throughput.out` (v5) 50/0 on DLL 7D80DBB3 + harness F946C881, Manual Stone Processor, 3 x 30 game min: output_progress A no gear 0.1042, B +50% Labouring (default build, JobOperateScaling on) 0.1599 (x1.53), C same gear with scaling off 0.1095 (x1.05, ~A). Jobs read the raw skill; the operate scaling makes equipped Labouring count. (m16 v4 on 10C19BAB: 0.1065 / 0.1123 / 0.1695; m13/m14 powered Stone Mine runs at machine rate) |
-| 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
+| 178–183 | PENDING-auto | `tests/ingame/auto-home/pg-14-labouring-curve.txt` (first Section L data: raw Labouring 10-90 without gear, +10/+25/+100 one piece, 25+25 set; one 30 game min window per point; repeats for the final fit still to do) |
+| 184–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof done (row 177, m16: jobs read the raw skill, JobOperateScaling applies the gear). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
 | 212 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |

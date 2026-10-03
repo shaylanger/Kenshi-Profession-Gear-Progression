@@ -1,0 +1,140 @@
+# id: PG-labouring-curve-14
+# covers: PG 177-183 (Labouring baseline, skill response curve, gear response, two-piece set), first Section L data
+# fixture: auto-home
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3 (JobOperateScaling on by default); harness 08AB6BF0 (`protect`, `fill`); set_test_mode.ps1 -Mode Forced -Rules InGameTest (before the launch)
+# design: pg-12's Manual Stone Processor, one 30 game min window per point (pg-12 v5: A 0.1042 vs control 0.1095, so ~5% noise per window).
+#   Part 1, no gear: raw Labouring 10 / 25 / 50 / 75 / 90 (how much skill itself is worth: the yardstick for gear %).
+#   Part 2, skill 50: one piece +10 / +25 / +100, then a two-piece set (shirt +25, hat +25 = +50 total; compare with pg-12 B, one piece +50).
+#   ~9 x 30 + 15 warm-up = 285 game min, about 30 real minutes at 10x. Stone is topped up in the machine before every window.
+# verify: every window calls > 0 and the processor state=NORMAL with stone (else that point is void). Expected shape:
+#   part 1 rises with skill (vanilla curve: record it); part 2 output_progress ~ L50 x (1 + bonus): +10 ~ x1.1, +25 ~ x1.25,
+#   +100 ~ x2.0; set (25+25) ~ x1.5 like pg-12 B. Record all numbers in INGAME_STATUS 177-183 / BALANCE_TEST_PLAN.
+@wait-world
+@sleep 8
+speed 0
+protect Shay on
+protect Malzin on
+hunger Malzin 280
+hunger Shay 280
+teleport Shay building "Manual Stone Processor" dist 20
+teleport Malzin building "Manual Stone Processor" dist 6
+building "Manual Stone Processor" 1000 ~ product=
+clearjobs Malzin
+pg_clear Malzin ~ cleared affixes
+setstat Malzin labouring 50
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=50\.00 .*match=1
+give Malzin "Raw Stone" 20
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+job Malzin "Manual Stone Processor" radius 1000 ~ Manual Stone Processor
+pg_jobscale on ~ jobOperateScaling=1
+speed 10
+@wait-game 15 900
+speed 0
+pg_operate "Manual Stone Processor" radius 100 near Malzin ~ calls=[1-9]
+# ===== Part 1: raw skill, no gear =====
+setstat Malzin labouring 10
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=10\.00
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set L10 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+setstat Malzin labouring 25
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=25\.00
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set L25 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+setstat Malzin labouring 50
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=50\.00
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set L50 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+setstat Malzin labouring 75
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=75\.00
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set L75 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+setstat Malzin labouring 90
+pg_bonus Malzin labouring ~ equipped_bonus=0% base=90\.00
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set L90 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+# ===== Part 2: skill 50 + gear (scaling on) =====
+setstat Malzin labouring 50
+pg_force_affix Malzin "Black Cloth Shirt" labouring 10 tier 2 ~ affixes=Labouring:10
+pg_bonus Malzin labouring ~ equipped_bonus=10% base=50\.00 .*match=1
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set G10 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+setstat Malzin labouring 50
+pg_force_affix Malzin "Black Cloth Shirt" labouring 25 tier 4 ~ affixes=Labouring:25
+pg_bonus Malzin labouring ~ equipped_bonus=25% base=50\.00 .*match=1
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set G25 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+setstat Malzin labouring 50
+pg_force_affix Malzin "Black Cloth Shirt" labouring 100 tier 6 ~ affixes=Labouring:100
+pg_bonus Malzin labouring ~ equipped_bonus=100% base=50\.00 .*match=1
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set G100 pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+fill "Manual Stone Processor" "Raw Stone" 20 radius 1000
+hunger Malzin 280
+# two-piece set: shirt +25 and hat +25 (the bonuses add up)
+setstat Malzin labouring 50
+pg_force_affix Malzin "Black Cloth Shirt" labouring 25 tier 4 ~ affixes=Labouring:25
+pg_force_affix Malzin "Iron Hat" labouring 25 tier 4 ~ affixes=Labouring:25
+pg_bonus Malzin labouring ~ equipped_bonus=50% base=50\.00 .*match=1
+pg_operate "Manual Stone Processor" reset radius 100 near Malzin ~ \(reset\)
+speed 10
+@wait-game 30 900
+speed 0
+@set SET pg_operate "Manual Stone Processor" radius 100 near Malzin ~ (calls=[1-9]\d* amount=[\d.]+ scaled_amount=[\d.]+ .*output_progress=[\d.]+)
+building "Manual Stone Processor" 1000 ~ state=NORMAL
+@echo skill 10 no gear: ${L10}
+@echo skill 25 no gear: ${L25}
+@echo skill 50 no gear: ${L50}
+@echo skill 75 no gear: ${L75}
+@echo skill 90 no gear: ${L90}
+@echo skill 50 +10%: ${G10}
+@echo skill 50 +25%: ${G25}
+@echo skill 50 +100%: ${G100}
+@echo skill 50 set 25+25: ${SET}
+clearjobs Malzin

@@ -1,0 +1,69 @@
+# id: PG-crowd-frametime-15
+# covers: PG 151 (100 loaded characters: the 1-second scan makes no visible hitch), PG 152 (300+ loaded characters: no runaway CPU/logging)
+# fixture: auto-home
+# reset: fresh
+# needs: harness 08AB6BF0 (`fps`, `protect`). Run it TWICE: in launch 1 (set_test_mode.ps1 -Mode Forced -Rules InGameTest, PG active)
+#   and in launch 3 (-Mode Disabled, PG off) = the same crowd without the mod. Note ProfessionGear.log size before and after.
+# design: 60 s fps windows at speed 1: baseline, after 100 spawned Drifters (110-200 m east of Shay, neutral), after 300.
+#   worst_ms = the longest frame in the window; a PG scan hitch shows up as worst_ms well above the Disabled run's.
+# verify: PG active vs Disabled at 100 and 300: avg fps within ~10%, worst_ms not more than ~1.5x (and no >250 ms frames
+#   that the Disabled run doesn't have). ProfessionGear.log grows by a bounded amount (roll lines for the spawned gear,
+#   not a line per character per second). kenshi-ctl health = ok after.
+@wait-world
+@sleep 8
+speed 0
+protect Shay on
+protect Malzin on
+hunger Shay 280
+hunger Malzin 280
+speed 1
+@sleep 10
+fps reset
+@sleep 60
+@set F0 fps ~ (avg=[\d.]+ min=[\d.]+ worst_ms=[\d.]+)
+spawn "Drifter" Drifters near Shay dist 110 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 120 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 130 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 140 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 150 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 160 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 170 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 180 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 190 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 200 count 10 ~ spawned 10/10
+@sleep 15
+@set N100 chars 400 ~ ^(\d+) within
+fps reset
+@sleep 60
+@set F100 fps ~ (avg=[\d.]+ min=[\d.]+ worst_ms=[\d.]+)
+spawn "Drifter" Drifters near Shay dist 115 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 125 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 135 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 145 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 155 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 165 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 175 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 185 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 195 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 205 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 115 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 125 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 135 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 145 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 155 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 165 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 175 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 185 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 195 count 10 ~ spawned 10/10
+spawn "Drifter" Drifters near Shay dist 205 count 10 ~ spawned 10/10
+@sleep 15
+@set N300 chars 400 ~ ^(\d+) within
+fps reset
+@sleep 60
+@set F300 fps ~ (avg=[\d.]+ min=[\d.]+ worst_ms=[\d.]+)
+speed 0
+status ~ phase=world
+where Shay ~ Shay
+@echo baseline: ${F0}
+@echo ${N100} characters within 400: ${F100}
+@echo ${N300} characters within 400: ${F300}
