@@ -52,7 +52,7 @@ pg_bonus Malzin farming ~ match=1
 pg_bonus Malzin farming ~ match=1
 # 157: a fight while profession gear is worn
 spawn "Hungry Bandit" Drifters near Malzin dist 30 count 1 ~ spawned 1/1
-@set D chars 120 ~ Hungry Bandit (#\d+) \[Drifters\]
+@set D chars 120 ~ Hungry Bandit (#\d+(?:/\d+)?) \[Drifters\]
 fight Malzin ${D} ~ fight \(factions set to -100\)
 speed 2
 @sleep 15

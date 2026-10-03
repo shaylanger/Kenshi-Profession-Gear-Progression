@@ -26,7 +26,7 @@ pg_shop "${TR}" ~ Rattan Hat key=pgp\S+ equipped=0 tier=\d+ affixes=(?!none)
 # --- 219 + 214 + 239: buy through the game's purchase path: the bought hat is the shop's record ---
 # Shay's bag is full in this fixture (run m12: no room for a hat or shirt): a recruited spare
 # character with an empty bag does the buying
-@set B_ID spawn "Drifter" Drifters near Shay dist 30 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
+@set B_ID spawn "Drifter" Drifters near Shay dist 30 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${B_ID} "PG Buyer" ~ -> PG Buyer
 recruit "PG Buyer"
 select Shay

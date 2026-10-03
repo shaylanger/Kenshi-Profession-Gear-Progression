@@ -18,7 +18,7 @@ pg_bonus Malzin "${S}" ~ equipped_bonus=0% .*match=1
 # --- 321: a record with no affix (Black Cloth Shirt, cleared in pg-02) survived the restart (CRLF sidecar fix) ---
 pg_info Malzin "Black Cloth Shirt" ~ key=pgp\S+ equipped=1 tier=\d+ affixes=none
 # --- 149: items with an explicit rule tag still take part (Leather Vest -> TOOL_COOKING on a cook NPC) ---
-@set N_ID spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+)
+@set N_ID spawn "Drifter" Drifters near Shay dist 45 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${N_ID} "PG Cook" ~ -> PG Cook
 setstat "PG Cook" cooking 100
 give "PG Cook" 2212-gamedata.base 1
