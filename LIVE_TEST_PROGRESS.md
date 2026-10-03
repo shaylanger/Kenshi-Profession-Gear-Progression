@@ -332,3 +332,97 @@ Next exact test:
 5. equip and save to a new v2 save,
 6. reload exact save and confirm runtime handle changes but persistent ID/affix/effective stat remain,
 7. fully restart Kenshi and repeat.
+
+
+## Recovery checkpoint — 2026-10-02 ~20:16
+
+The user hit a UI timeout/retry while the automated live run continued in the background.
+
+### Current runtime state
+- Kenshi: **running and healthy**, PID 44280, RE_Kenshi child process.
+- Current harness state: `phase=world save=pg-persist-v2 paused=0 speed=1.0 squad=2 player=Shay`.
+- Shay and Malzin are present.
+- ProfessionGear startup succeeded.
+- All expected hooks reported `hooked`, including:
+  - PlayerInterface update
+  - CharStats getStat
+  - Crafting finished-item
+  - Inventory total weight
+  - Inventory add/remove/update
+  - Item serialise/load identity hooks
+  - tooltip base/Armour/Container/Crossbow/Sword
+- Forced-test config is active.
+- ProfessionGear log exists and is actively writing.
+- Sidecar exists and currently contains ~930 generated records.
+- No crash/hang detected.
+
+### Harness history discovered
+- Stobe frame listener started.
+- `auto-home` autoloaded successfully.
+- Later the harness loaded a dedicated save named `pg-persist-v2`.
+- Therefore the interrupted automation already executed additional ProfessionGear test setup after Phase-1 launch.
+
+### Immediate next step
+Reconstruct ProfessionGear-specific harness commands and results from Stobe/ProfessionGear logs before issuing new commands. Do not repeat already-passed persistence/setup work until its evidence is classified.
+
+
+### Persistence v2 live verification — in-process reload PASS
+
+Current `pg-persist-v2` evidence:
+- Shay's equipped Square Goggles runtime handle after reload: `57374-2915527424-0-0-3`.
+- ProfessionGear restore log bound that volatile handle to persistent ID:
+  `pgp1-44280-278351953-1-585157587`.
+- The same persistent ID originally rolled:
+  - base: `2168-gamedata.base`
+  - item: Square Goggles
+  - tier: 1
+  - affix: **Science +5.3%**
+- Sidecar contains that persistent-ID record.
+- The runtime handle is different from the pre-save handle, proving the lookup is no longer relying on volatile `hand::toString()`.
+- Equipped Science remains above the same vanilla-effective baseline after reload.
+
+Status:
+- test 314 PASS (ID serialized)
+- test 315 PASS (ID restored/bound)
+- test 316 PASS (runtime handle changed but same persistent record resolved)
+- test 317 PASS (equipped affix active after same-save reload)
+- test 318 NEXT: full Kenshi process restart + reload.
+
+
+### Phase 1 — automated startup PASS
+
+Evidence:
+- Kenshi launches and remains healthy under RE_Kenshi.
+- ProfessionGear starts with forced config.
+- All expected hooks report success.
+- Stobe frame listener/autoload works.
+- save/load transitions complete.
+- high/normal/pause speed commands already occurred without crash.
+- sidecar writes successfully.
+
+Phase 1 status: **PASS (AUTO)**.
+Visual-only tooltip readability remains part of Phase 2.
+
+### Phase 2 — equip-only + persistence core PASS
+
+Post-restart controlled Science sample using Square Goggles:
+- persistent ID: `pgp1-44280-278351953-1-585157587`
+- affix: **Science +5.3%**
+- equipped Science: **22.0**
+- after unequip: **20.9**
+- after reloading `pg-persist-v2`: **22.0**
+- runtime handle changed on reload again, but restored persistent ID/affix remained.
+
+Results:
+- carrying/unequipped bonus = 0
+- equipped bonus applies exactly once
+- unequip removes it
+- same-save reload restores exact affix
+- full Kenshi process restart restores exact affix
+- tests 314–318 PASS live
+- tests 62–80 core equip-only behavior PASS for this sample
+- tests 312–313 PASS
+- original test 123 failure from v1 identity design is superseded by v2 and now PASS
+
+Phase 2 status: **PASS (AUTO CORE)**.
+Remaining Phase-2-only item: tooltip visual/readability/duplicate confirmation (SHAY/visual unless screenshot automation is sufficient).
