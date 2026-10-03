@@ -122,6 +122,7 @@ pg_check Malzin "Leather Vest" ~ tags=TOOL_COOKING pool=Cooking .*valid=1
 # --- save for the stale-record test (298, config/pg-30): Malzin wears a world-loot Rattan Hat ---
 unequip Malzin "Iron Hat" ~ head -> main
 give Malzin 2185-gamedata.base 1
+equip Malzin "Rattan Hat" ~ equipped Rattan Hat .*equipped=1
 pg_info Malzin "Rattan Hat" ~ equipped=1 tier=\d+ affixes=(?!none)[A-Za-z ]+:
 @set S pg_info Malzin "Rattan Hat" ~ affixes=([A-Za-z ]+):
 pg_bonus Malzin "${S}" ~ equipped_bonus=[1-9][\d.]*% .*match=1

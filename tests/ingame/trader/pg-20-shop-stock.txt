@@ -41,8 +41,10 @@ load kah-pg-trader
 @sleep 8
 speed 0
 pg_info Shay "Rattan Hat" ~ key=${RK} equipped=0 tier=\d+ affixes=${RA}
-# --- 218: gear a trader wears follows her own profession (Farming 100), not random stock
-# (only meaningful if the shirt slot was free and the shirt got worn: equipped=1) ---
+# --- 218: gear a trader wears follows her own profession (Farming 100), not random stock.
+# give never auto-equips, so: give, equip, then pg_roll re-rolls the worn shirt in its worn context
+# (if her shirt slot is taken the equip step fails: then 218 stays open)
 setstat "${TR}" farming 100
 give "${TR}" 1168-gamedata.base 1
-@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ (?m)^roll source=trader .*baseId=1168-gamedata.base name="Cloth Shirt" equipped=1 .*affixes=Farming:[\d.]+\r?$
+equip "${TR}" "Cloth Shirt" ~ equipped Cloth Shirt .*equipped=1
+pg_roll "${TR}" "Cloth Shirt" ~ rolled: Cloth Shirt key=pgp\S+ equipped=1 tier=\d+ affixes=Farming:[\d.]+$
