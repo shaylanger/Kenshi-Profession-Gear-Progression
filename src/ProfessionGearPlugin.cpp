@@ -565,7 +565,7 @@ void LoadRules() {
 
 } // anonymous
 
-extern "C" __declspec(dllexport) void startPlugin() {
+__declspec(dllexport) void startPlugin() {
   if(g_started) return;
   g_started=true;
   InitializeCriticalSection(&g_lock);

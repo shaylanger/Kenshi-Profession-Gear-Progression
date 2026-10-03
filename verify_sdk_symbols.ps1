@@ -38,11 +38,12 @@ foreach ($symbol in $required) {
 }
 
 $exports = & $dumpbin /EXPORTS $dll 2>&1 | Out-String
-if ($exports -notmatch "(?m)\bstartPlugin\b") {
-  $missing += "DLL export startPlugin"
-  Write-Host "MISSING DLL export startPlugin"
+$entry = "?startPlugin@@YAXXZ"
+if ($exports -notmatch [regex]::Escape($entry)) {
+  $missing += "DLL export $entry"
+  Write-Host "MISSING DLL export $entry"
 } else {
-  Write-Host "OK      DLL export startPlugin"
+  Write-Host "OK      DLL export $entry"
 }
 
 if ($missing.Count -gt 0) {
