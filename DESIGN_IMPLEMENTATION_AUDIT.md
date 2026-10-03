@@ -1,6 +1,6 @@
 # Profession Gear Progression — Design-to-Implementation Audit
 
-**Audit date:** 2026-10-02  
+**Audit date:** 2026-10-02
 **Purpose:** Verify the current pretest build against Shay's full design/context before first installation.
 
 ## Status meanings
