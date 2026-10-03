@@ -34,6 +34,7 @@ pg_info Malzin "Rag Shirt" ~ key=${C1} equipped=1
 pg_bonus Malzin armour_smithing ~ equipped_bonus=[1-9][\d.]*% base=40\.00 .*match=1
 # --- 92: crafted item keeps its exact roll through save/reload ---
 save kah-pg-craft
+@sleep 8
 load kah-pg-craft
 @wait-world
 @sleep 8

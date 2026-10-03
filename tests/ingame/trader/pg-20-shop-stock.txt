@@ -36,6 +36,7 @@ pg_check Shay "Cloth Shirt" ~ tags=WORKWEAR_GENERIC .*valid=1
 # 237: stock statistics in this town (data), no illegal stats on anything bought
 pg_census ~ shop: records=[1-9]\d* rolled=[1-9]
 save kah-pg-trader
+@sleep 8
 load kah-pg-trader
 @wait-world
 @sleep 8

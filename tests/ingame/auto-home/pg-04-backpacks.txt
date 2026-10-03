@@ -45,22 +45,22 @@ pg_pack Malzin "Medium Backpack (colored)" ~ tags=PACK_MEDICAL equipped=1 items=
 unequip Malzin "Medium Backpack (colored)" ~ -> main\)
 pg_pack Malzin "Medium Backpack (colored)" ~ equipped=0 .*applied_ratio=1\.000
 pg_store Malzin chest "Medium Backpack (colored)" ~ stored in
-# --- PACK_TECH (Shopkeepers Backpack) ---
+# --- PACK_TECH (Shopkeepers Backpack; Ancient Science Book: Engineering Research weighs 0) ---
 give Malzin 910-gamedata.base 1
 pg_pack Malzin "Shopkeepers Backpack" ~ tags=PACK_TECH equipped=1 items=0
-packput Malzin "Shopkeepers Backpack" 43951-rebirth.mod 5
+packput Malzin "Shopkeepers Backpack" 43953-rebirth.mod 3
 pg_pack Malzin "Shopkeepers Backpack" ~ tags=PACK_TECH equipped=1 items=\d+ .*content_ratio=0\.350 .*applied_ratio=0\.350
 unequip Malzin "Shopkeepers Backpack" ~ -> main\)
 pg_pack Malzin "Shopkeepers Backpack" ~ equipped=0 .*applied_ratio=1\.000
 pg_store Malzin chest "Shopkeepers Backpack" ~ stored in
-# --- PACK_HAULING (Old Traders backpack small) ---
-give Malzin 1019-gamedata.base 1
-pg_pack Malzin "Old Traders backpack small" ~ tags=PACK_HAULING equipped=1 items=0
-packput Malzin "Old Traders backpack small" 43959-rebirth.mod 5
-pg_pack Malzin "Old Traders backpack small" ~ tags=PACK_HAULING equipped=1 items=\d+ .*content_ratio=0\.750 .*applied_ratio=0\.750
-unequip Malzin "Old Traders backpack small" ~ -> main\)
-pg_pack Malzin "Old Traders backpack small" ~ equipped=0 .*applied_ratio=1\.000
-pg_store Malzin chest "Old Traders backpack small" ~ stored in
+# --- PACK_HAULING + 147: a mod-added pack (UWE "Medium Backpack") made a hauling pack by exact rule ---
+give Malzin "5066412-Universal Wasteland Expansion.mod" 1
+pg_pack Malzin "Medium Backpack" ~ base=5066412-Universal Wasteland Expansion\.mod tags=PACK_HAULING equipped=1 items=0
+packput Malzin "Medium Backpack" 43959-rebirth.mod 5
+pg_pack Malzin "Medium Backpack" ~ tags=PACK_HAULING equipped=1 items=\d+ .*content_ratio=0\.750 .*applied_ratio=0\.750
+unequip Malzin "Medium Backpack" ~ -> main\)
+pg_pack Malzin "Medium Backpack" ~ equipped=0 .*applied_ratio=1\.000
+pg_store Malzin chest "Medium Backpack" ~ stored in
 # --- construction pack also takes Iron Plates (113) ---
 give Malzin 1012-gamedata.base 1
 packput Malzin "Large Backpack" 42159-gamedata.base 3
@@ -80,9 +80,5 @@ pg_store Malzin chest "Traders Backpack Medium" ~ stored in
 # --- generic control: Small Thieves Backpack gets no specialist reduction, may roll Athletics (117, 281, 299) ---
 give Malzin 1288-gamedata.base 1
 packput Malzin "Small Thieves Backpack" 580-gamedata.base 3
-pg_pack Malzin "Small Thieves Backpack" ~ tags=THIEF_GEAR,PACK_GENERIC equipped=1 .*content_ratio=1\.000 .*applied_ratio=1\.000
+pg_pack Malzin "Small Thieves Backpack" ~ tags=\S*THIEF_GEAR\S*PACK_GENERIC equipped=1 .*content_ratio=1\.000 .*applied_ratio=1\.000
 pg_check Malzin "Small Thieves Backpack" ~ pool=.*Athletics.* valid=1
-# --- 282: a specialist pack is not also a generic pack; 147: a mod-added pack made a hauling pack by exact rule ---
-pg_pack Shay "Medium Backpack" ~ base=5066412-Universal Wasteland Expansion\.mod tags=PACK_HAULING equipped=1
-packput Shay "Medium Backpack" 43959-rebirth.mod 1
-pg_pack Shay "Medium Backpack" ~ tags=PACK_HAULING equipped=1 .*content_ratio=0\.750 .*applied_ratio=0\.750

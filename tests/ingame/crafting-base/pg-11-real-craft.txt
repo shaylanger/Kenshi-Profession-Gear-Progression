@@ -39,6 +39,7 @@ speed 1
 speed 0
 benches 150 ~ Clothing Bench [^|]*queue=1
 save kah-pg-midcraft
+@sleep 8
 load kah-pg-midcraft
 @wait-world
 @sleep 8

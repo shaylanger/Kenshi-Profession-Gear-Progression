@@ -14,8 +14,11 @@ pg_force_affix Malzin "Black Cloth Shirt" medic 12 tier 3 ~ Black Cloth Shirt ke
 pg_bonus Malzin medic ~ equipped_bonus=12% .*match=1
 # 134: several manual saves in a row (autosave is off under the harness)
 save kah-pg-persist-a
+@sleep 8
 save kah-pg-persist-b
+@sleep 8
 save kah-pg-persist-a
+@sleep 8
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ serialize item id=${K} 
 # 131: the same state under a second save name loads with the same identity and roll
 load kah-pg-persist-b

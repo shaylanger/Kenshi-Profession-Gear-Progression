@@ -7,6 +7,11 @@
 @wait-world
 @sleep 8
 speed 0
+# Malzin starts wounded in the fixture (a chest wound cuts her effective stats): heal and feed first
+health Malzin 100
+health Shay 100
+hunger Malzin 250
+hunger Shay 250
 # --- baseline: nothing active on Malzin ---
 pg_clear Malzin ~ Malzin: cleared affixes on \d+ of \d+ item\(s\)
 setstat Malzin farming 50
@@ -127,3 +132,4 @@ pg_info Malzin "Rattan Hat" ~ equipped=1 tier=\d+ affixes=(?!none)[A-Za-z ]+:
 @set S pg_info Malzin "Rattan Hat" ~ affixes=([A-Za-z ]+):
 pg_bonus Malzin "${S}" ~ equipped_bonus=[1-9][\d.]*% .*match=1
 save kah-pg-stale
+@sleep 8
