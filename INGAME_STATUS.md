@@ -1,6 +1,6 @@
 # Profession Gear Progression — in-game test status
 
-**Updated:** 2026-10-03 (after coordinator runs m2-m6). One row per `TEST_PLAN.md` ID (1–330 plus 16a–16c and 30a–30i = 342 rows).
+**Updated:** 2026-10-03 (after coordinator runs m2-m13). One row per `TEST_PLAN.md` ID (1–330 plus 16a–16c and 30a–30i = 342 rows).
 The coordinator session runs the game; the PG agent writes scenarios (`tests/ingame/`, order in
 `tests/ingame/RUN_ORDER.md`) and fixes. Build: **ProfessionGearProgression.dll 59EFB4B1** (FAA5B471 ran m4-m12).
 
@@ -12,8 +12,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | State | Rows |
 |---|---|
 | PASS-offline | 71 |
-| PASS-live | 161 |
-| PENDING-auto | 9 |
+| PASS-live | 169 |
+| PENDING-auto | 1 |
 | NEEDS-SETUP | 65 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
@@ -94,20 +94,20 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 178–199 | NEEDS-SETUP | balance measurement driver (N repeats per skill/bonus point, CSV out) + per-profession benchmark fixtures; Phase-8 proof first (pg-08). Missing: research bench (184), robotics job (186), turret + target (192), water route (194), detection/lock/target benchmarks (195-199) |
 | 200–210 | DEFERRED | by design: fitting and freeze after the measurement campaign (tools/analyze_balance.py) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
-| 212 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` (Habul's shop; 219/237 were PARTIAL; fixes d3ac3dc + 1da2eb0 scan shop storage within 60; the m2-m6 censuses already show 12 natural stock items rolled as trader stock) |
+| 212 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 213 | PASS-live | `C:\KenshiTestRuns\m4\pg-07-worldloot.out` (archive/test-run-2026-10-03-m4.md) 31/0 |
 | 214–216 | PASS-live | LIVE_TEST_PROGRESS.md "Trader item transfer / purchase-style identity - LIVE PASS" |
 | 217 | NEEDS-SETUP | a trader restock trigger (game restock timer or a harness restock command) |
-| 218–219 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` (Habul's shop; 219/237 were PARTIAL; fixes d3ac3dc + 1da2eb0 scan shop storage within 60; the m2-m6 censuses already show 12 natural stock items rolled as trader stock) |
+| 218–219 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 220–227 | NEEDS-SETUP | fixtures/teleports next to several shop types (clothing/armour, tech, bar/cook, smith, doctor) + a Normal-mode pg_census per shop |
 | 228 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
 | 229 | NEEDS-SETUP | an equippable mod hoe/sickle/pickaxe weapon on a character: the harness cannot create weapons; needs a craftable recipe (ArkWeaponPack Sickle/Pickaxe) or a fixture NPC carrying one |
 | 230 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 231–234 | PASS-offline | classifier corpus tests (ordinary/legendary weapons, profession-named weapons); 59 rechecked live in pg-02 |
 | 235–236 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
-| 237 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` (Habul's shop; 219/237 were PARTIAL; fixes d3ac3dc + 1da2eb0 scan shop storage within 60; the m2-m6 censuses already show 12 natural stock items rolled as trader stock) |
+| 237 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 238 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
-| 239 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` (Habul's shop; 219/237 were PARTIAL; fixes d3ac3dc + 1da2eb0 scan shop storage within 60; the m2-m6 censuses already show 12 natural stock items rolled as trader stock) |
+| 239 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 240 | NEEDS-SETUP | harness commands for Kenshi import and new game (menu flows) |
 | 241–243 | PASS-live | LIVE_TEST_PROGRESS.md "Exact-ID harness + world-loot live results" |
 | 244 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
@@ -149,13 +149,13 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 320 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
 | 321 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 322 | PASS-offline | core regressions added 2026-10-03 (bd6643c, 2b14a4c) |
-| 323–324 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` (Habul's shop; 219/237 were PARTIAL; fixes d3ac3dc + 1da2eb0 scan shop storage within 60; the m2-m6 censuses already show 12 natural stock items rolled as trader stock) |
+| 323–324 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 325 | PASS-offline | core regressions added 2026-10-03 (bd6643c, 2b14a4c) |
 | 326 | PASS-live | `C:\KenshiTestRuns\m6\pg-31.out` (archive/test-run-2026-10-03-m5.md) 12/0 (launch 3); log "loaded affixes=3 legacyIgnored=1", no roll line |
 | 327 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 328 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 329 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
-| 330 | PENDING-auto | `tests/ingame/trader/pg-21-shop-stock.txt` #pg_check Square Goggles (m12 found Square Goggles in shop stock tagged GOGGLES_GENERIC,PACK_TRADE with Athletics; fixed in 59EFB4B1, core test added) |
+| 330 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 
 ## Notes
 

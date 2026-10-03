@@ -797,3 +797,5 @@ pg-31 12/0, pg-40 16/0, pg-41 65/1 (chest full, fixed). Bugs found and fixed on 
 crafted roll on the wrong instance (row 329, 159C552F), shop storage radius 30 -> 60 (1da2eb0).
 Open: pg-11 (real crafting), trader/pg-21 (shop stock + purchase), pg-09 soak; measurement gaps
 for 177 (mine output counter) and 254 (run speed readout). Row states: `INGAME_STATUS.md`.
+- m8: pg-11 real crafting 39/0 (rows 87, 160, 253). m13 (DLL 59EFB4B1): trader/pg-21 shop stock +
+  purchase 39/0 (rows 212, 218, 219, 237, 239, 323, 324, 330). Only the optional soak (156) is left.

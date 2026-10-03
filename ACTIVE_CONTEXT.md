@@ -13,8 +13,8 @@ scenario files, fixes the bugs the coordinator sends, commits + pushes, and repo
 game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=shaylanger commit`
 (the repo-local email is wrong) and push after each commit.
 
-- **Per-row status:** `INGAME_STATUS.md` (341 rows after runs m2-m9: 71 PASS-offline, 161 PASS-live,
-  8 PENDING-auto (trader/pg-21 shop, waiting for a harness trade fix; pg-09 soak), 65 NEEDS-SETUP, 10 NEEDS-SHAY,
+- **Per-row status:** `INGAME_STATUS.md` (342 rows after runs m2-m13: 71 PASS-offline, 169 PASS-live,
+  1 PENDING-auto (pg-09 soak, optional), 65 NEEDS-SETUP, 10 NEEDS-SHAY,
   26 DEFERRED). Normal-chance measurements are at the end of that file.
 - **Scenarios:** `tests/ingame/` (auto-home, crafting-base, trader, config) + `tests/ingame/RUN_ORDER.md`
   (4 launches: main Forced+InGameTest rules, AutoClassifyOff, Disabled+startup sidecar, NormalVerbose).
@@ -23,7 +23,7 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   -Rules InGameTest|Normal -Sidecar StartupTest|Empty|Restore` (fixtures in `tests/fixtures/`; the
   InGameTest rules turn plain vanilla backpacks into the specialist packs, exclude Straw Hat, tag
   Leather Vest as cooking, tag the UWE Medium Backpack as hauling).
-- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **59EFB4B1** (0.9.1-pretest; FAA5B471 installed for m4-m12). Offline: 5,236 core checks, 21 SDK symbols, 9 source contracts, package OK.
+- **Installed by the coordinator:** `out\ProfessionGearProgression.dll` **59EFB4B1** (0.9.1-pretest; installed, runs m13+). Offline: 5,238 core checks, 21 SDK symbols, 9 source contracts, package OK.
 - **Harness test commands registered by PG (TEST ONLY):** pg_info, pg_force_affix, pg_clear,
   pg_roll, pg_bonus (now prints base / vanilla_effective / effective / expected / match=1),
   pg_check (record obeys tier/cap/range/pool), pg_shop (scan + list a trader's shop storage),
@@ -38,8 +38,8 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   Enabled=false creates no records; the craft hook rolls the item that actually reaches the bench
   output (launch 1: the passed Item* was another instance; row 329); sidecar rows with no affix survive a restart (CRLF bug: 2,629
   rows were dropped at every load). Regression rows 321-328 in TEST_PLAN.md.
-- **Open (needs the coordinator's run):** all PENDING-auto rows; the job-path proof (pg-08: does
-  mining read the hooked Labouring?) decides whether a direct job hook is needed.
+- **Open:** only the optional soak (pg-09). The job-path proof (does mining read the hooked
+  Labouring?) is still unanswered: row 177 needs a production counter (NEEDS-SETUP).
 - **Open engineering (not started):** balance measurement driver (rows 161-199), the NEEDS-SETUP
   harness commands listed in INGAME_STATUS.md (drop/pickup, combat stat names, import/new game,
   restock, unload trigger).
