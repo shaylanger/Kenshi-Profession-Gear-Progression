@@ -220,6 +220,30 @@ PGP::ProfessionStat MapStat(StatsEnumerated st) {
   }
 }
 
+StatsEnumerated KenshiStat(PGP::ProfessionStat st) {
+  switch(st) {
+    case PGP::STAT_LABOURING:return STAT_LABOURING;
+    case PGP::STAT_SCIENCE:return STAT_SCIENCE;
+    case PGP::STAT_ENGINEERING:return STAT_ENGINEERING;
+    case PGP::STAT_ROBOTICS:return STAT_ROBOTICS;
+    case PGP::STAT_WEAPON_SMITH:return STAT_SMITHING_WEAPON;
+    case PGP::STAT_ARMOUR_SMITH:return STAT_SMITHING_ARMOUR;
+    case PGP::STAT_CROSSBOW_SMITH:return STAT_SMITHING_BOW;
+    case PGP::STAT_MEDIC:return STAT_MEDIC;
+    case PGP::STAT_TURRETS:return STAT_TURRETS;
+    case PGP::STAT_FARMING:return STAT_FARMING;
+    case PGP::STAT_COOKING:return STAT_COOKING;
+    case PGP::STAT_ATHLETICS:return STAT_ATHLETICS;
+    case PGP::STAT_SWIMMING:return STAT_SWIMMING;
+    case PGP::STAT_PERCEPTION:return STAT_PERCEPTION;
+    case PGP::STAT_STEALTH:return STAT_STEALTH;
+    case PGP::STAT_ASSASSINATION:return STAT_ASSASSINATION;
+    case PGP::STAT_LOCKPICKING:return STAT_LOCKPICKING;
+    case PGP::STAT_THIEVERY:return STAT_THIEVING;
+    default:return STAT_NONE;
+  }
+}
+
 static bool HasTag(const std::vector<PGP::ItemTag>& tags, PGP::ItemTag tag) {
   return std::find(tags.begin(), tags.end(), tag) != tags.end();
 }
@@ -790,8 +814,24 @@ int KahBonus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   PGP::ProfessionStat st=PGP::ParseStat(argv[2]);
   if(st==PGP::STAT_NONE){ r->append(r,(std::string("unknown stat: ")+argv[2]).c_str()); return KAH_ERROR; }
   RebuildCharacterBonusCache(c);
+  const float bonus=EquippedBonus(c,st);
   std::ostringstream ss;
-  ss<<c->getName()<<" "<<PGP::StatName(st)<<" equipped_bonus="<<EquippedBonus(c,st)<<"%";
+  ss<<c->getName()<<" "<<PGP::StatName(st)<<" equipped_bonus="<<bonus<<"%";
+  // The game's own numbers: base (unmodified), vanilla effective (Kenshi without ProfessionGear)
+  // and the hooked effective value every job reads; expected = vanilla * (1 + bonus), cap 150.
+  const StatsEnumerated k=KenshiStat(st);
+  CharStats* stats=0;
+  try { stats=c->getStats(); } catch (...) {}
+  if(stats && k!=STAT_NONE && g_getStatOrig){
+    const float base=g_getStatOrig(stats,k,true);
+    const float vanilla=g_getStatOrig(stats,k,false);
+    const float effective=stats->getStat(k,false);
+    const float expected=PGP::EffectiveStatValue(vanilla,bonus,false,150.0f);
+    const float diff=effective-expected;
+    ss.setf(std::ios::fixed); ss.precision(2);
+    ss<<" base="<<base<<" vanilla_effective="<<vanilla<<" effective="<<effective<<" expected="<<expected
+      <<" match="<<((diff<0.05f && diff>-0.05f)?1:0);
+  }
   r->append(r,ss.str().c_str());
   return KAH_OK;
 }
