@@ -48,6 +48,8 @@ Run `package.bat` after a successful build. It creates:
 
 `out\package\ProfessionGearProgression\`
 
+For live testing, follow **`LIVE_TEST_RUNBOOK.md`**. `TEST_PLAN.md` is the 306-row technical master plan; you do not need to manually score every AUTO row.
+
 Nothing in the build or package scripts copies files into Kenshi. The guarded `install_test_build.ps1` script is provided for the first controlled live test, but it refuses to install unless explicitly invoked with `-Install`.
 
 ## Runtime files
@@ -76,9 +78,13 @@ bonus without changing earned XP.
 
 ## Gear classification
 
-`VANILLA_GEAR_CLASSIFICATION.md` documents the reviewed vanilla equipment catalogue and the revised hybrid classifier. Automatic support is not ID-only: exact IDs are strongest, but native slot/type, existing mechanical stats, descriptions, semantic names, and NPC context are combined so unknown third-party gear can still classify when evidence is strong. Weak/contradictory cases receive no profession affix rather than a guess.
+`VANILLA_GEAR_CLASSIFICATION.md` documents the reviewed vanilla equipment catalogue and the revised hybrid classifier. Automatic support is not ID-only: exact rules are strongest, but native item type/slot, descriptions, semantic names, and source/NPC context are combined so unknown third-party gear can still classify when evidence is strong. Weak/contradictory cases receive no profession affix rather than a guess.
 
 Affix-count progression is now tiered: low tiers (0–2) max 1 stat, medium tiers (3–4) up to 2, top tiers (5–6) up to 3 coherent stats. Utility classification also covers travel/Athletics, Swimming, stealth/assassination/thief gear, generic backpacks, hauling packs, and specialist cargo packs. Strong profession/utility semantics take precedence over generic fallback.
+
+## Design audit
+
+`DESIGN_IMPLEMENTATION_AUDIT.md` maps Shay's full design/context to the current implementation, live-proof requirements, balance work, and explicitly deferred roadmap items.
 
 ## Roadmap
 

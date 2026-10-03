@@ -1,6 +1,8 @@
 # Profession Gear Progression — First Live Test
 
-This is the first controlled Kenshi validation sequence after Shay explicitly authorizes installation.
+**Player-facing canonical instructions:** `LIVE_TEST_RUNBOOK.md`.
+
+This file is the shorter technical phase map. The first controlled Kenshi validation begins only after Shay explicitly authorizes installation.
 
 ## Safety rules
 

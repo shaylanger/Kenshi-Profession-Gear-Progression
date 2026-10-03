@@ -15,6 +15,7 @@ copy /y "%ROOT%mod\mod.info" "%DEST%\mod.info" >nul
 copy /y "%ROOT%mod\ProfessionGear.ini" "%DEST%\ProfessionGear.ini" >nul
 copy /y "%ROOT%mod\ProfessionGear.rules" "%DEST%\ProfessionGear.rules" >nul
 copy /y "%ROOT%FIRST_LIVE_TEST.md" "%DEST%\FIRST_LIVE_TEST.md" >nul
+copy /y "%ROOT%LIVE_TEST_RUNBOOK.md" "%DEST%\LIVE_TEST_RUNBOOK.md" >nul
 powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%verify_package.ps1"
 if errorlevel 1 exit /b 1
 echo PACKAGE OK: %DEST%

@@ -7,7 +7,8 @@ $required = @(
   "RE_Kenshi.json",
   "mod.info",
   "ProfessionGear.ini",
-  "ProfessionGear.rules"
+  "ProfessionGear.rules",
+  "LIVE_TEST_RUNBOOK.md"
 )
 $missing=@()
 foreach($name in $required){

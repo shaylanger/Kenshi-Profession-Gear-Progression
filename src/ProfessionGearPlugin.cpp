@@ -468,8 +468,11 @@ void HookInventoryUpdate(Inventory* inv,Item* item,int amount) {
 void HookCraft(CraftingBuilding* b,Item* item) {
   Character* crafter=0;
   try { crafter=b?b->whosCrafting.getCharacter():0; } catch (...) {}
-  if(item) EnsureRecord(item,crafter,true);
+
+  // Kenshi must finish the item first so ProfessionGear reads the final quality/model.
   if(g_craftOrig) g_craftOrig(b,item);
+
+  if(item) EnsureRecord(item,crafter,true);
   if(crafter) RebuildCharacterBonusCache(crafter);
   SaveDb();
 }

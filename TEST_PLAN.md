@@ -2,7 +2,7 @@
 
 **Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
 
-**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **305**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **306**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -400,3 +400,10 @@ These tests correspond to approved future goals so roadmap work is not left as u
 | 303 | AUTO | Field Medic/Doctor Backpack | Classified as medical specialist; not generic pack fallback |
 | 304 | AUTO | Engineer/Builder Pack | Classified as construction specialist; not generic pack fallback |
 | 305 | AUTO | Research/Science/Robotics Satchel | Classified as tech specialist; not generic pack fallback |
+
+
+## Section S — final design-audit regression
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 306 | AUTO | Craft hook ordering / critical-success quality | Kenshi original `addFinishedCraftItem` completes first; ProfessionGear then reads the final item quality/model and rolls exactly once |

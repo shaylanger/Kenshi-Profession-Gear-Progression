@@ -7,6 +7,8 @@ call "%ROOT%build_portable.bat"
 if errorlevel 1 exit /b 1
 call "%ROOT%verify_offline.bat"
 if errorlevel 1 exit /b 1
+powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%verify_source_contracts.ps1"
+if errorlevel 1 exit /b 1
 call "%ROOT%package.bat"
 if errorlevel 1 exit /b 1
 powershell -NoProfile -ExecutionPolicy Bypass -File "%ROOT%verify_not_installed.ps1"

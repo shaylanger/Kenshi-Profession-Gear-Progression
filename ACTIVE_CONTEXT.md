@@ -1041,3 +1041,112 @@ They are all represented by numbered tests:
 
 **The standalone runtime mod is ready for the first controlled install/live-test phase.**
 Do not call it release-ready until the live suites and balance calibration pass.
+
+
+---
+
+## Turn update — 2026-10-02 design-to-build audit and live-test handoff
+
+Shay requested a full once-over against the complete design/context, followed by a test-plan cleanup so the only player-side work is installing/enabling the mod and following a concrete gameplay runbook.
+
+### Audit result
+
+Created `DESIGN_IMPLEMENTATION_AUDIT.md`, mapping the requested design to one of:
+- IMPLEMENTED,
+- LIVE PROOF REQUIRED,
+- DEFERRED BY DESIGN,
+- BALANCE PENDING.
+
+The audit confirms the first-test runtime framework covers the requested core behavior:
+- standalone RE_Kenshi plugin,
+- contextual vanilla/mod-added item classification using exact rules + native item type/slot + name + description + source/NPC context,
+- word-boundary protections against accidental mod-name false matches,
+- profession-named weapons such as Farmer's Sword/Pitchfork,
+- utility-role weapons,
+- unique/special gear protection,
+- 1/2/3-stat tier progression,
+- separate 15-grade weapon quality mapping,
+- per-instance random rolls,
+- source-dependent rarity,
+- crafted gear,
+- NPC/trader/world-loot sources,
+- generic workwear/goggles contextual pools,
+- equip-only effective-stat application,
+- profession skills and broad utility stats,
+- persistence,
+- tooltips,
+- generic/specialist/hauling backpacks,
+- selective contents-weight specialization,
+- mod compatibility overrides,
+- diagnostics and package safety.
+
+### Audit correction: craft ordering
+
+A real implementation mismatch was found and fixed:
+- `HookCraft` previously called `EnsureRecord` before Kenshi's original `addFinishedCraftItem`.
+- This contradicted the design requirement to use the final crafted quality/model.
+- The hook now calls the original Kenshi function first, then rolls ProfessionGear from the finalized item.
+- Added master test **306** for this contract.
+
+### Documentation accuracy correction
+
+README previously claimed the classifier consumed existing mechanical stats. The current runtime does not use those fields as classification evidence. Wording was corrected to the actual implemented inputs:
+- exact rules,
+- native item type/slot,
+- name,
+- description,
+- source/NPC context.
+
+### Explicitly deferred items remain non-blockers
+
+Per Shay's earlier decisions:
+1. new FCS profession-themed base item generation/distribution is a later goal,
+2. category-selective specialist pack stacking is a later goal if it can be done safely.
+
+Direct native movement/encumbrance hooks are not prematurely added. Current first-test behavior uses effective Athletics plus pack-weight specialization; live tests 193–199 and 254–257 determine whether those safe paths are sufficient or whether a direct native path is warranted.
+
+### Player-facing testing simplified
+
+Created `LIVE_TEST_RUNBOOK.md` as the canonical user-facing plan.
+
+The 306-row `TEST_PLAN.md` remains the technical master plan. Shay does **not** manually score all AUTO rows.
+
+Runbook phases:
+1. startup,
+2. equip-only + tooltip,
+3. crafting,
+4. NPC context,
+5. vendors,
+6. exploration/world loot,
+7. backpacks/hauling,
+8. real job-path proof,
+9. utility proof,
+10. normal rarity/distribution,
+11. STOBE/KenshiFP/full-mod compatibility,
+12. balance calibration.
+
+For each phase Shay performs gameplay actions and reports `Phase N done`; the agent reads logs/sidecar and marks/investigates AUTO rows.
+
+### New test helpers
+
+Added:
+- `set_test_mode.ps1`
+  - `-Mode Forced`: installs forced-roll/verbose test config into an already installed ProfessionGear test build.
+  - `-Mode Normal`: restores packaged normal config.
+- `collect_test_artifacts.ps1`
+  - archives available ProfessionGear log/sidecar/config and STOBE/KenshiFP logs under `out\test-runs\<timestamp>-<label>`.
+- `verify_source_contracts.ps1`
+  - verifies craft original-before-roll ordering,
+  - specialist backpack equip-only guard,
+  - plugin double-start guard.
+- `verify_ready.bat` now includes source-contract verification.
+
+### Packaging/test documentation
+
+- `LIVE_TEST_RUNBOOK.md` is included in the installable package and required by package verification.
+- `FIRST_LIVE_TEST.md` now points to `LIVE_TEST_RUNBOOK.md` as the canonical player-facing instructions.
+- README points to the design audit and runbook.
+
+### Test plan
+
+Master numbered plan now extends through **306**.
