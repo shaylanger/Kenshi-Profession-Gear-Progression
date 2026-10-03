@@ -523,3 +523,234 @@ Results:
 - test 320 PASS live
 
 Trader/world-loot generic gear still keeps the broad legal pool when there is no wearer profession context.
+
+### Additional NPC role-context live passes
+
+- **97 PASS (Medic context):** spawned `Doctor /GENNAME/` (Doctor Colby), Medic forced to 100, exact generic Rattan Hat generated `source=npc`, `WORKWEAR_GENERIC`, **Medic +20.4% only**.
+  - Harness `give` reported 0/1 because the hat auto-equipped instead of remaining in main inventory; ProfessionGear still saw the item and rolled it correctly.
+- **96 PASS (Engineering context):** spawned `Engineer /GENNAME/` (Engineer Double), Engineering forced to 100, exact generic Rattan Hat generated **Engineering +21.1% only**.
+
+Known-role generic workwear coherence is now confirmed live across Farming, Medic, Engineering; generic goggles confirmed with Science.
+
+### Trader-stock synthetic-template test — INCONCLUSIVE, not a mod failure
+
+Spawned `Trader /GENNAME/` (`Pethra [Trader Stelania]`) and forced Medic 100. Added five unequipped exact `1168-gamedata.base` Cloth Shirts.
+
+Observed all five targeted rolls:
+- `source=npc` (NOT `source=trader`)
+- `equipped=0`
+- all narrowed to Medic
+
+Interpretation:
+- the spawned trader-looking template is **not** returning Kenshi `Character::isATrader()==true` in this runtime state.
+- therefore this setup tests ordinary NPC inventory, not real shop stock.
+- tests 211/219/237 remain PENDING rather than FAIL.
+
+Next action: add a harness-only `traders [radius]` query that lists characters for whom Kenshi itself reports `isATrader()==true`, then target a real live merchant.
+
+### Harness trader-discovery helper added
+
+Added harness-only command `traders [radius]` in Stobe TestAutomation. It lists only characters for whom Kenshi runtime `Character::isATrader()` returns true. Purpose: distinguish real merchant/shop actors from NPC templates merely named Trader.
+
+### Real trader-stock context — PASS
+
+Used harness `traders` command to locate actual runtime merchants (`Character::isATrader()==true`). Teleported Shay near real Shinobi trader **Blamo**.
+
+Test setup:
+- Blamo Medic forced to 100.
+- Blamo already had occupied/equipped clothing, so five exact `1168-gamedata.base` Cloth Shirts remained unequipped.
+
+Observed all five target rolls:
+- `source=trader`
+- `equipped=0`
+- varied legal generic-workwear affixes:
+  - Cooking + Robotics
+  - Farming + Medic
+  - Crossbow Smithing + Science
+  - Cooking + Crossbow Smithing
+  - Robotics
+- rolls were **not** collapsed to Blamo's Medic role.
+
+Results:
+- **211 PASS** — generic workwear in true trader inventory can roll random legal profession stock.
+- trader source detection (`isATrader`) is functioning live.
+- synthetic `Trader /GENNAME/` test was correctly inconclusive because that spawned template was not runtime-flagged as trader.
+- **219 still PARTIAL** until actual naturally generated merchant stock (not harness-injected inventory) is confirmed to use the same character inventory/source path.
+
+### Harness batch extension planned
+
+To automate remaining Phase 5–7 tests without repeated rebuilds, add three test-only Stobe commands:
+- `transfer <from> <to> <item>`: move the same unequipped Item* instance using Inventory remove-without-destroy + add; preserves ProfessionGear identity for purchase/loot transfer tests.
+- `packput <npc> <pack> <item> [n]`: create exact cargo directly inside an owned ContainerItem.
+- `packweight <npc> <pack>`: recalculate/read the backpack inventory total through the live ProfessionGear weight hook and report equipped state.
+
+These are harness-only and do not change normal gameplay code.
+
+### Harness batch commands implemented
+
+Patched only Stobe `src/TestAutomation.cpp` with:
+- exact `stringID` matching in inventory-item lookup,
+- `transfer <from> <to> <item>` using `removeItemDontDestroy_returnsItem` + `addItem` to preserve the same Item* instance,
+- `packput <npc> <pack> <item> [n]` for deterministic cargo setup,
+- `packweight <npc> <pack>` reporting equipped state, raw contained-item weight, and hooked total weight.
+
+Next: rebuild/install Stobe, then use these to automate purchase/loot identity and backpack weight tests.
+
+### Trader item transfer / purchase-style identity — LIVE PASS
+
+Real trader Blamo generated exact `1168-gamedata.base` Cloth Shirt:
+- source `trader`
+- persistent sidecar key `pgp1-45748-280821234-1-3937117084`
+- affixes `Medic +16.2%, Engineering +17.4%`
+
+Harness `transfer` moved the **same Item*** from Blamo to Shay:
+- runtime handle before: `62156-3313232384-0-0-3`
+- runtime handle after:  `62156-3313232384-0-0-3`
+- no target reroll occurred.
+
+Equip-only check on transferred item:
+- carried/unequipped after freeing shirt slot: Medic 1.7, Engineering 1.9
+- equipped transferred trader shirt: Medic 1.9, Engineering 2.3
+- same handle remained equipped.
+
+Results:
+- **214 PASS at engine transfer level** — trader-generated affix survives same-instance merchant→player transfer.
+- **215 PASS** — transferred purchased-style item gives no bonus while carried/unequipped.
+- **216 PASS** — stored affix activates when equipped.
+- actual trade-UI click flow is not separately automated; the critical item identity/transfer behavior is proven.
+
+### Generic backpack live weight control — PASS
+
+Used real equipped `Small Thieves Backpack` (base `1288-gamedata.base`) on Tengu.
+- added exact Building Material cargo (`580-gamedata.base`)
+- equipped: raw=2.0, total=2.0
+- unequipped: raw=2.0, total=2.0
+
+No ProfessionGear specialist weight reduction leaked onto the generic/thief backpack.
+Results:
+- **117 PASS** — generic backpack same contents unchanged by ProfessionGear specialist system.
+- **299 PASS (weight half)** — generic pack receives no specialist contents-weight reduction.
+
+### Final planned harness batch before next rebuild
+
+Add:
+- `CONTAINER` GameData support to `find/give/stash/buy/packput`, so exact backpack records can be created by stringID.
+- `craftfinish <npc> <item name|stringID>`: locate nearest real `CraftingBuilding`, set `whosCrafting` to the chosen NPC, create the requested item, and call the real `addFinishedCraftItem()` on the game thread. Purpose: live-test ProfessionGear's finished-item craft hook and final-item roll path.
+
+If `craftfinish` cannot find a real crafting building in the fixture, it will fail safely and Phase 3 remains pending rather than fabricating a pass.
+
+### Final harness batch implemented
+
+TestAutomation now additionally supports:
+- `CONTAINER` records in find/give/stash/buy/packput data resolution,
+- `craftfinish <npc> <item>` using nearest real `CraftingBuilding::addFinishedCraftItem()` on the game thread,
+- existing transfer/packput/packweight commands from prior batch.
+
+Source sanity check found no remaining 3-type item loops; all relevant arrays include ITEM/WEAPON/ARMOUR/CONTAINER.
+
+
+### Live launch recovery checkpoint — after timeout
+
+The previously timed-out harness launch **did actually run ProfessionGear in Kenshi**.
+
+Evidence recovered:
+- Kenshi is currently not running.
+- `ProfessionGear.log` exists (~94 KB).
+- `profession_gear_affixes.tsv` exists (~57 KB).
+- The live log contains both persisted-record restores and new forced-mode rolls.
+- Live examples observed:
+  - Wooden Sandals -> BOOTS_TRAVEL -> Athletics + Perception rolls.
+  - Rag Shirt / Rag Loincloth / Holy Servant Rags -> WORKWEAR_GENERIC -> contextual profession rolls such as Engineering or Medic.
+  - Black Rag Shirt -> STEALTH_GEAR -> Stealth/Lockpicking.
+  - a Staff instance classified TOOL_FARMING and rolled Farming; this needs classifier-evidence review before calling it valid.
+- Installed build therefore passed the fundamental loader/startPlugin barrier and executed runtime hooks far enough to scan live inventories and write persistence.
+
+Phase 1 is **PARTIAL / INVESTIGATING**, not yet PASS:
+- startup/load execution proven,
+- persistence write proven,
+- need determine why Kenshi is no longer running (normal exit vs crash vs harness timeout/termination),
+- need inspect startup hook lines and RE_Kenshi/crash evidence before relaunch.
+
+
+### Recovery reconstruction — archived work after test 320
+
+Recovered from committed LIVE_TEST_PROGRESS history plus archived ProfessionGear snapshots at:
+- 20:36 `pre-traders-harness`
+- 20:43 `pre-transfer-pack-harness`
+- 20:51 `pre-container-craft-harness`
+
+Do **not** rerun the following already-proven items unless later code changes invalidate them.
+
+#### Confirmed PASS before timeout
+
+Startup / persistence / equip:
+- Phase 1 AUTO startup: PASS.
+- Phase 2 AUTO core: PASS.
+- tests 62–80 equip-only/effective-stat sample: PASS.
+- 123 same-save persistence: PASS under persistent-ID v2.
+- 308–311 non-equippable false-positive regressions: PASS.
+- 312 equipped-section discovery: PASS.
+- 313 harness lookup after equip: PASS.
+- 314–318 persistent-ID serialize/restore/in-process/full-process reload: PASS.
+- 319 legacy pre-v2 rows ignored by v2 loader design/offline checks.
+- 320 contextual generic coherence: PASS live.
+
+World loot:
+- 241 PASS — player-first-seen eligible item uses world_loot source.
+- 242 PASS — Rattan Hat world-loot roll stayed inside WORKWEAR_GENERIC pool.
+- 243 PASS — Square Goggles world-loot roll stayed inside goggles legal pool.
+
+NPC context:
+- 93 PASS — Farmer generic workwear narrows to Farming only.
+- 95 PASS — Researcher generic goggles narrows to Science only.
+- 96 PASS — Engineer generic workwear narrows to Engineering only.
+- 97 PASS — Doctor generic workwear narrows to Medic only.
+- 235 PASS — known-role workwear coherence.
+- 236 PASS — known-role goggles coherence.
+
+Trader source / transfer:
+- 211 PASS — true runtime trader inventory can roll random legal generic profession stock.
+- 214 PASS at same-engine-item transfer level — trader-generated item kept its exact persistent affix moving trader -> player.
+- 215 PASS — transferred trader item carried/unequipped gives no ProfessionGear bonus.
+- 216 PASS — transferred item activates its stored affix when equipped.
+- 219 PARTIAL — `Character::isATrader()` source detection works on true trader actors; still need naturally generated shop-stock ownership confirmation rather than only harness-injected merchant inventory.
+- 237 PARTIAL — trader random legal distribution demonstrated, but broader real shop-stock distribution still pending.
+
+Backpack control:
+- 117 PASS — generic/thief backpack did not receive specialist contents-weight reduction.
+- 299 PASS (weight-control half) — generic pack no specialist weight reduction.
+
+#### Harness-only improvements already installed
+
+Stobe test harness currently includes:
+- exact GameData stringID matching,
+- all inventory-section item lookup,
+- `traders [radius]` runtime isATrader discovery,
+- `transfer <from> <to> <item>`,
+- `packput <npc> <pack> <item> [n]`,
+- `packweight <npc> <pack>`,
+- CONTAINER GameData support in item lookup/create paths,
+- `craftfinish <npc> <item>` using nearest real CraftingBuilding::addFinishedCraftItem().
+
+These are test-harness changes only, not ProfessionGear gameplay features.
+
+#### Last prepared-but-not-run batch
+
+The 20:51 archive was taken immediately before testing the new CONTAINER/craft harness batch.
+
+Next exact live work:
+1. Launch dedicated `pg-context-base` fixture.
+2. Validate `craftfinish` against a real nearby CraftingBuilding:
+   - if a real bench exists, test 85/89/306 craft hook/final-quality path;
+   - if no real bench exists, record safe harness failure and keep Phase 3 pending.
+3. Use exact CONTAINER IDs to create/test specialist packs:
+   - equipped vs unequipped weight behavior,
+   - matching vs unrelated cargo,
+   - generic pack control already passed.
+4. Continue real-trader/natural-shop-stock validation.
+5. Review the live `Staff -> TOOL_FARMING` classification before accepting it; confirm name/description evidence or add a false-positive regression.
+
+#### Timeout/process-exit finding
+
+The run that ended before this recovery did not leave a new Kenshi crash dump. RE_Kenshi rendered normally and ProfessionGear loaded all hooks. Treat the stopped process as harness/tool-session termination unless new evidence shows otherwise.
+
