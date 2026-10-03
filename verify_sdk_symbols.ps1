@@ -16,6 +16,8 @@ $required = @(
   "?_sectionAddItemCallback@Inventory@@UEAAXPEAVItem@@@Z",
   "?_sectionRemoveItemCallback@Inventory@@UEAAXPEAVItem@@@Z",
   "?_sectionUpdateItemCallback@Inventory@@UEAAXPEAVItem@@H@Z",
+  "?serialiseInInventory@Item@@UEAAPEAVGameData@@PEAVGameDataContainer@@PEAV2@@Z",
+  "?loadFromSerialiseInInventory@Item@@UEAAXPEAVGameDataContainer@@PEAVGameData@@@Z",
   "?isStackable@InventoryItemBase@@QEBAHPEAVInventorySection@@@Z",
   '?getSection@Inventory@@QEBAPEAVInventorySection@@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z',
   "?isATrader@Character@@QEBA_NXZ",

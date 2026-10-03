@@ -301,3 +301,34 @@ Next investigation:
 2. inspect `Item::persistant`, proper owner, and inventory-owner handles across reload,
 3. determine whether any built-in serialized identity survives,
 4. if none does, implement sidecar reconciliation based on stable item fingerprint + owner/section/position metadata or hook serialization to persist a custom ID.
+
+
+### Persistence v2 implementation checkpoint
+
+Implemented save-native item identity:
+- added per-item `ProfessionGearPersistentId`,
+- runtime map binds volatile Kenshi handle -> persistent ID,
+- sidecar records now use persistent ID as `instanceKey`,
+- hooked `Item::serialiseInInventory` to write the persistent ID into item `GameData.sdata`,
+- hooked `Item::loadFromSerialiseInInventory` to restore/bind it after reload,
+- load without a stored ID clears any stale runtime binding,
+- persistent-ID/base-item collisions create a new ID rather than stealing/deleting another item's record,
+- pre-v2 runtime-handle sidecar rows are ignored.
+
+Added tests 314-319.
+
+Offline validation:
+- core: **5,217 PASS**
+- DLL: BUILD OK
+- SDK/export: **19/19 PASS**
+- source contracts: **6/6 PASS**
+- package verification: PASS
+
+Next exact test:
+1. install clean v2 package + forced config,
+2. delete old v1 sidecar/log,
+3. load fresh auto-home,
+4. use Square Goggles (or another eligible item), record persistent ID/affix,
+5. equip and save to a new v2 save,
+6. reload exact save and confirm runtime handle changes but persistent ID/affix/effective stat remain,
+7. fully restart Kenshi and repeat.

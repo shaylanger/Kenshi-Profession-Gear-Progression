@@ -2,7 +2,7 @@
 
 **Status:** pre-install plan. The mod must not be copied into Kenshi until Shay explicitly authorizes installation/testing.
 
-**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **313**. These do not substitute for the in-game rows below.
+**Current offline automation:** `run_tests.bat` passes **5,213 core checks**; `verify_offline.bat` passes **17 required SDK/export symbol checks**; `build_portable.bat`, `package.bat`, source-contract verification, and the full `verify_ready.bat` gate are green. The numbered plan now extends through **319**. These do not substitute for the in-game rows below.
 
 ## Test policy
 
@@ -435,3 +435,17 @@ These rows were added from the first Phase 2 live equip test on 2026-10-02.
 |---|---|---|---|
 | 312 | AUTO | Equipped belt/armour/weapon/backpack item leaves Inventory::getAllItems() | ProfessionGear still discovers the item by scanning all character inventory sections and applies its affix while equipped |
 | 313 | AUTO | Harness item lookup after equip | stobe-auto iteminfo/unequip finds items in equipped sections, not only the main inventory list |
+
+
+## Section W — save-native persistent item identity
+
+Added after live test 123 proved Kenshi runtime item handles change across ordinary save/reload.
+
+| ID | Automation | Test | Expected |
+|---|---|---|---|
+| 314 | AUTO | Eligible item serialized into inventory save state | `ProfessionGearPersistentId` is written into the item's serialized `GameData` |
+| 315 | AUTO | Same item loaded from inventory save state | Serialized persistent ID is restored and bound to the new runtime handle |
+| 316 | AUTO | Runtime handle changes across exact save/reload | Sidecar lookup still resolves the same persistent ID and exact affix record |
+| 317 | AUTO | Equipped affixed item save/reload | Same affix remains active after reload even though runtime handle changes |
+| 318 | AUTO | Full Kenshi process restart + reload | Persistent ID/affix survives process restart, not just in-process reload |
+| 319 | AUTO | Pre-v2 runtime-handle sidecar rows | Legacy rows are ignored; they cannot attach to unrelated new runtime items |

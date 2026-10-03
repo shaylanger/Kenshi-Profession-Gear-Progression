@@ -14,6 +14,7 @@
 #include <kenshi/Character.h>
 #include <kenshi/CharStats.h>
 #include <kenshi/GameWorld.h>
+#include <kenshi/GameData.h>
 #include <kenshi/Gear.h>
 #include <kenshi/Inventory.h>
 #include <kenshi/Item.h>
@@ -27,7 +28,10 @@ namespace {
 CRITICAL_SECTION g_lock;
 PGP::RuleConfig g_cfg;
 std::map<std::string, PGP::AffixRecord> g_records;
+std::map<std::string, std::string> g_runtimeItemIds;
 std::map<std::string, std::map<PGP::ProfessionStat, float> > g_bonusCache;
+LONG g_persistentIdCounter = 0;
+const char* kPersistentIdField = "ProfessionGearPersistentId";
 bool g_refreshingInventory = false;
 std::map<std::string, std::vector<PGP::ItemTag> > g_overrides;
 std::set<std::string> g_exclusions;
@@ -45,6 +49,8 @@ typedef void (*TooltipFn)(InventoryItemBase*, Ogre::vector<StringPair>::type&);
 typedef float (*InventoryWeightFn)(Inventory*);
 typedef void (*InventoryAddRemoveFn)(Inventory*, Item*);
 typedef void (*InventoryUpdateFn)(Inventory*, Item*, int);
+typedef GameData* (*ItemSerialiseInventoryFn)(Item*, GameDataContainer*, GameData*);
+typedef void (*ItemLoadInventoryFn)(Item*, GameDataContainer*, GameData*);
 
 PlayerUpdateFn g_playerUpdateOrig = 0;
 GetStatFn g_getStatOrig = 0;
@@ -58,6 +64,8 @@ InventoryWeightFn g_inventoryWeightOrig = 0;
 InventoryAddRemoveFn g_inventoryAddOrig = 0;
 InventoryAddRemoveFn g_inventoryRemoveOrig = 0;
 InventoryUpdateFn g_inventoryUpdateOrig = 0;
+ItemSerialiseInventoryFn g_itemSerialiseInventoryOrig = 0;
+ItemLoadInventoryFn g_itemLoadInventoryOrig = 0;
 
 void Log(const std::string& s) {
   std::ofstream f(g_logPath.c_str(), std::ios::app);
@@ -69,9 +77,56 @@ std::string DirName(const std::string& p) {
   return x==std::string::npos?".":p.substr(0,x);
 }
 
-std::string ItemKey(Item* item) {
+std::string RuntimeItemKey(Item* item) {
   if (!item) return "";
   try { return item->getHandle().toString(); } catch (...) { return ""; }
+}
+
+std::string BaseId(Item* item);
+
+std::string GeneratePersistentItemId(Item* item) {
+  LONG n=InterlockedIncrement(&g_persistentIdCounter);
+  std::string runtime=RuntimeItemKey(item);
+  std::ostringstream s;
+  s<<"pgp1-"<<GetCurrentProcessId()<<"-"<<GetTickCount()<<"-"<<n<<"-"
+   <<PGP::Hash32(runtime+"|"+BaseId(item));
+  return s.str();
+}
+
+void BindPersistentItemId(Item* item,const std::string& id) {
+  if(!item || id.empty()) return;
+  const std::string runtime=RuntimeItemKey(item);
+  if(runtime.empty()) return;
+  EnterCriticalSection(&g_lock);
+  g_runtimeItemIds[runtime]=id;
+  LeaveCriticalSection(&g_lock);
+}
+
+void UnbindPersistentItemId(Item* item) {
+  if(!item) return;
+  const std::string runtime=RuntimeItemKey(item);
+  if(runtime.empty()) return;
+  EnterCriticalSection(&g_lock);
+  g_runtimeItemIds.erase(runtime);
+  LeaveCriticalSection(&g_lock);
+}
+
+std::string PersistentItemId(Item* item,bool createIfMissing) {
+  if(!item) return "";
+  const std::string runtime=RuntimeItemKey(item);
+  if(runtime.empty()) return "";
+  EnterCriticalSection(&g_lock);
+  std::map<std::string,std::string>::const_iterator it=g_runtimeItemIds.find(runtime);
+  if(it!=g_runtimeItemIds.end()){
+    std::string id=it->second;
+    LeaveCriticalSection(&g_lock);
+    return id;
+  }
+  LeaveCriticalSection(&g_lock);
+  if(!createIfMissing) return "";
+  const std::string id=GeneratePersistentItemId(item);
+  BindPersistentItemId(item,id);
+  return id;
 }
 
 std::string BaseId(Item* item) {
@@ -203,7 +258,7 @@ void SaveDb() {
   std::string tmp=g_dbPath+".tmp";
   std::ofstream f(tmp.c_str(),std::ios::trunc);
   if (f.is_open()) {
-    f<<"# Profession Gear Progression v1\n";
+    f<<"# Profession Gear Progression v2 persistent-item-id\n";
     for(std::map<std::string,PGP::AffixRecord>::const_iterator i=g_records.begin();i!=g_records.end();++i)
       f<<PGP::SerializeRecord(i->second)<<"\n";
     f.close();
@@ -219,43 +274,47 @@ void LoadDb() {
   std::ifstream f(g_dbPath.c_str());
   if(!f.is_open()) return;
   std::string line;
+  unsigned long legacyIgnored=0;
   while(std::getline(f,line)){
     if(line.empty()||line[0]=='#') continue;
     PGP::AffixRecord r;
-    if(PGP::ParseRecord(line,r)) g_records[r.instanceKey]=r;
+    if(!PGP::ParseRecord(line,r)) continue;
+    if(r.instanceKey.find("pgp1-")!=0){ ++legacyIgnored; continue; }
+    g_records[r.instanceKey]=r;
   }
-  std::ostringstream ss; ss << "loaded affixes=" << (unsigned long)g_records.size(); Log(ss.str());
+  std::ostringstream ss; ss << "loaded affixes=" << (unsigned long)g_records.size()
+                            << " legacyIgnored=" << legacyIgnored; Log(ss.str());
 }
 
 PGP::AffixRecord* EnsureRecord(Item* item, Character* owner, bool crafted) {
   if(!item) return 0;
-  std::string key=ItemKey(item);
-  if(key.empty()) return 0;
   PGP::ItemDescriptor d=Describe(item);
   const bool explicitlyExcluded=g_exclusions.count(PGP::Lower(d.baseId))!=0;
   const bool forceIneligible=!d.equippable || d.legendary || d.stackable || explicitlyExcluded;
-  EnterCriticalSection(&g_lock);
-  std::map<std::string,PGP::AffixRecord>::iterator existing=g_records.find(key);
-  if(forceIneligible){
-    if(existing!=g_records.end()){ g_records.erase(existing); g_dirty=true; }
-    LeaveCriticalSection(&g_lock);
-    return 0;
-  }
-  if(existing!=g_records.end()){
-    if(existing->second.baseId==d.baseId){
-      PGP::AffixRecord* p=&existing->second;
-      LeaveCriticalSection(&g_lock);
-      return p;
-    }
-    // Defensive handle-reuse protection: never attach an old instance roll to a
-    // different base item that happens to receive the same runtime handle string.
-    g_records.erase(existing);
-    g_dirty=true;
-  }
-  LeaveCriticalSection(&g_lock);
+  if(forceIneligible) return 0;
 
   std::vector<PGP::ItemTag> tags=TagsFor(d);
   if(tags.empty()) return 0;
+
+  std::string key=PersistentItemId(item,true);
+  if(key.empty()) return 0;
+
+  EnterCriticalSection(&g_lock);
+  std::map<std::string,PGP::AffixRecord>::iterator existing=g_records.find(key);
+  if(existing!=g_records.end() && existing->second.baseId==d.baseId){
+    PGP::AffixRecord* p=&existing->second;
+    LeaveCriticalSection(&g_lock);
+    return p;
+  }
+  const bool collision=(existing!=g_records.end() && existing->second.baseId!=d.baseId);
+  LeaveCriticalSection(&g_lock);
+
+  if(collision){
+    key=GeneratePersistentItemId(item);
+    BindPersistentItemId(item,key);
+    Log(std::string("persistent-id collision/reuse: rebound runtime=")+RuntimeItemKey(item)+" newId="+key+" baseId="+d.baseId);
+  }
+
   PGP::RoleProfile role=RoleFor(owner);
   // Trader stock should be generated from the item's plausible profession pool, not from
   // whatever unrelated skill happens to be highest on the shopkeeper. Equipped trader gear
@@ -338,12 +397,17 @@ void RebuildCharacterBonusCache(Character* c) {
   if(!inv) return;
   std::map<PGP::ProfessionStat,float> totals;
   std::vector<Item*> items;
+  std::vector<std::string> equippedIds;
   CollectCharacterInventoryItems(inv,items);
-  EnterCriticalSection(&g_lock);
   for(size_t i=0;i<items.size();++i){
     Item* item=items[i];
     if(!item || !item->isEquipped) continue;
-    std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(ItemKey(item));
+    const std::string itemId=PersistentItemId(item,false);
+    if(!itemId.empty()) equippedIds.push_back(itemId);
+  }
+  EnterCriticalSection(&g_lock);
+  for(size_t i=0;i<equippedIds.size();++i){
+    std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(equippedIds[i]);
     if(it==g_records.end()) continue;
     for(size_t j=0;j<it->second.affixes.size();++j)
       totals[it->second.affixes[j].stat]+=it->second.affixes[j].percent;
@@ -398,7 +462,8 @@ void AppendTip(InventoryItemBase* base,Ogre::vector<StringPair>::type& lines) {
   PGP::ItemDescriptor current=Describe(item);
   if(!current.equippable || current.legendary || current.stackable || g_exclusions.count(PGP::Lower(current.baseId))) return;
   for(size_t i=0;i<lines.size();++i) if(lines[i].s1=="Profession Gear") return;
-  std::string key=ItemKey(item);
+  std::string key=PersistentItemId(item,false);
+  if(key.empty()) return;
   const std::string baseId=current.baseId;
   EnterCriticalSection(&g_lock);
   std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(key);
@@ -410,6 +475,64 @@ void AppendTip(InventoryItemBase* base,Ogre::vector<StringPair>::type& lines) {
     }
   }
   LeaveCriticalSection(&g_lock);
+}
+
+GameData* HookItemSerialiseInInventory(Item* item,GameDataContainer* container,GameData* refs) {
+  GameData* state=0;
+  try {
+    state=g_itemSerialiseInventoryOrig?g_itemSerialiseInventoryOrig(item,container,refs):0;
+  } catch (...) {
+    Log("exception in Item::serialiseInInventory original");
+    return state;
+  }
+  if(!item || !state || !g_cfg.enabled) return state;
+  try {
+    PGP::ItemDescriptor d=Describe(item);
+    const bool excluded=g_exclusions.count(PGP::Lower(d.baseId))!=0;
+    if(!d.equippable || d.legendary || d.stackable || excluded) return state;
+    if(TagsFor(d).empty()) return state;
+    const std::string id=PersistentItemId(item,true);
+    if(!id.empty()){
+      state->sdata[kPersistentIdField]=id;
+      state->activeValues[kPersistentIdField]=true;
+      if(g_cfg.verboseLogging)
+        Log(std::string("serialize item id=")+id+" runtime="+RuntimeItemKey(item)+" baseId="+d.baseId);
+    }
+  } catch (...) {
+    Log("exception writing ProfessionGearPersistentId");
+  }
+  return state;
+}
+
+void HookItemLoadFromSerialiseInInventory(Item* item,GameDataContainer* container,GameData* state) {
+  std::string id;
+  try {
+    if(state){
+      boost::unordered::unordered_map<std::string,std::string,boost::hash<std::string>,std::equal_to<std::string>,Ogre::STLAllocator<std::pair<std::string const,std::string>,Ogre::GeneralAllocPolicy> >::const_iterator it=
+        state->sdata.find(kPersistentIdField);
+      if(it!=state->sdata.end()) id=it->second;
+    }
+  } catch (...) {}
+
+  try {
+    if(g_itemLoadInventoryOrig) g_itemLoadInventoryOrig(item,container,state);
+  } catch (...) {
+    Log("exception in Item::loadFromSerialiseInInventory original");
+    return;
+  }
+
+  if(!item) return;
+  try {
+    if(id.empty()){
+      UnbindPersistentItemId(item);
+      return;
+    }
+    BindPersistentItemId(item,id);
+    if(g_cfg.verboseLogging)
+      Log(std::string("restore item id=")+id+" runtime="+RuntimeItemKey(item)+" baseId="+BaseId(item));
+  } catch (...) {
+    Log("exception restoring ProfessionGearPersistentId");
+  }
 }
 
 void HookPlayerUpdate(PlayerInterface* p) {
@@ -531,6 +654,8 @@ void InstallHooks() {
   HookSymbol(lib,"?_sectionAddItemCallback@Inventory@@UEAAXPEAVItem@@@Z",(void*)HookInventoryAdd,(void**)&g_inventoryAddOrig);
   HookSymbol(lib,"?_sectionRemoveItemCallback@Inventory@@UEAAXPEAVItem@@@Z",(void*)HookInventoryRemove,(void**)&g_inventoryRemoveOrig);
   HookSymbol(lib,"?_sectionUpdateItemCallback@Inventory@@UEAAXPEAVItem@@H@Z",(void*)HookInventoryUpdate,(void**)&g_inventoryUpdateOrig);
+  HookSymbol(lib,"?serialiseInInventory@Item@@UEAAPEAVGameData@@PEAVGameDataContainer@@PEAV2@@Z",(void*)HookItemSerialiseInInventory,(void**)&g_itemSerialiseInventoryOrig);
+  HookSymbol(lib,"?loadFromSerialiseInInventory@Item@@UEAAXPEAVGameDataContainer@@PEAVGameData@@@Z",(void*)HookItemLoadFromSerialiseInInventory,(void**)&g_itemLoadInventoryOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);
   HookSymbol(lib,"?getTooltipData1@Armour@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipArmour,(void**)&g_tipArmourOrig);
   HookSymbol(lib,"?getTooltipData1@ContainerItem@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipContainer,(void**)&g_tipContainerOrig);

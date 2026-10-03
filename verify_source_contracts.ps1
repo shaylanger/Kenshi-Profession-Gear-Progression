@@ -24,4 +24,21 @@ if($text -notmatch [regex]::Escape("if(g_started) return;")){
 }
 Write-Host "OK      plugin double-start guard"
 
-Write-Host "Source contract verification passed: 3 checks"
+if($text -notmatch [regex]::Escape('state->sdata[kPersistentIdField]=id;') -or
+   $text -notmatch [regex]::Escape('state->activeValues[kPersistentIdField]=true;')){
+  throw "Source contract failed: persistent item ID is not written into serialized GameData"
+}
+Write-Host "OK      persistent item ID serialized into GameData"
+
+if($text -notmatch [regex]::Escape('BindPersistentItemId(item,id);')){
+  throw "Source contract failed: persistent item ID is not restored from serialized GameData"
+}
+Write-Host "OK      persistent item ID restored from GameData"
+
+if($text -notmatch [regex]::Escape('?serialiseInInventory@Item@@UEAAPEAVGameData@@PEAVGameDataContainer@@PEAV2@@Z') -or
+   $text -notmatch [regex]::Escape('?loadFromSerialiseInInventory@Item@@UEAAXPEAVGameDataContainer@@PEAVGameData@@@Z')){
+  throw "Source contract failed: item save/load hooks not installed"
+}
+Write-Host "OK      item save/load hooks installed"
+
+Write-Host "Source contract verification passed: 6 checks"
