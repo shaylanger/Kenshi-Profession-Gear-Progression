@@ -2,6 +2,9 @@
 #include "ProfessionGearCore.h"
 
 #include <windows.h>
+#include <math.h>
+#include <intrin.h>
+#include <tlhelp32.h>
 #include <fstream>
 #include <map>
 #include <set>
@@ -108,6 +111,66 @@ bool g_statProbe = false;
 const Character* g_statProbeWho = 0;
 int g_statProbeMod[PGP::STAT_THIEVERY+1] = {0};
 int g_statProbeRaw[PGP::STAT_THIEVERY+1] = {0};
+
+// pg_statprobe callers / watch (TEST ONLY, finds formulas that skip getStat): getStat callers of the probed
+// character (exe RVA of the return address) and a hardware read/write watchpoint on one CharStats member.
+struct ProbeSite { volatile LONG64 rva; volatile LONG n; };
+ProbeSite g_probeCallers[48];
+ProbeSite g_probeWatch[48];
+volatile LONG g_probeWatchHits = 0;
+void* g_probeVeh = 0;
+DWORD64 g_probeWatchAddr = 0;
+void ProbeRecord(ProbeSite* t,LONG64 rva){
+  for(int i=0;i<48;++i){
+    if(t[i].rva==rva){ InterlockedIncrement(&t[i].n); return; }
+    if(t[i].rva==0 && InterlockedCompareExchange64(&t[i].rva,rva,0)==0){ InterlockedIncrement(&t[i].n); return; }
+    if(t[i].rva==rva){ InterlockedIncrement(&t[i].n); return; }
+  }
+}
+LONG CALLBACK ProbeVeh(EXCEPTION_POINTERS* e){
+  if(e->ExceptionRecord->ExceptionCode!=EXCEPTION_SINGLE_STEP) return EXCEPTION_CONTINUE_SEARCH;
+  if(!(e->ContextRecord->Dr6&1)) return EXCEPTION_CONTINUE_SEARCH;
+  InterlockedIncrement(&g_probeWatchHits);
+  ProbeRecord(g_probeWatch,(LONG64)((DWORD64)e->ExceptionRecord->ExceptionAddress-(DWORD64)GetModuleHandleA(0)));
+  e->ContextRecord->Dr6=0;
+  return EXCEPTION_CONTINUE_EXECUTION;
+}
+DWORD WINAPI ProbeSetDr(LPVOID){
+  // runs on a helper thread so every game thread (incl. the caller, which waits) can be suspended
+  HANDLE snap=CreateToolhelp32Snapshot(TH32CS_SNAPTHREAD,0);
+  if(snap==INVALID_HANDLE_VALUE) return 0;
+  THREADENTRY32 te; te.dwSize=sizeof(te); DWORD n=0;
+  for(BOOL ok=Thread32First(snap,&te);ok;ok=Thread32Next(snap,&te)){
+    if(te.th32OwnerProcessID!=GetCurrentProcessId()||te.th32ThreadID==GetCurrentThreadId()) continue;
+    HANDLE h=OpenThread(THREAD_GET_CONTEXT|THREAD_SET_CONTEXT|THREAD_SUSPEND_RESUME,FALSE,te.th32ThreadID);
+    if(!h) continue;
+    if(SuspendThread(h)!=(DWORD)-1){
+      CONTEXT c; memset(&c,0,sizeof(c)); c.ContextFlags=CONTEXT_DEBUG_REGISTERS;
+      if(GetThreadContext(h,&c)){
+        c.Dr0=g_probeWatchAddr; c.Dr6=0;
+        if(g_probeWatchAddr) c.Dr7=(c.Dr7&~0xF0003ULL)|1ULL|(3ULL<<16)|(3ULL<<18); else c.Dr7&=~0xF0003ULL;
+        if(SetThreadContext(h,&c)) ++n;
+      }
+      ResumeThread(h);
+    }
+    CloseHandle(h);
+  }
+  CloseHandle(snap);
+  return n;
+}
+DWORD ProbeApplyWatch(DWORD64 addr){
+  if(!g_probeVeh) g_probeVeh=AddVectoredExceptionHandler(1,ProbeVeh);
+  g_probeWatchAddr=addr;
+  HANDLE t=CreateThread(0,0,ProbeSetDr,0,0,0); DWORD n=0;
+  if(t){ WaitForSingleObject(t,10000); GetExitCodeThread(t,&n); CloseHandle(t); }
+  return n;
+}
+std::string ProbeDump(ProbeSite* t){
+  std::ostringstream ss; int k=0;
+  for(int i=0;i<48;++i){ if(!t[i].rva) continue; ss<<(k++?",":"")<<std::hex<<"0x"<<t[i].rva<<std::dec<<":"<<t[i].n; t[i].n=0; }
+  if(!k) ss<<"none";
+  return ss.str();
+}
 typedef float (*CritChanceFn)(CraftingBuilding*, Character*);
 CritChanceFn g_critChanceOrig = 0;
 
@@ -1368,6 +1431,20 @@ int KahStatProbe(const char*,int argc,const char* const* argv,KAH_Reply* r,void*
     r->append(r,(std::string("statprobe on ")+c->getName()).c_str());
     return KAH_OK;
   }
+  if(v=="watch"){
+    // pg_statprobe watch <npc> <CharStats member offset, hex> | watch off: hardware watchpoint (reads+writes)
+    if(argc>=3 && PGP::Lower(argv[2])=="off"){ DWORD t=ProbeApplyWatch(0); std::ostringstream o; o<<"watch off threads="<<t; r->append(r,o.str().c_str()); return KAH_OK; }
+    if(argc<4){ r->append(r,"usage: pg_statprobe watch <npc> <hexoffset> | watch off"); return KAH_ERROR; }
+    Character* c=KahFindCharacter(argv[2]);
+    if(!c||!c->stats){ r->append(r,(std::string("no character named: ")+argv[2]).c_str()); return KAH_ERROR; }
+    const unsigned long off=strtoul(argv[3],0,16);
+    for(int i=0;i<48;++i){ g_probeWatch[i].rva=0; g_probeWatch[i].n=0; }
+    g_probeWatchHits=0;
+    DWORD t=ProbeApplyWatch((DWORD64)c->stats+off);
+    std::ostringstream o; o<<"watch "<<c->getName()<<" +0x"<<std::hex<<off<<std::dec<<" threads="<<t;
+    r->append(r,o.str().c_str());
+    return t?KAH_OK:KAH_ERROR;
+  }
   std::ostringstream ss; ss<<"statprobe "<<(g_statProbe?"on":"off")<<":";
   int n=0;
   for(int i=1;i<=PGP::STAT_THIEVERY;++i){
@@ -1376,7 +1453,9 @@ int KahStatProbe(const char*,int argc,const char* const* argv,KAH_Reply* r,void*
     g_statProbeMod[i]=0; g_statProbeRaw[i]=0;
   }
   if(!n) ss<<" none";
-  if(v=="off"){ g_statProbe=false; g_statProbeWho=0; }
+  if(v=="callers"){ ss<<" callers(rva*2+raw)="<<ProbeDump(g_probeCallers); for(int i=0;i<48;++i) g_probeCallers[i].rva=0; }
+  if(g_probeWatchAddr||g_probeWatchHits) ss<<" watch hits="<<g_probeWatchHits<<" next_rip_rva="<<ProbeDump(g_probeWatch);
+  if(v=="off"){ g_statProbe=false; g_statProbeWho=0; if(g_probeWatchAddr) ProbeApplyWatch(0); }
   r->append(r,ss.str().c_str());
   return KAH_OK;
 }
@@ -1407,7 +1486,7 @@ void KahTick() {
        +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)
        +g_kah.registerCommand("pg_formulas","pg_formulas on|off (FormulaScaling: gear raises run/swim/stealth/KO/lockpick formulas)",KahFormulas,0)
-       +g_kah.registerCommand("pg_statprobe","pg_statprobe on <npc> | read | off (TEST ONLY: getStat calls per stat)",KahStatProbe,0)
+       +g_kah.registerCommand("pg_statprobe","pg_statprobe on <npc> | read | callers | watch <npc> <hexoff> | watch off | off (TEST ONLY: getStat calls per stat)",KahStatProbe,0)
        +g_kah.registerCommand("pg_force_critical","pg_force_critical on|off (TEST ONLY: every craft is a critical success)",KahForceCritical,0);
   g_kah.log("ProfessionGear: test commands registered");
   std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe/pg_formulas)";
@@ -1443,6 +1522,7 @@ float HookGetStat(const CharStats* s,StatsEnumerated st,bool unmodified) {
   if(g_statProbe && s && s->me==g_statProbeWho){
     PGP::ProfessionStat q=MapStat(st);
     if(q!=PGP::STAT_NONE){ if(unmodified) ++g_statProbeRaw[q]; else ++g_statProbeMod[q]; }
+    if(q!=PGP::STAT_NONE) ProbeRecord(g_probeCallers,(LONG64)((DWORD64)_ReturnAddress()-(DWORD64)GetModuleHandleA(0))*2+(unmodified?1:0));
   }
   if(unmodified || !s || !s->me) return base;
   PGP::ProfessionStat p=MapStat(st);
