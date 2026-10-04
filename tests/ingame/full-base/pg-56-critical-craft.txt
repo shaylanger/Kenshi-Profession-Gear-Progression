@@ -2,7 +2,7 @@
 # covers: PG 89 (critical-success craft: the actual finished quality drives the tier)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; weapon smith)
 # reset: fresh
-# needs: harness 616121b+ (benches near, fill topup); ProfessionGearProgression.dll D7A60E49 or later (`pg_force_critical`, hook on CraftingBuilding::calculateCriticalChance),
+# needs: harness 616121b+ (benches near <x y z>, fill topup); ProfessionGearProgression.dll D7A60E49 or later (`pg_force_critical`, hook on CraftingBuilding::calculateCriticalChance),
 #   harness 8BF347BF+ (m19-4080: the squad stands ~300 m from the benches, Weapon Smith V takes Steel Bars + Fabrics and
 #   needs Katanas + Basic Weapon Grades 3 before the Sickle shows); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: two REAL Sickle crafts by Avarek at weapon smithing 10 (low quality): first normal, then with pg_force_critical on.
@@ -39,6 +39,11 @@ speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 @until 30 teleport Beaks Avarek dist 8 ~ moved=1
 benches 60 crafts ~ Weapon[^|]*Sickle
+# m24-4080: benches/fill search around the first squad member (Full-Base: Avarek); he left the bench at speed 50,
+#   so the queue is polled at the bench position
+@set WX buildings 60 smith ~ Weapon Smith V dist=\S+ pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set WY buildings 60 smith ~ Weapon Smith V dist=\S+ pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set WZ buildings 60 smith ~ Weapon Smith V dist=\S+ pos=[-\d.]+,[-\d.]+,([-\d.]+)
 setstat Avarek weapon_smith 10
 # --- normal craft ---
 # m24-4080: bench inputs take nothing until a craft is queued (m23 probe) -> craft first, then fill
@@ -46,7 +51,8 @@ craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
 speed 50 hold
-@until 900 benches 60 near Avarek ~ Weapon[^|]*queue=0
+@until 900 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
+jobs Avarek
 where Avarek
 where Beaks
 speed 0
@@ -61,7 +67,8 @@ craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
 fill "Weapon Smith" "Steel Bars" 10 radius 60 topup
 fill "Weapon Smith" "Fabrics" 10 radius 60 topup
 speed 50 hold
-@until 900 benches 60 near Avarek ~ Weapon[^|]*queue=0
+@until 900 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
+jobs Avarek
 where Avarek
 where Beaks
 speed 0
