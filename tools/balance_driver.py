@@ -14,7 +14,10 @@ gen: write one harness scenario file per profession (tests/ingame/full-base/pg-5
                   (stealth: the sneaker's skill/gear varies; perception: the observer's)
        chance     harness `chance`: the game's own probability (lockpick, stealth KO, steal)
 csv: turn the BAL2 (and old BAL) lines of runner .out files into the CSV tools/analyze_balance.py reads
-     (test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes).
+     (test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes,
+     setup,evidence,provenance): setup = READY/POST checks (ready=ok, or ready=FAIL with the failed check in
+     notes), evidence = .out line + raw captures, provenance = the runner's PROV line (DLL hashes, PG ini/rules,
+     fixture, scenario hash). Skill and gear have their own columns.
      Throughput = result_count / elapsed_game_seconds, so for every kind "higher = better for the worker":
        craft/operate/research/construct: amount done / window; heal: bandaging / seconds bandaging;
        move/swim: distance / seconds; detect (stealth): seconds unseen / 1; detect (perception): 1 / seconds;
@@ -38,7 +41,7 @@ OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 WORKER = "Avarek"
 OTHER = "Beaks"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
-NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness 5BEC01D0+ (90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, "
+NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
 
@@ -84,8 +87,7 @@ P = [
          building="Wheat Farm L", fill=("Water", 40), window=30, extra_skills=[25, 75]),
     dict(file="pg-54-research.txt", rows="184", kind="research", prof="science", setstat="science",
          building="Research Bench", window=10,
-         techs=["Research Bench II", "Research Bench III", "Stone Processing", "Crossbow Bolts", "Bonedog Breeding",
-                "Hydroponics", "Advanced Cooking", "Iron Plates"]),
+         ),
     dict(file="pg-83-balance-engineering.txt", rows="185", kind="construct", prof="engineering",
          setstat="engineering", building="Small Shack", window=5),
     # ---- timed events ----
@@ -179,6 +181,28 @@ def wear(who):
             'pg_info %s "%s" ~ equipped=1' % (who, GEAR_ITEM)]
 
 
+def ready(*checks):
+    """Bounded readiness block before a measurement window (Shay 2026-10-04): every check is one command with a
+    ~ assertion; a FAIL between "@echo READY" and the point's BAL2 makes that point invalid with the failed check as
+    its reason (csv), so a worker who is asleep / off the bench / without materials, research, power or job is
+    never fitted as a slow worker."""
+    return ["@echo READY"] + list(checks)
+
+
+def post(*checks):
+    """Checks right after the window (worker still at the bench / still researching): same rule as ready()."""
+    return ["@echo POST"] + list(checks)
+
+
+AWAKE = r"where %s ~ ^(?!.*\b(KO|DEAD)\b)" % WORKER
+HASJOB = r"jobs %s ~ jobs=[1-9]" % WORKER
+
+
+def bench_has(bench, item):
+    # the bench's own entry only: " || <bench> ... | in 6x3: [Steel Bars x7 @..]"; '||' separates benches
+    return r"benches 60 ~ %s[^|]*(?:\|[^|]+)*?\[%s x[1-9]" % (bench, item)
+
+
 def timed_points(p):
     skills = sorted(set(TIMED_SKILLS + p.get("extra_skills", [])))
     return points(skills, TIMED_GEAR, TIMED_REPEATS)
@@ -210,11 +234,16 @@ def gen_craft(p):
         # put him back at the bench each point and log where he is / his jobs after the window.
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, bench)]
         L += ['fill "%s" "%s" %d radius 60' % (bench, it, n) for it, n in p["give"]]
-        L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench),
-              q % 0, fpat % 0,
+        L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench)]
+        # a "fill ... nothing fitted" top-up is not a failure by itself: the real bench state decides
+        L += ready(AWAKE, *[bench_has(bench, it) for it, _ in p["give"]] +
+                   [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB])
+        L += [q % 0, fpat % 0,
               "speed %d" % sp, "@wait-game %d 900" % w, "speed 0",
-              "where %s" % WORKER, "jobs %s" % WORKER,
-              q % 1, fpat % 1,
+              "where %s" % WORKER, "jobs %s" % WORKER]
+        # m22-4080 pg-52 w10: he walked 500 m away during the window (benches 60 then found another bench)
+        L += post(AWAKE, r"benches 8 ~ %s" % bench)
+        L += [q % 1, fpat % 1,
               echo(p["rows"], p["prof"], skill, gear, label, "craft", w * 60, "${Q0}/${F0}", "${Q1}/${F1}"),
               "hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]
@@ -237,8 +266,9 @@ def gen_operate(p):
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
-        L += ['fill "%s" %s %d radius 1000' % (b, p["fill"][0], p["fill"][1]),
-              'pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
+        L += ['fill "%s" %s %d radius 1000' % (b, p["fill"][0], p["fill"][1])]
+        L += ready(AWAKE, HASJOB)
+        L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
               "speed 10", "@wait-game %d 900" % w, "speed 0",
               '@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
               echo(p["rows"], p["prof"], skill, gear, label, "operate", w * 60, "0", "${OP}"),
@@ -250,24 +280,29 @@ def gen_research(p):
     w = p["window"]
     L = header(p, ["%s researches at the %s (job); research status progress (0..1) of the first queued tech per"
                    % (WORKER, p["building"]),
-                   "%d-game-minute window at speed 10. Several techs are queued (each start that the game refuses" % w,
-                   "is one FAIL line, harmless): the first that starts is measured; progress resets to the next tech",
+                   "%d-game-minute window at speed 10. research start any 3 queues up to 3 techs the game would" % w,
+                   "start now (longest first); the first is measured; progress resets to the next tech",
                    "when one completes (then that window's BAL2 is invalid: P1 < P0)."],
                ["progress rises in every window (else no power/bench level: research status desk_level/benches);",
                 "own50 > none = research reads the hooked Science (ResearchBuilding::operate is not scaled by PG)."])
     # Full-Base: the bench is ~520 m from the squad and research costs Books (can_pay=0 without, m21-4080)
+    # m22-4080: "Books" is an ARTIFACTS item (harness c5a5c88+ give finds it); hand-picked tech names were
+    # finished / missing / unpayable in this save, so the harness picks startable techs (longest first)
     L += start(['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"]),
-                'give %s "Books" 40' % WORKER, "research status"] +
-               ['research start "%s"' % t for t in p["techs"]] +
-               ["research status ~ queue=[1-9]",
+                'give %s "Books" 40 ~ got [1-9]' % WORKER, "research status",
+                "research start any 3 ~ started=[1-9]",
+                "research status ~ queue=[1-9]",
                 'job %s "%s" radius 60' % (WORKER, p["building"])]) + wear(WORKER)
     L += ["speed 10", "@wait-game 5 600", "speed 0"]
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
+        L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"])]
+        L += ready(AWAKE, HASJOB, r"research status ~ queue=[1-9]", r"research status ~ ^(?!.*power_off)")
         L += ["@set P0 research status ~ progress=%s" % NUM,
-              "speed 10", "@wait-game %d 900" % w, "speed 0",
-              "@set P1 research status ~ progress=%s" % NUM,
+              "speed 10", "@wait-game %d 900" % w, "speed 0"]
+        L += post(r"research status ~ researchers=[1-9]")
+        L += ["@set P1 research status ~ progress=%s" % NUM,
               echo(p["rows"], p["prof"], skill, gear, label, "research", w * 60, "${P0}", "${P1}"),
               "hunger %s 280" % WORKER]
     return L + ["research status", "clearjobs %s" % WORKER]
@@ -301,15 +336,25 @@ def gen_heal(p):
                    "health, no bandages and the same three cuts, then times the first aid at speed 1. %s is NOT" % OTHER,
                    "protected while treated (protect heals wounds). Result = bandaging added per game second."],
                ["finished=1 in every point; own50 > none = first aid reads the hooked Medic."])
-    L += start(['give %s "Basic First Aid Kit" 5' % WORKER, "teleport %s %s dist 4" % (WORKER, OTHER),
-                "protect %s off" % OTHER,
+    # m22-4080: still flat ~4.3/s at Medic 10..90 after Beaks' kit was dropped, first bandage after 0.1 s:
+    # control point with NO kit on the worker first. If the patient still gets bandaged, someone else treats
+    # him and every heal point of this file is invalid (csv: heal_control).
+    L += start(["teleport %s %s dist 4" % (WORKER, OTHER), "protect %s off" % OTHER,
+                'drop %s "Standard First Aid Kit" 1' % OTHER, 'drop %s "Basic First Aid Kit" 1' % OTHER,
+                'drop %s "Basic First Aid Kit" 1' % WORKER, 'drop %s "Standard First Aid Kit" 1' % WORKER,
+                "inv %s" % OTHER, "inv %s" % WORKER, "speed 1",
+                "@set HC healtime %s %s wound %d timeout 60 ~ (bandaging [\\d.]+ -> [\\d.]+)" % (WORKER, OTHER, p["cut"]),
+                "speed 0",
+                "@echo BAL2,%s,%s,0,0,nokit,w0,heal_control,0,${HC},-" % (p["rows"].split("-")[0], p["prof"]),
+                'give %s "Basic First Aid Kit" 5' % WORKER, "teleport %s %s dist 4" % (WORKER, OTHER),
                 # Beaks carries a Standard First Aid Kit in Full-Base and bandages himself within 0.3 s
                 # (flat 4.4/s at every Medic skill of the worker, m21-4080): take it off him first.
-                'drop %s "Standard First Aid Kit" 1' % OTHER]) + wear(WORKER)
+                ]) + wear(WORKER)
     for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
-        L += ["teleport %s %s dist 4" % (WORKER, OTHER), "speed 1",
+        L += ["teleport %s %s dist 4" % (WORKER, OTHER)] + ready(AWAKE, r"inv %s ~ First Aid Kit" % WORKER)
+        L += ["speed 1",
               "@set H healtime %s %s wound %d timeout 600 ~ (seconds_bandaging=[\\d.]+ bandaging [\\d.]+ -> [\\d.]+)"
               % (WORKER, OTHER, p["cut"]),
               "speed 0",
@@ -544,16 +589,43 @@ def measure(kind, window_s, a, b):
     return 0, 1, 0, "unknown kind " + kind
 
 
+def short(x, n=90):
+    return re.sub(r"\s+", " ", x).strip().replace(",", ";")[:n]
+
+
+def prov_of(lines):
+    """PROV line the runner writes on top of each .out (harness/PG DLL hashes, PG ini/rules, fixture, scenario hash);
+    older outputs have none: 'prov=unknown' (usable only while nothing relevant changed since)."""
+    for line in lines[:5]:
+        m = re.match(r"^PROV (.*)$", line.strip())
+        if m:
+            return short(m.group(1), 300)
+    return "prov=unknown"
+
+
 def to_csv(paths):
-    print("test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes")
+    print("test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes,"
+          "setup,evidence,provenance")
+    flats = {}
     for path in paths:
         base = os.path.basename(path)
         lines = list(open(path, encoding="utf-8", errors="replace"))
-        failed_since_point = False
+        prov = prov_of(lines)
+        fail = ""          # first failed command since the last point (its text is the invalid reason)
+        stage = "setup"    # setup | ready | post
+        control_bad = ""   # heal_control: the patient got bandaged with no kit on the medic
         for i, line in enumerate(lines):
-            # "fill ... nothing fitted" = the bench input was already full: harmless top-up, not a broken point
-            if re.match(r"^FAIL\s", line) and "nothing fitted" not in line:
-                failed_since_point = True
+            if re.search(r"@echo READY\b", line):
+                stage = "ready"
+            elif re.search(r"@echo POST\b", line):
+                stage = "post"
+            m = re.match(r"^FAIL\s+(\d+)\s+(.*)$", line)
+            if m:
+                # "fill ... nothing fitted" = the bench input was already full: a top-up, not a failure by itself.
+                # The READY block's benches check reads the real bench state and decides.
+                if "nothing fitted" not in line and not fail:
+                    fail = "%s FAIL L%s %s" % (stage, m.group(1), short(m.group(2)))
+                continue
             m = re.search(r"=> BAL2,([^,]*),([^,]*),(\d+),(\d+),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),(.*)$", line)
             if m:
                 tid, prof, skill, bonus, gear, label, kind, win, a, b = m.groups()
@@ -561,12 +633,28 @@ def to_csv(paths):
                     a = ""
                 if "${" in b:
                     b = ""
+                evidence = "L%d a=%s b=%s" % (i + 1, short(a.strip(), 60), short(b.strip(), 60))
+                if kind == "heal_control":
+                    hm = re.search(r"bandaging ([\d.]+) -> ([\d.]+)", a)
+                    if fail or not hm:
+                        control_bad = "heal control did not run (%s)" % (fail or "no healtime reply")
+                    elif float(hm.group(2)) > float(hm.group(1)):
+                        control_bad = "patient bandaged with no kit on the medic (%s): someone else treats him" % short(a, 60)
+                    print("%s,%s,%s,%s,0,0,0,%s,%s,control,%s,%s" % (
+                        tid, prof, skill, bonus, gear,
+                        "%s heal_control %s %s" % (label, control_bad or "ok: no bandaging without a kit", base),
+                        evidence, prov))
+                    fail, stage = "", "setup"
+                    continue
                 count, secs, ok, note = measure(kind, f(win) or 0, a.strip(), b.strip())
-                # A failed @set leaves its previous capture intact in kah.py. Never
-                # fit that echoed stale value (or a point whose setup command failed).
-                if failed_since_point:
-                    count, ok, note = 0, 0, "failed scenario command before point"
-                failed_since_point = False
+                # A failed @set leaves its previous capture intact in kah.py: never fit that echoed stale value,
+                # nor a point whose setup / readiness / post check failed (the reason names the failed check).
+                setup = "ready=ok"
+                if fail:
+                    count, ok, note, setup = 0, 0, "invalid: " + fail, "ready=FAIL"
+                if control_bad and kind == "heal":
+                    count, ok, note = 0, 0, "invalid: " + control_bad
+                fail, stage = "", "setup"
                 if gear == "lab50":
                     prof, bonus = prof + "_lab50ctl", "0"
                 # the next pg_statprobe read: which profession stats the game read through getStat in this point
@@ -577,8 +665,11 @@ def to_csv(paths):
                         probe = " probe[" + pm.group(1).strip().replace(",", "/") + "]"
                         break
                 extra = (" b=" + b.strip().replace(",", ";")) if b.strip() not in ("", "-") and kind != "craft" else ""
-                print("%s,%s,%s,%s,%s,%s,%d,%s,%s" % (tid, prof, skill, bonus, secs, count, ok, gear,
-                                                     "%s %s %s %s%s%s" % (label, kind, note, base, extra, probe)))
+                print("%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s" % (
+                    tid, prof, skill, bonus, secs, count, ok, gear,
+                    "%s %s %s %s%s%s" % (label, kind, note, base, extra, probe), setup, evidence, prov))
+                if ok and gear == "none" and float(secs or 0) > 0:
+                    flats.setdefault((base, prof), {})[int(skill)] = count / float(secs)
                 continue
             # pg-14 labouring curve (rows 177-183, 30 game minutes per window): "skill 50 +25%: ... output_progress=x"
             m = re.search(r"=> skill (\d+) (no gear|\+(\d+)%|set 25\+25): .*output_progress=([-\d.]+)", line)
@@ -586,7 +677,8 @@ def to_csv(paths):
                 skill, what, pct, prog = m.groups()
                 bonus = 50 if what.startswith("set") else int(pct or 0)
                 gear = "none" if what == "no gear" else ("set25+25" if what.startswith("set") else "own%d" % bonus)
-                print("177,labouring,%s,%d,1800,%s,1,%s,pg-14 %s" % (skill, bonus, float(prog) * 1000.0, gear, base))
+                print("177,labouring,%s,%d,1800,%s,1,%s,pg-14 %s,ready=unchecked,L%d,%s" % (
+                    skill, bonus, float(prog) * 1000.0, gear, base, i + 1, prov))
                 continue
             m = re.search(r"=> BAL,([^,]+),([^,]+),(\d+),(\d+),(\d+),(\d*),(\d*),([^,]+),(\S+)", line)
             if m:  # the old pg-52/53 format
@@ -594,8 +686,14 @@ def to_csv(paths):
                 count, _, ok, note = measure("craft", float(secs), q0, q1)
                 if gear == "lab50":
                     prof, bonus = prof + "_lab50ctl", "0"
-                print("%s,%s,%s,%s,%s,%s,%d,%s,%s" % (tid, prof, skill, bonus, secs, count, ok, gear,
-                                                     "%s craft %s %s" % (label, note, base)))
+                print("%s,%s,%s,%s,%s,%s,%d,%s,%s,ready=unchecked,L%d,%s" % (
+                    tid, prof, skill, bonus, secs, count, ok, gear, "%s craft %s %s" % (label, note, base), i + 1, prov))
+    # 0 script failures is not valid balance data: a curve whose skill-10 and skill-90 throughputs (no gear) are
+    # within 3% is flagged for investigation before any fit (m21/m22: medic flat ~4.37/s at every skill).
+    for (base, prof), pts in sorted(flats.items()):
+        if 10 in pts and 90 in pts and pts[10] > 0 and abs(pts[90] / pts[10] - 1.0) < 0.03:
+            sys.stderr.write("FLAT %s %s: skill 10 %.4g vs skill 90 %.4g per s: investigate before fitting\n"
+                             % (base, prof, pts[10], pts[90]))
 
 
 def list_files():

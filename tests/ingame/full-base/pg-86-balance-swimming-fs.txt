@@ -3,7 +3,7 @@
 # variant: pg_formulas on (FormulaScaling), professions written as <prof>_fs
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness 5BEC01D0+ (90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: Avarek is teleported to deep water at Treefall (-61979 97 33880, findwater: depth 3.3, best run -x 500 m)
 #   per point and swims 30 m along -x (swimtime). Result = swim_speed (deep distance / deep
 #   seconds); runspeed adds the game's own swim_speed/max_swim_speed (harness 740ba0a+).
