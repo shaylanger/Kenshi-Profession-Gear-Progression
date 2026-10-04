@@ -25,8 +25,12 @@ clearjobs Avarek
 @until 30 teleport Avarek building "Harpoon Turret" dist 4 radius 1500 ~ moved=1
 power "Harpoon Turret" supply radius 60
 building "Harpoon Turret" 60 ~ out_of_power=0
-job Avarek "Harpoon Turret" radius 60
-jobs Avarek ~ jobs=[1-9]
+# m25-4080: USE_TURRET is not a permanent job (job ... "job not recorded"; turret never fired): give the real order
+order Avarek USE_TURRET building "Harpoon Turret"
+speed 1
+@sleep 5
+speed 0
+building "Harpoon Turret" 60 ~ operators=1
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_clear Avarek ~ cleared affixes
@@ -37,6 +41,7 @@ setstat Avarek turrets 10
 @set D1 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 relation ${D1} -100
 @sleep 45
+building "Harpoon Turret" 1500 ~ operators=1
 @set H1 hp ${D1} ~ (worst=[\d.]+%?[^|]*)
 kill ${D1}
 # --- Turrets 90, no gear ---
@@ -44,6 +49,7 @@ setstat Avarek turrets 90
 @set D2 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 relation ${D2} -100
 @sleep 45
+building "Harpoon Turret" 1500 ~ operators=1
 @set H2 hp ${D2} ~ (worst=[\d.]+%?[^|]*)
 kill ${D2}
 # --- Turrets 10 with +50% Turrets gear ---
@@ -53,6 +59,7 @@ pg_bonus Avarek turrets ~ equipped_bonus=50% .*match=1
 @set D3 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 relation ${D3} -100
 @sleep 45
+building "Harpoon Turret" 1500 ~ operators=1
 @set H3 hp ${D3} ~ (worst=[\d.]+%?[^|]*)
 relation ${D3} 0
 kill ${D3}
