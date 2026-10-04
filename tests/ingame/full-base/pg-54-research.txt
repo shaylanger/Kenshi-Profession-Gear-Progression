@@ -56,13 +56,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,10,0,none,w1,research,600,${P0},${P1}
+@echo BAL2,184,science,10,0,none,w1,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w2: skill 90, gear none ---
@@ -80,13 +82,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,90,0,none,w2,research,600,${P0},${P1}
+@echo BAL2,184,science,90,0,none,w2,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w3: skill 50, gear none ---
@@ -104,13 +108,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,0,none,w3,research,600,${P0},${P1}
+@echo BAL2,184,science,50,0,none,w3,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w4: skill 50, gear own25 ---
@@ -131,13 +137,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,25,own25,w4,research,600,${P0},${P1}
+@echo BAL2,184,science,50,25,own25,w4,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w5: skill 50, gear own50 ---
@@ -158,13 +166,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,50,own50,w5,research,600,${P0},${P1}
+@echo BAL2,184,science,50,50,own50,w5,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w6: skill 50, gear lab50 ---
@@ -185,13 +195,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,0,lab50,w6,research,600,${P0},${P1}
+@echo BAL2,184,science,50,0,lab50,w6,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w7: skill 50, gear none ---
@@ -209,13 +221,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,0,none,w7,research,600,${P0},${P1}
+@echo BAL2,184,science,50,0,none,w7,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w8: skill 50, gear own25 ---
@@ -236,13 +250,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,25,own25,w8,research,600,${P0},${P1}
+@echo BAL2,184,science,50,25,own25,w8,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w9: skill 50, gear own50 ---
@@ -263,13 +279,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,50,own50,w9,research,600,${P0},${P1}
+@echo BAL2,184,science,50,50,own50,w9,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w10: skill 50, gear lab50 ---
@@ -290,13 +308,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,0,lab50,w10,research,600,${P0},${P1}
+@echo BAL2,184,science,50,0,lab50,w10,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w11: skill 50, gear none ---
@@ -314,13 +334,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,0,none,w11,research,600,${P0},${P1}
+@echo BAL2,184,science,50,0,none,w11,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w12: skill 50, gear own25 ---
@@ -341,13 +363,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,25,own25,w12,research,600,${P0},${P1}
+@echo BAL2,184,science,50,25,own25,w12,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w13: skill 50, gear own50 ---
@@ -368,13 +392,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,50,own50,w13,research,600,${P0},${P1}
+@echo BAL2,184,science,50,50,own50,w13,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w14: skill 50, gear lab50 ---
@@ -395,13 +421,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,50,0,lab50,w14,research,600,${P0},${P1}
+@echo BAL2,184,science,50,0,lab50,w14,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w15: skill 75, gear none ---
@@ -419,13 +447,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,75,0,none,w15,research,600,${P0},${P1}
+@echo BAL2,184,science,75,0,none,w15,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 # --- w16: skill 25, gear own50 ---
@@ -446,13 +476,15 @@ research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
+@set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 10 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 @echo POST
 research status ~ researchers=[1-9]
 @set P1 research status ~ progress=([-\d.]+)
-@echo BAL2,184,science,25,50,own50,w16,research,600,${P0},${P1}
+@echo BAL2,184,science,25,50,own50,w16,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
 research status

@@ -60,9 +60,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -70,7 +72,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,10,0,none,w1,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,10,0,none,w1,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w2: skill 90, gear none ---
@@ -93,9 +95,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -103,7 +107,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,90,0,none,w2,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,90,0,none,w2,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w3: skill 50, gear none ---
@@ -126,9 +130,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -136,7 +142,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,0,none,w3,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,0,none,w3,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w4: skill 50, gear own25 ---
@@ -162,9 +168,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -172,7 +180,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,25,own25,w4,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,25,own25,w4,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w5: skill 50, gear own50 ---
@@ -198,9 +206,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -208,7 +218,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,50,own50,w5,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,50,own50,w5,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w6: skill 50, gear lab50 ---
@@ -234,9 +244,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -244,7 +256,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,0,lab50,w6,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,0,lab50,w6,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w7: skill 50, gear none ---
@@ -267,9 +279,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -277,7 +291,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,0,none,w7,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,0,none,w7,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w8: skill 50, gear own25 ---
@@ -303,9 +317,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -313,7 +329,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,25,own25,w8,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,25,own25,w8,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w9: skill 50, gear own50 ---
@@ -339,9 +355,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -349,7 +367,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,50,own50,w9,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,50,own50,w9,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w10: skill 50, gear lab50 ---
@@ -375,9 +393,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -385,7 +405,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,0,lab50,w10,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,0,lab50,w10,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w11: skill 50, gear none ---
@@ -408,9 +428,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -418,7 +440,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,0,none,w11,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,0,none,w11,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w12: skill 50, gear own25 ---
@@ -444,9 +466,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -454,7 +478,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,25,own25,w12,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,25,own25,w12,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w13: skill 50, gear own50 ---
@@ -480,9 +504,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -490,7 +516,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,50,own50,w13,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,50,own50,w13,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w14: skill 50, gear lab50 ---
@@ -516,9 +542,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -526,7 +554,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,50,0,lab50,w14,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,50,0,lab50,w14,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w15: skill 75, gear none ---
@@ -549,9 +577,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -559,7 +589,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,75,0,none,w15,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,75,0,none,w15,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 # --- w16: skill 25, gear own50 ---
@@ -585,9 +615,11 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+@set T0 time ~ game_hours=([\d.]+)
 speed 20 hold
 @wait-game 20 900
 speed 0
+@set T1 time ~ game_hours=([\d.]+)
 where Avarek
 jobs Avarek
 @echo POST
@@ -595,7 +627,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 8 ~ Crossbow Crafting
 @set Q1 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F1 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
-@echo BAL2,190,crossbow_smithing,25,50,own50,w16,craft,1200,${Q0}/${F0},${Q1}/${F1}
+@echo BAL2,190,crossbow_smithing,25,50,own50,w16,craft,T${T0}_${T1},${Q0}/${F0},${Q1}/${F1}
 pg_statprobe read
 hunger Avarek 280
 clearjobs Avarek

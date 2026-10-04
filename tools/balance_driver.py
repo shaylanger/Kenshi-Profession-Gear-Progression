@@ -115,6 +115,11 @@ P = [
 ]
 
 NUM = r"([-\d.]+)"
+# m23b-4080: @wait-game overshoots (asked 5/20 game min, got 8.5/21.6-33): measure every window with the game clock
+# and echo "T<h0>_<h1>" as the window; csv turns it into game seconds.
+TS0 = r"@set T0 time ~ game_hours=([\d.]+)"
+TS1 = r"@set T1 time ~ game_hours=([\d.]+)"
+WIN = "T${T0}_${T1}"
 
 
 def pgstat(prof, stat):
@@ -249,12 +254,12 @@ def gen_craft(p):
         L += ready(AWAKE, *[bench_has(bench, it) for it, _ in p["give"]] +
                    [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB, powered(bench)])
         L += [q % 0, fpat % 0,
-              "speed %d" % sp, "@wait-game %d 900" % w, "speed 0",
+              TS0, "speed %d" % sp, "@wait-game %d 900" % w, "speed 0", TS1,
               "where %s" % WORKER, "jobs %s" % WORKER]
         # m22-4080 pg-52 w10: he walked 500 m away during the window (benches 60 then found another bench)
         L += post(AWAKE, r"benches 8 ~ %s" % bench)
         L += [q % 1, fpat % 1,
-              echo(p["rows"], p["prof"], skill, gear, label, "craft", w * 60, "${Q0}/${F0}", "${Q1}/${F1}"),
+              echo(p["rows"], p["prof"], skill, gear, label, "craft", WIN, "${Q0}/${F0}", "${Q1}/${F1}"),
               "hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]
 
@@ -279,9 +284,9 @@ def gen_operate(p):
         L += ['fill "%s" %s %d radius 1000' % (b, p["fill"][0], p["fill"][1])]
         L += ready(AWAKE, HASJOB)
         L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
-              "speed 10", "@wait-game %d 900" % w, "speed 0",
+              TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1,
               '@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
-              echo(p["rows"], p["prof"], skill, gear, label, "operate", w * 60, "0", "${OP}"),
+              echo(p["rows"], p["prof"], skill, gear, label, "operate", WIN, "0", "${OP}"),
               "hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]
 
@@ -311,10 +316,10 @@ def gen_research(p):
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"])]
         L += ready(AWAKE, HASJOB, r"research status ~ queue=[1-9]", r"research status ~ ^(?!.*power_off)", powered(p["building"]))
         L += ["@set P0 research status ~ progress=%s" % NUM,
-              "speed 10", "@wait-game %d 900" % w, "speed 0"]
+              TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1]
         L += post(r"research status ~ researchers=[1-9]")
         L += ["@set P1 research status ~ progress=%s" % NUM,
-              echo(p["rows"], p["prof"], skill, gear, label, "research", w * 60, "${P0}", "${P1}"),
+              echo(p["rows"], p["prof"], skill, gear, label, "research", WIN, "${P0}", "${P1}"),
               "hunger %s 280" % WORKER]
     return L + ["research status", "clearjobs %s" % WORKER]
 
@@ -332,9 +337,9 @@ def gen_construct(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         L += ['@set P0 construct %s "%s" dist 12 ~ progress=%s' % (WORKER, b, NUM),
-              "speed 10", "@wait-game %d 900" % w, "speed 0",
+              TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1,
               '@set P1 construction "%s" ~ progress=%s complete=0' % (b, NUM),
-              echo(p["rows"], p["prof"], skill, gear, label, "construct", w * 60, "${P0}", "${P1}"),
+              echo(p["rows"], p["prof"], skill, gear, label, "construct", WIN, "${P0}", "${P1}"),
               "clearjobs %s" % WORKER,
               'unbuild "%s"' % b,
               "hunger %s 280" % WORKER]
@@ -563,6 +568,9 @@ def gen():
 
 # ---------------------------------------------------------------- csv
 def f(x):
+    m = re.match(r"^T([\d.]+)_([\d.]+)$", str(x).strip())
+    if m:  # game-clock window (m23b): game hours -> game seconds
+        return (float(m.group(2)) - float(m.group(1))) * 3600.0
     try:
         return float(x)
     except (TypeError, ValueError):
