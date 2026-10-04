@@ -2,7 +2,7 @@
 # covers: PG 250 (world-loot profession distribution across a ruin/chest corpus)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the world has ruins and labs: `towns ruin,ancient,...`)
 # reset: fresh
-# needs: PG 266C68F5+ (`pg_lootscan`), harness 33087EDE+ (`towns`, KAH 24); own launch with
+# needs: PG 266C68F5+ (`pg_lootscan`), harness 5BEC01D0+ (`towns`, KAH 24; teleport moved=, speed hold); own launch with
 #   set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (normal chances, every roll logged;
 #   afterwards -Sidecar Restore). Forced mode would make every eligible item roll: the result means nothing there.
 # design: part B runs first (at the base), then part A. Part A, real ruins: the 3 ruins/labs nearest the base (harness `towns ruin,ancient,...`) are visited by teleport
@@ -28,10 +28,15 @@ protect Beaks on
 protect Avarek on
 hunger Avarek 280
 hunger Beaks 280
-select Beaks
+select Avarek
+clearjobs Avarek
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
 # --- part B: harness-made chest corpus, 300 m from the base (away from the base's own chests) ---
-teleport Avarek Beaks dist 300
-teleport Beaks Avarek dist 6
+@until 30 teleport Avarek Beaks dist 300 ~ moved=1
+@until 30 teleport Beaks Avarek dist 6 ~ moved=1
 build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ built
 fill "General Camp Storage Chest" 2227-chris_r.mod 3 radius 60
 fill "General Camp Storage Chest" 2185-gamedata.base 3 radius 60
@@ -56,9 +61,9 @@ towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodla
 @set X1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
 @set Y1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=[-\d.]+,([-\d.]+),[-\d.]+
 @set Z1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=[-\d.]+,[-\d.]+,([-\d.]+)
-teleport Avarek ${X1} ${Y1} ${Z1}
-teleport Beaks Avarek dist 5
-speed 1
+@until 30 teleport Avarek ${X1} ${Y1} ${Z1} ~ moved=1
+@until 30 teleport Beaks Avarek dist 5 ~ moved=1
+speed 1 hold
 @sleep 20
 speed 0
 where Avarek
@@ -70,9 +75,9 @@ pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
 @set X2 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 2: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
 @set Y2 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 2: [^|]*?pos=[-\d.]+,([-\d.]+),[-\d.]+
 @set Z2 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 2: [^|]*?pos=[-\d.]+,[-\d.]+,([-\d.]+)
-teleport Avarek ${X2} ${Y2} ${Z2}
-teleport Beaks Avarek dist 5
-speed 1
+@until 30 teleport Avarek ${X2} ${Y2} ${Z2} ~ moved=1
+@until 30 teleport Beaks Avarek dist 5 ~ moved=1
+speed 1 hold
 @sleep 20
 speed 0
 where Avarek
@@ -83,9 +88,9 @@ pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
 @set X3 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 3: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
 @set Y3 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 3: [^|]*?pos=[-\d.]+,([-\d.]+),[-\d.]+
 @set Z3 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 3: [^|]*?pos=[-\d.]+,[-\d.]+,([-\d.]+)
-teleport Avarek ${X3} ${Y3} ${Z3}
-teleport Beaks Avarek dist 5
-speed 1
+@until 30 teleport Avarek ${X3} ${Y3} ${Z3} ~ moved=1
+@until 30 teleport Beaks Avarek dist 5 ~ moved=1
+speed 1 hold
 @sleep 20
 speed 0
 where Avarek
