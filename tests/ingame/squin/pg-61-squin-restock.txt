@@ -14,7 +14,9 @@ speed 0
 protect Beak on
 protect Kint on
 select Beak
-@set T traders 300 ~ traders within [\d.]+: ([^|#]+?) #\d+/\d+ \[
+# m18-4080: the nearest "trader" was a walking Shop Guard whose 60 m storage set changed as he moved (7 -> 5 storages,
+# the watched item gone, nothing to compare). Trader Tentpeg (Tech Traders, fixed shop, 7 rolled items) is a real shopkeeper.
+@set T traders 1500 ~ (Trader Tentpeg) #\d+/\d+ \[
 pg_shop "${T}" ~ trader=1 storages=[1-9]
 @set K pg_shop "${T}" ~ key=(pgp\S+) equipped=\d tier=\d+ affixes=(?!none)
 @set A pg_shop "${T}" ~ key=${K} equipped=\d tier=\d+ affixes=([^\]]+)\]

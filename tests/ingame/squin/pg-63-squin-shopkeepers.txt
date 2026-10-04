@@ -1,0 +1,37 @@
+# id: PG-squin-shopkeepers-63
+# covers: PG 220-227 (shop stock by trader type), the shopkeepers pg-60 misses
+# fixture: Testing-Save-Squin (squad Beak + Kint), a fresh kah copy that was not saved
+# reset: fresh
+# needs: ProfessionGearProgression.dll 7D80DBB3+, harness F6A3FC31; same launch/mode as pg-60 (NormalVerbose + Normal
+#   rules + empty sidecar). Items of an unsaved copy get new keys on every load, so a reload rolls them again from the
+#   shipped distribution: this file needn't be the first load.
+# design: pg-60's `traders 300` only reaches the shop guards round the squad's start (m18-4080: 7 hits, 6 of them
+#   "Shop Guard ..."); the real shopkeepers stand 400-1450 m away. `traders 1500` (m18-4080) lists them; the names
+#   below are this fixture's: Barman Urush (bar), Apothecary Misheel/Marquart/Misho (medic), Trader Tentpeg (Tech
+#   Traders), Gemeson, Double. pg_shop scans storage within 60 m of the trader, so it works at any distance as long as
+#   the town is loaded. A missing name just fails its own step.
+# verify: per shopkeeper: storages, eligible_stock and the pg_census `shop` class (stats rolled). Row 220-227 = which
+#   shop types exist and roll their profession stats (Medic at apothecaries, Cooking/Farming at the bar, Science/
+#   Engineering/Robotics at Tech Traders); types with no shop in Squin = needs setup.
+@wait-world
+@sleep 8
+speed 0
+protect Beak on
+protect Kint on
+select Beak
+traders 1500 ~ traders within
+pg_shop "Barman Urush" ~ trader=1 storages=
+pg_census "Barman Urush" ~ shop:
+pg_shop "Apothecary Misheel" ~ trader=1 storages=
+pg_census "Apothecary Misheel" ~ shop:
+pg_shop "Apothecary Marquart" ~ trader=1 storages=
+pg_census "Apothecary Marquart" ~ shop:
+pg_shop "Apothecary Misho" ~ trader=1 storages=
+pg_census "Apothecary Misho" ~ shop:
+pg_shop "Trader Tentpeg" ~ trader=1 storages=
+pg_census "Trader Tentpeg" ~ shop:
+pg_shop "Gemeson" ~ trader=1 storages=
+pg_census "Gemeson" ~ shop:
+pg_shop "Double" ~ trader=1 storages=
+pg_census "Double" ~ shop:
+pg_census
