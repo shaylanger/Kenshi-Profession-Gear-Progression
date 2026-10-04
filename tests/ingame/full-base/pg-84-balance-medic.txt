@@ -3,7 +3,7 @@
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: Beaks (medic, 5 Basic First Aid Kits) treats Avarek: per point healtime ... wound 30 gives Avarek full
+# design: Beaks (medic, 5 Standard First Aid Kits) treats Avarek: per point healtime ... wound 30 gives Avarek full
 #   health, no bandages and the same three cuts, then times the first aid at speed 1. Avarek is NOT
 #   protected while treated (protect heals wounds). Result = bandaging added per game second.
 # verify: finished=1 in every point; own50 > none = first aid reads the hooked Medic.
@@ -46,7 +46,7 @@ speed 1 hold
 speed 0
 @echo BAL2,191,medic,0,0,nokit,w0,heal_control,0,bandaging 0 -> 0,-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 5
+give Beaks "Standard First Aid Kit" 5
 wake Beaks
 speed 1 hold
 @sleep 3
@@ -137,7 +137,7 @@ pg_statprobe read
 hunger Beaks 280
 drop Beaks "Basic First Aid Kit" all
 drop Beaks "Standard First Aid Kit" all
-give Beaks "Basic First Aid Kit" 5
+give Beaks "Standard First Aid Kit" 5
 # --- w1: skill 10, gear none ---
 setstat Beaks medic 10
 pg_clear Beaks ~ cleared affixes
@@ -148,14 +148,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,10,0,none,w1,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w2: skill 90, gear none ---
 setstat Beaks medic 90
@@ -167,14 +167,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,90,0,none,w2,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w3: skill 50, gear none ---
 setstat Beaks medic 50
@@ -186,14 +186,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,none,w3,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w4: skill 50, gear own25 ---
 setstat Beaks medic 50
@@ -208,14 +208,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,25,own25,w4,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w5: skill 50, gear own50 ---
 setstat Beaks medic 50
@@ -230,14 +230,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,50,own50,w5,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w6: skill 50, gear lab50 ---
 setstat Beaks medic 50
@@ -252,14 +252,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,lab50,w6,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w7: skill 50, gear none ---
 setstat Beaks medic 50
@@ -271,14 +271,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,none,w7,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w8: skill 50, gear own25 ---
 setstat Beaks medic 50
@@ -293,14 +293,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,25,own25,w8,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w9: skill 50, gear own50 ---
 setstat Beaks medic 50
@@ -315,14 +315,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,50,own50,w9,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w10: skill 50, gear lab50 ---
 setstat Beaks medic 50
@@ -337,14 +337,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,lab50,w10,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w11: skill 50, gear none ---
 setstat Beaks medic 50
@@ -356,14 +356,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,none,w11,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w12: skill 50, gear own25 ---
 setstat Beaks medic 50
@@ -378,14 +378,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,25,own25,w12,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w13: skill 50, gear own50 ---
 setstat Beaks medic 50
@@ -400,14 +400,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,50,own50,w13,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w14: skill 50, gear lab50 ---
 setstat Beaks medic 50
@@ -422,14 +422,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,lab50,w14,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w15: skill 75, gear none ---
 setstat Beaks medic 75
@@ -441,14 +441,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,75,0,none,w15,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 # --- w16: skill 25, gear own50 ---
 setstat Beaks medic 25
@@ -463,14 +463,14 @@ speed 0
 @until 30 teleport Beaks Avarek dist 4 ~ moved=1
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
-inv Beaks ~ First Aid Kit
+inv Beaks ~ Standard First Aid Kit
 speed 1 hold
 stat Beaks medic ~ wounds=1\.0000
 @set H healtime Beaks Avarek wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,25,50,own50,w16,heal,0,${H},-
 pg_statprobe read
-give Beaks "Basic First Aid Kit" 1
+give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
 health Avarek 100
 protect Avarek on
