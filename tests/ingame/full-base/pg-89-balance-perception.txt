@@ -47,6 +47,11 @@ equip PGW1 "Iron Hat"
 pg_info PGW1 "Iron Hat" ~ equipped=1
 setstat PGW1 perception 10
 pg_clear PGW1 ~ cleared affixes
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW1 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -77,6 +82,11 @@ equip PGW2 "Iron Hat"
 pg_info PGW2 "Iron Hat" ~ equipped=1
 setstat PGW2 perception 90
 pg_clear PGW2 ~ cleared affixes
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW2 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -107,6 +117,11 @@ equip PGW3 "Iron Hat"
 pg_info PGW3 "Iron Hat" ~ equipped=1
 setstat PGW3 perception 50
 pg_clear PGW3 ~ cleared affixes
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW3 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -140,6 +155,11 @@ pg_clear PGW4 ~ cleared affixes
 pg_force_affix PGW4 "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGW4 perception ~ equipped_bonus=25% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW4 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -173,6 +193,11 @@ pg_clear PGW5 ~ cleared affixes
 pg_force_affix PGW5 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW5 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW5 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -206,6 +231,11 @@ pg_clear PGW6 ~ cleared affixes
 pg_force_affix PGW6 "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGW6 labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW6 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -236,6 +266,11 @@ equip PGW7 "Iron Hat"
 pg_info PGW7 "Iron Hat" ~ equipped=1
 setstat PGW7 perception 50
 pg_clear PGW7 ~ cleared affixes
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW7 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -269,6 +304,11 @@ pg_clear PGW8 ~ cleared affixes
 pg_force_affix PGW8 "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGW8 perception ~ equipped_bonus=25% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW8 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -302,6 +342,11 @@ pg_clear PGW9 ~ cleared affixes
 pg_force_affix PGW9 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW9 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW9 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -335,6 +380,11 @@ pg_clear PGW10 ~ cleared affixes
 pg_force_affix PGW10 "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGW10 labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW10 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -365,6 +415,11 @@ equip PGW11 "Iron Hat"
 pg_info PGW11 "Iron Hat" ~ equipped=1
 setstat PGW11 perception 50
 pg_clear PGW11 ~ cleared affixes
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW11 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -398,6 +453,11 @@ pg_clear PGW12 ~ cleared affixes
 pg_force_affix PGW12 "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGW12 perception ~ equipped_bonus=25% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW12 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -431,6 +491,11 @@ pg_clear PGW13 ~ cleared affixes
 pg_force_affix PGW13 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW13 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW13 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -464,6 +529,11 @@ pg_clear PGW14 ~ cleared affixes
 pg_force_affix PGW14 "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGW14 labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW14 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -494,6 +564,11 @@ equip PGW15 "Iron Hat"
 pg_info PGW15 "Iron Hat" ~ equipped=1
 setstat PGW15 perception 75
 pg_clear PGW15 ~ cleared affixes
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW15 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0
@@ -527,6 +602,11 @@ pg_clear PGW16 ~ cleared affixes
 pg_force_affix PGW16 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW16 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek PGW16 dist 20 ~ moved=1
 speed 1 hold
 @sleep 3
 speed 0

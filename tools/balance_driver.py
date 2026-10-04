@@ -493,6 +493,9 @@ def gen_detect(p):
         if not sneaker_varies:
             L += ["pg_statprobe on %s" % obs] + wear(obs)
         L += ["setstat %s %s %d" % (who, p["setstat"], skill)] + gear_lines(who, p["prof"], gear)
+        # m25-4080 batch19 pg-87: 2 of the first 3 observers stood ~200 m away 3 s after the spawn (the game moved
+        # them out of the base layout), w2 was 16 m away: bring the sneaker to wherever the observer stands
+        L += ['@until 30 teleport %s %s dist %d ~ moved=1' % (WORKER, obs, d)]
         L += ["speed 1", "@sleep 3", "speed 0"] + ready("where %s ~ %s" % (obs, near)) +              ["speed 1",
               "@set T detecttime %s %s timeout %d ~ (seen=\d seconds_to_seen=\S+)" % (WORKER, obs, to),
               "speed 0",
