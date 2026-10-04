@@ -43,10 +43,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW1
-pin PGW1 face Beaks ~ pinned
+pin PGW1 at Beaks dist 100 face Beaks ~ pinned
 relation PGW1 0
 setstat PGW1 perception 30
 pg_statprobe on PGW1
@@ -56,11 +56,6 @@ equip PGW1 "Iron Hat"
 pg_info PGW1 "Iron Hat" ~ equipped=1
 setstat PGW1 perception 10
 pg_clear PGW1 ~ cleared affixes
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW1 dist 100 ~ moved=1
 face PGW1 Beaks
 speed 1 hold
 @sleep 3
@@ -83,10 +78,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW2
-pin PGW2 face Beaks ~ pinned
+pin PGW2 at Beaks dist 100 face Beaks ~ pinned
 relation PGW2 0
 setstat PGW2 perception 30
 pg_statprobe on PGW2
@@ -96,11 +91,6 @@ equip PGW2 "Iron Hat"
 pg_info PGW2 "Iron Hat" ~ equipped=1
 setstat PGW2 perception 90
 pg_clear PGW2 ~ cleared affixes
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW2 dist 100 ~ moved=1
 face PGW2 Beaks
 speed 1 hold
 @sleep 3
@@ -123,10 +113,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW3
-pin PGW3 face Beaks ~ pinned
+pin PGW3 at Beaks dist 100 face Beaks ~ pinned
 relation PGW3 0
 setstat PGW3 perception 30
 pg_statprobe on PGW3
@@ -136,11 +126,6 @@ equip PGW3 "Iron Hat"
 pg_info PGW3 "Iron Hat" ~ equipped=1
 setstat PGW3 perception 50
 pg_clear PGW3 ~ cleared affixes
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW3 dist 100 ~ moved=1
 face PGW3 Beaks
 speed 1 hold
 @sleep 3
@@ -163,10 +148,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW4
-pin PGW4 face Beaks ~ pinned
+pin PGW4 at Beaks dist 100 face Beaks ~ pinned
 relation PGW4 0
 setstat PGW4 perception 30
 pg_statprobe on PGW4
@@ -179,11 +164,6 @@ pg_clear PGW4 ~ cleared affixes
 pg_force_affix PGW4 "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGW4 perception ~ equipped_bonus=25% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW4 dist 100 ~ moved=1
 face PGW4 Beaks
 speed 1 hold
 @sleep 3
@@ -206,10 +186,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW5
-pin PGW5 face Beaks ~ pinned
+pin PGW5 at Beaks dist 100 face Beaks ~ pinned
 relation PGW5 0
 setstat PGW5 perception 30
 pg_statprobe on PGW5
@@ -222,11 +202,6 @@ pg_clear PGW5 ~ cleared affixes
 pg_force_affix PGW5 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW5 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW5 dist 100 ~ moved=1
 face PGW5 Beaks
 speed 1 hold
 @sleep 3
@@ -249,10 +224,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW6
-pin PGW6 face Beaks ~ pinned
+pin PGW6 at Beaks dist 100 face Beaks ~ pinned
 relation PGW6 0
 setstat PGW6 perception 30
 pg_statprobe on PGW6
@@ -265,11 +240,6 @@ pg_clear PGW6 ~ cleared affixes
 pg_force_affix PGW6 "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGW6 labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW6 dist 100 ~ moved=1
 face PGW6 Beaks
 speed 1 hold
 @sleep 3
@@ -292,10 +262,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW7
-pin PGW7 face Beaks ~ pinned
+pin PGW7 at Beaks dist 100 face Beaks ~ pinned
 relation PGW7 0
 setstat PGW7 perception 30
 pg_statprobe on PGW7
@@ -305,11 +275,6 @@ equip PGW7 "Iron Hat"
 pg_info PGW7 "Iron Hat" ~ equipped=1
 setstat PGW7 perception 50
 pg_clear PGW7 ~ cleared affixes
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW7 dist 100 ~ moved=1
 face PGW7 Beaks
 speed 1 hold
 @sleep 3
@@ -332,10 +297,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW8
-pin PGW8 face Beaks ~ pinned
+pin PGW8 at Beaks dist 100 face Beaks ~ pinned
 relation PGW8 0
 setstat PGW8 perception 30
 pg_statprobe on PGW8
@@ -348,11 +313,6 @@ pg_clear PGW8 ~ cleared affixes
 pg_force_affix PGW8 "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGW8 perception ~ equipped_bonus=25% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW8 dist 100 ~ moved=1
 face PGW8 Beaks
 speed 1 hold
 @sleep 3
@@ -375,10 +335,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW9
-pin PGW9 face Beaks ~ pinned
+pin PGW9 at Beaks dist 100 face Beaks ~ pinned
 relation PGW9 0
 setstat PGW9 perception 30
 pg_statprobe on PGW9
@@ -391,11 +351,6 @@ pg_clear PGW9 ~ cleared affixes
 pg_force_affix PGW9 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW9 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW9 dist 100 ~ moved=1
 face PGW9 Beaks
 speed 1 hold
 @sleep 3
@@ -418,10 +373,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW10
-pin PGW10 face Beaks ~ pinned
+pin PGW10 at Beaks dist 100 face Beaks ~ pinned
 relation PGW10 0
 setstat PGW10 perception 30
 pg_statprobe on PGW10
@@ -434,11 +389,6 @@ pg_clear PGW10 ~ cleared affixes
 pg_force_affix PGW10 "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGW10 labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW10 dist 100 ~ moved=1
 face PGW10 Beaks
 speed 1 hold
 @sleep 3
@@ -461,10 +411,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW11
-pin PGW11 face Beaks ~ pinned
+pin PGW11 at Beaks dist 100 face Beaks ~ pinned
 relation PGW11 0
 setstat PGW11 perception 30
 pg_statprobe on PGW11
@@ -474,11 +424,6 @@ equip PGW11 "Iron Hat"
 pg_info PGW11 "Iron Hat" ~ equipped=1
 setstat PGW11 perception 50
 pg_clear PGW11 ~ cleared affixes
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW11 dist 100 ~ moved=1
 face PGW11 Beaks
 speed 1 hold
 @sleep 3
@@ -501,10 +446,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW12
-pin PGW12 face Beaks ~ pinned
+pin PGW12 at Beaks dist 100 face Beaks ~ pinned
 relation PGW12 0
 setstat PGW12 perception 30
 pg_statprobe on PGW12
@@ -517,11 +462,6 @@ pg_clear PGW12 ~ cleared affixes
 pg_force_affix PGW12 "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGW12 perception ~ equipped_bonus=25% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW12 dist 100 ~ moved=1
 face PGW12 Beaks
 speed 1 hold
 @sleep 3
@@ -544,10 +484,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW13
-pin PGW13 face Beaks ~ pinned
+pin PGW13 at Beaks dist 100 face Beaks ~ pinned
 relation PGW13 0
 setstat PGW13 perception 30
 pg_statprobe on PGW13
@@ -560,11 +500,6 @@ pg_clear PGW13 ~ cleared affixes
 pg_force_affix PGW13 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW13 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW13 dist 100 ~ moved=1
 face PGW13 Beaks
 speed 1 hold
 @sleep 3
@@ -587,10 +522,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW14
-pin PGW14 face Beaks ~ pinned
+pin PGW14 at Beaks dist 100 face Beaks ~ pinned
 relation PGW14 0
 setstat PGW14 perception 30
 pg_statprobe on PGW14
@@ -603,11 +538,6 @@ pg_clear PGW14 ~ cleared affixes
 pg_force_affix PGW14 "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGW14 labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW14 dist 100 ~ moved=1
 face PGW14 Beaks
 speed 1 hold
 @sleep 3
@@ -630,10 +560,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW15
-pin PGW15 face Beaks ~ pinned
+pin PGW15 at Beaks dist 100 face Beaks ~ pinned
 relation PGW15 0
 setstat PGW15 perception 30
 pg_statprobe on PGW15
@@ -643,11 +573,6 @@ equip PGW15 "Iron Hat"
 pg_info PGW15 "Iron Hat" ~ equipped=1
 setstat PGW15 perception 75
 pg_clear PGW15 ~ cleared affixes
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW15 dist 100 ~ moved=1
 face PGW15 Beaks
 speed 1 hold
 @sleep 3
@@ -670,10 +595,10 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW16
-pin PGW16 face Beaks ~ pinned
+pin PGW16 at Beaks dist 100 face Beaks ~ pinned
 relation PGW16 0
 setstat PGW16 perception 30
 pg_statprobe on PGW16
@@ -686,11 +611,6 @@ pg_clear PGW16 ~ cleared affixes
 pg_force_affix PGW16 "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGW16 perception ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-wake Beaks
-speed 1 hold
-@sleep 3
-speed 0
-@until 30 teleport Beaks PGW16 dist 100 ~ moved=1
 face PGW16 Beaks
 speed 1 hold
 @sleep 3

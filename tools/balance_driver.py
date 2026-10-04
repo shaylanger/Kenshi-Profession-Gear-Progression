@@ -544,7 +544,7 @@ def gen_swim(p):
 # saw at all). With DETECT_SPOT set, every point teleports the sneaker to that fixed open spot and pins the observer
 # DETECT dist from him (same direction every point); the READY check also requires line of sight >= 0.5
 # (harness A447F08E+: `face` reports los=). Choose the spot with tests/ingame/full-base/pg-detect-spot-probe.txt.
-DETECT_SPOT = None   # (x, y, z) or None = sneaker brought next to a randomly spawned observer (old method)
+DETECT_SPOT = (-75966.1, 327.2, 33085.7)   # m33 5090 spot probe P5 (600 m from base, los=1, neighbours P6/P7 los=1); (x, y, z) or None = sneaker brought next to a randomly spawned observer (old method)
 LOS_MIN = r"los=(0\.[5-9]\d*|1\.0+)"
 
 def gen_detect(p):
