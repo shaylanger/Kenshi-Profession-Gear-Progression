@@ -542,7 +542,8 @@ def to_csv(paths):
         lines = list(open(path, encoding="utf-8", errors="replace"))
         failed_since_point = False
         for i, line in enumerate(lines):
-            if re.match(r"^FAIL\s", line):
+            # "fill ... nothing fitted" = the bench input was already full: harmless top-up, not a broken point
+            if re.match(r"^FAIL\s", line) and "nothing fitted" not in line:
                 failed_since_point = True
             m = re.search(r"=> BAL2,([^,]*),([^,]*),(\d+),(\d+),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),(.*)$", line)
             if m:
