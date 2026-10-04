@@ -28,16 +28,12 @@ speed 1 hold
 speed 0
 @until 30 teleport Avarek Beaks dist 4 ~ moved=1
 protect Beaks off
-give Beaks "Basic First Aid Kit" 1
-drop Beaks "Basic First Aid Kit"
-give Beaks "Standard First Aid Kit" 1
-drop Beaks "Standard First Aid Kit"
-give Avarek "Basic First Aid Kit" 1
-drop Avarek "Basic First Aid Kit"
-give Avarek "Standard First Aid Kit" 1
-drop Avarek "Standard First Aid Kit"
-inv Beaks
-inv Avarek
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
+inv Beaks ~ ^(?!.*First Aid Kit)
+inv Avarek ~ ^(?!.*First Aid Kit)
 speed 1 hold
 !healtime Avarek Beaks wound 30 timeout 60 ~ finished=0 .*bandaging 0\.0+ -> 0\.0+
 speed 0
@@ -54,10 +50,8 @@ equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
 # --- d1 diagnostic: skill 10, wound 60, Basic kit only ---
 setstat Avarek medic 10
-give Avarek "Basic First Aid Kit" 1
-drop Avarek "Basic First Aid Kit"
-give Avarek "Standard First Aid Kit" 1
-drop Avarek "Standard First Aid Kit"
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
 give Avarek "Basic First Aid Kit" 1
 wake Avarek
 speed 1 hold
@@ -75,10 +69,8 @@ pg_statprobe read
 hunger Avarek 280
 # --- d2 diagnostic: skill 90, wound 60, Basic kit only ---
 setstat Avarek medic 90
-give Avarek "Basic First Aid Kit" 1
-drop Avarek "Basic First Aid Kit"
-give Avarek "Standard First Aid Kit" 1
-drop Avarek "Standard First Aid Kit"
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
 give Avarek "Basic First Aid Kit" 1
 wake Avarek
 speed 1 hold
@@ -96,10 +88,8 @@ pg_statprobe read
 hunger Avarek 280
 # --- d3 diagnostic: skill 90, wound 30, Standard kit only ---
 setstat Avarek medic 90
-give Avarek "Basic First Aid Kit" 1
-drop Avarek "Basic First Aid Kit"
-give Avarek "Standard First Aid Kit" 1
-drop Avarek "Standard First Aid Kit"
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
 give Avarek "Standard First Aid Kit" 1
 wake Avarek
 speed 1 hold
@@ -115,10 +105,8 @@ speed 0
 @echo BAL2,191,medic_diag_standard_cut30,90,0,none,d3,heal,0,${H},-
 pg_statprobe read
 hunger Avarek 280
-give Avarek "Basic First Aid Kit" 1
-drop Avarek "Basic First Aid Kit"
-give Avarek "Standard First Aid Kit" 1
-drop Avarek "Standard First Aid Kit"
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
 give Avarek "Basic First Aid Kit" 5
 # --- w1: skill 10, gear none ---
 setstat Avarek medic 10

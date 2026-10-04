@@ -353,10 +353,11 @@ def gen_heal(p):
     # m23-4080: give 1 + drop the whole stack (a plain drop FAILs when the kit is absent and voided the control);
     # healtime answers an error when nothing finished, so the control is an expected-error step (!) that must show
     # finished=0 and no bandaging. If someone bandages the patient the step FAILs and every heal point is invalid.
-    nokit = sum([['give %s "%s First Aid Kit" 1' % (who, k), 'drop %s "%s First Aid Kit"' % (who, k)]
-                 for who in (OTHER, WORKER) for k in ("Basic", "Standard")], [])
+    # m23b-4080: kits with uses don't stack, so give 1 + drop left one kit (Avarek bandaged Beaks in the control):
+    # harness b444cf7 `drop ... all` drops every instance (ok with 0); inv must then show no kit at all.
+    nokit = ['drop %s "%s First Aid Kit" all' % (who, k) for who in (OTHER, WORKER) for k in ("Basic", "Standard")]
     L += start(["teleport %s %s dist 4" % (WORKER, OTHER), "protect %s off" % OTHER] + nokit + [
-                "inv %s" % OTHER, "inv %s" % WORKER, "speed 1",
+                "inv %s ~ ^(?!.*First Aid Kit)" % OTHER, "inv %s ~ ^(?!.*First Aid Kit)" % WORKER, "speed 1",
                 "!healtime %s %s wound %d timeout 60 ~ finished=0 .*bandaging 0\\.0+ -> 0\\.0+" % (WORKER, OTHER, p["cut"]),
                 "speed 0",
                 "@echo BAL2,%s,%s,0,0,nokit,w0,heal_control,0,bandaging 0 -> 0,-" % (p["rows"].split("-")[0], p["prof"]),
@@ -369,8 +370,7 @@ def gen_heal(p):
     # Separate prof name (<prof>_diag_*) so the fit never uses these points.
     none = EVENT_GEAR[0]
     # give 1 + drop the whole stack never fails, whatever the kits' remaining uses
-    clear_kits = sum([['give %s "%s First Aid Kit" 1' % (WORKER, k), 'drop %s "%s First Aid Kit"' % (WORKER, k)]
-                      for k in ("Basic", "Standard")], [])
+    clear_kits = ['drop %s "%s First Aid Kit" all' % (WORKER, k) for k in ("Basic", "Standard")]
     for label, skill, cut, kit in (("d1", 10, p["cut"] * 2, "Basic"), ("d2", 90, p["cut"] * 2, "Basic"),
                                    ("d3", 90, p["cut"], "Standard")):
         L += ["# --- %s diagnostic: skill %d, wound %d, %s kit only ---" % (label, skill, cut, kit),
