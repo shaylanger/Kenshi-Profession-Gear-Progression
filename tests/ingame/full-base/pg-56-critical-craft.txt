@@ -14,10 +14,14 @@
 @wait-world
 @sleep 8
 speed 0
+wake Avarek
+speed 1
+@sleep 4
+speed 0
 protect Beaks on
 protect Avarek on
 hunger Avarek 280
-select Beaks
+select Avarek
 clearjobs Avarek
 pg_force_critical off ~ forceCritical=0$
 research "Basic Weapon Smithing"
@@ -28,8 +32,12 @@ research "Basic Weapon Grades 3"
 speed 1
 @sleep 2
 speed 0
-teleport Avarek building "Weapon Smith" dist 4 radius 1500
-teleport Beaks Avarek dist 8
+wake Avarek
+speed 1
+@sleep 3
+speed 0
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+@until 30 teleport Beaks Avarek dist 8 ~ moved=1
 benches 60 crafts ~ Weapon[^|]*Sickle
 setstat Avarek weapon_smith 10
 # --- normal craft ---

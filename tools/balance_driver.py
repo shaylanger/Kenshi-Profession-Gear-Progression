@@ -34,11 +34,11 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 
-# Fixture Testing-Save-Full-Base: squad Beaks + Avarek. The worker is Avarek, Beaks stays the selection.
+# Fixture Testing-Save-Full-Base: squad Beaks + Avarek. The worker is Avarek and stays the selection.
 WORKER = "Avarek"
 OTHER = "Beaks"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
-NEEDS = ("ProfessionGearProgression.dll 7D80DBB3+ (D7A60E49 ok), harness 33087EDE+ (KAH 24: chance, detect, "
+NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness 5AF3E517+ (44992a0: teleport moved=) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
 
@@ -160,10 +160,12 @@ def header(p, design, verify):
 
 
 def start(extra=()):
-    return ["@wait-world", "@sleep 8", "speed 0",
+    # Avarek is often in bed in this save (in_bed_or_cage=1): teleport then silently does nothing (m19-4080)
+    return ["@wait-world", "@sleep 8", "speed 0", "wake %s" % WORKER, "speed 1", "@sleep 4", "speed 0",
             "protect %s on" % OTHER, "protect %s on" % WORKER,
             "hunger %s 280" % WORKER, "hunger %s 280" % OTHER,
-            "select %s" % OTHER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER] + list(extra)
+            # select the worker: an unselected Avarek walks into the base's Bed and lies there (m19-4080)
+            "select %s" % WORKER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER] + list(extra)
 
 
 def wear(who):
@@ -417,6 +419,12 @@ def gen():
     for p in P:
         L = GEN[p["kind"]](p)
         # PG 36D7474D+ pg_statprobe: after every point, which profession stats the game read through getStat
+        # harness 44992a0+: a teleport can leave him where he was (m19-4080): repeat it until it lands
+        L = ["@until 30 %s ~ moved=1" % x if x.startswith("teleport ") and "~" not in x else x for x in L]
+        # m19-4080: a teleport of the worker after a load / clearjobs / long pause did nothing (moved=0, retries while
+        # paused never land); after wake + 3 s of game time it always landed
+        L = [y for x in L for y in (["wake %s" % WORKER, "speed 1", "@sleep 3", "speed 0", x]
+                                     if x.startswith("@until 30 teleport %s " % WORKER) else [x])]
         # (a read right after pg_bonus clears the reads pg_bonus itself made)
         L = [y for x in L for y in ([x, "pg_statprobe read"] if x.startswith(("@echo BAL2", "pg_bonus ")) else [x])]
         path = os.path.join(OUT_DIR, p["file"])

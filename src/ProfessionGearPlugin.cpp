@@ -1381,6 +1381,8 @@ int KahStatProbe(const char*,int argc,const char* const* argv,KAH_Reply* r,void*
   return KAH_OK;
 }
 
+int KahFormulas(const char*,int argc,const char* const* argv,KAH_Reply* r,void*); // FormulaScaling, below
+
 void KahTick() {
   if(g_kahConnected) return;
   DWORD now=GetTickCount();
@@ -1404,10 +1406,11 @@ void KahTick() {
        +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0)
        +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)
+       +g_kah.registerCommand("pg_formulas","pg_formulas on|off (FormulaScaling: gear raises run/swim/stealth/KO/lockpick formulas)",KahFormulas,0)
        +g_kah.registerCommand("pg_statprobe","pg_statprobe on <npc> | read | off (TEST ONLY: getStat calls per stat)",KahStatProbe,0)
        +g_kah.registerCommand("pg_force_critical","pg_force_critical on|off (TEST ONLY: every craft is a critical success)",KahForceCritical,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe/pg_formulas)";
   Log(ss.str());
 }
 
@@ -1620,6 +1623,65 @@ bool HookSymbol(HMODULE lib,const char* sym,void* detour,void** orig) {
   return ok;
 }
 
+// ---- FormulaScaling (balance rows 193-197; OFF by default, Shay decides): the game's run-speed, swim-speed,
+// stealth, stealth-KO and lockpick formulas read the raw CharStats members, never CharStats::getStat (pg_statprobe,
+// m19-4080), so equipped Athletics/Swimming/Stealth/Assassination/Lockpicking gear changed nothing there. While on,
+// each formula runs with the member raised the way getStat raises it (EffectiveStatValue) and put back afterwards.
+bool g_formulaScaling = false;
+typedef void (*StatsVoidFn)(CharStats*);
+typedef float (*StatsFloatFn)(CharStats*);
+typedef float (*StealthSkillFn)(const CharStats*, bool);
+typedef float (*KOChanceFn)(Character*, Character*, bool);
+typedef float (*LockpickFn)(Character*, DoorLock*);
+StatsVoidFn g_maxRunOrig = 0;
+StatsFloatFn g_idealRunOrig = 0, g_maxSwimOrig = 0, g_swimOrig = 0, g_stealthSpeedOrig = 0;
+StealthSkillFn g_stealthSkillOrig = 0;
+KOChanceFn g_koChanceOrig = 0;
+LockpickFn g_lockpickOrig = 0;
+
+struct ScopedStat {
+  float* member; float saved; bool on;
+  ScopedStat(CharStats* s, float* m, PGP::ProfessionStat st) : member(m), saved(0), on(false) {
+    if(!g_formulaScaling || !g_cfg.enabled || !s || !s->me || !m) return;
+    float pct=0;
+    try { pct=EquippedBonus(s->me,st); } catch (...) { return; }
+    if(pct==0.0f) return;
+    saved=*m; *m=PGP::EffectiveStatValue(saved,pct,false,150.0f); on=true;
+  }
+  ~ScopedStat(){ if(on) *member=saved; }
+};
+
+void HookMaxRun(CharStats* s){ ScopedStat k(s,s?&s->_athletics:0,PGP::STAT_ATHLETICS); if(g_maxRunOrig) g_maxRunOrig(s); }
+float HookIdealRun(CharStats* s){ ScopedStat k(s,s?&s->_athletics:0,PGP::STAT_ATHLETICS); return g_idealRunOrig?g_idealRunOrig(s):0; }
+float HookMaxSwim(CharStats* s){ ScopedStat k(s,s?&s->swimming:0,PGP::STAT_SWIMMING); return g_maxSwimOrig?g_maxSwimOrig(s):0; }
+float HookSwim(CharStats* s){ ScopedStat k(s,s?&s->swimming:0,PGP::STAT_SWIMMING); return g_swimOrig?g_swimOrig(s):0; }
+float HookStealthSpeed(CharStats* s){ ScopedStat k(s,s?&s->stealth:0,PGP::STAT_STEALTH); return g_stealthSpeedOrig?g_stealthSpeedOrig(s):0; }
+float HookStealthSkill(const CharStats* cs,bool modded){
+  CharStats* s=const_cast<CharStats*>(cs);
+  ScopedStat k(s,s?&s->stealth:0,PGP::STAT_STEALTH);
+  return g_stealthSkillOrig?g_stealthSkillOrig(cs,modded):0;
+}
+float HookKOChance(Character* c,Character* victim,bool factors){
+  CharStats* s=c?c->stats:0;
+  ScopedStat k(s,s?&s->assassin:0,PGP::STAT_ASSASSINATION);
+  return g_koChanceOrig?g_koChanceOrig(c,victim,factors):0;
+}
+float HookLockpick(Character* c,DoorLock* lock){
+  CharStats* s=c?c->stats:0;
+  ScopedStat k(s,s?&s->lockpicking:0,PGP::STAT_LOCKPICKING);
+  return g_lockpickOrig?g_lockpickOrig(c,lock):0;
+}
+
+int KahFormulas(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_formulaScaling=(v=="on"||v=="1"||v=="true"); }
+  Log(std::string("harness: formulaScaling=")+(g_formulaScaling?"1":"0"));
+  std::ostringstream ss; ss<<"formulaScaling="<<(g_formulaScaling?1:0)<<" hooks="
+    <<(g_maxRunOrig?1:0)+(g_idealRunOrig?1:0)+(g_maxSwimOrig?1:0)+(g_swimOrig?1:0)+(g_stealthSpeedOrig?1:0)
+      +(g_stealthSkillOrig?1:0)+(g_koChanceOrig?1:0)+(g_lockpickOrig?1:0)<<"/8";
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
+}
+
 void InstallHooks() {
   HMODULE lib=GetModuleHandleA("KenshiLib.dll");
   if(!lib){Log("KenshiLib.dll not loaded");return;}
@@ -1636,6 +1698,14 @@ void InstallHooks() {
   HookSymbol(lib,"?operate@ProductionBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookProductionOperate,(void**)&g_productionOperateOrig);
   HookSymbol(lib,"?operate@FarmBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookFarmOperate,(void**)&g_farmOperateOrig);
   HookSymbol(lib,"?calculateCriticalChance@CraftingBuilding@@QEAAMPEAVCharacter@@@Z",(void*)HookCritChance,(void**)&g_critChanceOrig);
+  HookSymbol(lib,"?calculateMaxRunSpeed@CharStats@@QEAAXXZ",(void*)HookMaxRun,(void**)&g_maxRunOrig);
+  HookSymbol(lib,"?calculateTheoreticalIdealMaxRunSpeed@CharStats@@QEAAMXZ",(void*)HookIdealRun,(void**)&g_idealRunOrig);
+  HookSymbol(lib,"?_calculateMaxSwimSpeed@CharStats@@QEAAMXZ",(void*)HookMaxSwim,(void**)&g_maxSwimOrig);
+  HookSymbol(lib,"?calculateSwimSpeed@CharStats@@QEAAMXZ",(void*)HookSwim,(void**)&g_swimOrig);
+  HookSymbol(lib,"?calculateMaxStealthSpeed@CharStats@@QEAAMXZ",(void*)HookStealthSpeed,(void**)&g_stealthSpeedOrig);
+  HookSymbol(lib,"?getStealthSkill01@CharStats@@QEBAM_N@Z",(void*)HookStealthSkill,(void**)&g_stealthSkillOrig);
+  HookSymbol(lib,"?getStealthKOChance@Character@@QEAAMPEAV1@_N@Z",(void*)HookKOChance,(void**)&g_koChanceOrig);
+  HookSymbol(lib,"?getLockpickChance@Character@@QEAAMPEAVDoorLock@@@Z",(void*)HookLockpick,(void**)&g_lockpickOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);
   HookSymbol(lib,"?getTooltipData1@Armour@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipArmour,(void**)&g_tipArmourOrig);
   HookSymbol(lib,"?getTooltipData1@ContainerItem@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipContainer,(void**)&g_tipContainerOrig);
@@ -1663,6 +1733,7 @@ void LoadConfig() {
     else if(k=="worldlootmultiplier") g_cfg.worldLootMultiplier=(float)atof(v.c_str());
     else if(k=="maxaffixes") g_cfg.maxAffixes=atoi(v.c_str());
     else if(k=="joboperatescaling") g_jobOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
+    else if(k=="formulascaling") g_formulaScaling=(v!="0"&&PGP::Lower(v)!="false");
   }
   PGP::NormalizeConfig(g_cfg);
 }
@@ -1723,7 +1794,7 @@ __declspec(dllexport) void startPlugin() {
       <<" poorNpcMultiplier="<<g_cfg.poorNpcMultiplier
       <<" worldLootMultiplier="<<g_cfg.worldLootMultiplier
       <<" maxAffixes="<<g_cfg.maxAffixes
-      <<" jobOperateScaling="<<(g_jobOperateScaling?1:0)
+      <<" jobOperateScaling="<<(g_jobOperateScaling?1:0)<<" formulaScaling="<<(g_formulaScaling?1:0)
       <<" overrides="<<(unsigned long)g_overrides.size()
       <<" exclusions="<<(unsigned long)g_exclusions.size();
     Log(ss.str());

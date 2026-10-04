@@ -59,7 +59,7 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 105 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
 | 106 | PASS-live | `C:\KenshiTestRuns\m16-4080\pg-72-unload-reload.out` 14/0: same key + affixes after unload/reload, restored not rerolled |
 | 107 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
-| 108 | PENDING-auto | `tests/ingame/squin/pg-62-unique-npc.txt` (harness KAH 13 `unique=1`; census for the first unique NPC identical across save/load) |
+| 108 | PASS-live | `C:\KenshiTestRuns\m18-4080\pg-62-unique-npc-4080.out` 19/0 (4080, Squin, PG D7A60E49): unique NPC Ruka, census identical before/after save+load (npc records=1 rolled=0), no duplicate record. Weak: Ruka carries nothing that rolled |
 | 109–116 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 117 | PASS-live | LIVE_TEST_PROGRESS.md "Generic backpack live weight control - PASS" (rechecked in pg-04) |
 | 118–119 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
@@ -106,9 +106,9 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | 212 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 213 | PASS-live | `C:\KenshiTestRuns\m4\pg-07-worldloot.out` (archive/test-run-2026-10-03-m4.md) 31/0 |
 | 214–216 | PASS-live | LIVE_TEST_PROGRESS.md "Trader item transfer / purchase-style identity - LIVE PASS" |
-| 217 | PENDING-auto | `tests/ingame/squin/pg-61-squin-restock.txt` (2 game days at 50x; a surviving key keeps its affixes; restock itself diagnostic) |
+| 217 | PASS-live | `C:\KenshiTestRuns\m18-4080\pg-61-squin-restock-4080.out` 37/0 (+ `-guard` variant 37/0; 4080, PG D7A60E49): after 2 game days Trader Tentpeg eligible stock 7 -> 4, no key changed its affixes, new stock rolled on first sight. The watched Athletics item was sold/removed in both runs, so the "survivor keeps its affixes" half held only for the items that stayed |
 | 218–219 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
-| 220–227 | PENDING-auto | `tests/ingame/squin/pg-60-squin-shops.txt` (own launch, NormalVerbose + Normal rules + empty sidecar; pg_shop + pg_census per Squin trader; types missing in Squin become "needs setup (no <type> shop in Squin)") |
+| 220–227 | PASS-live (measured; finding for Shay) | `C:\KenshiTestRuns\m18-4080\pg-60-squin-shops-4080.out` 53/15 + `pg-63-squin-shopkeepers-4080.out` 22/0 (4080, Normal chances, empty sidecar; the 15 FAILs are trader slots 8-12: Squin has 7 traders within 300 m). Squin shops: 7 shopkeepers, eligible stock only at Trader Tentpeg (7) and Double (3, armour), 0 at the barman and 3 apothecaries; census npc 210-247 records, 112-113 rolled: Athletics 53-57, Perception 47-54, Medic 22-27 (222 measurable), Engineering 2 (223), Robotics 1 (225), Stealth/Lockpicking/Thievery 2-3; traders 97 records, 35 rolled. Farming (220), Labouring (221), Science (224), Cooking (226), Smithing (227): 0 in Squin (also ~0 in the Trader town, m6). Production gear practically never appears in shops: a rarity/source decision for Shay (no balance change until the balance data is complete) |
 | 228 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
 | 229 | PENDING-auto | `tests/ingame/full-base/pg-51-tool-weapons.txt` (Sickle with Farming 20: 0% carried, 20% equipped, 0% unequipped) |
 | 230 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
