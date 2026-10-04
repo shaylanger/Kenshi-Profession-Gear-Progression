@@ -1,6 +1,6 @@
 # Profession Gear Progression — ACTIVE CONTEXT
 
-**Last updated:** 2026-10-02
+**Last updated:** 2026-10-03 (m18, balance campaign)
 **Purpose:** Live handoff file. Update this file every implementation turn before finishing so another agent can continue without reconstructing state.
 
 ## CURRENT STATE — 2026-10-03 (read this first; everything below is history)
@@ -56,9 +56,16 @@ game folder. Commit with `git -c user.email=shaylanger2@gmail.com -c user.name=s
   Also note: vanilla effective stats of Malzin are ~31% of base (Farming 140 -> 42.8, Labouring 50 ->
   15.5): some game modifier; the PG bonus multiplies that vanilla effective value.
   Optional: the soak (pg-09).
-- **Open engineering (not started):** balance measurement driver (rows 161-199), the NEEDS-SETUP
-  harness commands listed in INGAME_STATUS.md (drop/pickup, combat stat names, import/new game,
-  restock, unload trigger).
+- **Balance campaign built (m18, 2026-10-03), waiting for in-game runs:** `tools/balance_driver.py gen` writes one
+  scenario per profession for Testing-Save-Full-Base (rows 161-199: pg-52/53/54, pg-80..90; kinds craft, operate,
+  research, construct, heal, move, swim, detect, chance), `csv` turns the `BAL2` echo lines (and pg-14's labouring
+  lines) into the analyzer CSV, `tools/analyze_balance.py` adds a cross-profession block for rows 200-208. Harness
+  KAH 24 (repo 8116c46, DLL 33087EDE): `chance` (game's lockpick/stealth-KO/kidnap/steal chance), `detect`,
+  `detecttime`, `healtime`, `water`/`findwater`/`swimtime`, `construct`/`construction`, `towns`. Row 250: PG
+  `pg_lootscan` (build 266C68F5) + `tests/ingame/full-base/pg-91-ruin-loot.txt` + `tools/analyze_loot.py`.
+  Run list: `tests/ingame/RUN_ORDER.md` launches 5 and 7. First fit data (pg-14 labouring): +1% gear = +1.09%
+  throughput, skill 10 -> 90 only x1.26, so gear outweighs skill there (principle 4): decide after other professions.
+- **Still open engineering:** the NEEDS-SETUP harness commands listed in INGAME_STATUS.md that are not built yet.
 - `D:\Steam\steamapps\common\Kenshi\mods\_ProfessionGearBackups\` (7 dated copies from 2026-10-02
   19:10-20:30): nothing in it is needed (old DLLs rebuildable from git; sidecars are v1 or a subset
   of the live v2 sidecar; logs are summarized in LIVE_TEST_PROGRESS.md and archived under

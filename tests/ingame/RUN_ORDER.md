@@ -82,20 +82,63 @@ load. The first load rolls every item PG hasn't seen: check ProfessionGear.log a
 describes (roll count, no exceptions, health ok after 2 min). Never `build "Biofuel Distillery"` (crash).
 PG commands (`pg_*`) take character names only, not `#serial/index` handles.
 
-### Launch 5 — Testing-Save-Full-Base (Beaks + Avarek), Forced + InGameTest
+### Launch 5 — Testing-Save-Full-Base (Beaks + Avarek), Forced + InGameTest (balance rows 161-199 + 89)
+
+Needs: harness **33087EDE** (KAH 24 balance commands + `towns`; repo 8116c46) and the harness repo's `client/kah.py`
+(its LONG_COMMANDS lets `detecttime`/`healtime`/`swimtime` wait 200 s; the 5090's stobe-auto uses it; the 4080 needs
+`C:\KAH\client\kah.py` refreshed from the repo). PG: any build since 7D80DBB3 (the installed D7A60E49 is fine; 266C68F5
+adds `pg_lootscan` for launch 7). Fresh copy (`load <kah copy>`) before every file: they research, craft, build and
+change skills. Bench names come from the save itself (Weapon Smith V, Clothing Bench, Crossbow Crafting Bench,
+Robotics Bench, Cooking Stove, Research Bench VII, Wheat Farm L, Prisoner Cage x12), so pg-50 is optional now.
+
+| Order | File | Rows | Kind | Time (real) |
+|---|---|---|---|---|
+| 1 | `full-base/pg-56-critical-craft.txt` (**PG D7A60E49+**: `pg_force_critical`) | 89 | 2 crafts | ~3 min |
+| 2 | `full-base/pg-88-balance-chances.txt` (all paused) | 196, 197, 198 | game's chance x45 | ~2 min |
+| 3 | `full-base/pg-84-balance-medic.txt` | 191 | healtime x16 | ~10 min |
+| 4 | `full-base/pg-87-balance-stealth.txt` | 195 | detecttime x16 | <= 35 min (120 s timeout) |
+| 5 | `full-base/pg-89-balance-perception.txt` | 199 | detecttime x16 | <= 35 min |
+| 6 | `full-base/pg-85-balance-athletics.txt` | 193 | timed 40 m run x16 | ~5 min |
+| 7 | `full-base/pg-86-balance-swimming.txt` | 194 | findwater + swimtime x16 | ~5 min |
+| 8 | `full-base/pg-83-balance-engineering.txt` | 185 | construct, 5 game min x16 | ~10 min |
+| 9 | `full-base/pg-52-balance-weapon-smithing.txt` | 188 | craft, 10 game min x16 | ~18 min |
+| 10 | `full-base/pg-53-balance-armour-smithing.txt` | 189 | craft | ~18 min |
+| 11 | `full-base/pg-80-balance-crossbow-smithing.txt` | 190 | craft (Junkbow) | ~18 min |
+| 12 | `full-base/pg-81-balance-robotics.txt` | 186 | craft (Gears) | ~18 min |
+| 13 | `full-base/pg-82-balance-cooking.txt` | 187 | craft (Dried Meat) | ~18 min |
+| 14 | `full-base/pg-54-research.txt` | 184 | research progress x16 | ~18 min |
+| 15 | `full-base/pg-90-balance-farming.txt` | 161-176 | pg_operate, 30 game min x18 | ~55 min |
+| 16 | `full-base/pg-55-turret.txt` (diagnostic) | 192 | turret vs dummy | 3 min at 1x |
+| 17 | `full-base/pg-51-tool-weapons.txt` | 145, 229 | | 2 min |
+
+Every generated file (all `pg-8x`/`pg-90` and pg-52/53/54) comes from `tools/balance_driver.py gen`; edit the generator.
+Each measured point ends with an `@echo BAL2,<row>,<profession>,<skill>,<bonus>,<gear>,<label>,<kind>,<window s>,<a>,<b>`
+line. Data: `python3 tools/balance_driver.py csv <all .out files> > balance.csv`, then
+`python3 tools/analyze_balance.py balance.csv` (per profession curves + the cross-profession block for rows 200-208).
+Send the .out files to the PG agent; a file whose BAL2 lines are empty (`${T}`) needs a scenario fix, not a re-run.
+The 4080 is fine for all of these (no Stobe needed); keep each file's results on one machine.
+
+### Launch 7 — Testing-Save-Full-Base, NormalVerbose + Normal rules + empty sidecar (row 250, ruin loot)
+
+Before: `set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty`; after: `-Sidecar Restore` and back to
+Forced + InGameTest. Needs PG **266C68F5** (`pg_lootscan`) and harness 33087EDE (`towns`).
 
 | Order | File | Rows | Time |
 |---|---|---|---|
-| 1 | `full-base/pg-50-fullbase-survey.txt` (send the .out to the PG agent: bench/turret names) | load test | 1 min |
-| 2 | `full-base/pg-51-tool-weapons.txt` | 145, 229 | 2 min |
-| 3 | `full-base/pg-52-balance-weapon-smithing.txt` (generated) | 188 | 11 x 10 game min at 10x, ~12 min |
-| 4 | `full-base/pg-53-balance-armour-smithing.txt` (generated; needs a Clothing bench) | 189 | ~12 min |
-| 5 | `full-base/pg-55-turret.txt` (diagnostic) | 192 | 3 min at 1x |
-| 6 | `full-base/pg-54-research.txt` (harness KAH 14) | 184 | 5 x 10 game min, ~6 min |
-| 7 | `full-base/pg-56-critical-craft.txt` (**PG D7A60E49**: `pg_force_critical`) | 89 | ~3 min |
+| 1 | `full-base/pg-91-ruin-loot.txt` (chest corpus at the base, then the 3 nearest ruins/labs by teleport) | 250 | ~3 min |
 
-Fresh copy per file (they research, craft and change skills). Balance data:
-`python3 tools/balance_driver.py csv <out files> > balance.csv` then `python3 tools/analyze_balance.py balance.csv`.
+Then `python3 tools/analyze_loot.py <that launch's ProfessionGear.log>` prints the row 250 verdict.
+
+### Rows 151-152 — frame time with PG on vs off (5090 only, same session)
+
+Launch 1 (m16, DLL 7D80DBB3) is done but on an older build and day; for a clean A/B run both now, back to back:
+1. Kenshi closed: `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (PG on). Launch auto-home on a `kah-*` copy,
+   run `auto-home/pg-15-crowd-frametime.txt`, keep the .out as `pg-15-on.out`. `kenshi-ctl stop`.
+2. Kenshi closed: `set_test_mode.ps1 -Mode Disabled` (sidecar untouched). Fresh `kah-*` copy of auto-home, launch,
+   run the same file, keep `pg-15-off.out`; check ProfessionGear.log has `config enabled=0` and no `roll source=`.
+3. `set_test_mode.ps1 -Mode Forced -Rules InGameTest` (or `-Mode Normal -Rules Normal` at the very end).
+Pass: at 100 and at 300 spawned, avg fps on within ~10% of off and worst_ms on <= ~1.5x off (no >250 ms frames only
+in the on run); ProfessionGear.log growth bounded (roll lines for the spawned gear only).
 
 ### Launch 6 — Testing-Save-Squin (Beak + Kint), NormalVerbose + Normal rules + empty sidecar
 
