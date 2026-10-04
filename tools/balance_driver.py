@@ -13,6 +13,10 @@ gen: write one harness scenario file per profession (tests/ingame/full-base/pg-5
        detect     harness `detecttime`: game seconds until an observer sees a sneaking character
                   (stealth: the sneaker's skill/gear varies; perception: the observer's)
        chance     harness `chance`: the game's own probability (lockpick, stealth KO, steal)
+gate: the validation gate files (tests/ingame/full-base/gate/pg-gate-*.txt): GATE_POINTS per profession, same
+     fixture and method as the matrix; run them before any full matrix (RUN_ORDER.md).
+gatecheck: one GATE line per profession from csv files of gate outputs (valid points, drift bracket, equal game
+     conditions, skill 25 vs 90 response, gear gain vs the gain the game's own hooked values predict).
 csv: turn the BAL2 (and old BAL) lines of runner .out files into the CSV tools/analyze_balance.py reads
      (test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes,
      setup,evidence,provenance): setup = READY/POST checks (ready=ok, or ready=FAIL with the failed check in
@@ -29,6 +33,8 @@ Usage:
   python3 tools/balance_driver.py gen                 (rewrites every generated file)
   python3 tools/balance_driver.py list                (files, rows, kinds, window counts)
   python3 tools/balance_driver.py csv run.out... > balance.csv
+  python3 tools/balance_driver.py gate                (writes the gate files)
+  python3 tools/balance_driver.py gatecheck gate.csv...
 """
 import os
 import re
@@ -56,6 +62,15 @@ EVENT_REPEATS = 3
 # Skill-vs-gear sanity points (rows 176, 183, 206): skill 75 without gear vs skill 25 with +50% gear.
 SANITY = [(75, ("none", None, 0)), (25, ("own50", "OWN", 50))]
 CHANCE_SKILLS = [10, 25, 50, 75, 90]
+# PG validation gate (Shay 2026-10-04): before any full matrix, per profession on the same fixture and method:
+# low skill/no gear, low skill/+50% own gear, high skill/no gear, then low skill/no gear again (drift bracket).
+# Low = 25, not 10: gear multiplies the skill (expected = vanilla x 1.5, pg_bonus), so at 10 the +50% is 5 skill
+# points, inside the window-to-window noise; at 25 it is 12.5. `python3 tools/balance_driver.py gate` writes
+# tests/ingame/full-base/gate/pg-gate-*.txt; `gatecheck <csv>` prints one GATE line per profession.
+GATE_LOW, GATE_HIGH = 25, 90
+GATE_POINTS = [("g1", GATE_LOW, ("none", None, 0)), ("g2", GATE_LOW, ("own50", "OWN", 50)),
+               ("g3", GATE_HIGH, ("none", None, 0)), ("g4", GATE_LOW, ("none", None, 0))]
+GATE = False
 CHANCE_GEAR = [("own2", "OWN", 2), ("own5", "OWN", 5), ("own10", "OWN", 10), ("own25", "OWN", 25),
                ("own50", "OWN", 50), ("own100", "OWN", 100), ("lab50", "labouring", 50)]
 
@@ -139,7 +154,16 @@ def gear_lines(who, prof, gear):
         s = pgstat(prof, stat)
         lines.append('pg_force_affix %s "%s" %s %d tier 6 ~ affixes=' % (who, GEAR_ITEM, s, pct))
         lines.append("pg_bonus %s %s ~ equipped_bonus=%d%% .*match=1" % (who, s, pct))
+    elif GATE:  # gate: the no-gear points also log the game's own base / vanilla / hooked values (native evidence)
+        lines.append("pg_bonus %s %s ~ equipped_bonus=0%% .*match=1" % (who, prof))
     return lines
+
+
+def cond(who, stat):
+    """The game's condition multiplier on the measured stat (harness `stat`, CCA2984F+: mod= hunger= wounds= dark=
+    robot= weather= gear= light=). csv puts it in the notes; gatecheck rejects a gate whose points ran under
+    different conditions (m28: base 50 read 27.5 early and 12.5 later in the same file)."""
+    return "stat %s %s" % (who, stat)
 
 
 def echo(row, prof, skill, gear, label, kind, window_s, a, b):
@@ -150,6 +174,8 @@ def echo(row, prof, skill, gear, label, kind, window_s, a, b):
 
 def points(skills, gears, repeats, base=BASE):
     """[(label, skill, gear)]: skills without gear, then repeats x gears at the base skill."""
+    if GATE:
+        return list(GATE_POINTS)
     out, n = [], 0
     for s in skills:
         n += 1
@@ -383,13 +409,13 @@ def gen_heal(p):
                 # (flat 4.4/s at every Medic skill of the worker, m21-4080): take it off him first.
                 ]) + wear(WORKER)
     # m22-4080 diagnosis of the flat medic rate (always ~77 bandaging in ~17.8 s, Medic 10 = Medic 90): which
-    # input moves it at all? Medic 10 vs 90 with a double wound, and Medic 90 with a Standard kit only.
+    # input moves it at all? Medic 10 vs 90 with a double wound, and Medic 90 / 10 with a Standard kit only.
     # Separate prof name (<prof>_diag_*) so the fit never uses these points.
     none = EVENT_GEAR[0]
     # give 1 + drop the whole stack never fails, whatever the kits' remaining uses
     clear_kits = ['drop %s "%s First Aid Kit" all' % (WORKER, k) for k in ("Basic", "Standard")]
     for label, skill, cut, kit in (("d1", 10, p["cut"] * 2, "Basic"), ("d2", 90, p["cut"] * 2, "Basic"),
-                                   ("d3", 90, p["cut"], "Standard")):
+                                   ("d3", 90, p["cut"], "Standard"), ("d4", 10, p["cut"], "Standard")):
         L += ["# --- %s diagnostic: skill %d, wound %d, %s kit only ---" % (label, skill, cut, kit),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill),
               ] + clear_kits + ['give %s "%s First Aid Kit" 1' % (WORKER, kit),
@@ -537,6 +563,8 @@ def gen_chance(p):
         prof = sub["prof"]
         pts = [("s%d" % s, s, ("none", None, 0)) for s in CHANCE_SKILLS] + [("s50b", BASE, ("none", None, 0))] + \
               [(g[0], BASE, g) for g in CHANCE_GEAR] +               [("s25_own50", 25, ("own50", "OWN", 50)), ("s25_own100", 25, ("own100", "OWN", 100))]
+        if GATE:
+            pts = list(GATE_POINTS)
         for label, skill, gear in pts:
             L += ["# --- %s %s: skill %d, gear %s ---" % (sub["row"], prof, skill, gear[0]),
                   "setstat %s %s %d" % (WORKER, sub["setstat"], skill)] + gear_lines(WORKER, prof, gear)
@@ -555,10 +583,36 @@ GEN = dict(craft=gen_craft, operate=gen_operate, research=gen_research, construc
            move=gen_move, swim=gen_swim, detect=gen_detect, chance=gen_chance)
 
 
+MEASURE_START = ("@set H healtime", "@set T swimtime", "@set T detecttime", "@set C chance")
+
+
+def with_conditions(L):
+    """Before every measurement (window start, healtime, swimtime, detecttime, chance) and after every window end:
+    the game's condition multiplier on the stat the point varies (the last setstat), as native evidence."""
+    out, last = [], None
+    for x in L:
+        m = re.match(r"^setstat (\S+) (\S+) \d+$", x)
+        if m:
+            last = cond(m.group(1), m.group(2))
+        if last and (x == TS0 or x.startswith(MEASURE_START)):
+            out.append(last)
+            if x.startswith("@set T swimtime"):
+                out.append("runspeed %s" % WORKER)
+        out.append(x)
+        if last and x == TS1:
+            out.append(last)
+    return out
+
+
 def gen():
-    os.makedirs(OUT_DIR, exist_ok=True)
+    out_dir = os.path.join(OUT_DIR, "gate") if GATE else OUT_DIR
+    os.makedirs(out_dir, exist_ok=True)
     for p in P:
-        L = GEN[p["kind"]](p)
+        L = with_conditions(GEN[p["kind"]](p))
+        if GATE:
+            L[0] = "# id: PG-gate-%s" % os.path.splitext(p["file"])[0][3:]
+            L.insert(2, "# gate: validation gate (RUN_ORDER.md): %s, same fixture and method as the matrix file"
+                     % ", ".join("%s skill %d gear %s" % (lb, sk, g[0]) for lb, sk, g in GATE_POINTS))
         # PG 36D7474D+ pg_statprobe: after every point, which profession stats the game read through getStat
         # harness 44992a0+: a teleport can leave him where he was (m19-4080): repeat it until it lands
         L = ["@until 30 %s ~ moved=1" % x if x.startswith("teleport ") and "~" not in x else x for x in L]
@@ -571,7 +625,7 @@ def gen():
         L = [x + " hold" if re.match(r"^speed (?!0$)[\d.]+$", x) else x for x in L]
         # (a read right after pg_bonus clears the reads pg_bonus itself made)
         L = [y for x in L for y in ([x, "pg_statprobe read"] if x.startswith(("@echo BAL2", "pg_bonus ")) else [x])]
-        path = os.path.join(OUT_DIR, p["file"])
+        path = os.path.join(out_dir, p["file"].replace("pg-", "pg-gate-", 1) if GATE else p["file"])
         with open(path, "w", newline="\n") as fh:
             fh.write("\n".join(L) + "\n")
         # FormulaScaling (PG C5CAC166+, off by default): the same sweep with pg_formulas on, professions "<prof>_fs"
@@ -683,7 +737,14 @@ def to_csv(paths):
         fail = ""          # first failed command since the last point (its text is the invalid reason)
         stage = "setup"    # setup | ready | post
         control_bad = ""   # heal_control: the patient got bandaged with no kit on the medic
+        bonus_ev, mods = "", []   # this point's pg_bonus base/vanilla/hooked values and stat condition multipliers
         for i, line in enumerate(lines):
+            bm = re.search(r"^PASS\s+\d+\s+pg_bonus .*=> .*base=([\d.]+) vanilla_effective=([\d.]+) effective=([\d.]+)", line)
+            if bm:
+                bonus_ev = "/".join(bm.groups())
+            sm = re.search(r"^PASS\s+\d+\s+stat \S+ \S+ => .* mod=([\d.]+)", line)
+            if sm:
+                mods.append(sm.group(1))
             if re.search(r"@echo READY\b", line):
                 stage = "ready"
             elif re.search(r"@echo POST\b", line):
@@ -716,6 +777,11 @@ def to_csv(paths):
                     fail, stage = "", "setup"
                     continue
                 count, secs, ok, note = measure(kind, f(win) or 0, a.strip(), b.strip())
+                # game time must advance in a timed window (a paused or stuck clock is not a slow worker)
+                if kind in ("craft", "operate", "research", "construct") and (f(win) or 0) <= 0:
+                    count, ok, note = 0, 0, "invalid: game clock did not advance (%s)" % win
+                cond_ev = (" eff=" + bonus_ev if bonus_ev else "") + (" mod=" + ">".join(mods) if mods else "")
+                bonus_ev, mods = "", []
                 # A failed @set leaves its previous capture intact in kah.py: never fit that echoed stale value,
                 # nor a point whose setup / readiness / post check failed (the reason names the failed check).
                 setup = "ready=ok"
@@ -736,7 +802,7 @@ def to_csv(paths):
                 extra = (" b=" + b.strip().replace(",", ";")) if b.strip() not in ("", "-") and kind != "craft" else ""
                 print("%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s" % (
                     tid, prof, skill, bonus, secs, count, ok, gear,
-                    "%s %s %s %s%s%s" % (label, kind, note, base, extra, probe), setup, evidence, prov))
+                    "%s %s %s %s%s%s%s" % (label, kind, note, base, extra, probe, cond_ev), setup, evidence, prov))
                 if ok and gear == "none" and float(secs or 0) > 0:
                     flats.setdefault((base, prof), {})[int(skill)] = count / float(secs)
                 continue
@@ -765,6 +831,71 @@ def to_csv(paths):
                              % (base, prof, pts[10], pts[90]))
 
 
+def gatecheck(paths):
+    """One GATE line per (output file, profession) from csv files made by `csv` on gate outputs (labels g1..g4)."""
+    import csv as _csv
+    groups = {}
+    for path in paths:
+        for r in _csv.DictReader(open(path, encoding="utf-8")):
+            notes = r["notes"].split()
+            if not notes or not re.match(r"^g[1-4]$", notes[0]):
+                continue
+            src = next((n for n in notes if n.endswith(".out")), path)
+            groups.setdefault((src, r["profession"]), {})[notes[0]] = r
+    for (src, prof), g in sorted(groups.items()):
+        def rate(lb):
+            r = g.get(lb)
+            if not r or r["valid"] != "1" or float(r["elapsed_game_seconds"] or 0) <= 0:
+                return None
+            return float(r["result_count"]) / float(r["elapsed_game_seconds"])
+        def ev(lb, key):
+            m = re.search(r"%s=(\S+)" % key, (g.get(lb) or {}).get("notes", ""))
+            return m.group(1) if m else ""
+        rates = dict((lb, rate(lb)) for lb in ("g1", "g2", "g3", "g4"))
+        mods = [float(ev(lb, "mod").split(">")[0]) for lb in rates if ev(lb, "mod")]
+        eff = dict((lb, ev(lb, "eff")) for lb in rates)
+        kind = ((g.get("g1") or {}).get("notes", "x x").split() + ["", ""])[1]
+        head = "GATE %s %s" % (prof, os.path.basename(src))
+        bad = [lb for lb, v in rates.items() if v is None]
+        if bad:
+            why = "; ".join("%s %s" % (lb, (g.get(lb) or {}).get("notes", "missing")[:80]) for lb in bad)
+            print("%s FAIL setup: invalid/missing %s" % (head, why))
+            continue
+        r1, r2, r3, r4 = (rates[x] for x in ("g1", "g2", "g3", "g4"))
+        base = (r1 + r4) / 2.0
+        if base <= 0:
+            print("%s FAIL measurement: zero result at low skill (%.4g/%.4g)" % (head, r1, r4))
+            continue
+        drift = abs(r1 - r4) / base
+        noise = max(0.01 if kind == "chance" else 0.03, drift)
+        skill = r3 / base - 1.0
+        gear = r2 / base - 1.0
+        # predicted gear gain from the game's own hooked values: (eff_g2 - eff_g1) / (eff_g3 - eff_g1) of the skill gain
+        try:
+            e1, e2, e3 = (float(eff[x].split("/")[2]) for x in ("g1", "g2", "g3"))
+            frac = (e2 - e1) / (e3 - e1) if e3 != e1 else 0.0
+            mech = "eff %.3g->%.3g (x%.2f)" % (e1, e2, e2 / e1 if e1 else 0)
+        except (ValueError, IndexError):
+            frac, mech = (GATE_LOW * 0.5) / (GATE_HIGH - GATE_LOW), "eff ?"
+        pred = frac * skill
+        if kind == "operate":  # JobOperateScaling multiplies work by the bonus on top of the skill read
+            pred = (1 + pred) * 1.5 - 1
+        modtxt = "mod " + "/".join("%.3g" % m for m in mods) if mods else "mod ?"
+        nums = "s25=%.4g s25+g=%.4g s90=%.4g s25b=%.4g drift=%.1f%% skill=%+.1f%% gear=%+.1f%% pred=%+.1f%% %s %s" % (
+            r1, r2, r3, r4, 100 * drift, 100 * skill, 100 * gear, 100 * pred, mech, modtxt)
+        if mods and max(mods) > 1.10 * min(mods):
+            verdict = "FAIL measurement: conditions changed between points (%s)" % modtxt
+        elif abs(skill) <= 2 * noise:
+            verdict = "FAIL flat: skill 25 vs 90 within noise (measurement or game behaviour)"
+        elif abs(pred) <= noise:
+            verdict = "PASS skill; gear unresolved (predicted gain within noise)"
+        elif gear >= 0.5 * pred - noise and gear > noise:
+            verdict = "PASS"
+        else:
+            verdict = "FAIL gear: no measurable gain where the skill curve predicts one"
+        print("%s %s %s" % (head, verdict, nums))
+
+
 def list_files():
     for p in P:
         print("%-42s rows %-8s kind %s" % (p["file"], p["rows"], p["kind"]))
@@ -773,6 +904,11 @@ def list_files():
 if __name__ == "__main__":
     if len(sys.argv) >= 2 and sys.argv[1] == "gen":
         gen()
+    elif len(sys.argv) >= 2 and sys.argv[1] == "gate":
+        GATE = True
+        gen()
+    elif len(sys.argv) >= 3 and sys.argv[1] == "gatecheck":
+        gatecheck(sys.argv[2:])
     elif len(sys.argv) >= 2 and sys.argv[1] == "list":
         list_files()
     elif len(sys.argv) >= 3 and sys.argv[1] == "csv":
