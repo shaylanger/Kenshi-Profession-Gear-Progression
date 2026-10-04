@@ -2,7 +2,7 @@
 # covers: PG 145 (a mod-added tool weapon auto-classifies and rolls), PG 229 (UWE Sickle-type tool: the affix counts only while equipped)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has a weapon smith)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 7D80DBB3, harness 59b742d+ (fill optional; 616121b benches near <x y z>); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 59b742d+ (client kah.py cd21aa8+ for @any) (fill optional; 616121b benches near <x y z>); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: research the UWE utility weapons, craft one Sickle at the bench (real craft job, materials filled), take it
 #   from the bench output, then carried / equipped / unequipped with a forced Farming 20 affix.
 # verify: 145 = the crafted Sickle's roll line has tags TOOL_FARMING; 229 = pg_bonus farming 0% carried, 20% equipped, 0% unequipped.
@@ -64,7 +64,15 @@ where Avarek
 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" .*tags=\S*TOOL_FARMING
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-pg_take Avarek "Weapon" "Sickle" ~ to Avarek: [^|]*Sickle key=pgp\S+ equipped=0
+# m29-4080 (pg-51 batch20 FAIL): the smith hauled the finished Sickle out of the output and equipped it (hip) before
+#   pg_take ran -> accept either path (harness cd21aa8 @any), then make sure it is carried, not equipped.
+@any pg_take Avarek "Weapon" "Sickle" ~ to Avarek: [^|]*Sickle key=pgp\S+ || pg_info Avarek "Sickle" ~ key=pgp\S+
+@any unequip Avarek "Sickle" ~ unequipped || pg_info Avarek "Sickle" ~ equipped=0
+pg_info Avarek "Sickle" ~ equipped=0
+# baseline: in Forced mode his other worn items rolled affixes too (batch20: Farming 18.8% from another item) ->
+#   clear the affixes of everything he wears (the carried Sickle is not worn), so 229 measures the Sickle alone
+pg_clear Avarek ~ cleared affixes
+pg_bonus Avarek farming ~ equipped_bonus=0% .*match=1
 pg_force_affix Avarek "Sickle" farming 20 tier 4 ~ affixes=Farming:20
 # 229: carried only -> no bonus
 pg_bonus Avarek farming ~ equipped_bonus=0% .*match=1
