@@ -3,7 +3,7 @@
 # variant: pg_formulas on (FormulaScaling), professions written as <prof>_fs
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: Avarek runs 40 m along +x on open ground 150 m from Beaks (harness swimtime on land: any axis, seconds
 #   of game time), back to the start by teleport; also the game's movement speed (runspeed).
 # verify: every point arrives (no 'did not arrive'); speed rises with Athletics; own50 > none = movement

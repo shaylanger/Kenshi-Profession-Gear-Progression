@@ -41,7 +41,7 @@ OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 WORKER = "Avarek"
 OTHER = "Beaks"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
-NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, "
+NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
 
@@ -249,8 +249,9 @@ def gen_craft(p):
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, bench)]
         # m23-4080 probe: bench input sections accept nothing until a craft is queued -> craft first, then fill
         L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench)]
-        L += ['fill "%s" "%s" %d radius 60' % (bench, it, n) for it, n in p["give"]]
-        # a "fill ... nothing fitted" top-up is not a failure by itself: the real bench state decides
+        # topup (harness 6933d0f): a refill of an already full input answers ok; 0 held still fails, and the
+        # READY bench check reads the real bench state (m23b-4080: full-input refills made every craft row FAIL)
+        L += ['fill "%s" "%s" %d radius 60 topup' % (bench, it, n) for it, n in p["give"]]
         L += ready(AWAKE, *[bench_has(bench, it) for it, _ in p["give"]] +
                    [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB, powered(bench)])
         L += [q % 0, fpat % 0,
@@ -281,7 +282,7 @@ def gen_operate(p):
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
-        L += ['fill "%s" %s %d radius 1000' % (b, p["fill"][0], p["fill"][1])]
+        L += ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1])]
         L += ready(AWAKE, HASJOB)
         L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
               TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1,
