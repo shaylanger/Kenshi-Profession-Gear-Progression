@@ -959,6 +959,12 @@ def gatecheck(paths):
         except (ValueError, IndexError):
             frac, mech = (GATE_LOW * 0.5) / (GATE_HIGH - GATE_LOW), "eff ?"
         pred = frac * skill
+        if kind == "chance" and prof.split("_")[0] == "lockpicking" and mech != "eff ?":
+            # the game's lockpick chance is exponential, not linear: 0.9 / 2^((level - skill) * 0.1), capped at 0.9
+            # (harness BalanceCommands.inc, DoorLock chance via getStat), so gear adding d effective points multiplies
+            # the chance by 2^(d / 10) up to the cap (m34: 88 s25 0.0281 -> 0.0669 = x2^1.25 exactly)
+            pred = min(0.9, base * 2.0 ** ((e2 - e1) / 10.0)) / base - 1.0
+            mech += " exp"
         if kind == "operate":  # JobOperateScaling multiplies work by the bonus on top of the skill read
             pred = (1 + pred) * 1.5 - 1
         modtxt = "mod " + "/".join("%.3g" % m for m in mods) if mods else "mod ?"
