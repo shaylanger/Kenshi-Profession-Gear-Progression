@@ -301,7 +301,7 @@ def gen_operate(p):
 
 def gen_research(p):
     w = p["window"]
-    L = header(p, ["%s researches at the %s (job); research status progress (0..1) of the first queued tech per"
+    L = header(p, ["%s researches at the %s (job); research status raw progress points of the first queued tech per"
                    % (WORKER, p["building"]),
                    "%d-game-minute window at speed %d. research start any 3 queues up to 3 techs the game would" % (w, CRAFT_SPEED),
                    "start now (longest first); the first is measured; progress resets to the next tech",
@@ -325,10 +325,12 @@ def gen_research(p):
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"])]
         L += ready(AWAKE, HASJOB, r"research status ~ queue=[1-9]", r"research status ~ ^(?!.*power_off)", powered(p["building"]))
-        L += ["@set P0 research status ~ progress=%s" % NUM,
+        # m25-4080 pg-54: progress= has 1 decimal (0.1 steps); raw= is the game's own progress points (0 -> ~430 for an
+        # 8-hour tech), and researchers=/rate= read 0 while paused, so the post check is the job, not researchers
+        L += ["@set P0 research status ~ raw=%s" % NUM,
               TS0, "speed %d" % CRAFT_SPEED, "@wait-game %d 900" % w, "speed 0", TS1]
-        L += post(r"research status ~ researchers=[1-9]")
-        L += ["@set P1 research status ~ progress=%s" % NUM,
+        L += post(AWAKE, HASJOB)
+        L += ["@set P1 research status ~ raw=%s" % NUM,
               echo(p["rows"], p["prof"], skill, gear, label, "research", WIN, "${P0}", "${P1}"),
               "hunger %s 280" % WORKER]
     return L + ["research status", "clearjobs %s" % WORKER]

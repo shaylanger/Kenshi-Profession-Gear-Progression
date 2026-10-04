@@ -3,7 +3,7 @@
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: Avarek researches at the Research Bench (job); research status progress (0..1) of the first queued tech per
+# design: Avarek researches at the Research Bench (job); research status raw progress points of the first queued tech per
 #   30-game-minute window at speed 3. research start any 3 queues up to 3 techs the game would
 #   start now (longest first); the first is measured; progress resets to the next tech
 #   when one completes (then that window's BAL2 is invalid: P1 < P0).
@@ -55,15 +55,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,10,0,none,w1,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -81,15 +82,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,90,0,none,w2,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -107,15 +109,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,0,none,w3,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -136,15 +139,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,25,own25,w4,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -165,15 +169,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,50,own50,w5,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -194,15 +199,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,0,lab50,w6,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -220,15 +226,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,0,none,w7,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -249,15 +256,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,25,own25,w8,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -278,15 +286,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,50,own50,w9,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -307,15 +316,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,0,lab50,w10,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -333,15 +343,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,0,none,w11,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -362,15 +373,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,25,own25,w12,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -391,15 +403,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,50,own50,w13,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -420,15 +433,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,50,0,lab50,w14,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -446,15 +460,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,75,0,none,w15,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
@@ -475,15 +490,16 @@ jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
 building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
-@set P0 research status ~ progress=([-\d.]+)
+@set P0 research status ~ raw=([-\d.]+)
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 @echo POST
-research status ~ researchers=[1-9]
-@set P1 research status ~ progress=([-\d.]+)
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+jobs Avarek ~ jobs=[1-9]
+@set P1 research status ~ raw=([-\d.]+)
 @echo BAL2,184,science,25,50,own50,w16,research,T${T0}_${T1},${P0},${P1}
 pg_statprobe read
 hunger Avarek 280
