@@ -16,11 +16,17 @@ protect Beaks on
 protect Avarek on
 select Beaks
 clearjobs Avarek
-@set TX buildings 500 turret ~ pos=([-\d.]+),[-\d.]+,[-\d.]+
-@set TY buildings 500 turret ~ pos=[-\d.]+,([-\d.]+),[-\d.]+
-@set TZ buildings 500 turret ~ pos=[-\d.]+,[-\d.]+,([-\d.]+)
+# m25-4080 probe: the only real turret is the Double-Barrel Harpoon Turret ~570-760 m from the squad (search origin =
+# Avarek), unpowered (out_of_power=1); "Training Turret MkIII" is a trainer. Teleport him to it, power it, then the job.
+@set TX buildings 1500 harpoon ~ pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set TY buildings 1500 harpoon ~ pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set TZ buildings 1500 harpoon ~ pos=[-\d.]+,[-\d.]+,([-\d.]+)
 @echo turret at ${TX} ${TY} ${TZ}
-job Avarek "Turret" radius 500
+@until 30 teleport Avarek building "Harpoon Turret" dist 4 radius 1500 ~ moved=1
+power "Harpoon Turret" supply radius 60
+building "Harpoon Turret" 60 ~ out_of_power=0
+job Avarek "Harpoon Turret" radius 60
+jobs Avarek ~ jobs=[1-9]
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_clear Avarek ~ cleared affixes

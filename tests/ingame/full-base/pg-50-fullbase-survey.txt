@@ -20,17 +20,17 @@ chars 60 ~ Beaks
 chars 60 ~ Avarek
 where Beaks ~ Nameless
 where Avarek ~ Nameless
-buildings 500 bench
-buildings 500 smith
-buildings 500 turret
-buildings 500 research
-buildings 500 robot
-buildings 500 farm
-buildings 500 oven
-buildings 500 stove
+buildings 1500 bench
+buildings 1500 smith
+buildings 1500 turret
+buildings 1500 research
+buildings 1500 robot
+buildings 1500 farm
+buildings 1500 oven
+buildings 1500 stove
 research status
-benches 500 crafts
-building "Turret" 500
+benches 1500 crafts
+building "Turret" 1500
 find research Utility
 pg_census Nameless ~ player
 pg_census
