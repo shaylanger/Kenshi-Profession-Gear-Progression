@@ -57,25 +57,25 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 jobs Avarek
 where Avarek
@@ -97,25 +97,25 @@ fill "Weapon Smith" "Fabrics" 10 radius 60 topup
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
+@until 1800 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
 jobs Avarek
 where Avarek
