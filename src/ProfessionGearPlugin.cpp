@@ -1783,12 +1783,59 @@ bool HookDoctoring(void* m,float skill,Item* eq,float t,Character* who){
   return g_doctoringOrig?g_doctoringOrig(m,MedicSkill(skill,who,"doctoring"),eq,t,who):false;
 }
 
+// Engineering (m33-4080 diag: HW watchpoint on CharStats::engineer +0xCC while building): construction progress is
+// computed in an unnamed function (Steam 1.0.65 RVA 0x34A3E0) that reads the raw member (RVA 0x34A50C), clamps it,
+// maps it through a curve and posts the amount as a type-11 message to Building::addConstructionProgress. getStat
+// never ran there, so Engineering gear did nothing for building. Found by its code bytes (prologue + the
+// [rcx+0x18] / [rdx+0x50] checks); arg 2's virtual +0x48 returns the builder (same call the function makes).
+typedef void* (*ConstructFn)(void*, void*);
+ConstructFn g_constructOrig = 0;
+void* HookConstruct(void* self, void* agent){
+  CharStats* s=0;
+  if(agent && g_formulaScaling && g_cfg.enabled){
+    try {
+      void** vt=*(void***)agent;
+      Character* c=((Character*(*)(void*))vt[9])(agent);
+      s=c?c->stats:0;
+    } catch (...) { s=0; }
+  }
+  ScopedStat k(s,s?&s->engineer:0,PGP::STAT_ENGINEERING);
+  return g_constructOrig?g_constructOrig(self,agent):0;
+}
+void* FindCode(const char* sig){
+  std::vector<int> pat;
+  for(const char* q=sig;*q;){ if(*q==' '){++q;continue;} pat.push_back(q[0]=='?'?-1:(int)strtol(std::string(q,2).c_str(),0,16)); q+=2; }
+  unsigned char* base=(unsigned char*)GetModuleHandleA(0);
+  IMAGE_NT_HEADERS* nt=(IMAGE_NT_HEADERS*)(base+((IMAGE_DOS_HEADER*)base)->e_lfanew);
+  IMAGE_SECTION_HEADER* sec=IMAGE_FIRST_SECTION(nt);
+  void* hit=0; int n=0;
+  for(int i=0;i<nt->FileHeader.NumberOfSections;++i,++sec){
+    if(!(sec->Characteristics&IMAGE_SCN_MEM_EXECUTE)) continue;
+    unsigned char* a=base+sec->VirtualAddress; size_t len=sec->Misc.VirtualSize;
+    for(size_t j=0;j+pat.size()<=len;++j){
+      size_t k=0; while(k<pat.size()&&(pat[k]<0||a[j+k]==pat[k])) ++k;
+      if(k==pat.size()){ if(!hit) hit=a+j; ++n; }
+    }
+  }
+  return n==1?hit:0;
+}
+void HookConstructionProgress(){
+  static const char* sig="48 8b c4 55 57 41 54 48 8d 68 a1 48 81 ec f0 00 00 00 48 c7 45 e7 fe ff ff ff 48 89 58 18 "
+                         "48 89 70 20 0f 29 70 d8 0f 29 78 c8 48 8b 05 ?? ?? ?? ?? 48 33 c4 48 89 45 17 48 8b da "
+                         "83 79 18 00 74 12 48 8b 4a 50 48 8b 49 20 e8";
+  void* f=FindCode(sig);
+  if(!f){ Log("hook failed construction progress (code bytes not found once)"); return; }
+  bool ok=KenshiLib::AddHook(f,(void*)HookConstruct,(void**)&g_constructOrig)==KenshiLib::SUCCESS;
+  std::ostringstream ss; ss<<(ok?"hooked ":"hook failed ")<<"construction progress rva=0x"<<std::hex<<((unsigned char*)f-(unsigned char*)GetModuleHandleA(0));
+  Log(ss.str());
+}
+
 int KahFormulas(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_formulaScaling=(v=="on"||v=="1"||v=="true"); }
   Log(std::string("harness: formulaScaling=")+(g_formulaScaling?"1":"0"));
   std::ostringstream ss; ss<<"formulaScaling="<<(g_formulaScaling?1:0)<<" hooks="
     <<(g_maxRunOrig?1:0)+(g_idealRunOrig?1:0)+(g_maxSwimOrig?1:0)+(g_swimOrig?1:0)+(g_stealthSpeedOrig?1:0)
-      +(g_stealthSkillOrig?1:0)+(g_koChanceOrig?1:0)+(g_lockpickOrig?1:0)<<"/8"<<" medic="<<(g_firstAidOrig?1:0)+(g_doctoringOrig?1:0)<<"/2";
+      +(g_stealthSkillOrig?1:0)+(g_koChanceOrig?1:0)+(g_lockpickOrig?1:0)<<"/8"<<" medic="<<(g_firstAidOrig?1:0)+(g_doctoringOrig?1:0)<<"/2 engineering="<<(g_constructOrig?1:0)<<"/1";
   r->append(r,ss.str().c_str());
   return KAH_OK;
 }
@@ -1817,6 +1864,7 @@ void InstallHooks() {
   HookSymbol(lib,"?getStealthSkill01@CharStats@@QEBAM_N@Z",(void*)HookStealthSkill,(void**)&g_stealthSkillOrig);
   HookSymbol(lib,"?getStealthKOChance@Character@@QEAAMPEAV1@_N@Z",(void*)HookKOChance,(void**)&g_koChanceOrig);
   HookSymbol(lib,"?getLockpickChance@Character@@QEAAMPEAVDoorLock@@@Z",(void*)HookLockpick,(void**)&g_lockpickOrig);
+  HookConstructionProgress();
   HookSymbol(lib,"?applyFirstAid@MedicalSystem@@QEAA_NMPEAVItem@@MPEAVCharacter@@@Z",(void*)HookFirstAid,(void**)&g_firstAidOrig);
   HookSymbol(lib,"?applyDoctoring@MedicalSystem@@QEAA_NMPEAVItem@@MPEAVCharacter@@@Z",(void*)HookDoctoring,(void**)&g_doctoringOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);

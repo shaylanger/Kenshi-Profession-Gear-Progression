@@ -66,4 +66,10 @@ if($text -notmatch [regex]::Escape('?applyFirstAid@MedicalSystem@@QEAA_NMPEAVIte
 }
 Write-Host "OK      medic gear reaches first aid / doctoring (gate 84)"
 
-Write-Host "Source contract verification passed: 11 checks"
+if($text -notmatch [regex]::Escape('48 8b c4 55 57 41 54 48 8d 68 a1 48 81 ec f0 00 00 00') -or
+   $text -notmatch [regex]::Escape('  HookConstructionProgress();')){
+  throw "Source contract failed: engineering construction-progress hook not installed (gear never reaches building)"
+}
+Write-Host "OK      engineering gear reaches construction progress (gate 83)"
+
+Write-Host "Source contract verification passed: 12 checks"
