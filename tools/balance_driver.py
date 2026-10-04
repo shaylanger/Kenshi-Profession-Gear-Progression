@@ -348,13 +348,16 @@ def gen_heal(p):
     # m22-4080: still flat ~4.3/s at Medic 10..90 after Beaks' kit was dropped, first bandage after 0.1 s:
     # control point with NO kit on the worker first. If the patient still gets bandaged, someone else treats
     # him and every heal point of this file is invalid (csv: heal_control).
-    L += start(["teleport %s %s dist 4" % (WORKER, OTHER), "protect %s off" % OTHER,
-                'drop %s "Standard First Aid Kit" 1' % OTHER, 'drop %s "Basic First Aid Kit" 1' % OTHER,
-                'drop %s "Basic First Aid Kit" 1' % WORKER, 'drop %s "Standard First Aid Kit" 1' % WORKER,
+    # m23-4080: give 1 + drop the whole stack (a plain drop FAILs when the kit is absent and voided the control);
+    # healtime answers an error when nothing finished, so the control is an expected-error step (!) that must show
+    # finished=0 and no bandaging. If someone bandages the patient the step FAILs and every heal point is invalid.
+    nokit = sum([['give %s "%s First Aid Kit" 1' % (who, k), 'drop %s "%s First Aid Kit"' % (who, k)]
+                 for who in (OTHER, WORKER) for k in ("Basic", "Standard")], [])
+    L += start(["teleport %s %s dist 4" % (WORKER, OTHER), "protect %s off" % OTHER] + nokit + [
                 "inv %s" % OTHER, "inv %s" % WORKER, "speed 1",
-                "@set HC healtime %s %s wound %d timeout 60 ~ (bandaging [\\d.]+ -> [\\d.]+)" % (WORKER, OTHER, p["cut"]),
+                "!healtime %s %s wound %d timeout 60 ~ finished=0 .*bandaging 0\\.0+ -> 0\\.0+" % (WORKER, OTHER, p["cut"]),
                 "speed 0",
-                "@echo BAL2,%s,%s,0,0,nokit,w0,heal_control,0,${HC},-" % (p["rows"].split("-")[0], p["prof"]),
+                "@echo BAL2,%s,%s,0,0,nokit,w0,heal_control,0,bandaging 0 -> 0,-" % (p["rows"].split("-")[0], p["prof"]),
                 'give %s "Basic First Aid Kit" 5' % WORKER, "teleport %s %s dist 4" % (WORKER, OTHER),
                 # Beaks carries a Standard First Aid Kit in Full-Base and bandages himself within 0.3 s
                 # (flat 4.4/s at every Medic skill of the worker, m21-4080): take it off him first.

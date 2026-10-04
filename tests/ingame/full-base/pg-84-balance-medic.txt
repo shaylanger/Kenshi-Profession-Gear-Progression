@@ -28,16 +28,20 @@ speed 1 hold
 speed 0
 @until 30 teleport Avarek Beaks dist 4 ~ moved=1
 protect Beaks off
-drop Beaks "Standard First Aid Kit" 1
-drop Beaks "Basic First Aid Kit" 1
-drop Avarek "Basic First Aid Kit" 1
-drop Avarek "Standard First Aid Kit" 1
+give Beaks "Basic First Aid Kit" 1
+drop Beaks "Basic First Aid Kit"
+give Beaks "Standard First Aid Kit" 1
+drop Beaks "Standard First Aid Kit"
+give Avarek "Basic First Aid Kit" 1
+drop Avarek "Basic First Aid Kit"
+give Avarek "Standard First Aid Kit" 1
+drop Avarek "Standard First Aid Kit"
 inv Beaks
 inv Avarek
 speed 1 hold
-@set HC healtime Avarek Beaks wound 30 timeout 60 ~ (bandaging [\d.]+ -> [\d.]+)
+!healtime Avarek Beaks wound 30 timeout 60 ~ finished=0 .*bandaging 0\.0+ -> 0\.0+
 speed 0
-@echo BAL2,191,medic,0,0,nokit,w0,heal_control,0,${HC},-
+@echo BAL2,191,medic,0,0,nokit,w0,heal_control,0,bandaging 0 -> 0,-
 pg_statprobe read
 give Avarek "Basic First Aid Kit" 5
 wake Avarek
