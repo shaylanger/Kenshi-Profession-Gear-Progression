@@ -28,11 +28,16 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+wake Avarek
+pin Avarek ~ pinned
 wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Prisoner Cage" dist 4 radius 1000 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @set TGT spawn "Hungry Bandit" Drifters near Beaks dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${TGT} PGTarget
 relation PGTarget 0

@@ -30,6 +30,8 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+wake Avarek
+pin Avarek ~ pinned
 blueprint "Rag Shirt"
 speed 1 hold
 @sleep 2
@@ -39,6 +41,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Clothing" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @until 30 teleport Avarek Beaks dist 8 ~ moved=1
 benches 60 crafts ~ Clothing[^|]*Rag Shirt
 power "Clothing" supply radius 60
@@ -55,6 +60,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Clothing" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Rag Shirt" at "Clothing" count 5 ~ queued
 fill "Clothing" "Fabrics" 10 radius 60 topup
 @echo READY
@@ -93,6 +101,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Clothing" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Rag Shirt" at "Clothing" count 5 ~ queued
 fill "Clothing" "Fabrics" 10 radius 60 topup
 @echo READY
@@ -130,6 +141,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Clothing" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Rag Shirt" at "Clothing" count 5 ~ queued
 fill "Clothing" "Fabrics" 10 radius 60 topup
 @echo READY
@@ -167,6 +181,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Clothing" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Rag Shirt" at "Clothing" count 5 ~ queued
 fill "Clothing" "Fabrics" 10 radius 60 topup
 @echo READY

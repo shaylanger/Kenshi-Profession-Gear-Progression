@@ -216,7 +216,26 @@ def start(extra=()):
             "health %s 100" % WORKER, "health %s 100" % OTHER, "blood %s 100%%" % WORKER, "blood %s 100%%" % OTHER,
             "hunger %s 280" % WORKER, "hunger %s 280" % OTHER,
             # select the worker: an unselected Avarek walks into the base's Bed and lies there (m19-4080)
-            "select %s" % WORKER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER] + list(extra)
+            "select %s" % WORKER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER,
+            # m29-4080: the harness searches buildings/benches/fill around the FIRST squad member (Avarek = OTHER),
+            # and crippled Avarek walks back to his bed (320 m) within seconds: pin him (harness pin) where he is;
+            # anchor() moves the pin next to the worker after every worker teleport to a building.
+            "wake %s" % OTHER, "pin %s ~ pinned" % OTHER] + list(extra)
+
+
+def anchor():
+    return ["pin %s off ~ unpinned" % OTHER, "@until 30 teleport %s %s dist 8 ~ moved=1" % (OTHER, WORKER),
+            "pin %s ~ pinned" % OTHER]
+
+
+def with_anchor(L):
+    """After every teleport of the worker to a building: bring the pinned first squad member (search origin) along."""
+    out = []
+    for x in L:
+        out.append(x)
+        if re.match(r"^(@until \d+ )?teleport %s building " % WORKER, x):
+            out += anchor()
+    return out
 
 
 def wear(who):
@@ -614,7 +633,7 @@ def gen():
     out_dir = os.path.join(OUT_DIR, "gate") if GATE else OUT_DIR
     os.makedirs(out_dir, exist_ok=True)
     for p in P:
-        L = with_conditions(GEN[p["kind"]](p))
+        L = with_anchor(with_conditions(GEN[p["kind"]](p)))
         if GATE:
             L[0] = "# id: PG-gate-%s" % os.path.splitext(p["file"])[0][3:]
             L.insert(2, "# gate: validation gate (RUN_ORDER.md): %s, same fixture and method as the matrix file"

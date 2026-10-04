@@ -30,6 +30,8 @@ select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
 pg_formulas on ~ formulaScaling=1 hooks=8/8
+wake Avarek
+pin Avarek ~ pinned
 wake Beaks
 speed 1 hold
 @sleep 3

@@ -29,11 +29,16 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+wake Avarek
+pin Avarek ~ pinned
 wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Research Bench" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 power "Research Bench" supply radius 60
 fill "Research Bench" "Book" 40 radius 60 topup
 research status
@@ -56,6 +61,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Research Bench" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -88,6 +96,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Research Bench" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -119,6 +130,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Research Bench" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -150,6 +164,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Research Bench" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]

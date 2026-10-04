@@ -30,6 +30,8 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+wake Avarek
+pin Avarek ~ pinned
 research "Basic Weapon Smithing"
 research "Basic Weapon Grades"
 research "Utility Weapons"
@@ -43,6 +45,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 @until 30 teleport Avarek Beaks dist 8 ~ moved=1
 benches 60 crafts ~ Weapon Smith[^|]*Sickle
 power "Weapon Smith" supply radius 60
@@ -59,6 +64,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60 topup
 fill "Weapon Smith" "Fabrics" 10 radius 60 topup
@@ -99,6 +107,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60 topup
 fill "Weapon Smith" "Fabrics" 10 radius 60 topup
@@ -138,6 +149,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60 topup
 fill "Weapon Smith" "Fabrics" 10 radius 60 topup
@@ -177,6 +191,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 craft Beaks "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60 topup
 fill "Weapon Smith" "Fabrics" 10 radius 60 topup
