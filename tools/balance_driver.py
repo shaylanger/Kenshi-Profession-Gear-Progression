@@ -954,6 +954,8 @@ def gatecheck(paths):
             verdict = "FAIL measurement: conditions changed between points (%s)" % modtxt
         elif abs(skill) <= 2 * noise:
             verdict = "FAIL flat: skill 25 vs 90 within noise (measurement or game behaviour)"
+        elif skill < 0:  # m31 (coordinator): a skill response in the wrong direction is never a PASS
+            verdict = "FAIL skill: negative response (s90 worse than s25: measurement or game behaviour)"
         elif abs(pred) <= noise:
             verdict = "PASS skill; gear unresolved (predicted gain within noise)"
         elif gear >= 0.5 * pred - noise and gear > noise:
