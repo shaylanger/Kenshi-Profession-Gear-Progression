@@ -1115,6 +1115,88 @@ int KahLoot(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
 // pg_census [filter]: records of items on loaded characters (whose name or faction contains the filter)
 // and in trader shop storage, by owner class (player/npc/trader/shop) and stat. Data for the
 // distribution rows (102-104, 220-228, 237, 245).
+// pg_lootscan <player npc> [radius <m>] [all]: world-loot rolls for every item lying in the buildings (chests,
+// crates, shelves) within radius of a player character, as if he had picked each one up (EnsureRecord with
+// him as the finder, the same call the character scan makes). Player-faction buildings are skipped unless
+// `all`. Row 250 (ruin/chest loot corpus). TEST ONLY.
+int KahLootScan(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc<2){ r->append(r,"usage: pg_lootscan <player npc> [radius <m>] [all]"); return KAH_ERROR; }
+  GameWorld* world=KahWorld();
+  Character* c=KahFindCharacter(argv[1]);
+  if(!world || !c){ r->append(r,(std::string("no character named: ")+argv[1]).c_str()); return KAH_ERROR; }
+  bool player=false;
+  try { player=c->isPlayerCharacter(); } catch (...) {}
+  if(!player){ r->append(r,(c->getName()+" is not a player character: world loot needs a player finder").c_str()); return KAH_ERROR; }
+  float radius=200.0f; bool all=false;
+  for(int i=2;i<argc;++i){
+    const std::string a=PGP::Lower(argv[i]);
+    if(a=="radius" && i+1<argc) radius=(float)atof(argv[++i]);
+    else if(a=="all") all=true;
+  }
+  if(!(radius>0 && radius<=2000)){ r->append(r,"radius must be 1..2000"); return KAH_ERROR; }
+  static lektor<RootObject*> nearby;   // reused: lektor has no destructor
+  nearby.clear();
+  Faction* mine=0;
+  try { mine=c->getFaction(); world->getObjectsWithinSphere(nearby,c->getPosition(),radius,BUILDING,2048,0); }
+  catch (...) { r->append(r,"building search failed"); return KAH_ERROR; }
+  int buildings=0, withItems=0, skippedOwn=0, items=0, eligible=0, already=0, rolled=0, multi=0;
+  std::map<PGP::ProfessionStat,int> stats;
+  std::map<int,int> tierAll, tierRolled;
+  std::ostringstream per;
+  int listed=0;
+  for(uint32_t bi=0;bi<nearby.size();++bi){
+    Building* b=dynamic_cast<Building*>(nearby.stuff[bi]);
+    Inventory* inv=0;
+    try { inv=b?b->getInventory():0; } catch (...) { inv=0; }
+    if(!inv) continue;
+    try { if(!all && mine && b->getFaction()==mine){ ++skippedOwn; continue; } } catch (...) { continue; }
+    ++buildings;
+    std::vector<Item*> list;
+    CollectCharacterInventoryItems(inv,list);
+    if(list.empty()) continue;
+    ++withItems;
+    int bElig=0, bRolled=0;
+    for(size_t i=0;i<list.size();++i){
+      Item* item=list[i];
+      if(!item) continue;
+      ++items;
+      const std::string oldKey=PersistentItemId(item,false);
+      bool had=false;
+      if(!oldKey.empty()){
+        EnterCriticalSection(&g_lock);
+        had=g_records.count(oldKey)!=0;
+        LeaveCriticalSection(&g_lock);
+      }
+      PGP::AffixRecord* rec=EnsureRecord(item,c,false);
+      if(!rec) continue;
+      ++eligible; ++bElig;
+      if(had) ++already;
+      ++tierAll[rec->tier];
+      if(!rec->affixes.empty()){ ++rolled; ++bRolled; ++tierRolled[rec->tier]; }
+      if(rec->affixes.size()>1) ++multi;
+      for(size_t a=0;a<rec->affixes.size();++a) ++stats[rec->affixes[a].stat];
+    }
+    if(listed<15){
+      ++listed;
+      std::string fac="?";
+      try { Faction* f=b->getFaction(); if(f) fac=f->getName(); } catch (...) {}
+      per<<" | "<<b->getName()<<" ["<<fac<<"] items="<<(unsigned long)list.size()<<" eligible="<<bElig<<" rolled="<<bRolled;
+    }
+  }
+  std::ostringstream ss;
+  ss<<"lootscan finder="<<c->getName()<<" radius="<<(int)radius<<" buildings="<<buildings<<" with_items="<<withItems
+    <<" skipped_own="<<skippedOwn<<" items="<<items<<" eligible="<<eligible<<" already_recorded="<<already
+    <<" rolled="<<rolled<<" multi="<<multi<<" rate="<<(eligible?(double)rolled/eligible:0.0)<<" stats:";
+  for(std::map<PGP::ProfessionStat,int>::const_iterator s=stats.begin();s!=stats.end();++s)
+    ss<<" "<<PGP::StatName(s->first)<<"="<<s->second;
+  ss<<" tiers(rolled/all):";
+  for(std::map<int,int>::const_iterator t=tierAll.begin();t!=tierAll.end();++t)
+    ss<<" t"<<t->first<<"="<<tierRolled[t->first]<<"/"<<t->second;
+  Log("harness: "+ss.str());
+  r->append(r,(ss.str()+per.str()).c_str());
+  return KAH_OK;
+}
+
 int KahCensus(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   GameWorld* world=KahWorld();
   if(!world){ r->append(r,"no world"); return KAH_ERROR; }
@@ -1286,6 +1368,7 @@ void KahTick() {
        +g_kah.registerCommand("pg_store","pg_store <npc> <building> <item>",KahStore,0)
        +g_kah.registerCommand("pg_check","pg_check <npc> <item>",KahCheck,0)
        +g_kah.registerCommand("pg_census","pg_census [name filter]",KahCensus,0)
+       +g_kah.registerCommand("pg_lootscan","pg_lootscan <player npc> [radius <m>] [all]",KahLootScan,0)
        +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0)
        +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)

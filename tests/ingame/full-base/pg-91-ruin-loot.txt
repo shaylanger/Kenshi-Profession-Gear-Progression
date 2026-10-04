@@ -1,0 +1,99 @@
+# id: PG-ruin-loot-91
+# covers: PG 250 (world-loot profession distribution across a ruin/chest corpus)
+# fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the world has ruins and labs: `towns ruin,ancient,...`)
+# reset: fresh
+# needs: PG 266C68F5+ (`pg_lootscan`), harness 33087EDE+ (`towns`, KAH 24); own launch with
+#   set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (normal chances, every roll logged;
+#   afterwards -Sidecar Restore). Forced mode would make every eligible item roll: the result means nothing there.
+# design: part B runs first (at the base), then part A. Part A, real ruins: the 3 ruins/labs nearest the base (harness `towns ruin,ancient,...`) are visited by teleport
+#   (both squad members, protected); after 20 s at speed 1 (streaming) every item in the non-player buildings within
+#   250 m is given its world-loot roll as if Avarek picked it up (`pg_lootscan`: the same EnsureRecord call the
+#   character scan makes, Avarek as the finder). A second scan of the same place must find every eligible item
+#   already recorded (no re-roll). Part B, a harness-made chest corpus (always available): 300 m from the base a
+#   General Camp Storage Chest owned by Drifters is built and filled with 15 common gear types x 3, then scanned.
+# verify (250): per scan line items / eligible / rolled / stats. Pass when, over all scans:
+#   - eligible > 0 and the rolled share of eligible is between 0.15 and 0.6 (world loot rolls at half the tier
+#     chance: .10-.48 by tier; a share above 0.6 = excessive frequency, below 0.15 = loot is pointless);
+#   - the affixes cover at least 4 different stats (a useful mix), and no single stat has more than 50% of them;
+#   - in ProfessionGear.log every new line for these items says `roll source=world_loot` (never npc/trader), and
+#     each rolled item's stats belong to its tags (coherent gear: Rattan/Straw Hat farming, Ninja Rags stealth, ...);
+#   - the second scan of each ruin: already_recorded = eligible, rolled unchanged.
+#   Summary: python3 tools/analyze_loot.py <ProfessionGear.log> (world_loot lines: shares by tier, stat mix, tags).
+# A ruin that `towns` lists but has no containers in range gives items=0: fine, the chest corpus still counts.
+@wait-world
+@sleep 8
+speed 0
+status ~ phase=world
+protect Beaks on
+protect Avarek on
+hunger Avarek 280
+hunger Beaks 280
+select Beaks
+# --- part B: harness-made chest corpus, 300 m from the base (away from the base's own chests) ---
+teleport Avarek Beaks dist 300
+teleport Beaks Avarek dist 6
+build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ built
+fill "General Camp Storage Chest" 2227-chris_r.mod 3 radius 60
+fill "General Camp Storage Chest" 2185-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 2212-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 18917-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 2309-clothes_v1.mod 3 radius 60
+fill "General Camp Storage Chest" 3061-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 575-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 2151-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 1169-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 544-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 2145-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 2222-chris_r.mod 3 radius 60
+fill "General Camp Storage Chest" 576-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 635-gamedata.base 3 radius 60
+fill "General Camp Storage Chest" 46036-rebirth.mod 3 radius 60
+@set LC pg_lootscan Avarek radius 60 ~ (items=[1-9]\d* eligible=[1-9]\d* already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
+pg_lootscan Avarek radius 60 ~ items=\d+ eligible=(\d+) already_recorded=\1
+unbuild "General Camp Storage Chest" 100
+# --- part A: ruin 1 ---
+towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10
+@set X1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set Y1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set Z1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=[-\d.]+,[-\d.]+,([-\d.]+)
+teleport Avarek ${X1} ${Y1} ${Z1}
+teleport Beaks Avarek dist 5
+speed 1
+@sleep 20
+speed 0
+where Avarek
+buildings 250 near Avarek
+chars 150
+@set L1 pg_lootscan Avarek radius 250 ~ (items=\d+ eligible=\d+ already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
+pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
+# --- ruin 2 ---
+@set X2 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 2: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set Y2 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 2: [^|]*?pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set Z2 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 2: [^|]*?pos=[-\d.]+,[-\d.]+,([-\d.]+)
+teleport Avarek ${X2} ${Y2} ${Z2}
+teleport Beaks Avarek dist 5
+speed 1
+@sleep 20
+speed 0
+where Avarek
+buildings 250 near Avarek
+@set L2 pg_lootscan Avarek radius 250 ~ (items=\d+ eligible=\d+ already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
+pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
+# --- ruin 3 ---
+@set X3 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 3: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set Y3 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 3: [^|]*?pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set Z3 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 3: [^|]*?pos=[-\d.]+,[-\d.]+,([-\d.]+)
+teleport Avarek ${X3} ${Y3} ${Z3}
+teleport Beaks Avarek dist 5
+speed 1
+@sleep 20
+speed 0
+where Avarek
+buildings 250 near Avarek
+@set L3 pg_lootscan Avarek radius 250 ~ (items=\d+ eligible=\d+ already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
+pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
+@echo LOOT,250,ruin1,${L1}
+@echo LOOT,250,ruin2,${L2}
+@echo LOOT,250,ruin3,${L3}
+@echo LOOT,250,chest,${LC}
+@log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=world_loot
