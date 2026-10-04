@@ -24,6 +24,12 @@ hunger Beaks 280
 select Avarek
 clearjobs Avarek
 pg_statprobe on Avarek
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek building "Research Bench" dist 4 radius 1500 ~ moved=1
+give Avarek "Books" 40
 research status
 research start "Research Bench II"
 research start "Research Bench III"
@@ -34,7 +40,7 @@ research start "Hydroponics"
 research start "Advanced Cooking"
 research start "Iron Plates"
 research status ~ queue=[1-9]
-job Avarek "Research Bench" radius 500
+job Avarek "Research Bench" radius 60
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1

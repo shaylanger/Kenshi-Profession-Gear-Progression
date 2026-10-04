@@ -251,9 +251,12 @@ def gen_research(p):
                    "when one completes (then that window's BAL2 is invalid: P1 < P0)."],
                ["progress rises in every window (else no power/bench level: research status desk_level/benches);",
                 "own50 > none = research reads the hooked Science (ResearchBuilding::operate is not scaled by PG)."])
-    L += start(["research status"] + ['research start "%s"' % t for t in p["techs"]] +
+    # Full-Base: the bench is ~520 m from the squad and research costs Books (can_pay=0 without, m21-4080)
+    L += start(['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"]),
+                'give %s "Books" 40' % WORKER, "research status"] +
+               ['research start "%s"' % t for t in p["techs"]] +
                ["research status ~ queue=[1-9]",
-                'job %s "%s" radius 500' % (WORKER, p["building"])]) + wear(WORKER)
+                'job %s "%s" radius 60' % (WORKER, p["building"])]) + wear(WORKER)
     L += ["speed 10", "@wait-game 5 600", "speed 0"]
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
