@@ -2,8 +2,8 @@
 # covers: PG 145 (a mod-added tool weapon auto-classifies and rolls), PG 229 (UWE Sickle-type tool: the affix counts only while equipped)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has a weapon smith)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0; set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: research the UWE utility weapons, craft one Sickle through the bench's real finish step (craftfinish), take it
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 616121b+ (benches near <x y z>); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# design: research the UWE utility weapons, craft one Sickle at the bench (real craft job, materials filled), take it
 #   from the bench output, then carried / equipped / unequipped with a forced Farming 20 affix.
 # verify: 145 = the crafted Sickle's roll line has tags TOOL_FARMING; 229 = pg_bonus farming 0% carried, 20% equipped, 0% unequipped.
 @wait-world
@@ -30,8 +30,21 @@ speed 0
 @until 30 teleport Beaks Avarek dist 8 ~ moved=1
 benches 60 crafts ~ Weapon[^|]*Sickle
 setstat Avarek weapon_smith 50
-craftfinish Avarek Sickle at "Weapon" ~ output \d+ -> \d+
+# m24-4080: craftfinish refuses weapons ("the game's item factory refuses them") -> one real craft, as pg-56 does.
+#   benches/fill search around the first squad member (Avarek); the queue is polled at the bench position.
+@set WX buildings 60 smith ~ Weapon Smith V dist=\S+ pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set WY buildings 60 smith ~ Weapon Smith V dist=\S+ pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set WZ buildings 60 smith ~ Weapon Smith V dist=\S+ pos=[-\d.]+,[-\d.]+,([-\d.]+)
+craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
+fill "Weapon Smith" "Steel Bars" 10 radius 60
+fill "Weapon Smith" "Fabrics" 10 radius 60
+speed 50 hold
+@until 900 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
+speed 0
+jobs Avarek
+where Avarek
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" .*tags=\S*TOOL_FARMING
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 pg_take Avarek "Weapon" "Sickle" ~ to Avarek: [^|]*Sickle key=pgp\S+ equipped=0
 pg_force_affix Avarek "Sickle" farming 20 tier 4 ~ affixes=Farming:20
 # 229: carried only -> no bonus
