@@ -23,9 +23,9 @@ packweight Malzin "Small Backpack" ~ in_inventory.* raw=${R} total=${R}
 @sleep 2
 packweight ground "Small Backpack" ~ raw=${R} total=${R} 
 # the back slot is free, so the picked-up pack goes on her back (run m16-4080): unequip it again before storing.
-# `now`: harness F6A3FC31 treats a dropped item (faction "No Faction") as owned and sends a PICKUP order, which never
-# finishes while paused (m18-4080)
-pickup Malzin ${G} now ~ picked up Small Backpack x1
+# (harness 0f5bdc4+: a "No Faction" drop is not owned, so the plain pickup is the instant same-instance one; the
+# `now` workaround of m18-4080 is gone)
+pickup Malzin ${G} ~ picked up Small Backpack x1
 unequip Malzin "Small Backpack" ~ -> main\)
 pg_info Malzin "Small Backpack" ~ equipped=0
 # --- in a chest ---

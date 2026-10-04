@@ -38,7 +38,7 @@ OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 WORKER = "Avarek"
 OTHER = "Beaks"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
-NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness 5AF3E517+ (44992a0: teleport moved=) (KAH 24: chance, detect, "
+NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness 5BEC01D0+ (90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
 
@@ -425,11 +425,26 @@ def gen():
         # paused never land); after wake + 3 s of game time it always landed
         L = [y for x in L for y in (["wake %s" % WORKER, "speed 1", "@sleep 3", "speed 0", x]
                                      if x.startswith("@until 30 teleport %s " % WORKER) else [x])]
+        # harness 90a0e33+: "speed N hold" resumes after the game's own pauses (m19-4080: a Bandit Demands event
+        # paused the game at 50x and the scenario waited until its timeout)
+        L = [x + " hold" if re.match(r"^speed (?!0$)[\d.]+$", x) else x for x in L]
         # (a read right after pg_bonus clears the reads pg_bonus itself made)
         L = [y for x in L for y in ([x, "pg_statprobe read"] if x.startswith(("@echo BAL2", "pg_bonus ")) else [x])]
         path = os.path.join(OUT_DIR, p["file"])
         with open(path, "w", newline="\n") as fh:
             fh.write("\n".join(L) + "\n")
+        # FormulaScaling (PG C5CAC166+, off by default): the same sweep with pg_formulas on, professions "<prof>_fs"
+        if p["kind"] in ("move", "swim", "chance") or p.get("prof") == "stealth":
+            F = []
+            for x in L:
+                x = re.sub(r"^(@echo BAL2,[^,]*,)([^,]*),", r"\1\2_fs,", x)
+                F.append(x)
+                if x.startswith("pg_statprobe on "):
+                    F.append("pg_formulas on ~ formulaScaling=1 hooks=8/8")
+            F[0] = F[0] + "-fs"
+            F.insert(2, "# variant: pg_formulas on (FormulaScaling), professions written as <prof>_fs")
+            with open(path.replace(".txt", "-fs.txt"), "w", newline="\n") as fh:
+                fh.write("\n".join(F + ["pg_formulas off"]) + "\n")
         n = sum(1 for x in L if x.startswith("@echo BAL2"))
         print("wrote %-42s rows %-8s kind %-9s points %d" % (p["file"], p["rows"], p["kind"], n))
 

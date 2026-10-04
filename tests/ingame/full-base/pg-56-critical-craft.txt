@@ -15,7 +15,7 @@
 @sleep 8
 speed 0
 wake Avarek
-speed 1
+speed 1 hold
 @sleep 4
 speed 0
 protect Beaks on
@@ -29,11 +29,11 @@ research "Basic Weapon Grades"
 research "Utility Weapons"
 research "Katanas"
 research "Basic Weapon Grades 3"
-speed 1
+speed 1 hold
 @sleep 2
 speed 0
 wake Avarek
-speed 1
+speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
@@ -44,7 +44,7 @@ setstat Avarek weapon_smith 10
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
-speed 50
+speed 50 hold
 @until 900 benches 60 ~ Weapon[^|]*queue=0
 speed 0
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" equipped=0 tier=\d
@@ -53,7 +53,7 @@ pg_force_critical on ~ forceCritical=1$
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
-speed 50
+speed 50 hold
 @until 900 benches 60 ~ Weapon[^|]*queue=0
 speed 0
 pg_force_critical off ~ forceCritical=0$
