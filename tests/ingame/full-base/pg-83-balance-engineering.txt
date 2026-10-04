@@ -39,7 +39,7 @@ pg_clear Avarek ~ cleared affixes
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,10,0,none,w1,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -52,7 +52,7 @@ pg_clear Avarek ~ cleared affixes
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,90,0,none,w2,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -65,7 +65,7 @@ pg_clear Avarek ~ cleared affixes
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,0,none,w3,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -81,7 +81,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,25,own25,w4,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -97,7 +97,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,50,own50,w5,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -113,7 +113,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,0,lab50,w6,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -126,7 +126,7 @@ pg_clear Avarek ~ cleared affixes
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,0,none,w7,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -142,7 +142,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,25,own25,w8,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -158,7 +158,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,50,own50,w9,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -174,7 +174,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,0,lab50,w10,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -187,7 +187,7 @@ pg_clear Avarek ~ cleared affixes
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,0,none,w11,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -203,7 +203,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,25,own25,w12,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -219,7 +219,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,50,own50,w13,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -235,7 +235,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,50,0,lab50,w14,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -248,7 +248,7 @@ pg_clear Avarek ~ cleared affixes
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,75,0,none,w15,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek
@@ -264,7 +264,7 @@ pg_statprobe read
 speed 10 hold
 @wait-game 5 900
 speed 0
-@set P1 construction "Small Shack" ~ progress=([-\d.]+)
+@set P1 construction "Small Shack" ~ progress=([-\d.]+) complete=0
 @echo BAL2,185,engineering,25,50,own50,w16,construct,300,${P0},${P1}
 pg_statprobe read
 clearjobs Avarek

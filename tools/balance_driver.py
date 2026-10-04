@@ -6,7 +6,7 @@ gen: write one harness scenario file per profession (tests/ingame/full-base/pg-5
        craft      crafts queued at a bench; result = queue drop in a fixed game-time window
        operate    production building / farm worker ticks: PG `pg_operate` output_progress in a window
        research   `research status` progress (0..1) of the queued tech in a window
-       construct  harness `construct`: a fresh construction site per window, progress (0..1) in the window
+       construct  harness `construct`: a fresh construction site per window, progress (material units, Small Shack 0..7) in the window
        heal       harness `healtime ... wound <cut>`: bandaging per game second while treating a fixed wound
        move       harness `swimtime` on dry land (any axis): seconds for a fixed run, plus `runspeed`
        swim       harness `findwater` + `swimtime`: swim speed through deep water
@@ -206,10 +206,14 @@ def gen_craft(p):
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
+        # m21-4080: crafting stalled after the first windows (worker off the bench, benches 60 found none):
+        # put him back at the bench each point and log where he is / his jobs after the window.
+        L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, bench)]
         L += ['fill "%s" "%s" %d radius 60' % (bench, it, n) for it, n in p["give"]]
         L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench),
               q % 0, fpat % 0,
               "speed %d" % sp, "@wait-game %d 900" % w, "speed 0",
+              "where %s" % WORKER, "jobs %s" % WORKER,
               q % 1, fpat % 1,
               echo(p["rows"], p["prof"], skill, gear, label, "craft", w * 60, "${Q0}/${F0}", "${Q1}/${F1}"),
               "hunger %s 280" % WORKER]
@@ -283,7 +287,7 @@ def gen_construct(p):
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         L += ['@set P0 construct %s "%s" dist 12 ~ progress=%s' % (WORKER, b, NUM),
               "speed 10", "@wait-game %d 900" % w, "speed 0",
-              '@set P1 construction "%s" ~ progress=%s' % (b, NUM),
+              '@set P1 construction "%s" ~ progress=%s complete=0' % (b, NUM),
               echo(p["rows"], p["prof"], skill, gear, label, "construct", w * 60, "${P0}", "${P1}"),
               "clearjobs %s" % WORKER,
               'unbuild "%s"' % b,
@@ -500,7 +504,9 @@ def measure(kind, window_s, a, b):
         if p0 is None or p1 is None:
             return 0, window_s, 0, "missing progress"
         done = p1 - p0
-        note = "saturated" if kind == "construct" and p1 >= 0.999 else ""
+        # construction progress is NOT 0..1: it counts up to the site's material total (Small Shack: 7, then
+        # complete=1; m21-4080). The P1 capture needs complete=0, so a finished site fails that line instead.
+        note = ""
         return done * 1000.0, window_s, int(done > 0 and not note), note  # x1000: per-mille units
     if kind == "heal":
         m = re.search(r"seconds_bandaging=([\d.]+) bandaging ([\d.]+) -> ([\d.]+)", a or "")
