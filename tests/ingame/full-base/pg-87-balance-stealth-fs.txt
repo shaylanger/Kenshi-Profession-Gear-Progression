@@ -3,7 +3,7 @@
 # variant: pg_formulas on (FormulaScaling), professions written as <prof>_fs
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: a fresh neutral observer per point (Hungry Bandit, Drifters, renamed PGW<n>) spawned 20 m from Avarek,
 #   who sneaks (detecttime: sneak on). Result = game seconds until seen
 #   (timeout 120 s). The sneaker's skill/gear varies (stealth).
@@ -44,6 +44,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW1
+pin PGW1 face Avarek ~ pinned
 relation PGW1 0
 setstat PGW1 perception 30
 setstat Avarek stealth 10
@@ -53,6 +54,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW1 dist 20 ~ moved=1
+face PGW1 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -64,6 +66,7 @@ speed 0
 @echo BAL2,195,stealth_fs,10,0,none,w1,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW1 off ~ unpinned
 kill PGW1
 @until 30 teleport PGW1 Avarek dist 300 ~ moved=1
 # --- w2: stealth 90, gear none ---
@@ -75,6 +78,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW2
+pin PGW2 face Avarek ~ pinned
 relation PGW2 0
 setstat PGW2 perception 30
 setstat Avarek stealth 90
@@ -84,6 +88,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW2 dist 20 ~ moved=1
+face PGW2 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -95,6 +100,7 @@ speed 0
 @echo BAL2,195,stealth_fs,90,0,none,w2,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW2 off ~ unpinned
 kill PGW2
 @until 30 teleport PGW2 Avarek dist 300 ~ moved=1
 # --- w3: stealth 50, gear none ---
@@ -106,6 +112,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW3
+pin PGW3 face Avarek ~ pinned
 relation PGW3 0
 setstat PGW3 perception 30
 setstat Avarek stealth 50
@@ -115,6 +122,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW3 dist 20 ~ moved=1
+face PGW3 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -126,6 +134,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,0,none,w3,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW3 off ~ unpinned
 kill PGW3
 @until 30 teleport PGW3 Avarek dist 300 ~ moved=1
 # --- w4: stealth 50, gear own25 ---
@@ -137,6 +146,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW4
+pin PGW4 face Avarek ~ pinned
 relation PGW4 0
 setstat PGW4 perception 30
 setstat Avarek stealth 50
@@ -149,6 +159,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW4 dist 20 ~ moved=1
+face PGW4 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -160,6 +171,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,25,own25,w4,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW4 off ~ unpinned
 kill PGW4
 @until 30 teleport PGW4 Avarek dist 300 ~ moved=1
 # --- w5: stealth 50, gear own50 ---
@@ -171,6 +183,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW5
+pin PGW5 face Avarek ~ pinned
 relation PGW5 0
 setstat PGW5 perception 30
 setstat Avarek stealth 50
@@ -183,6 +196,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW5 dist 20 ~ moved=1
+face PGW5 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -194,6 +208,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,50,own50,w5,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW5 off ~ unpinned
 kill PGW5
 @until 30 teleport PGW5 Avarek dist 300 ~ moved=1
 # --- w6: stealth 50, gear lab50 ---
@@ -205,6 +220,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW6
+pin PGW6 face Avarek ~ pinned
 relation PGW6 0
 setstat PGW6 perception 30
 setstat Avarek stealth 50
@@ -217,6 +233,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW6 dist 20 ~ moved=1
+face PGW6 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -228,6 +245,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,0,lab50,w6,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW6 off ~ unpinned
 kill PGW6
 @until 30 teleport PGW6 Avarek dist 300 ~ moved=1
 # --- w7: stealth 50, gear none ---
@@ -239,6 +257,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW7
+pin PGW7 face Avarek ~ pinned
 relation PGW7 0
 setstat PGW7 perception 30
 setstat Avarek stealth 50
@@ -248,6 +267,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW7 dist 20 ~ moved=1
+face PGW7 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -259,6 +279,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,0,none,w7,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW7 off ~ unpinned
 kill PGW7
 @until 30 teleport PGW7 Avarek dist 300 ~ moved=1
 # --- w8: stealth 50, gear own25 ---
@@ -270,6 +291,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW8
+pin PGW8 face Avarek ~ pinned
 relation PGW8 0
 setstat PGW8 perception 30
 setstat Avarek stealth 50
@@ -282,6 +304,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW8 dist 20 ~ moved=1
+face PGW8 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -293,6 +316,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,25,own25,w8,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW8 off ~ unpinned
 kill PGW8
 @until 30 teleport PGW8 Avarek dist 300 ~ moved=1
 # --- w9: stealth 50, gear own50 ---
@@ -304,6 +328,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW9
+pin PGW9 face Avarek ~ pinned
 relation PGW9 0
 setstat PGW9 perception 30
 setstat Avarek stealth 50
@@ -316,6 +341,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW9 dist 20 ~ moved=1
+face PGW9 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -327,6 +353,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,50,own50,w9,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW9 off ~ unpinned
 kill PGW9
 @until 30 teleport PGW9 Avarek dist 300 ~ moved=1
 # --- w10: stealth 50, gear lab50 ---
@@ -338,6 +365,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW10
+pin PGW10 face Avarek ~ pinned
 relation PGW10 0
 setstat PGW10 perception 30
 setstat Avarek stealth 50
@@ -350,6 +378,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW10 dist 20 ~ moved=1
+face PGW10 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -361,6 +390,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,0,lab50,w10,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW10 off ~ unpinned
 kill PGW10
 @until 30 teleport PGW10 Avarek dist 300 ~ moved=1
 # --- w11: stealth 50, gear none ---
@@ -372,6 +402,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW11
+pin PGW11 face Avarek ~ pinned
 relation PGW11 0
 setstat PGW11 perception 30
 setstat Avarek stealth 50
@@ -381,6 +412,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW11 dist 20 ~ moved=1
+face PGW11 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -392,6 +424,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,0,none,w11,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW11 off ~ unpinned
 kill PGW11
 @until 30 teleport PGW11 Avarek dist 300 ~ moved=1
 # --- w12: stealth 50, gear own25 ---
@@ -403,6 +436,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW12
+pin PGW12 face Avarek ~ pinned
 relation PGW12 0
 setstat PGW12 perception 30
 setstat Avarek stealth 50
@@ -415,6 +449,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW12 dist 20 ~ moved=1
+face PGW12 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -426,6 +461,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,25,own25,w12,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW12 off ~ unpinned
 kill PGW12
 @until 30 teleport PGW12 Avarek dist 300 ~ moved=1
 # --- w13: stealth 50, gear own50 ---
@@ -437,6 +473,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW13
+pin PGW13 face Avarek ~ pinned
 relation PGW13 0
 setstat PGW13 perception 30
 setstat Avarek stealth 50
@@ -449,6 +486,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW13 dist 20 ~ moved=1
+face PGW13 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -460,6 +498,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,50,own50,w13,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW13 off ~ unpinned
 kill PGW13
 @until 30 teleport PGW13 Avarek dist 300 ~ moved=1
 # --- w14: stealth 50, gear lab50 ---
@@ -471,6 +510,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW14
+pin PGW14 face Avarek ~ pinned
 relation PGW14 0
 setstat PGW14 perception 30
 setstat Avarek stealth 50
@@ -483,6 +523,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW14 dist 20 ~ moved=1
+face PGW14 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -494,6 +535,7 @@ speed 0
 @echo BAL2,195,stealth_fs,50,0,lab50,w14,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW14 off ~ unpinned
 kill PGW14
 @until 30 teleport PGW14 Avarek dist 300 ~ moved=1
 # --- w15: stealth 75, gear none ---
@@ -505,6 +547,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW15
+pin PGW15 face Avarek ~ pinned
 relation PGW15 0
 setstat PGW15 perception 30
 setstat Avarek stealth 75
@@ -514,6 +557,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW15 dist 20 ~ moved=1
+face PGW15 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -525,6 +569,7 @@ speed 0
 @echo BAL2,195,stealth_fs,75,0,none,w15,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW15 off ~ unpinned
 kill PGW15
 @until 30 teleport PGW15 Avarek dist 300 ~ moved=1
 # --- w16: stealth 25, gear own50 ---
@@ -536,6 +581,7 @@ speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW16
+pin PGW16 face Avarek ~ pinned
 relation PGW16 0
 setstat PGW16 perception 30
 setstat Avarek stealth 25
@@ -548,6 +594,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek PGW16 dist 20 ~ moved=1
+face PGW16 Avarek
 speed 1 hold
 @sleep 3
 speed 0
@@ -559,6 +606,7 @@ speed 0
 @echo BAL2,195,stealth_fs,25,50,own50,w16,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
+pin PGW16 off ~ unpinned
 kill PGW16
 @until 30 teleport PGW16 Avarek dist 300 ~ moved=1
 stealth Avarek off

@@ -41,7 +41,7 @@ OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 WORKER = "Avarek"
 OTHER = "Beaks"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
-NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near) (KAH 24: chance, detect, "
+NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
 
@@ -489,18 +489,24 @@ def gen_detect(p):
               "stealth %s off" % WORKER, "teleport %s %s dist 60" % (WORKER, OTHER),
               "@set OBS spawn \"Hungry Bandit\" Drifters near %s dist %d count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)"
               % (WORKER, d),
-              "setname ${OBS} %s" % obs, "relation %s 0" % obs, "setstat %s perception 30" % obs]
+              "setname ${OBS} %s" % obs,
+              # m27-4080 (pg-87/87-fs/89 batch19): the observer still ran 200-3000 m away during detecttime even
+              # with the sneaker teleported to him (HOLD_POSITION did not help): pin him (harness c4fa520) where he
+              # spawned (game paused), facing the sneaker, until the point is measured
+              "pin %s face %s ~ pinned" % (obs, WORKER),
+              "relation %s 0" % obs, "setstat %s perception 30" % obs]
         if not sneaker_varies:
             L += ["pg_statprobe on %s" % obs] + wear(obs)
         L += ["setstat %s %s %d" % (who, p["setstat"], skill)] + gear_lines(who, p["prof"], gear)
         # m25-4080 batch19 pg-87: 2 of the first 3 observers stood ~200 m away 3 s after the spawn (the game moved
         # them out of the base layout), w2 was 16 m away: bring the sneaker to wherever the observer stands
-        L += ['@until 30 teleport %s %s dist %d ~ moved=1' % (WORKER, obs, d)]
+        L += ['@until 30 teleport %s %s dist %d ~ moved=1' % (WORKER, obs, d), "face %s %s" % (obs, WORKER)]
         L += ["speed 1", "@sleep 3", "speed 0"] + ready("where %s ~ %s" % (obs, near)) +              ["speed 1",
               "@set T detecttime %s %s timeout %d ~ (seen=\d seconds_to_seen=\S+)" % (WORKER, obs, to),
               "speed 0",
               echo(p["rows"], p["prof"], skill, gear, label, "detect_" + p["side"], to, "${T}", "-"),
-              "stealth %s off" % WORKER, "kill %s" % obs, "teleport %s %s dist 300" % (obs, WORKER)]
+              "stealth %s off" % WORKER, "pin %s off ~ unpinned" % obs, "kill %s" % obs,
+              "teleport %s %s dist 300" % (obs, WORKER)]
     return L + ["stealth %s off" % WORKER, "teleport %s %s dist 3" % (WORKER, OTHER)]
 
 def gen_chance(p):
