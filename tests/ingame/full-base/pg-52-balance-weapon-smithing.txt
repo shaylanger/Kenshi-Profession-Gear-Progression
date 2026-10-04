@@ -52,9 +52,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -85,9 +85,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -118,9 +118,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -154,9 +154,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -190,9 +190,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -226,9 +226,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -259,9 +259,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -295,9 +295,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -331,9 +331,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -367,9 +367,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -400,9 +400,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -436,9 +436,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -472,9 +472,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -508,9 +508,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -541,9 +541,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -577,9 +577,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]

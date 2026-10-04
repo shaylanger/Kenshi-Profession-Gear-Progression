@@ -242,8 +242,9 @@ def gen_craft(p):
         # m21-4080: crafting stalled after the first windows (worker off the bench, benches 60 found none):
         # put him back at the bench each point and log where he is / his jobs after the window.
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, bench)]
-        L += ['fill "%s" "%s" %d radius 60' % (bench, it, n) for it, n in p["give"]]
+        # m23-4080 probe: bench input sections accept nothing until a craft is queued -> craft first, then fill
         L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench)]
+        L += ['fill "%s" "%s" %d radius 60' % (bench, it, n) for it, n in p["give"]]
         # a "fill ... nothing fitted" top-up is not a failure by itself: the real bench state decides
         L += ready(AWAKE, *[bench_has(bench, it) for it, _ in p["give"]] +
                    [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB, powered(bench)])

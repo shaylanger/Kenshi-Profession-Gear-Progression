@@ -48,8 +48,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -79,8 +79,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -110,8 +110,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -144,8 +144,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -178,8 +178,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -212,8 +212,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -243,8 +243,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -277,8 +277,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -311,8 +311,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -345,8 +345,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -376,8 +376,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -410,8 +410,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -444,8 +444,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -478,8 +478,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -509,8 +509,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
@@ -543,8 +543,8 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
-fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
+fill "Clothing" "Fabrics" 10 radius 60
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]

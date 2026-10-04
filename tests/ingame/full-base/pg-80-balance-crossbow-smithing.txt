@@ -48,9 +48,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -81,9 +81,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -114,9 +114,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -150,9 +150,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -186,9 +186,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -222,9 +222,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -255,9 +255,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -291,9 +291,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -327,9 +327,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -363,9 +363,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -396,9 +396,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -432,9 +432,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -468,9 +468,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -504,9 +504,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -537,9 +537,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
@@ -573,9 +573,9 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
+craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 fill "Crossbow Crafting" "Steel Bars" 10 radius 60
 fill "Crossbow Crafting" "Hinge" 10 radius 60
-craft Avarek "Junkbow" at "Crossbow Crafting" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
