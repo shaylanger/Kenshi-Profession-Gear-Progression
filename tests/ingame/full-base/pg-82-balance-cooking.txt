@@ -4,7 +4,7 @@
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: Avarek works the Cooking Stove (real craft job, Dried Meat queued 5 more per point); the bench input is refilled
-#   with Raw Meat before every 20-game-minute window at speed 20. Result = items made in the window:
+#   with Raw Meat before every 30-game-minute window at speed 3. Result = items made in the window:
 #   queue drop + progress of the first queued item (benches prints it with 4 decimals, harness
 #   after 33087EDE). Skills 10/90 without gear, then 3 x (skill 50: none / +25% / +50% cooking / +50%
 #   Labouring control), then the sanity pair.
@@ -64,8 +64,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -97,8 +97,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -130,8 +130,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -166,8 +166,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -202,8 +202,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -238,8 +238,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -271,8 +271,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -307,8 +307,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -343,8 +343,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -379,8 +379,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -412,8 +412,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -448,8 +448,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -484,8 +484,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -520,8 +520,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -553,8 +553,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek
@@ -589,8 +589,8 @@ building "Cooking Stove" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied
 @set Q0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Cooking Stove[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 @set T0 time ~ game_hours=([\d.]+)
-speed 20 hold
-@wait-game 20 900
+speed 3 hold
+@wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 where Avarek

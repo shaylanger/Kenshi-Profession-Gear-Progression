@@ -59,26 +59,32 @@ CHANCE_SKILLS = [10, 25, 50, 75, 90]
 CHANCE_GEAR = [("own2", "OWN", 2), ("own5", "OWN", 5), ("own10", "OWN", 10), ("own25", "OWN", 25),
                ("own50", "OWN", 50), ("own100", "OWN", 100), ("lab50", "labouring", 50)]
 
+# m25-4080 probe: craft progress per GAME hour falls with game speed (Gears, Robotics Bench, robotics 50: speed 3 =
+# 10.2/10.9 %/h, speed 20 = 3.8/5.8 %/h; the frame step is likely clamped). Craft and research windows run at speed 3;
+# 30-game-minute windows (~1.5 real min each) give ~5 % first-item progress for slow items like Gears.
+CRAFT_SPEED = 3
+CRAFT_WINDOW = 30
+
 # setstat names (harness) and pg stat names (pg_force_affix / pg_bonus).
 P = [
     # ---- crafting benches (window = queue drop) ----
     dict(file="pg-52-balance-weapon-smithing.txt", rows="188", kind="craft", prof="weapon_smithing",
          setstat="weapon_smith", bench="Weapon Smith", item="Sickle", give=[("Steel Bars", 10), ("Fabrics", 10)],
-         window=20, prep=['research "Basic Weapon Smithing"', 'research "Basic Weapon Grades"',
+         window=CRAFT_WINDOW, prep=['research "Basic Weapon Smithing"', 'research "Basic Weapon Grades"',
                           'research "Utility Weapons"', 'research "Katanas"', 'research "Basic Weapon Grades 3"'],
          check=r'benches 60 crafts ~ Weapon Smith[^|]*Sickle'),
     dict(file="pg-53-balance-armour-smithing.txt", rows="189", kind="craft", prof="armour_smithing",
-         setstat="armour_smith", bench="Clothing", item="Rag Shirt", give=[("Fabrics", 10)], window=20,
+         setstat="armour_smith", bench="Clothing", item="Rag Shirt", give=[("Fabrics", 10)], window=CRAFT_WINDOW,
          prep=['blueprint "Rag Shirt"'], check=r'benches 60 crafts ~ Clothing[^|]*Rag Shirt'),
     dict(file="pg-80-balance-crossbow-smithing.txt", rows="190", kind="craft", prof="crossbow_smithing",
          setstat="crossbow_smith", bench="Crossbow Crafting", item="Junkbow",
-         give=[("Steel Bars", 10), ("Hinge", 10)], window=20,
+         give=[("Steel Bars", 10), ("Hinge", 10)], window=CRAFT_WINDOW,
          prep=['research "Crossbow Crafting"'], check=r'benches 60 crafts ~ Crossbow Crafting[^|]*Junkbow'),
     dict(file="pg-81-balance-robotics.txt", rows="186", kind="craft", prof="robotics", setstat="robotics",
-         bench="Robotics Bench", item="Gears", give=[("Iron Plates", 15)], window=20,
+         bench="Robotics Bench", item="Gears", give=[("Iron Plates", 15)], window=CRAFT_WINDOW,
          prep=['research "Robotics"'], check=r'benches 60 crafts ~ Robotics Bench[^|]*Gears'),
     dict(file="pg-82-balance-cooking.txt", rows="187", kind="craft", prof="cooking", setstat="cooking",
-         bench="Cooking Stove", item="Dried Meat", give=[("Raw Meat", 15)], window=20,
+         bench="Cooking Stove", item="Dried Meat", give=[("Raw Meat", 15)], window=CRAFT_WINDOW,
          # Full-Base has no Cooking Stove (the Bread Oven runs without an operator): build one (m19-4080)
          prep=['teleport %s %s dist 30' % (WORKER, OTHER), 'build "Cooking Stove" near %s dist 10' % WORKER],
          check=r'benches 60 crafts ~ Cooking Stove[^|]*Dried Meat'),
@@ -86,7 +92,7 @@ P = [
     dict(file="pg-90-balance-farming.txt", rows="161-176", kind="operate", prof="farming", setstat="farming",
          building="Wheat Farm L", fill=("Water", 40), window=30, extra_skills=[25, 75]),
     dict(file="pg-54-research.txt", rows="184", kind="research", prof="science", setstat="science",
-         building="Research Bench", window=10,
+         building="Research Bench", window=30,
          ),
     dict(file="pg-83-balance-engineering.txt", rows="185", kind="construct", prof="engineering",
          setstat="engineering", building="Small Shack", window=5),
@@ -225,7 +231,7 @@ def timed_points(p):
 # ---------------------------------------------------------------- kinds
 def gen_craft(p):
     w, bench = p["window"], p["bench"]
-    sp = p.get("speed", 20)
+    sp = p.get("speed", CRAFT_SPEED)
     L = header(p, ["%s works the %s (real craft job, %s queued 5 more per point); the bench input is refilled"
                    % (WORKER, bench, p["item"]),
                    "with %s before every %d-game-minute window at speed %d. Result = items made in the window:"
@@ -297,7 +303,7 @@ def gen_research(p):
     w = p["window"]
     L = header(p, ["%s researches at the %s (job); research status progress (0..1) of the first queued tech per"
                    % (WORKER, p["building"]),
-                   "%d-game-minute window at speed 10. research start any 3 queues up to 3 techs the game would" % w,
+                   "%d-game-minute window at speed %d. research start any 3 queues up to 3 techs the game would" % (w, CRAFT_SPEED),
                    "start now (longest first); the first is measured; progress resets to the next tech",
                    "when one completes (then that window's BAL2 is invalid: P1 < P0)."],
                ["progress rises in every window (else no power/bench level: research status desk_level/benches);",
@@ -306,8 +312,10 @@ def gen_research(p):
     # m23-4080: the research cost item is ITEM "Book" (`find item book` -> [Book]); "Books" = no data named. Hand-picked tech names were
     # finished / missing / unpayable in this save, so the harness picks startable techs (longest first)
     L += start(['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"]),
-                'give %s "Book" 40 ~ got [1-9]' % WORKER, "research status",
+                # m25-4080 probe: Books in the worker's inventory do not pay (canPayCosts skipped cost=27 with 40
+                # carried); Books in the bench inventory do (fill -> started=3, cost skips 27 -> 10)
                 'power "%s" supply radius 60' % p["building"],
+                'fill "%s" "Book" 40 radius 60 topup' % p["building"], "research status",
                 "research start any 3 ~ started=[1-9]",
                 "research status ~ queue=[1-9]",
                 'job %s "%s" radius 60' % (WORKER, p["building"])]) + wear(WORKER)
@@ -318,7 +326,7 @@ def gen_research(p):
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"])]
         L += ready(AWAKE, HASJOB, r"research status ~ queue=[1-9]", r"research status ~ ^(?!.*power_off)", powered(p["building"]))
         L += ["@set P0 research status ~ progress=%s" % NUM,
-              TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1]
+              TS0, "speed %d" % CRAFT_SPEED, "@wait-game %d 900" % w, "speed 0", TS1]
         L += post(r"research status ~ researchers=[1-9]")
         L += ["@set P1 research status ~ progress=%s" % NUM,
               echo(p["rows"], p["prof"], skill, gear, label, "research", WIN, "${P0}", "${P1}"),
