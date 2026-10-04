@@ -48,6 +48,74 @@ speed 0
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
+# --- d1 diagnostic: skill 10, wound 60, Basic kit only ---
+setstat Avarek medic 10
+give Avarek "Basic First Aid Kit" 1
+drop Avarek "Basic First Aid Kit"
+give Avarek "Standard First Aid Kit" 1
+drop Avarek "Standard First Aid Kit"
+give Avarek "Basic First Aid Kit" 1
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 4 ~ moved=1
+@echo READY
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+inv Avarek ~ Basic First Aid Kit
+speed 1 hold
+@set H healtime Avarek Beaks wound 60 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
+speed 0
+@echo BAL2,191,medic_diag_basic_cut60,10,0,none,d1,heal,0,${H},-
+pg_statprobe read
+hunger Avarek 280
+# --- d2 diagnostic: skill 90, wound 60, Basic kit only ---
+setstat Avarek medic 90
+give Avarek "Basic First Aid Kit" 1
+drop Avarek "Basic First Aid Kit"
+give Avarek "Standard First Aid Kit" 1
+drop Avarek "Standard First Aid Kit"
+give Avarek "Basic First Aid Kit" 1
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 4 ~ moved=1
+@echo READY
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+inv Avarek ~ Basic First Aid Kit
+speed 1 hold
+@set H healtime Avarek Beaks wound 60 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
+speed 0
+@echo BAL2,191,medic_diag_basic_cut60,90,0,none,d2,heal,0,${H},-
+pg_statprobe read
+hunger Avarek 280
+# --- d3 diagnostic: skill 90, wound 30, Standard kit only ---
+setstat Avarek medic 90
+give Avarek "Basic First Aid Kit" 1
+drop Avarek "Basic First Aid Kit"
+give Avarek "Standard First Aid Kit" 1
+drop Avarek "Standard First Aid Kit"
+give Avarek "Standard First Aid Kit" 1
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 4 ~ moved=1
+@echo READY
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+inv Avarek ~ Standard First Aid Kit
+speed 1 hold
+@set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
+speed 0
+@echo BAL2,191,medic_diag_standard_cut30,90,0,none,d3,heal,0,${H},-
+pg_statprobe read
+hunger Avarek 280
+give Avarek "Basic First Aid Kit" 1
+drop Avarek "Basic First Aid Kit"
+give Avarek "Standard First Aid Kit" 1
+drop Avarek "Standard First Aid Kit"
+give Avarek "Basic First Aid Kit" 5
 # --- w1: skill 10, gear none ---
 setstat Avarek medic 10
 pg_clear Avarek ~ cleared affixes

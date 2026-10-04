@@ -359,6 +359,27 @@ def gen_heal(p):
                 # Beaks carries a Standard First Aid Kit in Full-Base and bandages himself within 0.3 s
                 # (flat 4.4/s at every Medic skill of the worker, m21-4080): take it off him first.
                 ]) + wear(WORKER)
+    # m22-4080 diagnosis of the flat medic rate (always ~77 bandaging in ~17.8 s, Medic 10 = Medic 90): which
+    # input moves it at all? Medic 10 vs 90 with a double wound, and Medic 90 with a Standard kit only.
+    # Separate prof name (<prof>_diag_*) so the fit never uses these points.
+    none = EVENT_GEAR[0]
+    # give 1 + drop the whole stack never fails, whatever the kits' remaining uses
+    clear_kits = sum([['give %s "%s First Aid Kit" 1' % (WORKER, k), 'drop %s "%s First Aid Kit"' % (WORKER, k)]
+                      for k in ("Basic", "Standard")], [])
+    for label, skill, cut, kit in (("d1", 10, p["cut"] * 2, "Basic"), ("d2", 90, p["cut"] * 2, "Basic"),
+                                   ("d3", 90, p["cut"], "Standard")):
+        L += ["# --- %s diagnostic: skill %d, wound %d, %s kit only ---" % (label, skill, cut, kit),
+              "setstat %s %s %d" % (WORKER, p["setstat"], skill),
+              ] + clear_kits + ['give %s "%s First Aid Kit" 1' % (WORKER, kit),
+              "teleport %s %s dist 4" % (WORKER, OTHER)] + ready(AWAKE, r"inv %s ~ %s First Aid Kit" % (WORKER, kit))
+        L += ["speed 1",
+              "@set H healtime %s %s wound %d timeout 600 ~ (seconds_bandaging=[\\d.]+ bandaging [\\d.]+ -> [\\d.]+)"
+              % (WORKER, OTHER, cut),
+              "speed 0",
+              echo(p["rows"], "%s_diag_%s_cut%d" % (p["prof"], kit.lower(), cut), skill, none, label, "heal", 0,
+                   "${H}", "-"),
+              "hunger %s 280" % WORKER]
+    L += clear_kits + ['give %s "Basic First Aid Kit" 5' % WORKER]
     for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
