@@ -1640,15 +1640,16 @@ KOChanceFn g_koChanceOrig = 0;
 LockpickFn g_lockpickOrig = 0;
 
 struct ScopedStat {
-  float* member; float saved; bool on;
-  ScopedStat(CharStats* s, float* m, PGP::ProfessionStat st) : member(m), saved(0), on(false) {
+  float* member; float saved; float boosted; bool on;
+  ScopedStat(CharStats* s, float* m, PGP::ProfessionStat st) : member(m), saved(0), boosted(0), on(false) {
     if(!g_formulaScaling || !g_cfg.enabled || !s || !s->me || !m) return;
     float pct=0;
     try { pct=EquippedBonus(s->me,st); } catch (...) { return; }
     if(pct==0.0f) return;
-    saved=*m; *m=PGP::EffectiveStatValue(saved,pct,false,150.0f); on=true;
+    saved=*m; boosted=PGP::EffectiveStatValue(saved,pct,false,150.0f); *m=boosted; on=true;
   }
-  ~ScopedStat(){ if(on) *member=saved; }
+  // keeps any change the game made inside the scope (skill XP written to the member), m33
+  ~ScopedStat(){ if(on) *member=saved+(*member-boosted); }
 };
 
 void HookMaxRun(CharStats* s){ ScopedStat k(s,s?&s->_athletics:0,PGP::STAT_ATHLETICS); if(g_maxRunOrig) g_maxRunOrig(s); }
