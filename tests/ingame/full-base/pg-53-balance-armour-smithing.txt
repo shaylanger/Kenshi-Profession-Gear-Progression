@@ -36,6 +36,7 @@ speed 0
 @until 30 teleport Avarek building "Clothing" dist 4 radius 1500 ~ moved=1
 @until 30 teleport Beaks Avarek dist 8 ~ moved=1
 benches 60 crafts ~ Clothing[^|]*Rag Shirt
+power "Clothing" supply radius 60
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
@@ -54,6 +55,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -84,6 +86,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -114,6 +117,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -147,6 +151,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -180,6 +185,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -213,6 +219,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -243,6 +250,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -276,6 +284,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -309,6 +318,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -342,6 +352,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -372,6 +383,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -405,6 +417,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -438,6 +451,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -471,6 +485,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -501,6 +516,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -534,6 +550,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Clothing[^|]*queue=(\d+)
 @set F0 benches 60 ~ Clothing[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold

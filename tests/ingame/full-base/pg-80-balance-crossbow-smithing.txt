@@ -36,6 +36,7 @@ speed 0
 @until 30 teleport Avarek building "Crossbow Crafting" dist 4 radius 1500 ~ moved=1
 @until 30 teleport Beaks Avarek dist 8 ~ moved=1
 benches 60 crafts ~ Crossbow Crafting[^|]*Junkbow
+power "Crossbow Crafting" supply radius 60
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
@@ -56,6 +57,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -88,6 +90,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -120,6 +123,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -155,6 +159,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -190,6 +195,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -225,6 +231,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -257,6 +264,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -292,6 +300,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -327,6 +336,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -362,6 +372,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -394,6 +405,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -429,6 +441,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -464,6 +477,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -499,6 +513,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -531,6 +546,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold
@@ -566,6 +582,7 @@ benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
 benches 60 ~ Crossbow Crafting[^|]*(?:\|[^|]+)*?\[Hinge x[1-9]
 benches 8 ~ Crossbow Crafting[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
+building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
 speed 20 hold

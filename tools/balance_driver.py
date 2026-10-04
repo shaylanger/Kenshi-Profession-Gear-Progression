@@ -198,6 +198,13 @@ AWAKE = r"where %s ~ ^(?!.*\b(KO|DEAD)\b)" % WORKER
 HASJOB = r"jobs %s ~ jobs=[1-9]" % WORKER
 
 
+def powered(b):
+    # m22-4080: crafting/research stopped after the first windows with the worker at the bench (job kept):
+    # power is held constant (harness `power ... supply`, c5a5c88+ also answers ok for benches that use none)
+    # and checked before every window
+    return r'building "%s" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)' % b
+
+
 def bench_has(bench, item):
     # the bench's own entry only: " || <bench> ... | in 6x3: [Steel Bars x7 @..]"; '||' separates benches
     return r"benches 60 ~ %s[^|]*(?:\|[^|]+)*?\[%s x[1-9]" % (bench, item)
@@ -226,7 +233,8 @@ def gen_craft(p):
     fpat = '@set F%d benches 60 ~ ' + bench + r'[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%%\)'
     L += start(p["prep"] + ["speed 1", "@sleep 2", "speed 0",
                             'teleport %s building "%s" dist 4 radius 1500' % (WORKER, bench),
-                            "teleport %s %s dist 8" % (OTHER, WORKER), p["check"]]) + wear(WORKER)
+                            "teleport %s %s dist 8" % (OTHER, WORKER), p["check"],
+                            'power "%s" supply radius 60' % bench]) + wear(WORKER)
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
@@ -237,7 +245,7 @@ def gen_craft(p):
         L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench)]
         # a "fill ... nothing fitted" top-up is not a failure by itself: the real bench state decides
         L += ready(AWAKE, *[bench_has(bench, it) for it, _ in p["give"]] +
-                   [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB])
+                   [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB, powered(bench)])
         L += [q % 0, fpat % 0,
               "speed %d" % sp, "@wait-game %d 900" % w, "speed 0",
               "where %s" % WORKER, "jobs %s" % WORKER]
@@ -290,6 +298,7 @@ def gen_research(p):
     # finished / missing / unpayable in this save, so the harness picks startable techs (longest first)
     L += start(['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"]),
                 'give %s "Books" 40 ~ got [1-9]' % WORKER, "research status",
+                'power "%s" supply radius 60' % p["building"],
                 "research start any 3 ~ started=[1-9]",
                 "research status ~ queue=[1-9]",
                 'job %s "%s" radius 60' % (WORKER, p["building"])]) + wear(WORKER)
@@ -298,7 +307,7 @@ def gen_research(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         L += ['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"])]
-        L += ready(AWAKE, HASJOB, r"research status ~ queue=[1-9]", r"research status ~ ^(?!.*power_off)")
+        L += ready(AWAKE, HASJOB, r"research status ~ queue=[1-9]", r"research status ~ ^(?!.*power_off)", powered(p["building"]))
         L += ["@set P0 research status ~ progress=%s" % NUM,
               "speed 10", "@wait-game %d 900" % w, "speed 0"]
         L += post(r"research status ~ researchers=[1-9]")

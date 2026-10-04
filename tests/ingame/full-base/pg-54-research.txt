@@ -31,6 +31,7 @@ speed 0
 @until 30 teleport Avarek building "Research Bench" dist 4 radius 1500 ~ moved=1
 give Avarek "Books" 40 ~ got [1-9]
 research status
+power "Research Bench" supply radius 60
 research start any 3 ~ started=[1-9]
 research status ~ queue=[1-9]
 job Avarek "Research Bench" radius 60
@@ -53,6 +54,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -76,6 +78,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -99,6 +102,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -125,6 +129,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -151,6 +156,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -177,6 +183,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -200,6 +207,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -226,6 +234,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -252,6 +261,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -278,6 +288,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -301,6 +312,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -327,6 +339,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -353,6 +366,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -379,6 +393,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -402,6 +417,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
@@ -428,6 +444,7 @@ where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 research status ~ queue=[1-9]
 research status ~ ^(?!.*power_off)
+building "Research Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set P0 research status ~ progress=([-\d.]+)
 speed 10 hold
 @wait-game 10 900
