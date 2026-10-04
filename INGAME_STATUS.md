@@ -28,11 +28,14 @@ gear, g2 skill 25 + own +50%, g3 skill 90 no gear, g4 skill 25 no gear (drift br
 harness `stat` mod= condition factors, game-clock elapsed). "Gear applies" (mechanical, pg_bonus match=1) is tracked
 apart from "balance curve accepted".
 
-**Invalidating finding (m29):** in Testing-Save-Full-Base Avarek is crippled at full hp: harness `stat` shows the game's
-wounds factor 0.25 on every craft skill, 0.55 Medic, 0.665 Perception, run speed capped at 11 (Beaks 82.8). Every
-balance point of batches 17-20 measured a quartered skill (the m28 "x0.55 -> x0.25 drift" was this factor settling
-after load). Fix 0da79eb: worker = Beaks, full health/blood at start, `stat <worker> <stat> ~ wounds=1.0000`
-before every measurement (fails the point otherwise). Batch 17-20 balance numbers are kept only as provisional
+**Invalidating finding (m29):** a HARNESS bug, not the save: `protect <npc> on` and `health <npc> 100` wrote the body
+parts' stun damage (`fleshStun`) to max, so the game's derived part health was 0 and its wounds factor dropped to 0.25
+on every craft skill (0.55 Medic, 0.665 Perception, run speed capped at 11) for ANY protected character, at "full" hp.
+(First read as "Avarek is crippled in Full-Base": wrong, Beaks showed the same right after protect on.) Every balance
+point of batches 17-20 measured a quartered skill (the m28 "x0.55 -> x0.25 drift" was this factor settling after the
+first protect tick). Fixed in harness 6aa5685 (stun damage cleared; live: wounds=1.0000 with protect on, after
+health 100, over 3.4 game hours). Kept from 0da79eb: `stat <worker> <stat> ~ wounds=1.0000` before every measurement
+(it caught this); worker = Beaks with Avarek pinned (harmless). Batch 17-20 balance numbers are kept only as provisional
 direction; none is a fitted value.
 
 ### Mechanical passes (gear applies; native pg_bonus match=1, effective = vanilla x (1 + bonus))
@@ -42,17 +45,17 @@ direction; none is a fitted value.
   formulas read raw CharStats members (design: PG note; Shay decision whether non-fs should apply).
 
 ### Valid measurements awaiting analysis
-- m29 gate with crippled Avarek (equal mod 0.25 on all 4 points, so internally comparable but not representative):
+- m29 gate with Avarek under the protect wounds bug (equal mod 0.25 on all 4 points, so internally comparable but not representative):
   weapon smithing PASS (skill +74%, gear +22% vs pred +14%), armour smithing FAIL gear (+3.0% vs pred +4.8%, within
   noise of a compressed curve). Superseded by the Beaks gate (m29b).
 
 ### Unresolved (rerun in the Beaks gate, classify there)
 - engineering (row 185, construct): batch 20 own50 at s50 ~ +2% vs skill gain 9.1k->23.8k/h: product candidate
   (construction may read Engineering through an unhooked path).
-- medic (row 191): flat at every Medic with the Basic kit (35.3 s), Standard kit ~4x faster; Avarek's medic factor 0.55
+- medic (row 191): flat at every Medic with the Basic kit (35.3 s), Standard kit ~4x faster; the protect wounds-bug medic factor 0.55
   was in play; d4 (Medic 10, Standard kit) next to d3 decides kit-bound vs skill.
-- athletics (193): run speed 11.0 at every skill = Avarek's crippled cap (explained, setup).
-- swimming (194): actual swim speed capped at 4.0 while max_swim_speed rises: Avarek's cap again (setup), recheck.
+- athletics (193): run speed 11.0 at every skill = the protect wounds-bug cap (harness 6aa5685, setup).
+- swimming (194): actual swim speed capped at 4.0 while max_swim_speed rises: the protect wounds-bug cap again (setup), recheck.
 - stealth (195): seen in ~1.5 s at 20 m at every skill: measurement insensitive (observer pinned facing at 20 m).
 - lockpicking (196, Prisoner Cage / owned shackles): chance 0.0000 at every skill: target lock broken (setup).
 - farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement.

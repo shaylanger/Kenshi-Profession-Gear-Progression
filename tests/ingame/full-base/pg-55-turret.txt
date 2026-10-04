@@ -3,7 +3,7 @@
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has turrets)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0 (`protect`, `relation`) + c4fa520 (`pin`); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# m29-4080: operator Beaks (Avarek is crippled in this save: wounds factor 0.25 at full hp; stat asserts wounds=1).
+# m29-4080: operator Beaks; stat asserts wounds=1 (the 0.25 factor was the harness protect bug, fixed in harness 6aa5685: needed).
 # design: Beaks mans the nearest turret (its own job). Per point a fresh "Hungry Bandit" (Drifters) is spawned 40 m
 #   past the turret and made hostile (`relation` -100: the Drifters faction vs the player), then 45 real seconds at speed 1;
 #   the dummy's worst body part % is read. Points: Turrets 10 / 90 without gear, Turrets 10 with +50% Turrets gear.

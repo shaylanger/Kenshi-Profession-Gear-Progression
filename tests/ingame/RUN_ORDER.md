@@ -11,7 +11,8 @@
    condition factor (and wounds=1), pg_bonus native values.
 4. Classify every FAIL (setup / measurement / product / unresolved balance), fix, rerun only the failing gates.
    Only a profession whose gate passes goes to its matrix file (`pg-<n>-balance-*.txt`).
-- Worker is Beaks since 0da79eb: Avarek is crippled in Full-Base (wounds factor 0.25 at full hp); see INGAME_STATUS.md.
+- Worker is Beaks since 0da79eb (Avarek pinned). The wounds factor 0.25 first blamed on a crippled Avarek was the harness
+  protect/health bug, fixed in harness 6aa5685 (needs that harness or newer); see INGAME_STATUS.md.
 - Pending after the gates: pg-89 (perception) full matrix, pg-55 (turret; d6bb99b pins the dummies), pg-51 (57e0381:
   Sickle accepted in the bench output or hauled).
 

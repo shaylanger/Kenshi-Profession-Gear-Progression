@@ -43,9 +43,9 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 
-# Fixture Testing-Save-Full-Base: squad Beaks + Avarek. m29-4080: the worker is Beaks (stays the selection): Avarek is
-# crippled in this save (stat wounds=0.25 on crafting, 0.55 medic, 0.665 perception, run speed capped 11 vs 82.8 at full
-# hp), which quartered every skill read and explains the athletics cap and part of the flat curves of batches 17-20.
+# Fixture Testing-Save-Full-Base: squad Beaks + Avarek. m29-4080: the worker is Beaks (stays the selection). The
+# wounds factor 0.25 first blamed on a "crippled Avarek" was the harness protect/health bug (stun damage written to max,
+# fixed in harness 6aa5685); it quartered every skill read in batches 17-20 and explains the athletics cap.
 WORKER = "Beaks"
 OTHER = "Avarek"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
@@ -218,7 +218,7 @@ def start(extra=()):
             # select the worker: an unselected Avarek walks into the base's Bed and lies there (m19-4080)
             "select %s" % WORKER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER,
             # m29-4080: the harness searches buildings/benches/fill around the FIRST squad member (Avarek = OTHER),
-            # and crippled Avarek walks back to his bed (320 m) within seconds: pin him (harness pin) where he is;
+            # and Avarek walks back to his bed (320 m) within seconds: pin him (harness pin) where he is;
             # anchor() moves the pin next to the worker after every worker teleport to a building.
             "wake %s" % OTHER, "pin %s ~ pinned" % OTHER] + list(extra)
 
