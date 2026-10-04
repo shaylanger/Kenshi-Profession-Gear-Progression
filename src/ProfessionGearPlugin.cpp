@@ -1623,11 +1623,11 @@ bool HookSymbol(HMODULE lib,const char* sym,void* detour,void** orig) {
   return ok;
 }
 
-// ---- FormulaScaling (balance rows 193-197; OFF by default, Shay decides): the game's run-speed, swim-speed,
+// ---- FormulaScaling (balance rows 193-197; ON by default, Shay 2026-10-04): the game's run-speed, swim-speed,
 // stealth, stealth-KO and lockpick formulas read the raw CharStats members, never CharStats::getStat (pg_statprobe,
 // m19-4080), so equipped Athletics/Swimming/Stealth/Assassination/Lockpicking gear changed nothing there. While on,
 // each formula runs with the member raised the way getStat raises it (EffectiveStatValue) and put back afterwards.
-bool g_formulaScaling = false;
+bool g_formulaScaling = true;
 typedef void (*StatsVoidFn)(CharStats*);
 typedef float (*StatsFloatFn)(CharStats*);
 typedef float (*StealthSkillFn)(const CharStats*, bool);
