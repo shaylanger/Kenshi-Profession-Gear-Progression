@@ -21,6 +21,8 @@ blood Beaks 100%
 protect Beaks on
 select Avarek
 clearjobs Beaks
+# m31-5090: m29b FAILed lines power/building "within 60 of the player" (the search origin is the player Avarek,
+# ~600 m from the turret): those use radius 1500 too (the Double-Barrel Harpoon Turret is the only match in range).
 # m25-4080 probe: the only real turret is the Double-Barrel Harpoon Turret ~570-760 m from the squad (search origin =
 # Avarek), unpowered (out_of_power=1); "Training Turret MkIII" is a trainer. Teleport him to it, power it, then the job.
 @set TX buildings 1500 harpoon ~ pos=([-\d.]+),[-\d.]+,[-\d.]+
@@ -28,14 +30,14 @@ clearjobs Beaks
 @set TZ buildings 1500 harpoon ~ pos=[-\d.]+,[-\d.]+,([-\d.]+)
 @echo turret at ${TX} ${TY} ${TZ}
 @until 30 teleport Beaks building "Harpoon Turret" dist 4 radius 1500 ~ moved=1
-power "Harpoon Turret" supply radius 60
-building "Harpoon Turret" 60 ~ out_of_power=0
+power "Harpoon Turret" supply radius 1500
+building "Harpoon Turret" 1500 ~ out_of_power=0
 # m25-4080: USE_TURRET is not a permanent job (job ... "job not recorded"; turret never fired): give the real order
 order Beaks USE_TURRET building "Harpoon Turret"
 speed 1
 @sleep 5
 speed 0
-building "Harpoon Turret" 60 ~ operators=1
+building "Harpoon Turret" 1500 ~ operators=1
 give Beaks "Iron Hat" 1
 equip Beaks "Iron Hat"
 pg_formulas off ~ formulaScaling=0
