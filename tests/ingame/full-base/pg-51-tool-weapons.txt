@@ -39,77 +39,26 @@ craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
 # m25-4080 (pg-56 batch19): at speed 50 the smith used up the 5+5 input materials, walked off to fetch more and the
-#   craft stalled. 10 windows of 2 game hours at speed 20, back to the bench + refill each (fill optional, harness 59b742d).
+#   craft stalled. Now each block puts him back at the bench, refills (fill optional, harness 59b742d) and
+#   runs at speed 20 until the queue is done or an input is empty (needs: [...]); 5+5 materials = ~42% of a Sickle.
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@wait-game 120 900
+@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
-benches 30 near ${WX} ${WY} ${WZ}
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@wait-game 120 900
+@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
-benches 30 near ${WX} ${WY} ${WZ}
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
 fill "Weapon Smith" "Fabrics" 10 radius 60 optional
 speed 20 hold
-@wait-game 120 900
+@until 1200 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*(queue=0|needs: \[)
 speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
-@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
-fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
-fill "Weapon Smith" "Fabrics" 10 radius 60 optional
-speed 20 hold
-@wait-game 120 900
-speed 0
-benches 30 near ${WX} ${WY} ${WZ}
 jobs Avarek
 where Avarek
 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
