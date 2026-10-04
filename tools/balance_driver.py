@@ -122,7 +122,9 @@ P = [
     dict(file="pg-87-balance-stealth.txt", rows="195", kind="detect", prof="stealth", setstat="stealth",
          side="sneaker", dist=100, timeout=180),
     dict(file="pg-89-balance-perception.txt", rows="199", kind="detect", prof="perception", setstat="perception",
-         side="observer", dist=100, timeout=180),
+         side="observer", dist=100, timeout=180, sneaker_stealth=70),
+    # m31-5090: gate 89 at sneaker stealth 30 was flat (seen 3.0 s, maybe 0.1 s at every Perception): 70 makes the
+    # maybe->seen phase long enough for Perception to move it
     # ---- the game's own chances ----
     # m31-5090: KenshiLib's Character::getLockpickChance is a dead stub in 1.0.65 (returns 0.0 at every skill: the
     # m29 0.0000 readings). Harness DE9D9A54+ `chance lockpick` calls the game's DoorLock chance fn instead
@@ -524,6 +526,13 @@ def gen_swim(p):
     return L + ["teleport %s %s dist 3" % (WORKER, OTHER)]
 
 
+# m31-5090 (gate 87/89): a random spawn spot decided the result (los 0.2 vs 0.7, a terrain-blocked spot never
+# saw at all). With DETECT_SPOT set, every point teleports the sneaker to that fixed open spot and pins the observer
+# DETECT dist from him (same direction every point); the READY check also requires line of sight >= 0.5
+# (harness A447F08E+: `face` reports los=). Choose the spot with tests/ingame/full-base/pg-detect-spot-probe.txt.
+DETECT_SPOT = None   # (x, y, z) or None = sneaker brought next to a randomly spawned observer (old method)
+LOS_MIN = r"los=(0\.[5-9]\d*|1\.0+)"
+
 def gen_detect(p):
     d, to = p["dist"], p["timeout"]
     sneaker_varies = p["side"] == "sneaker"
@@ -538,7 +547,7 @@ def gen_detect(p):
                    "The observer is killed and moved away after every point."],
                ["seen=1 in most points (seen=0 everywhere: this observer never notices a sneaker, send the .out to",
                 "the PG agent); stealth: seconds_to_seen grows with Stealth; perception: it shrinks with Perception."])
-    L += start(["teleport %s %s dist 60" % (WORKER, OTHER), "setstat %s stealth 30" % WORKER]) +         (wear(WORKER) if sneaker_varies else [])
+    L += start(["teleport %s %s dist 60" % (WORKER, OTHER), "setstat %s stealth %d" % (WORKER, p.get("sneaker_stealth", 30))]) +         (wear(WORKER) if sneaker_varies else [])
     # m29-5090 gate: dist 20 is 20 game units (~2 m): seen in 1.5-3.4 s at every skill (flat); 100 units ~ 10 m.
     # The READY check was "where <obs>", whose dist= is from the search origin (pinned Avarek, ~80 away), not from
     # the sneaker: every point read invalid. "face <obs> <worker>" reports the observer-to-sneaker distance.
@@ -549,22 +558,27 @@ def gen_detect(p):
         obs = "PGW%d" % n
         who = WORKER if sneaker_varies else obs
         L += ["# --- %s: %s %d, gear %s ---" % (label, p["prof"], skill, gear[0]),
-              "stealth %s off" % WORKER, "teleport %s %s dist 60" % (WORKER, OTHER),
+              "stealth %s off" % WORKER,
+              ("@until 30 teleport %s %s %s %s ~ moved=1" % ((WORKER,) + tuple(DETECT_SPOT)) if DETECT_SPOT
+               else "teleport %s %s dist 60" % (WORKER, OTHER)),
               "@set OBS spawn \"Hungry Bandit\" Drifters near %s dist %d count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)"
               % (WORKER, d),
               "setname ${OBS} %s" % obs,
               # m27-4080 (pg-87/87-fs/89 batch19): the observer still ran 200-3000 m away during detecttime even
               # with the sneaker teleported to him (HOLD_POSITION did not help): pin him (harness c4fa520) where he
               # spawned (game paused), facing the sneaker, until the point is measured
-              "pin %s face %s ~ pinned" % (obs, WORKER),
+              ("pin %s at %s dist %d face %s ~ pinned" % (obs, WORKER, d, WORKER) if DETECT_SPOT
+               else "pin %s face %s ~ pinned" % (obs, WORKER)),
               "relation %s 0" % obs, "setstat %s perception 30" % obs]
         if not sneaker_varies:
             L += ["pg_statprobe on %s" % obs] + wear(obs)
         L += ["setstat %s %s %d" % (who, p["setstat"], skill)] + gear_lines(who, p["prof"], gear)
         # m25-4080 batch19 pg-87: 2 of the first 3 observers stood ~200 m away 3 s after the spawn (the game moved
         # them out of the base layout), w2 was 16 m away: bring the sneaker to wherever the observer stands
-        L += ['@until 30 teleport %s %s dist %d ~ moved=1' % (WORKER, obs, d), "face %s %s" % (obs, WORKER)]
-        L += ["speed 1", "@sleep 3", "speed 0"] + ready("face %s %s ~ %s" % (obs, WORKER, near)) +              ["speed 1",
+        if not DETECT_SPOT:
+            L += ['@until 30 teleport %s %s dist %d ~ moved=1' % (WORKER, obs, d)]
+        L += ["face %s %s" % (obs, WORKER)]
+        L += ["speed 1", "@sleep 3", "speed 0"] + ready("face %s %s ~ %s %s" % (obs, WORKER, near, LOS_MIN)) +              ["speed 1",
               "@set T detecttime %s %s timeout %d ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)" % (WORKER, obs, to),
               "speed 0",
               echo(p["rows"], p["prof"], skill, gear, label, "detect_" + p["side"], to, "${T}", "-"),

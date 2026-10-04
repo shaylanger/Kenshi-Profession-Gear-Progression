@@ -1,0 +1,162 @@
+# pg-detect-spot-probe (m31-5090): find a fixed open spot for the stealth/perception gates (87/89).
+# For each candidate (Beaks teleported N along x from the pinned Avarek), a Hungry Bandit is pinned 100 units
+# along x from Beaks facing him and `face` reports los. Pick a spot with los >= 0.5 (ideally ~1.0) at both
+# 100 and 110 units, then set DETECT_SPOT = (x, y, z) from its `where Beaks` line in tools/balance_driver.py
+# and regenerate (python3 tools/balance_driver.py gen; ... gate). Needs harness A447F08E+ (face los=).
+@wait-world
+@sleep 8
+speed 0
+wake Beaks
+speed 1 hold
+@sleep 4
+speed 0
+protect Avarek on
+protect Beaks on
+select Beaks
+clearjobs Beaks
+wake Avarek
+pin Avarek ~ pinned
+# --- candidate 1: Avarek dist 60 ---
+@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP1
+relation PGP1 0
+pin PGP1 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP1 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,1,60,${L},${W}
+pin PGP1 off
+kill PGP1
+teleport PGP1 Beaks dist 300
+# --- candidate 2: Avarek dist 150 ---
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP2
+relation PGP2 0
+pin PGP2 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP2 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,2,150,${L},${W}
+pin PGP2 off
+kill PGP2
+teleport PGP2 Beaks dist 300
+# --- candidate 3: Avarek dist 250 ---
+@until 30 teleport Beaks Avarek dist 250 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP3
+relation PGP3 0
+pin PGP3 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP3 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,3,250,${L},${W}
+pin PGP3 off
+kill PGP3
+teleport PGP3 Beaks dist 300
+# --- candidate 4: Avarek dist 400 ---
+@until 30 teleport Beaks Avarek dist 400 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP4
+relation PGP4 0
+pin PGP4 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP4 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,4,400,${L},${W}
+pin PGP4 off
+kill PGP4
+teleport PGP4 Beaks dist 300
+# --- candidate 5: Avarek dist 600 ---
+@until 30 teleport Beaks Avarek dist 600 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP5
+relation PGP5 0
+pin PGP5 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP5 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,5,600,${L},${W}
+pin PGP5 off
+kill PGP5
+teleport PGP5 Beaks dist 300
+# --- candidate 6: Avarek dist 800 ---
+@until 30 teleport Beaks Avarek dist 800 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP6
+relation PGP6 0
+pin PGP6 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP6 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,6,800,${L},${W}
+pin PGP6 off
+kill PGP6
+teleport PGP6 Beaks dist 300
+# --- candidate 7: Avarek dist 1000 ---
+@until 30 teleport Beaks Avarek dist 1000 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP7
+relation PGP7 0
+pin PGP7 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP7 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,7,1000,${L},${W}
+pin PGP7 off
+kill PGP7
+teleport PGP7 Beaks dist 300
+# --- candidate 8: Avarek dist 1300 ---
+@until 30 teleport Beaks Avarek dist 1300 ~ moved=1
+speed 1 hold
+@sleep 2
+speed 0
+@set W where Beaks ~ (.+)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGP8
+relation PGP8 0
+pin PGP8 at Beaks dist 100 face Beaks ~ pinned
+speed 1 hold
+@sleep 2
+speed 0
+@set L face PGP8 Beaks ~ (dist=\S+ observer_ko=\d los=\S+)
+@echo PROBE,8,1300,${L},${W}
+pin PGP8 off
+kill PGP8
+teleport PGP8 Beaks dist 300
