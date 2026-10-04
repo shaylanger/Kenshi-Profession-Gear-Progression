@@ -2,7 +2,7 @@
 # covers: PG 145 (a mod-added tool weapon auto-classifies and rolls), PG 229 (UWE Sickle-type tool: the affix counts only while equipped)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has a weapon smith)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 7D80DBB3, harness 616121b+ (benches near <x y z>); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 59b742d+ (fill optional; 616121b benches near <x y z>); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: research the UWE utility weapons, craft one Sickle at the bench (real craft job, materials filled), take it
 #   from the bench output, then carried / equipped / unequipped with a forced Farming 20 affix.
 # verify: 145 = the crafted Sickle's roll line has tags TOOL_FARMING; 229 = pg_bonus farming 0% carried, 20% equipped, 0% unequipped.
@@ -38,11 +38,81 @@ setstat Avarek weapon_smith 50
 craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-speed 50 hold
-@until 900 benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
+# m25-4080 (pg-56 batch19): at speed 50 the smith used up the 5+5 input materials, walked off to fetch more and the
+#   craft stalled. 10 windows of 2 game hours at speed 20, back to the bench + refill each (fill optional, harness 59b742d).
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
 speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+fill "Weapon Smith" "Steel Bars" 10 radius 60 optional
+fill "Weapon Smith" "Fabrics" 10 radius 60 optional
+speed 20 hold
+@wait-game 120 900
+speed 0
+benches 30 near ${WX} ${WY} ${WZ}
 jobs Avarek
 where Avarek
+benches 30 near ${WX} ${WY} ${WZ} ~ Weapon[^|]*queue=0
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" .*tags=\S*TOOL_FARMING
 @until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
 pg_take Avarek "Weapon" "Sickle" ~ to Avarek: [^|]*Sickle key=pgp\S+ equipped=0
