@@ -457,33 +457,36 @@ def gen_swim(p):
 def gen_detect(p):
     d, to = p["dist"], p["timeout"]
     sneaker_varies = p["side"] == "sneaker"
-    who = WORKER if sneaker_varies else "PGWatch"
-    L = header(p, ["a neutral observer (Hungry Bandit, Drifters, renamed PGWatch) stands %d m from %s, who sneaks"
+    # m23b-4080 (pg-87-fs, pg-89): one observer for the whole file did not hold: 3 s after "teleport PGWatch ... dist 20"
+    # detecttime measured him 214 m away, ~90 s later he was gone (spawned squad cleaned up). Now a fresh observer is
+    # spawned at distance d for every point (own name PGW<n>, killed + moved away after the point) and a READY check
+    # asserts he is still within d+10 m right before detecttime; otherwise the point is invalid (setup).
+    L = header(p, ["a fresh neutral observer per point (Hungry Bandit, Drifters, renamed PGW<n>) spawned %d m from %s,"
                    % (d, WORKER),
-                   "(detecttime: sneak on, the observer's earlier sighting reset). Result = game seconds until seen",
+                   "who sneaks (detecttime: sneak on). Result = game seconds until seen",
                    "(timeout %d s). The %s's skill/gear varies (%s)." % (to, p["side"], p["prof"]),
-                   "Both are put back to their places before every point; the observer is killed at the end."],
+                   "The observer is killed and moved away after every point."],
                ["seen=1 in most points (seen=0 everywhere: this observer never notices a sneaker, send the .out to",
                 "the PG agent); stealth: seconds_to_seen grows with Stealth; perception: it shrinks with Perception."])
-    L += start(["teleport %s %s dist 60" % (WORKER, OTHER),
-                "setstat %s stealth 30" % WORKER,
-                "@set OBS spawn \"Hungry Bandit\" Drifters near %s dist %d count 1 ~ spawned 1/1 [^:]+: .+? (#\\d+(?:/\\d+)?)"
-                % (WORKER, d),
-                "setname ${OBS} PGWatch",
-                "relation PGWatch 0",
-                "setstat PGWatch perception 30",
-                "where PGWatch"] + (["pg_statprobe on PGWatch"] if not sneaker_varies else [])) + wear(who)
-    for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
+    L += start(["teleport %s %s dist 60" % (WORKER, OTHER), "setstat %s stealth 30" % WORKER]) +         (wear(WORKER) if sneaker_varies else [])
+    near = r"dist=(\d|[1-%d]\d)\.\d" % ((d + 10) // 10 - 1) if d + 10 >= 20 else r"dist=\d\."
+    for n, (label, skill, gear) in enumerate(points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS), 1):
+        obs = "PGW%d" % n
+        who = WORKER if sneaker_varies else obs
         L += ["# --- %s: %s %d, gear %s ---" % (label, p["prof"], skill, gear[0]),
-              "setstat %s %s %d" % (who, p["setstat"], skill)] + gear_lines(who, p["prof"], gear)
-        L += ["stealth %s off" % WORKER, "teleport %s %s dist 60" % (WORKER, OTHER),
-              "teleport PGWatch %s dist %d" % (WORKER, d), "speed 1", "@sleep 3",
-              "@set T detecttime %s PGWatch timeout %d ~ (seen=\\d seconds_to_seen=\\S+)" % (WORKER, to),
+              "stealth %s off" % WORKER, "teleport %s %s dist 60" % (WORKER, OTHER),
+              "@set OBS spawn \"Hungry Bandit\" Drifters near %s dist %d count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)"
+              % (WORKER, d),
+              "setname ${OBS} %s" % obs, "relation %s 0" % obs, "setstat %s perception 30" % obs]
+        if not sneaker_varies:
+            L += ["pg_statprobe on %s" % obs] + wear(obs)
+        L += ["setstat %s %s %d" % (who, p["setstat"], skill)] + gear_lines(who, p["prof"], gear)
+        L += ["speed 1", "@sleep 3", "speed 0"] + ready("where %s ~ %s" % (obs, near)) +              ["speed 1",
+              "@set T detecttime %s %s timeout %d ~ (seen=\d seconds_to_seen=\S+)" % (WORKER, obs, to),
               "speed 0",
-              echo(p["rows"], p["prof"], skill, gear, label, "detect_" + p["side"], to, "${T}", "-")]
-    return L + ["stealth %s off" % WORKER, "teleport PGWatch %s dist 300" % WORKER, "kill PGWatch",
-                "teleport %s %s dist 3" % (WORKER, OTHER)]
-
+              echo(p["rows"], p["prof"], skill, gear, label, "detect_" + p["side"], to, "${T}", "-"),
+              "stealth %s off" % WORKER, "kill %s" % obs, "teleport %s %s dist 300" % (obs, WORKER)]
+    return L + ["stealth %s off" % WORKER, "teleport %s %s dist 3" % (WORKER, OTHER)]
 
 def gen_chance(p):
     L = header(p, ["the game's own chance functions read by the harness `chance` command (no randomness: one read per",

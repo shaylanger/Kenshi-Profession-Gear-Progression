@@ -3,10 +3,10 @@
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: a neutral observer (Hungry Bandit, Drifters, renamed PGWatch) stands 20 m from Avarek, who sneaks
-#   (detecttime: sneak on, the observer's earlier sighting reset). Result = game seconds until seen
+# design: a fresh neutral observer per point (Hungry Bandit, Drifters, renamed PGW<n>) spawned 20 m from Avarek,
+#   who sneaks (detecttime: sneak on). Result = game seconds until seen
 #   (timeout 120 s). The sneaker's skill/gear varies (stealth).
-#   Both are put back to their places before every point; the observer is killed at the end.
+#   The observer is killed and moved away after every point.
 # verify: seen=1 in most points (seen=0 everywhere: this observer never notices a sneaker, send the .out to
 #   the PG agent); stealth: seconds_to_seen grows with Stealth; perception: it shrinks with Perception.
 #   Data: python3 tools/balance_driver.py csv <out> > balance.csv; python3 tools/analyze_balance.py balance.csv
@@ -30,303 +30,456 @@ speed 1 hold
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
 setstat Avarek stealth 30
-@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
-setname ${OBS} PGWatch
-relation PGWatch 0
-setstat PGWatch perception 30
-where PGWatch
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
 # --- w1: stealth 10, gear none ---
-setstat Avarek stealth 10
-pg_clear Avarek ~ cleared affixes
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW1
+relation PGW1 0
+setstat PGW1 perception 30
+setstat Avarek stealth 10
+pg_clear Avarek ~ cleared affixes
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW1 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW1 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,10,0,none,w1,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW1
+@until 30 teleport PGW1 Avarek dist 300 ~ moved=1
 # --- w2: stealth 90, gear none ---
-setstat Avarek stealth 90
-pg_clear Avarek ~ cleared affixes
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW2
+relation PGW2 0
+setstat PGW2 perception 30
+setstat Avarek stealth 90
+pg_clear Avarek ~ cleared affixes
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW2 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW2 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,90,0,none,w2,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW2
+@until 30 teleport PGW2 Avarek dist 300 ~ moved=1
 # --- w3: stealth 50, gear none ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW3
+relation PGW3 0
+setstat PGW3 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW3 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW3 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,none,w3,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW3
+@until 30 teleport PGW3 Avarek dist 300 ~ moved=1
 # --- w4: stealth 50, gear own25 ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
-pg_force_affix Avarek "Iron Hat" stealth 25 tier 6 ~ affixes=
-pg_bonus Avarek stealth ~ equipped_bonus=25% .*match=1
-pg_statprobe read
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW4
+relation PGW4 0
+setstat PGW4 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
+pg_force_affix Avarek "Iron Hat" stealth 25 tier 6 ~ affixes=
+pg_bonus Avarek stealth ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW4 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW4 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,25,own25,w4,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW4
+@until 30 teleport PGW4 Avarek dist 300 ~ moved=1
 # --- w5: stealth 50, gear own50 ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
-pg_force_affix Avarek "Iron Hat" stealth 50 tier 6 ~ affixes=
-pg_bonus Avarek stealth ~ equipped_bonus=50% .*match=1
-pg_statprobe read
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW5
+relation PGW5 0
+setstat PGW5 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
+pg_force_affix Avarek "Iron Hat" stealth 50 tier 6 ~ affixes=
+pg_bonus Avarek stealth ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW5 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW5 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,50,own50,w5,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW5
+@until 30 teleport PGW5 Avarek dist 300 ~ moved=1
 # --- w6: stealth 50, gear lab50 ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
-pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
-pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
-pg_statprobe read
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW6
+relation PGW6 0
+setstat PGW6 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
+pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
+pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW6 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW6 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,lab50,w6,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW6
+@until 30 teleport PGW6 Avarek dist 300 ~ moved=1
 # --- w7: stealth 50, gear none ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW7
+relation PGW7 0
+setstat PGW7 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW7 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW7 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,none,w7,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW7
+@until 30 teleport PGW7 Avarek dist 300 ~ moved=1
 # --- w8: stealth 50, gear own25 ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
-pg_force_affix Avarek "Iron Hat" stealth 25 tier 6 ~ affixes=
-pg_bonus Avarek stealth ~ equipped_bonus=25% .*match=1
-pg_statprobe read
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW8
+relation PGW8 0
+setstat PGW8 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
+pg_force_affix Avarek "Iron Hat" stealth 25 tier 6 ~ affixes=
+pg_bonus Avarek stealth ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW8 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW8 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,25,own25,w8,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW8
+@until 30 teleport PGW8 Avarek dist 300 ~ moved=1
 # --- w9: stealth 50, gear own50 ---
+stealth Avarek off
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 60 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW9
+relation PGW9 0
+setstat PGW9 perception 30
 setstat Avarek stealth 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" stealth 50 tier 6 ~ affixes=
 pg_bonus Avarek stealth ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+speed 1 hold
+@sleep 3
+speed 0
+@echo READY
+where PGW9 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW9 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo BAL2,195,stealth,50,50,own50,w9,detect_sneaker,120,${T},-
+pg_statprobe read
+stealth Avarek off
+kill PGW9
+@until 30 teleport PGW9 Avarek dist 300 ~ moved=1
+# --- w10: stealth 50, gear lab50 ---
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
-speed 1 hold
-@sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
-speed 0
-@echo BAL2,195,stealth,50,50,own50,w9,detect_sneaker,120,${T},-
-pg_statprobe read
-# --- w10: stealth 50, gear lab50 ---
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW10
+relation PGW10 0
+setstat PGW10 perception 30
 setstat Avarek stealth 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-stealth Avarek off
-wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@echo READY
+where PGW10 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
-@sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Avarek PGW10 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,lab50,w10,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW10
+@until 30 teleport PGW10 Avarek dist 300 ~ moved=1
 # --- w11: stealth 50, gear none ---
-setstat Avarek stealth 50
-pg_clear Avarek ~ cleared affixes
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW11
+relation PGW11 0
+setstat PGW11 perception 30
+setstat Avarek stealth 50
+pg_clear Avarek ~ cleared affixes
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW11 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW11 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,none,w11,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW11
+@until 30 teleport PGW11 Avarek dist 300 ~ moved=1
 # --- w12: stealth 50, gear own25 ---
+stealth Avarek off
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 60 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW12
+relation PGW12 0
+setstat PGW12 perception 30
 setstat Avarek stealth 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" stealth 25 tier 6 ~ affixes=
 pg_bonus Avarek stealth ~ equipped_bonus=25% .*match=1
 pg_statprobe read
+speed 1 hold
+@sleep 3
+speed 0
+@echo READY
+where PGW12 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW12 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo BAL2,195,stealth,50,25,own25,w12,detect_sneaker,120,${T},-
+pg_statprobe read
+stealth Avarek off
+kill PGW12
+@until 30 teleport PGW12 Avarek dist 300 ~ moved=1
+# --- w13: stealth 50, gear own50 ---
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
-speed 1 hold
-@sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
-speed 0
-@echo BAL2,195,stealth,50,25,own25,w12,detect_sneaker,120,${T},-
-pg_statprobe read
-# --- w13: stealth 50, gear own50 ---
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW13
+relation PGW13 0
+setstat PGW13 perception 30
 setstat Avarek stealth 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" stealth 50 tier 6 ~ affixes=
 pg_bonus Avarek stealth ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+speed 1 hold
+@sleep 3
+speed 0
+@echo READY
+where PGW13 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW13 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo BAL2,195,stealth,50,50,own50,w13,detect_sneaker,120,${T},-
+pg_statprobe read
+stealth Avarek off
+kill PGW13
+@until 30 teleport PGW13 Avarek dist 300 ~ moved=1
+# --- w14: stealth 50, gear lab50 ---
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
-speed 1 hold
-@sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
-speed 0
-@echo BAL2,195,stealth,50,50,own50,w13,detect_sneaker,120,${T},-
-pg_statprobe read
-# --- w14: stealth 50, gear lab50 ---
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW14
+relation PGW14 0
+setstat PGW14 perception 30
 setstat Avarek stealth 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-stealth Avarek off
-wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@echo READY
+where PGW14 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
-@sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Avarek PGW14 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,lab50,w14,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW14
+@until 30 teleport PGW14 Avarek dist 300 ~ moved=1
 # --- w15: stealth 75, gear none ---
-setstat Avarek stealth 75
-pg_clear Avarek ~ cleared affixes
 stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW15
+relation PGW15 0
+setstat PGW15 perception 30
+setstat Avarek stealth 75
+pg_clear Avarek ~ cleared affixes
 speed 1 hold
 @sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+speed 0
+@echo READY
+where PGW15 ~ dist=(\d|[1-2]\d)\.\d
+speed 1 hold
+@set T detecttime Avarek PGW15 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,75,0,none,w15,detect_sneaker,120,${T},-
 pg_statprobe read
+stealth Avarek off
+kill PGW15
+@until 30 teleport PGW15 Avarek dist 300 ~ moved=1
 # --- w16: stealth 25, gear own50 ---
+stealth Avarek off
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 60 ~ moved=1
+@set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${OBS} PGW16
+relation PGW16 0
+setstat PGW16 perception 30
 setstat Avarek stealth 25
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" stealth 50 tier 6 ~ affixes=
 pg_bonus Avarek stealth ~ equipped_bonus=50% .*match=1
 pg_statprobe read
-stealth Avarek off
-wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek Beaks dist 60 ~ moved=1
-@until 30 teleport PGWatch Avarek dist 20 ~ moved=1
+@echo READY
+where PGW16 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
-@sleep 3
-@set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Avarek PGW16 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,25,50,own50,w16,detect_sneaker,120,${T},-
 pg_statprobe read
 stealth Avarek off
-@until 30 teleport PGWatch Avarek dist 300 ~ moved=1
-kill PGWatch
+kill PGW16
+@until 30 teleport PGW16 Avarek dist 300 ~ moved=1
+stealth Avarek off
 wake Avarek
 speed 1 hold
 @sleep 3
