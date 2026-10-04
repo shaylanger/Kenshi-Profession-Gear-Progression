@@ -295,7 +295,10 @@ def gen_heal(p):
                    "protected while treated (protect heals wounds). Result = bandaging added per game second."],
                ["finished=1 in every point; own50 > none = first aid reads the hooked Medic."])
     L += start(['give %s "Basic First Aid Kit" 5' % WORKER, "teleport %s %s dist 4" % (WORKER, OTHER),
-                "protect %s off" % OTHER]) + wear(WORKER)
+                "protect %s off" % OTHER,
+                # Beaks carries a Standard First Aid Kit in Full-Base and bandages himself within 0.3 s
+                # (flat 4.4/s at every Medic skill of the worker, m21-4080): take it off him first.
+                'drop %s "Standard First Aid Kit" 1' % OTHER]) + wear(WORKER)
     for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)

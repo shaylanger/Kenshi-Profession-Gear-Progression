@@ -29,6 +29,7 @@ speed 1 hold
 speed 0
 @until 30 teleport Avarek Beaks dist 4 ~ moved=1
 protect Beaks off
+drop Beaks "Standard First Aid Kit" 1
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
