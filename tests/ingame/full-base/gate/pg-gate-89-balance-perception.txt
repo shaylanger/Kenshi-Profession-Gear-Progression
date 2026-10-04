@@ -64,7 +64,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-face PGW1 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
+face PGW1 Beaks ~ dist=(\d|([1-9]|1[0-0])\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
 speed 1 hold
 stat PGW1 perception ~ wounds=1\.0000
 @set T detecttime Beaks PGW1 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
@@ -102,7 +102,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-face PGW2 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
+face PGW2 Beaks ~ dist=(\d|([1-9]|1[0-0])\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
 speed 1 hold
 stat PGW2 perception ~ wounds=1\.0000
 @set T detecttime Beaks PGW2 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
@@ -139,7 +139,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-face PGW3 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
+face PGW3 Beaks ~ dist=(\d|([1-9]|1[0-0])\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
 speed 1 hold
 stat PGW3 perception ~ wounds=1\.0000
 @set T detecttime Beaks PGW3 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
@@ -176,7 +176,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-face PGW4 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
+face PGW4 Beaks ~ dist=(\d|([1-9]|1[0-0])\d)\.\d observer_ko=0 los=(0\.[5-9]\d*|1\.0+)
 speed 1 hold
 stat PGW4 perception ~ wounds=1\.0000
 @set T detecttime Beaks PGW4 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)

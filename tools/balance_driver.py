@@ -547,6 +547,15 @@ def gen_swim(p):
 DETECT_SPOT = (-75966.1, 327.2, 33085.7)   # m33 5090 spot probe P5 (600 m from base, los=1, neighbours P6/P7 los=1); (x, y, z) or None = sneaker brought next to a randomly spawned observer (old method)
 LOS_MIN = r"los=(0\.[5-9]\d*|1\.0+)"
 
+def upto(m):
+    """Regex for the integers 1..m (no leading zero), m >= 1."""
+    if m < 10:
+        return "[1-%d]" % m
+    a, b = divmod(m, 10)
+    alts = ["[1-9]"] + ([r"[1-%d]\d" % (a - 1)] if a > 1 else []) + ["%d[0-%d]" % (a, b)]
+    return "|".join(alts)
+
+
 def gen_detect(p):
     d, to = p["dist"], p["timeout"]
     sneaker_varies = p["side"] == "sneaker"
@@ -566,8 +575,8 @@ def gen_detect(p):
     # The READY check was "where <obs>", whose dist= is from the search origin (pinned Avarek, ~80 away), not from
     # the sneaker: every point read invalid. "face <obs> <worker>" reports the observer-to-sneaker distance.
     lim = d + 10
-    near = (r"dist=(\d{1,2}|1[0-%d]\d)\.\d observer_ko=0" % ((lim - 100) // 10) if 100 <= lim < 200
-            else r"dist=(\d|[1-%d]\d)\.\d observer_ko=0" % (lim // 10 - 1))
+    # m34-4080: the old pattern built a broken character class from 200 up ("[1-19]"); any distance now works
+    near = r"dist=(\d|(%s)\d)\.\d observer_ko=0" % upto(lim // 10 - 1)
     for n, (label, skill, gear) in enumerate(points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS), 1):
         obs = "PGW%d" % n
         who = WORKER if sneaker_varies else obs
