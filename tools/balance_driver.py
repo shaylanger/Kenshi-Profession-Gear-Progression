@@ -271,6 +271,9 @@ def post(*checks):
 AWAKE = r"where %s ~ ^(?!.*\b(KO|DEAD)\b)" % WORKER
 HASJOB = r"jobs %s ~ jobs=[1-9]" % WORKER
 DAYLIGHT = r"stat %s %s ~ light=(0\.[5-9]|1)"  # % (npc, stat): Character::getLightLevel >= 0.5 (day)
+# m34-4080 gate 90: a window that started at 21:18 (light 0.72) ended at dusk (light 0.06, POST failed): a daylight
+# point also starts only between 07:00 and 18:59 game time, so the whole window runs before dusk (~21:30)
+DAYTIME = r"time ~ time=(0[7-9]|1[0-8]):"
 
 
 def powered(b):
@@ -355,9 +358,9 @@ def gen_operate(p):
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         day = DAYLIGHT % (WORKER, p["setstat"])
         if p.get("daylight"):
-            L += ["speed 20", "@until 1200 " + day, "speed 0"]
+            L += ["speed 20", "@until 2400 " + DAYTIME, "@until 1200 " + day, "speed 0"]
         L += ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1])]
-        L += ready(AWAKE, HASJOB, *([day] if p.get("daylight") else []))
+        L += ready(AWAKE, HASJOB, *([day, DAYTIME] if p.get("daylight") else []))
         L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
               TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1]
         if p.get("daylight"):

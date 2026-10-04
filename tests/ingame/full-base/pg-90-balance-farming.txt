@@ -51,6 +51,7 @@ speed 0
 setstat Beaks farming 10
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -58,6 +59,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -76,6 +78,7 @@ hunger Beaks 280
 setstat Beaks farming 25
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -83,6 +86,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -101,6 +105,7 @@ hunger Beaks 280
 setstat Beaks farming 75
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -108,6 +113,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -126,6 +132,7 @@ hunger Beaks 280
 setstat Beaks farming 90
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -133,6 +140,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -151,6 +159,7 @@ hunger Beaks 280
 setstat Beaks farming 50
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -158,6 +167,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -179,6 +189,7 @@ pg_force_affix Beaks "Iron Hat" farming 25 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -186,6 +197,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -207,6 +219,7 @@ pg_force_affix Beaks "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -214,6 +227,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -235,6 +249,7 @@ pg_force_affix Beaks "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Beaks labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -242,6 +257,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -260,6 +276,7 @@ hunger Beaks 280
 setstat Beaks farming 50
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -267,6 +284,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -288,6 +306,7 @@ pg_force_affix Beaks "Iron Hat" farming 25 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -295,6 +314,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -316,6 +336,7 @@ pg_force_affix Beaks "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -323,6 +344,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -344,6 +366,7 @@ pg_force_affix Beaks "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Beaks labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -351,6 +374,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -369,6 +393,7 @@ hunger Beaks 280
 setstat Beaks farming 50
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -376,6 +401,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -397,6 +423,7 @@ pg_force_affix Beaks "Iron Hat" farming 25 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -404,6 +431,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -425,6 +453,7 @@ pg_force_affix Beaks "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -432,6 +461,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -453,6 +483,7 @@ pg_force_affix Beaks "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Beaks labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -460,6 +491,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -478,6 +510,7 @@ hunger Beaks 280
 setstat Beaks farming 75
 pg_clear Beaks ~ cleared affixes
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -485,6 +518,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -506,6 +540,7 @@ pg_force_affix Beaks "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 speed 20 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
@@ -513,6 +548,7 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
+time ~ time=(0[7-9]|1[0-8]):
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
