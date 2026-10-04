@@ -254,6 +254,13 @@ Detailed methodology and measurement matrix: `BALANCE_TEST_PLAN.md`.
 
 Current tier values are **provisional until Section L is run in-game**.
 
+Validation gate (2026-10-04, `tests/ingame/RUN_ORDER.md` "Gate"): before any measurement matrix each profession
+passes 3 control points on the matrix fixture/method (skill 25 no gear, skill 90 no gear, skill 25 + gear; plus a
+skill-25 repeat for drift), each proving the action ran (ready checks, game clock, native pg_bonus values, harness
+`stat` condition factor equal across points, worker unwounded). "Gear applies" (mechanical) and "balance curve
+accepted" are reported separately. Batch 17-20 numbers were measured with a crippled worker (Avarek, wounds factor
+0.25) and are not fitted values; status per profession in INGAME_STATUS.md.
+
 ## Release gate
 
 The mod is not release-ready until:

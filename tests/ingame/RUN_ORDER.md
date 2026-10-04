@@ -1,5 +1,21 @@
 # PG in-game run order (for the coordinator)
 
+## Gate: standing step before any balance matrix (Shay 2026-10-04)
+
+1. `python3 tools/balance_driver.py gate` (WSL) writes `tests/ingame/full-base/gate/pg-gate-*.txt` (same generator,
+   fixture and method as the matrix; 4 points g1 s25 none / g2 s25 own50 / g3 s90 none / g4 s25 none).
+2. Run every gate file in one launch (4080: `C:\KenshiTestRuns\pgbal-4080un4080-m27.sh kah-fullbase <files>`, list
+   `gate-m29.list`), Forced + InGameTest, fresh `kah-fullbase` copy.
+3. `python3 tools/balance_driver.py csv <out>` per file, then `gatecheck <csv...>`: one GATE line per profession
+   (PASS / FAIL setup / measurement / flat / gear). Every point must show ready=ok, game clock advancing, equal mod=
+   condition factor (and wounds=1), pg_bonus native values.
+4. Classify every FAIL (setup / measurement / product / unresolved balance), fix, rerun only the failing gates.
+   Only a profession whose gate passes goes to its matrix file (`pg-<n>-balance-*.txt`).
+- Worker is Beaks since 0da79eb: Avarek is crippled in Full-Base (wounds factor 0.25 at full hp); see INGAME_STATUS.md.
+- Pending after the gates: pg-89 (perception) full matrix, pg-55 (turret; d6bb99b pins the dummies), pg-51 (57e0381:
+  Sickle accepted in the bench output or hauled).
+
+
 Build: `out\ProfessionGearProgression.dll` **D7A60E49** (7D80DBB3 + test-only `pg_force_critical`, row 89) (`install-dll.ps1 ProfessionGear`, Kenshi closed).
 All config switches are done with Kenshi closed:
 `powershell -File C:\KenshiModding\Kenshi-Profession-Gear-Progression\set_test_mode.ps1 ...`
