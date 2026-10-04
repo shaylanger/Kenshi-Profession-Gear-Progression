@@ -294,10 +294,10 @@ def gen_research(p):
                ["progress rises in every window (else no power/bench level: research status desk_level/benches);",
                 "own50 > none = research reads the hooked Science (ResearchBuilding::operate is not scaled by PG)."])
     # Full-Base: the bench is ~520 m from the squad and research costs Books (can_pay=0 without, m21-4080)
-    # m22-4080: "Books" is an ARTIFACTS item (harness c5a5c88+ give finds it); hand-picked tech names were
+    # m23-4080: the research cost item is ITEM "Book" (`find item book` -> [Book]); "Books" = no data named. Hand-picked tech names were
     # finished / missing / unpayable in this save, so the harness picks startable techs (longest first)
     L += start(['@until 30 teleport %s building "%s" dist 4 radius 1500 ~ moved=1' % (WORKER, p["building"]),
-                'give %s "Books" 40 ~ got [1-9]' % WORKER, "research status",
+                'give %s "Book" 40 ~ got [1-9]' % WORKER, "research status",
                 'power "%s" supply radius 60' % p["building"],
                 "research start any 3 ~ started=[1-9]",
                 "research status ~ queue=[1-9]",
