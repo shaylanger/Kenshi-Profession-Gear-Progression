@@ -124,15 +124,20 @@ P = [
     dict(file="pg-89-balance-perception.txt", rows="199", kind="detect", prof="perception", setstat="perception",
          side="observer", dist=100, timeout=180),
     # ---- the game's own chances ----
+    # m31-5090: KenshiLib's Character::getLockpickChance is a dead stub in 1.0.65 (returns 0.0 at every skill: the
+    # m29 0.0000 readings). Harness DE9D9A54+ `chance lockpick` calls the game's DoorLock chance fn instead
+    # (method=game); the gate asserts it so an old harness can never pass a 0 again.
     # A player-owned/unoccupied cage can report zero at every skill. Compare a real
     # locked shackle with an explicit foreign owner before treating row 196 as no response.
     dict(file="pg-92-balance-owned-lock.txt", rows="196", kind="chance", owned_lock=True, subs=[
         dict(row="196", prof="lockpicking", setstat="lockpicking",
-             what="lockpick PGTarget", key="lockpick_chance"),
+             what="lockpick PGTarget", key="lockpick_chance",
+             check=" .*method=game"),
     ]),
     dict(file="pg-88-balance-chances.txt", rows="196-198", kind="chance", subs=[
         dict(row="196", prof="lockpicking", setstat="lockpicking", what='lockpick "Prisoner Cage"',
-             key="lockpick_chance"),
+             key="lockpick_chance",
+             check=" .*method=game"),
         dict(row="197", prof="assassination", setstat="assassination", what="ko PGTarget", key="stealth_ko_chance"),
         dict(row="198", prof="thievery", setstat="thievery", what='steal PGTarget item "Iron Plates"',
              key="steal_chance"),
@@ -601,7 +606,7 @@ def gen_chance(p):
             L += ["# --- %s %s: skill %d, gear %s ---" % (sub["row"], prof, skill, gear[0]),
                   "setstat %s %s %d" % (WORKER, sub["setstat"], skill)] + gear_lines(WORKER, prof, gear)
             L += ["teleport PGTarget %s dist 3" % WORKER,
-                  "@set C chance %s %s ~ %s=%s" % (WORKER, sub["what"], sub["key"], NUM),
+                  "@set C chance %s %s ~ %s=%s%s" % (WORKER, sub["what"], sub["key"], NUM, sub.get("check", "")),
                   echo(sub["row"], prof, skill, gear, label, "chance", 0, "${C}", "-")]
     tail = ["stealth %s off" % WORKER, "teleport PGTarget %s dist 300" % WORKER, "kill PGTarget"]
     if p.get("owned_lock"):

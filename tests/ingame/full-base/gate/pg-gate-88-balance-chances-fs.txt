@@ -56,7 +56,7 @@ pg_bonus Beaks lockpicking ~ equipped_bonus=0% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Beaks dist 3 ~ moved=1
 stat Beaks lockpicking ~ wounds=1\.0000
-@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+)
+@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+) .*method=game
 @echo BAL2,196,lockpicking_fs,25,0,none,g1,chance,0,${C},-
 pg_statprobe read
 # --- 196 lockpicking: skill 25, gear own50 ---
@@ -67,7 +67,7 @@ pg_bonus Beaks lockpicking ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Beaks dist 3 ~ moved=1
 stat Beaks lockpicking ~ wounds=1\.0000
-@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+)
+@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+) .*method=game
 @echo BAL2,196,lockpicking_fs,25,50,own50,g2,chance,0,${C},-
 pg_statprobe read
 # --- 196 lockpicking: skill 90, gear none ---
@@ -77,7 +77,7 @@ pg_bonus Beaks lockpicking ~ equipped_bonus=0% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Beaks dist 3 ~ moved=1
 stat Beaks lockpicking ~ wounds=1\.0000
-@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+)
+@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+) .*method=game
 @echo BAL2,196,lockpicking_fs,90,0,none,g3,chance,0,${C},-
 pg_statprobe read
 # --- 196 lockpicking: skill 25, gear none ---
@@ -87,7 +87,7 @@ pg_bonus Beaks lockpicking ~ equipped_bonus=0% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Beaks dist 3 ~ moved=1
 stat Beaks lockpicking ~ wounds=1\.0000
-@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+)
+@set C chance Beaks lockpick "Prisoner Cage" ~ lockpick_chance=([-\d.]+) .*method=game
 @echo BAL2,196,lockpicking_fs,25,0,none,g4,chance,0,${C},-
 pg_statprobe read
 # --- 197 assassination: skill 25, gear none ---
