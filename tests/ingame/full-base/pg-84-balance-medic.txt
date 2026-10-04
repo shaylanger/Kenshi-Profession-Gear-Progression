@@ -62,6 +62,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ Basic First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 60 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic_diag_basic_cut60,10,0,none,d1,heal,0,${H},-
@@ -81,6 +82,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ Basic First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 60 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic_diag_basic_cut60,90,0,none,d2,heal,0,${H},-
@@ -100,9 +102,30 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ Standard First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic_diag_standard_cut30,90,0,none,d3,heal,0,${H},-
+pg_statprobe read
+hunger Avarek 280
+# --- d4 diagnostic: skill 10, wound 30, Standard kit only ---
+setstat Avarek medic 10
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
+give Avarek "Standard First Aid Kit" 1
+wake Avarek
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Avarek Beaks dist 4 ~ moved=1
+@echo READY
+where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
+inv Avarek ~ Standard First Aid Kit
+speed 1 hold
+stat Avarek medic
+@set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
+speed 0
+@echo BAL2,191,medic_diag_standard_cut30,10,0,none,d4,heal,0,${H},-
 pg_statprobe read
 hunger Avarek 280
 drop Avarek "Basic First Aid Kit" all
@@ -120,6 +143,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,10,0,none,w1,heal,0,${H},-
@@ -138,6 +162,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,90,0,none,w2,heal,0,${H},-
@@ -156,6 +181,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,none,w3,heal,0,${H},-
@@ -177,6 +203,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,25,own25,w4,heal,0,${H},-
@@ -198,6 +225,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,50,own50,w5,heal,0,${H},-
@@ -219,6 +247,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,lab50,w6,heal,0,${H},-
@@ -237,6 +266,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,none,w7,heal,0,${H},-
@@ -258,6 +288,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,25,own25,w8,heal,0,${H},-
@@ -279,6 +310,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,50,own50,w9,heal,0,${H},-
@@ -300,6 +332,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,lab50,w10,heal,0,${H},-
@@ -318,6 +351,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,none,w11,heal,0,${H},-
@@ -339,6 +373,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,25,own25,w12,heal,0,${H},-
@@ -360,6 +395,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,50,own50,w13,heal,0,${H},-
@@ -381,6 +417,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,50,0,lab50,w14,heal,0,${H},-
@@ -399,6 +436,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,75,0,none,w15,heal,0,${H},-
@@ -420,6 +458,7 @@ speed 0
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 inv Avarek ~ First Aid Kit
 speed 1 hold
+stat Avarek medic
 @set H healtime Avarek Beaks wound 30 timeout 600 ~ (seconds_bandaging=[\d.]+ bandaging [\d.]+ -> [\d.]+)
 speed 0
 @echo BAL2,191,medic,25,50,own50,w16,heal,0,${H},-

@@ -58,11 +58,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -91,11 +93,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -124,11 +128,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -160,11 +166,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -196,11 +204,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -232,11 +242,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -265,11 +277,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -301,11 +315,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -337,11 +353,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -373,11 +391,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -406,11 +426,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -442,11 +464,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -478,11 +502,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -514,11 +540,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -547,11 +575,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST
@@ -583,11 +613,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Robotics Bench" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Robotics Bench[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek robotics
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek robotics
 where Avarek
 jobs Avarek
 @echo POST

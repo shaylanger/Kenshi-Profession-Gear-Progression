@@ -59,6 +59,7 @@ speed 0
 @echo READY
 where PGW1 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW1 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,10,0,none,w1,detect_sneaker,120,${T},-
@@ -93,6 +94,7 @@ speed 0
 @echo READY
 where PGW2 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW2 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,90,0,none,w2,detect_sneaker,120,${T},-
@@ -127,6 +129,7 @@ speed 0
 @echo READY
 where PGW3 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW3 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,none,w3,detect_sneaker,120,${T},-
@@ -164,6 +167,7 @@ speed 0
 @echo READY
 where PGW4 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW4 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,25,own25,w4,detect_sneaker,120,${T},-
@@ -201,6 +205,7 @@ speed 0
 @echo READY
 where PGW5 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW5 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,50,own50,w5,detect_sneaker,120,${T},-
@@ -238,6 +243,7 @@ speed 0
 @echo READY
 where PGW6 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW6 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,lab50,w6,detect_sneaker,120,${T},-
@@ -272,6 +278,7 @@ speed 0
 @echo READY
 where PGW7 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW7 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,none,w7,detect_sneaker,120,${T},-
@@ -309,6 +316,7 @@ speed 0
 @echo READY
 where PGW8 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW8 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,25,own25,w8,detect_sneaker,120,${T},-
@@ -346,6 +354,7 @@ speed 0
 @echo READY
 where PGW9 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW9 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,50,own50,w9,detect_sneaker,120,${T},-
@@ -383,6 +392,7 @@ speed 0
 @echo READY
 where PGW10 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW10 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,lab50,w10,detect_sneaker,120,${T},-
@@ -417,6 +427,7 @@ speed 0
 @echo READY
 where PGW11 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW11 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,none,w11,detect_sneaker,120,${T},-
@@ -454,6 +465,7 @@ speed 0
 @echo READY
 where PGW12 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW12 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,25,own25,w12,detect_sneaker,120,${T},-
@@ -491,6 +503,7 @@ speed 0
 @echo READY
 where PGW13 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW13 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,50,own50,w13,detect_sneaker,120,${T},-
@@ -528,6 +541,7 @@ speed 0
 @echo READY
 where PGW14 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW14 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,50,0,lab50,w14,detect_sneaker,120,${T},-
@@ -562,6 +576,7 @@ speed 0
 @echo READY
 where PGW15 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW15 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,75,0,none,w15,detect_sneaker,120,${T},-
@@ -599,6 +614,7 @@ speed 0
 @echo READY
 where PGW16 ~ dist=(\d|[1-2]\d)\.\d
 speed 1 hold
+stat Avarek stealth
 @set T detecttime Avarek PGW16 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,195,stealth,25,50,own50,w16,detect_sneaker,120,${T},-

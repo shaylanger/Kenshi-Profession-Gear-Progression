@@ -50,6 +50,7 @@ inv PGTarget
 setstat Avarek lockpicking 10
 pg_clear Avarek ~ cleared affixes
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,10,0,none,s10,chance,0,${C},-
 pg_statprobe read
@@ -57,6 +58,7 @@ pg_statprobe read
 setstat Avarek lockpicking 25
 pg_clear Avarek ~ cleared affixes
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,25,0,none,s25,chance,0,${C},-
 pg_statprobe read
@@ -64,6 +66,7 @@ pg_statprobe read
 setstat Avarek lockpicking 50
 pg_clear Avarek ~ cleared affixes
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,0,none,s50,chance,0,${C},-
 pg_statprobe read
@@ -71,6 +74,7 @@ pg_statprobe read
 setstat Avarek lockpicking 75
 pg_clear Avarek ~ cleared affixes
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,75,0,none,s75,chance,0,${C},-
 pg_statprobe read
@@ -78,6 +82,7 @@ pg_statprobe read
 setstat Avarek lockpicking 90
 pg_clear Avarek ~ cleared affixes
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,90,0,none,s90,chance,0,${C},-
 pg_statprobe read
@@ -85,6 +90,7 @@ pg_statprobe read
 setstat Avarek lockpicking 50
 pg_clear Avarek ~ cleared affixes
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,0,none,s50b,chance,0,${C},-
 pg_statprobe read
@@ -95,6 +101,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 2 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=2% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,2,own2,own2,chance,0,${C},-
 pg_statprobe read
@@ -105,6 +112,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 5 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=5% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,5,own5,own5,chance,0,${C},-
 pg_statprobe read
@@ -115,6 +123,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 10 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=10% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,10,own10,own10,chance,0,${C},-
 pg_statprobe read
@@ -125,6 +134,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 25 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,25,own25,own25,chance,0,${C},-
 pg_statprobe read
@@ -135,6 +145,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 50 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,50,own50,own50,chance,0,${C},-
 pg_statprobe read
@@ -145,6 +156,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 100 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=100% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,100,own100,own100,chance,0,${C},-
 pg_statprobe read
@@ -155,6 +167,7 @@ pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,50,0,lab50,lab50,chance,0,${C},-
 pg_statprobe read
@@ -165,6 +178,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 50 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,25,50,own50,s25_own50,chance,0,${C},-
 pg_statprobe read
@@ -175,6 +189,7 @@ pg_force_affix Avarek "Iron Hat" lockpicking 100 tier 6 ~ affixes=
 pg_bonus Avarek lockpicking ~ equipped_bonus=100% .*match=1
 pg_statprobe read
 @until 30 teleport PGTarget Avarek dist 3 ~ moved=1
+stat Avarek lockpicking
 @set C chance Avarek lockpick PGTarget ~ lockpick_chance=([-\d.]+)
 @echo BAL2,196,lockpicking_fs,25,100,own100,s25_own100,chance,0,${C},-
 pg_statprobe read

@@ -44,6 +44,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,10,0,none,w1,move,0,${T},${RS}
@@ -59,6 +61,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,90,0,none,w2,move,0,${T},${RS}
@@ -74,6 +78,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,none,w3,move,0,${T},${RS}
@@ -92,6 +98,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,25,own25,w4,move,0,${T},${RS}
@@ -110,6 +118,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,50,own50,w5,move,0,${T},${RS}
@@ -128,6 +138,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,lab50,w6,move,0,${T},${RS}
@@ -143,6 +155,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,none,w7,move,0,${T},${RS}
@@ -161,6 +175,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,25,own25,w8,move,0,${T},${RS}
@@ -179,6 +195,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,50,own50,w9,move,0,${T},${RS}
@@ -197,6 +215,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,lab50,w10,move,0,${T},${RS}
@@ -212,6 +232,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,none,w11,move,0,${T},${RS}
@@ -230,6 +252,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,25,own25,w12,move,0,${T},${RS}
@@ -248,6 +272,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,50,own50,w13,move,0,${T},${RS}
@@ -266,6 +292,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,lab50,w14,move,0,${T},${RS}
@@ -281,6 +309,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,75,0,none,w15,move,0,${T},${RS}
@@ -299,6 +329,8 @@ speed 0
 speed 1 hold
 @sleep 2
 @set RS runspeed Avarek ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
+stat Avarek athletics
+runspeed Avarek
 @set T swimtime Avarek 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,25,50,own50,w16,move,0,${T},${RS}

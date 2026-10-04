@@ -45,11 +45,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,10,0,none,w1,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -62,11 +64,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,w2,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -79,11 +83,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,75,0,none,w3,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -96,11 +102,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,90,0,none,w4,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -113,11 +121,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,none,w5,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -133,11 +143,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,25,own25,w6,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -153,11 +165,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,50,own50,w7,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -173,11 +187,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,lab50,w8,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -190,11 +206,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,none,w9,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -210,11 +228,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,25,own25,w10,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -230,11 +250,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,50,own50,w11,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -250,11 +272,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,lab50,w12,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -267,11 +291,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,none,w13,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -287,11 +313,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,25,own25,w14,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -307,11 +335,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,50,own50,w15,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -327,11 +357,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,lab50,w16,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -344,11 +376,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,75,0,none,w17,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -364,11 +398,13 @@ fill "Wheat Farm L" Water 40 radius 1000 topup
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Avarek ~ jobs=[1-9]
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
+stat Avarek farming
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek farming
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,50,own50,w18,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read

@@ -60,11 +60,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -95,11 +97,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -130,11 +134,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -168,11 +174,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -206,11 +214,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -244,11 +254,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -279,11 +291,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -317,11 +331,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -355,11 +371,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -393,11 +411,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -428,11 +448,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -466,11 +488,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -504,11 +528,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -542,11 +568,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -577,11 +605,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST
@@ -615,11 +645,13 @@ jobs Avarek ~ jobs=[1-9]
 building "Crossbow Crafting" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
 @set Q0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=(\d+)
 @set F0 benches 60 near Avarek ~ Crossbow Crafting[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%\)
+stat Avarek crossbow_smith
 @set T0 time ~ game_hours=([\d.]+)
 speed 3 hold
 @wait-game 30 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
+stat Avarek crossbow_smith
 where Avarek
 jobs Avarek
 @echo POST

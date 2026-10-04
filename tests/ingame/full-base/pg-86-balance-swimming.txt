@@ -46,6 +46,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,10,0,none,w1,swim,0,${T},${RS}
@@ -63,6 +65,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,90,0,none,w2,swim,0,${T},${RS}
@@ -80,6 +84,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,none,w3,swim,0,${T},${RS}
@@ -100,6 +106,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,25,own25,w4,swim,0,${T},${RS}
@@ -120,6 +128,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,50,own50,w5,swim,0,${T},${RS}
@@ -140,6 +150,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,lab50,w6,swim,0,${T},${RS}
@@ -157,6 +169,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,none,w7,swim,0,${T},${RS}
@@ -177,6 +191,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,25,own25,w8,swim,0,${T},${RS}
@@ -197,6 +213,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,50,own50,w9,swim,0,${T},${RS}
@@ -217,6 +235,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,lab50,w10,swim,0,${T},${RS}
@@ -234,6 +254,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,none,w11,swim,0,${T},${RS}
@@ -254,6 +276,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,25,own25,w12,swim,0,${T},${RS}
@@ -274,6 +298,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,50,own50,w13,swim,0,${T},${RS}
@@ -294,6 +320,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,lab50,w14,swim,0,${T},${RS}
@@ -311,6 +339,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,75,0,none,w15,swim,0,${T},${RS}
@@ -331,6 +361,8 @@ speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
+stat Avarek swimming
+runspeed Avarek
 @set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,25,50,own50,w16,swim,0,${T},${RS}
