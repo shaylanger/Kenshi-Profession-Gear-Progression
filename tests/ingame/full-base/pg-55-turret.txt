@@ -2,13 +2,15 @@
 # covers: PG 192 (Turrets response, diagnostic first pass)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has turrets)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0 (`protect`, `relation`); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0 (`protect`, `relation`) + c4fa520 (`pin`); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: Avarek mans the nearest turret (its own job). Per point a fresh "Hungry Bandit" (Drifters) is spawned 40 m
 #   past the turret and made hostile (`relation` -100: the Drifters faction vs the player), then 45 real seconds at speed 1;
 #   the dummy's worst body part % is read. Points: Turrets 10 / 90 without gear, Turrets 10 with +50% Turrets gear.
 # verify (diagnostic): the turret fires (dummy worst < 100 or KO/DEAD in at least one point). If it does, worse hp at 90 and at
 #   10+gear than at 10 = the turret reads the hooked stat. If the turret never fires (target out of arc, no ammo), send
 #   the .out to the PG agent. Squad members are protected; spawned dummies are never next to the squad.
+#   m27-4080: the dummies ran off (D2/D3 "no character named" after 45 s, D1 untouched): each is pinned (harness
+#   c4fa520 `pin`) on its spawn spot 40 m past the turret until it is read, then unpinned and killed.
 @wait-world
 @sleep 8
 speed 0
@@ -39,29 +41,35 @@ speed 1
 # --- Turrets 10, no gear ---
 setstat Avarek turrets 10
 @set D1 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+pin ${D1} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D1} -100
 @sleep 45
 building "Harpoon Turret" 1500 ~ operators=1
 @set H1 hp ${D1} ~ (worst=[\d.]+%?[^|]*)
+pin ${D1} off ~ unpinned
 kill ${D1}
 # --- Turrets 90, no gear ---
 setstat Avarek turrets 90
 @set D2 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+pin ${D2} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D2} -100
 @sleep 45
 building "Harpoon Turret" 1500 ~ operators=1
 @set H2 hp ${D2} ~ (worst=[\d.]+%?[^|]*)
+pin ${D2} off ~ unpinned
 kill ${D2}
 # --- Turrets 10 with +50% Turrets gear ---
 setstat Avarek turrets 10
 pg_force_affix Avarek "Iron Hat" turrets 50 tier 6 ~ affixes=Turrets:50
 pg_bonus Avarek turrets ~ equipped_bonus=50% .*match=1
 @set D3 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+pin ${D3} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D3} -100
 @sleep 45
 building "Harpoon Turret" 1500 ~ operators=1
 @set H3 hp ${D3} ~ (worst=[\d.]+%?[^|]*)
 relation ${D3} 0
+pin ${D3} off ~ unpinned
 kill ${D3}
 speed 0
 @echo Turrets 10: ${H1}
