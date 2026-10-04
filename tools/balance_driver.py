@@ -657,17 +657,22 @@ def gen():
         L = [x + " hold" if re.match(r"^speed (?!0$)[\d.]+$", x) else x for x in L]
         # (a read right after pg_bonus clears the reads pg_bonus itself made)
         L = [y for x in L for y in ([x, "pg_statprobe read"] if x.startswith(("@echo BAL2", "pg_bonus ")) else [x])]
+        # FormulaScaling is on by default since PG 1db9fe7 (Shay 2026-10-04): the vanilla sweep sets it off
+        # explicitly so its numbers stay vanilla on any build; the -fs variant below turns it on instead
+        assert any(x.startswith("pg_statprobe on ") for x in L), p["file"]
+        L = [y for x in L for y in ([x, "pg_formulas off ~ formulaScaling=0"]
+                                     if x.startswith("pg_statprobe on ") else [x])]
         path = os.path.join(out_dir, p["file"].replace("pg-", "pg-gate-", 1) if GATE else p["file"])
         with open(path, "w", newline="\n") as fh:
             fh.write("\n".join(L) + "\n")
-        # FormulaScaling (PG C5CAC166+, off by default): the same sweep with pg_formulas on, professions "<prof>_fs"
+        # FormulaScaling (PG C5CAC166+; default on since 1db9fe7): the same sweep with pg_formulas on, professions "<prof>_fs"
         if p["kind"] in ("move", "swim", "chance") or p.get("prof") == "stealth":
             F = []
             for x in L:
                 x = re.sub(r"^(@echo BAL2,[^,]*,)([^,]*),", r"\1\2_fs,", x)
+                if x == "pg_formulas off ~ formulaScaling=0":
+                    x = "pg_formulas on ~ formulaScaling=1 hooks=8/8"
                 F.append(x)
-                if x.startswith("pg_statprobe on "):
-                    F.append("pg_formulas on ~ formulaScaling=1 hooks=8/8")
             F[0] = F[0] + "-fs"
             F.insert(2, "# variant: pg_formulas on (FormulaScaling), professions written as <prof>_fs")
             with open(path.replace(".txt", "-fs.txt"), "w", newline="\n") as fh:

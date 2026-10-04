@@ -29,6 +29,7 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+pg_formulas off ~ formulaScaling=0
 wake Avarek
 pin Avarek ~ pinned
 research "Robotics"

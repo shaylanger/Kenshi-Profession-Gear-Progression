@@ -28,6 +28,7 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+pg_formulas off ~ formulaScaling=0
 wake Avarek
 pin Avarek ~ pinned
 wake Beaks
@@ -49,6 +50,7 @@ pin PGW1 face Beaks ~ pinned
 relation PGW1 0
 setstat PGW1 perception 30
 pg_statprobe on PGW1
+pg_formulas off ~ formulaScaling=0
 give PGW1 "Iron Hat" 1
 equip PGW1 "Iron Hat"
 pg_info PGW1 "Iron Hat" ~ equipped=1
@@ -88,6 +90,7 @@ pin PGW2 face Beaks ~ pinned
 relation PGW2 0
 setstat PGW2 perception 30
 pg_statprobe on PGW2
+pg_formulas off ~ formulaScaling=0
 give PGW2 "Iron Hat" 1
 equip PGW2 "Iron Hat"
 pg_info PGW2 "Iron Hat" ~ equipped=1
@@ -127,6 +130,7 @@ pin PGW3 face Beaks ~ pinned
 relation PGW3 0
 setstat PGW3 perception 30
 pg_statprobe on PGW3
+pg_formulas off ~ formulaScaling=0
 give PGW3 "Iron Hat" 1
 equip PGW3 "Iron Hat"
 pg_info PGW3 "Iron Hat" ~ equipped=1
@@ -166,6 +170,7 @@ pin PGW4 face Beaks ~ pinned
 relation PGW4 0
 setstat PGW4 perception 30
 pg_statprobe on PGW4
+pg_formulas off ~ formulaScaling=0
 give PGW4 "Iron Hat" 1
 equip PGW4 "Iron Hat"
 pg_info PGW4 "Iron Hat" ~ equipped=1
@@ -208,6 +213,7 @@ pin PGW5 face Beaks ~ pinned
 relation PGW5 0
 setstat PGW5 perception 30
 pg_statprobe on PGW5
+pg_formulas off ~ formulaScaling=0
 give PGW5 "Iron Hat" 1
 equip PGW5 "Iron Hat"
 pg_info PGW5 "Iron Hat" ~ equipped=1
@@ -250,6 +256,7 @@ pin PGW6 face Beaks ~ pinned
 relation PGW6 0
 setstat PGW6 perception 30
 pg_statprobe on PGW6
+pg_formulas off ~ formulaScaling=0
 give PGW6 "Iron Hat" 1
 equip PGW6 "Iron Hat"
 pg_info PGW6 "Iron Hat" ~ equipped=1
@@ -292,6 +299,7 @@ pin PGW7 face Beaks ~ pinned
 relation PGW7 0
 setstat PGW7 perception 30
 pg_statprobe on PGW7
+pg_formulas off ~ formulaScaling=0
 give PGW7 "Iron Hat" 1
 equip PGW7 "Iron Hat"
 pg_info PGW7 "Iron Hat" ~ equipped=1
@@ -331,6 +339,7 @@ pin PGW8 face Beaks ~ pinned
 relation PGW8 0
 setstat PGW8 perception 30
 pg_statprobe on PGW8
+pg_formulas off ~ formulaScaling=0
 give PGW8 "Iron Hat" 1
 equip PGW8 "Iron Hat"
 pg_info PGW8 "Iron Hat" ~ equipped=1
@@ -373,6 +382,7 @@ pin PGW9 face Beaks ~ pinned
 relation PGW9 0
 setstat PGW9 perception 30
 pg_statprobe on PGW9
+pg_formulas off ~ formulaScaling=0
 give PGW9 "Iron Hat" 1
 equip PGW9 "Iron Hat"
 pg_info PGW9 "Iron Hat" ~ equipped=1
@@ -415,6 +425,7 @@ pin PGW10 face Beaks ~ pinned
 relation PGW10 0
 setstat PGW10 perception 30
 pg_statprobe on PGW10
+pg_formulas off ~ formulaScaling=0
 give PGW10 "Iron Hat" 1
 equip PGW10 "Iron Hat"
 pg_info PGW10 "Iron Hat" ~ equipped=1
@@ -457,6 +468,7 @@ pin PGW11 face Beaks ~ pinned
 relation PGW11 0
 setstat PGW11 perception 30
 pg_statprobe on PGW11
+pg_formulas off ~ formulaScaling=0
 give PGW11 "Iron Hat" 1
 equip PGW11 "Iron Hat"
 pg_info PGW11 "Iron Hat" ~ equipped=1
@@ -496,6 +508,7 @@ pin PGW12 face Beaks ~ pinned
 relation PGW12 0
 setstat PGW12 perception 30
 pg_statprobe on PGW12
+pg_formulas off ~ formulaScaling=0
 give PGW12 "Iron Hat" 1
 equip PGW12 "Iron Hat"
 pg_info PGW12 "Iron Hat" ~ equipped=1
@@ -538,6 +551,7 @@ pin PGW13 face Beaks ~ pinned
 relation PGW13 0
 setstat PGW13 perception 30
 pg_statprobe on PGW13
+pg_formulas off ~ formulaScaling=0
 give PGW13 "Iron Hat" 1
 equip PGW13 "Iron Hat"
 pg_info PGW13 "Iron Hat" ~ equipped=1
@@ -580,6 +594,7 @@ pin PGW14 face Beaks ~ pinned
 relation PGW14 0
 setstat PGW14 perception 30
 pg_statprobe on PGW14
+pg_formulas off ~ formulaScaling=0
 give PGW14 "Iron Hat" 1
 equip PGW14 "Iron Hat"
 pg_info PGW14 "Iron Hat" ~ equipped=1
@@ -622,6 +637,7 @@ pin PGW15 face Beaks ~ pinned
 relation PGW15 0
 setstat PGW15 perception 30
 pg_statprobe on PGW15
+pg_formulas off ~ formulaScaling=0
 give PGW15 "Iron Hat" 1
 equip PGW15 "Iron Hat"
 pg_info PGW15 "Iron Hat" ~ equipped=1
@@ -661,6 +677,7 @@ pin PGW16 face Beaks ~ pinned
 relation PGW16 0
 setstat PGW16 perception 30
 pg_statprobe on PGW16
+pg_formulas off ~ formulaScaling=0
 give PGW16 "Iron Hat" 1
 equip PGW16 "Iron Hat"
 pg_info PGW16 "Iron Hat" ~ equipped=1

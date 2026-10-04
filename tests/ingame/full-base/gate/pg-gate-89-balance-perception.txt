@@ -29,6 +29,7 @@ hunger Avarek 280
 select Beaks
 clearjobs Beaks
 pg_statprobe on Beaks
+pg_formulas off ~ formulaScaling=0
 wake Avarek
 pin Avarek ~ pinned
 wake Beaks
@@ -50,6 +51,7 @@ pin PGW1 face Beaks ~ pinned
 relation PGW1 0
 setstat PGW1 perception 30
 pg_statprobe on PGW1
+pg_formulas off ~ formulaScaling=0
 give PGW1 "Iron Hat" 1
 equip PGW1 "Iron Hat"
 pg_info PGW1 "Iron Hat" ~ equipped=1
@@ -91,6 +93,7 @@ pin PGW2 face Beaks ~ pinned
 relation PGW2 0
 setstat PGW2 perception 30
 pg_statprobe on PGW2
+pg_formulas off ~ formulaScaling=0
 give PGW2 "Iron Hat" 1
 equip PGW2 "Iron Hat"
 pg_info PGW2 "Iron Hat" ~ equipped=1
@@ -133,6 +136,7 @@ pin PGW3 face Beaks ~ pinned
 relation PGW3 0
 setstat PGW3 perception 30
 pg_statprobe on PGW3
+pg_formulas off ~ formulaScaling=0
 give PGW3 "Iron Hat" 1
 equip PGW3 "Iron Hat"
 pg_info PGW3 "Iron Hat" ~ equipped=1
@@ -174,6 +178,7 @@ pin PGW4 face Beaks ~ pinned
 relation PGW4 0
 setstat PGW4 perception 30
 pg_statprobe on PGW4
+pg_formulas off ~ formulaScaling=0
 give PGW4 "Iron Hat" 1
 equip PGW4 "Iron Hat"
 pg_info PGW4 "Iron Hat" ~ equipped=1

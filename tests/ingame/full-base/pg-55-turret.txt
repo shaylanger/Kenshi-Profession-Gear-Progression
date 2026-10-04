@@ -38,6 +38,7 @@ speed 0
 building "Harpoon Turret" 60 ~ operators=1
 give Beaks "Iron Hat" 1
 equip Beaks "Iron Hat"
+pg_formulas off ~ formulaScaling=0
 pg_clear Beaks ~ cleared affixes
 speed 1
 @sleep 20
