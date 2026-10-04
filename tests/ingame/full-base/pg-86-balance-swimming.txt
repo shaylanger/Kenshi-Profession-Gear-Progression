@@ -3,8 +3,8 @@
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: Avarek is teleported to deep water at Treefall (-61979 97 33880, findwater: depth 3.3, best run -x 500 m)
-#   per point and swims 30 m along -x (swimtime). Result = swim_speed (deep distance / deep
+# design: Avarek is teleported to deep water at Treefall (-62153 100 34366.6, findwater: depth 28.6, best run +z 300 m)
+#   per point and swims 60 m along +z (swimtime). Result = swim_speed (deep distance / deep
 #   seconds); runspeed adds the game's own swim_speed/max_swim_speed (harness 740ba0a+).
 # verify: water_level=deep at every start; deep_fraction near 1; own50 > none = swimming reads the hooked stat.
 #   Data: python3 tools/balance_driver.py csv <out> > balance.csv; python3 tools/analyze_balance.py balance.csv
@@ -26,11 +26,11 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 8
 speed 0
-findwater Avarek radius 300 depth 1.5 ~ best_run=
+findwater Avarek radius 300 depth 25 ~ best_run=
 give Avarek "Iron Hat" 1
 equip Avarek "Iron Hat"
 pg_info Avarek "Iron Hat" ~ equipped=1
@@ -41,12 +41,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,10,0,none,w1,swim,0,${T},${RS}
 pg_statprobe read
@@ -58,12 +58,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,90,0,none,w2,swim,0,${T},${RS}
 pg_statprobe read
@@ -75,12 +75,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,none,w3,swim,0,${T},${RS}
 pg_statprobe read
@@ -95,12 +95,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,25,own25,w4,swim,0,${T},${RS}
 pg_statprobe read
@@ -115,12 +115,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,50,own50,w5,swim,0,${T},${RS}
 pg_statprobe read
@@ -135,12 +135,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,lab50,w6,swim,0,${T},${RS}
 pg_statprobe read
@@ -152,12 +152,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,none,w7,swim,0,${T},${RS}
 pg_statprobe read
@@ -172,12 +172,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,25,own25,w8,swim,0,${T},${RS}
 pg_statprobe read
@@ -192,12 +192,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,50,own50,w9,swim,0,${T},${RS}
 pg_statprobe read
@@ -212,12 +212,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,lab50,w10,swim,0,${T},${RS}
 pg_statprobe read
@@ -229,12 +229,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,none,w11,swim,0,${T},${RS}
 pg_statprobe read
@@ -249,12 +249,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,25,own25,w12,swim,0,${T},${RS}
 pg_statprobe read
@@ -269,12 +269,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,50,own50,w13,swim,0,${T},${RS}
 pg_statprobe read
@@ -289,12 +289,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,50,0,lab50,w14,swim,0,${T},${RS}
 pg_statprobe read
@@ -306,12 +306,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,75,0,none,w15,swim,0,${T},${RS}
 pg_statprobe read
@@ -326,12 +326,12 @@ wake Avarek
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Avarek -61979 97 33880 ~ moved=1
+@until 30 teleport Avarek -62153 100 34366.6 ~ moved=1
 speed 1 hold
 @sleep 3
 water Avarek ~ water_level=deep
 @set RS runspeed Avarek ~ (swim_speed=[\d.]+ max_swim_speed=[\d.]+)
-@set T swimtime Avarek 30 -x ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
+@set T swimtime Avarek 60 +z ~ (deep_seconds=[\d.]+ deep_dist=[\d.]+)
 speed 0
 @echo BAL2,194,swimming,25,50,own50,w16,swim,0,${T},${RS}
 pg_statprobe read

@@ -93,7 +93,7 @@ P = [
     # ---- timed events ----
     dict(file="pg-84-balance-medic.txt", rows="191", kind="heal", prof="medic", setstat="medic", cut=30),
     dict(file="pg-85-balance-athletics.txt", rows="193", kind="move", prof="athletics", setstat="athletics", dist=40),
-    dict(file="pg-86-balance-swimming.txt", rows="194", kind="swim", prof="swimming", setstat="swimming", dist=30),
+    dict(file="pg-86-balance-swimming.txt", rows="194", kind="swim", prof="swimming", setstat="swimming", dist=60),
     dict(file="pg-87-balance-stealth.txt", rows="195", kind="detect", prof="stealth", setstat="stealth",
          side="sneaker", dist=20, timeout=120),
     dict(file="pg-89-balance-perception.txt", rows="199", kind="detect", prof="perception", setstat="perception",
@@ -206,8 +206,9 @@ def powered(b):
 
 
 def bench_has(bench, item):
-    # the bench's own entry only: " || <bench> ... | in 6x3: [Steel Bars x7 @..]"; '||' separates benches
-    return r"benches 60 ~ %s[^|]*(?:\|[^|]+)*?\[%s x[1-9]" % (bench, item)
+    # the bench's own entry only: " || <bench> ... | in1 6x3 limit=1: [Steel Bars x7 @..]"; '||' separates benches.
+    # m23-4080: an INPUT section (in1, in2, ...), never "out": materials in out don't feed the craft (stalled at 2.1%)
+    return r"benches 60 ~ %s[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[%s x[1-9]" % (bench, item)
 
 
 def timed_points(p):
@@ -418,20 +419,22 @@ def gen_move(p):
 
 
 # Deep water for row 194: Full-Base has none within 3 km (m19-4080 findwater). Treefall's river, 14.6 km away:
-# findwater there gives depth 3.3 and a 500 m run along -x (m19-4080).
-WATER_AT = "-61979 97 33880"
-WATER_DIR = "-x"
+# m23-4080: the old spot (-61979 97 33880, depth 3.3) reads water_level=very_shallow: Avarek wades, deep_seconds=0,
+# every pg86 point invalid. findwater radius 5000 depth 25 -> depth 28.6 with a 300 m run along +z; there
+# water_level=deep, swimming 90 swims 28.6 m in 1.1 s (too short: dist 60); low skill stops ~8.5 m short (harness swimtime stopped_short).
+WATER_AT = "-62153 100 34366.6"
+WATER_DIR = "+z"
 
 
 def gen_swim(p):
     d = p["dist"]
-    L = header(p, ["%s is teleported to deep water at Treefall (%s, findwater: depth 3.3, best run %s 500 m)"
+    L = header(p, ["%s is teleported to deep water at Treefall (%s, findwater: depth 28.6, best run %s 300 m)"
                    % (WORKER, WATER_AT, WATER_DIR),
                    "per point and swims %d m along %s (swimtime). Result = swim_speed (deep distance / deep" % (d, WATER_DIR),
                    "seconds); runspeed adds the game's own swim_speed/max_swim_speed (harness 740ba0a+)."],
                ["water_level=deep at every start; deep_fraction near 1; own50 > none = swimming reads the hooked stat."])
     L += start(["teleport %s %s" % (WORKER, WATER_AT), "speed 1", "@sleep 8", "speed 0",
-                "findwater %s radius 300 depth 1.5 ~ best_run=" % WORKER]) + wear(WORKER)
+                "findwater %s radius 300 depth 25 ~ best_run=" % WORKER]) + wear(WORKER)
     for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)

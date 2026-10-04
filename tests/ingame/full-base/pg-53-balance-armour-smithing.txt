@@ -52,7 +52,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -83,7 +83,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -114,7 +114,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -148,7 +148,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -182,7 +182,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -216,7 +216,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -247,7 +247,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -281,7 +281,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -315,7 +315,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -349,7 +349,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -380,7 +380,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -414,7 +414,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -448,7 +448,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -482,7 +482,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -513,7 +513,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -547,7 +547,7 @@ fill "Clothing" "Fabrics" 10 radius 60
 craft Avarek "Rag Shirt" at "Clothing" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Clothing[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Clothing[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Clothing" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)

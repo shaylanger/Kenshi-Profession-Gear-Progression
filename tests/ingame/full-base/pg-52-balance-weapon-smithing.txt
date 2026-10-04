@@ -57,8 +57,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -90,8 +90,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -123,8 +123,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -159,8 +159,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -195,8 +195,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -231,8 +231,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -264,8 +264,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -300,8 +300,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -336,8 +336,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -372,8 +372,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -405,8 +405,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -441,8 +441,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -477,8 +477,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -513,8 +513,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -546,8 +546,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
@@ -582,8 +582,8 @@ fill "Weapon Smith" "Fabrics" 10 radius 60
 craft Avarek "Sickle" at "Weapon Smith" count 5 ~ queued
 @echo READY
 where Avarek ~ ^(?!.*\b(KO|DEAD)\b)
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Steel Bars x[1-9]
-benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\[Fabrics x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Steel Bars x[1-9]
+benches 60 ~ Weapon Smith[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[Fabrics x[1-9]
 benches 8 ~ Weapon Smith[^|]*queue=[1-9]
 jobs Avarek ~ jobs=[1-9]
 building "Weapon Smith" 60 ~ power_on=1 .*broken=0 .*(wants=0(\.0+)?\s|supplied=1)
