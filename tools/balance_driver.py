@@ -97,6 +97,12 @@ P = [
     dict(file="pg-89-balance-perception.txt", rows="199", kind="detect", prof="perception", setstat="perception",
          side="observer", dist=20, timeout=120),
     # ---- the game's own chances ----
+    # A player-owned/unoccupied cage can report zero at every skill. Compare a real
+    # locked shackle with an explicit foreign owner before treating row 196 as no response.
+    dict(file="pg-92-balance-owned-lock.txt", rows="196", kind="chance", owned_lock=True, subs=[
+        dict(row="196", prof="lockpicking", setstat="lockpicking",
+             what="lockpick PGTarget", key="lockpick_chance"),
+    ]),
     dict(file="pg-88-balance-chances.txt", rows="196-198", kind="chance", subs=[
         dict(row="196", prof="lockpicking", setstat="lockpicking", what='lockpick "Prisoner Cage"',
              key="lockpick_chance"),
@@ -397,6 +403,15 @@ def gen_chance(p):
                 'give PGTarget "Iron Plates" 2',
                 "teleport PGTarget %s dist 3" % WORKER,
                 "stealth %s on" % WORKER]) + wear(WORKER)
+    if p.get("owned_lock"):
+        L += [
+            "# An owner is required so these are real locked shackles, not an unowned test item.",
+            '@set OWN spawn "Hungry Bandit" Drifters near %s dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\\d+(?:/\\d+)?)' % WORKER,
+            "setname ${OWN} PGLockOwner",
+            "relation PGLockOwner 0",
+            "shackle PGTarget owner PGLockOwner",
+            "inv PGTarget",
+        ]
     for sub in p["subs"]:
         prof = sub["prof"]
         pts = [("s%d" % s, s, ("none", None, 0)) for s in CHANCE_SKILLS] + [("s50b", BASE, ("none", None, 0))] + \
@@ -407,7 +422,12 @@ def gen_chance(p):
             L += ["teleport PGTarget %s dist 3" % WORKER,
                   "@set C chance %s %s ~ %s=%s" % (WORKER, sub["what"], sub["key"], NUM),
                   echo(sub["row"], prof, skill, gear, label, "chance", 0, "${C}", "-")]
-    return L + ["stealth %s off" % WORKER, "teleport PGTarget %s dist 300" % WORKER, "kill PGTarget"]
+    tail = ["stealth %s off" % WORKER, "teleport PGTarget %s dist 300" % WORKER, "kill PGTarget"]
+    if p.get("owned_lock"):
+        tail += ["kill PGLockOwner"]
+        # Replace the generic mixed-chance header for this focused lock ownership control.
+        L.insert(6, "# lock control: row 196 only, PGTarget wears shackles owned by PGLockOwner.")
+    return L + tail
 
 
 GEN = dict(craft=gen_craft, operate=gen_operate, research=gen_research, construct=gen_construct, heal=gen_heal,
@@ -517,7 +537,10 @@ def to_csv(paths):
     for path in paths:
         base = os.path.basename(path)
         lines = list(open(path, encoding="utf-8", errors="replace"))
+        failed_since_point = False
         for i, line in enumerate(lines):
+            if re.match(r"^FAIL\s", line):
+                failed_since_point = True
             m = re.search(r"=> BAL2,([^,]*),([^,]*),(\d+),(\d+),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),(.*)$", line)
             if m:
                 tid, prof, skill, bonus, gear, label, kind, win, a, b = m.groups()
@@ -526,6 +549,11 @@ def to_csv(paths):
                 if "${" in b:
                     b = ""
                 count, secs, ok, note = measure(kind, f(win) or 0, a.strip(), b.strip())
+                # A failed @set leaves its previous capture intact in kah.py. Never
+                # fit that echoed stale value (or a point whose setup command failed).
+                if failed_since_point:
+                    count, ok, note = 0, 0, "failed scenario command before point"
+                failed_since_point = False
                 if gear == "lab50":
                     prof, bonus = prof + "_lab50ctl", "0"
                 # the next pg_statprobe read: which profession stats the game read through getStat in this point
