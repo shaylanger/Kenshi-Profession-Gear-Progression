@@ -43,9 +43,11 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 
-# Fixture Testing-Save-Full-Base: squad Beaks + Avarek. The worker is Avarek and stays the selection.
-WORKER = "Avarek"
-OTHER = "Beaks"
+# Fixture Testing-Save-Full-Base: squad Beaks + Avarek. m29-4080: the worker is Beaks (stays the selection): Avarek is
+# crippled in this save (stat wounds=0.25 on crafting, 0.55 medic, 0.665 perception, run speed capped 11 vs 82.8 at full
+# hp), which quartered every skill read and explains the athletics cap and part of the flat curves of batches 17-20.
+WORKER = "Beaks"
+OTHER = "Avarek"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
 NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
@@ -208,6 +210,10 @@ def start(extra=()):
     # Avarek is often in bed in this save (in_bed_or_cage=1): teleport then silently does nothing (m19-4080)
     return ["@wait-world", "@sleep 8", "speed 0", "wake %s" % WORKER, "speed 1", "@sleep 4", "speed 0",
             "protect %s on" % OTHER, "protect %s on" % WORKER,
+            # m29-4080: the fixture's Avarek is wounded (in bed): stat showed wounds=0.25 -> mod=0.25 on every skill,
+            # so every point measured a quarter of the set skill. Full health + blood for both, checked before
+            # every measurement (cond_ready: wounds=1).
+            "health %s 100" % WORKER, "health %s 100" % OTHER, "blood %s 100%%" % WORKER, "blood %s 100%%" % OTHER,
             "hunger %s 280" % WORKER, "hunger %s 280" % OTHER,
             # select the worker: an unselected Avarek walks into the base's Bed and lies there (m19-4080)
             "select %s" % WORKER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER] + list(extra)
@@ -595,7 +601,7 @@ def with_conditions(L):
         if m:
             last = cond(m.group(1), m.group(2))
         if last and (x == TS0 or x.startswith(MEASURE_START)):
-            out.append(last)
+            out.append(last + r" ~ wounds=1\.0000")  # m29: a wounded measurer quarters the skill (setup failure)
             if x.startswith("@set T swimtime"):
                 out.append("runspeed %s" % WORKER)
         out.append(x)
@@ -849,7 +855,7 @@ def gatecheck(paths):
                 return None
             return float(r["result_count"]) / float(r["elapsed_game_seconds"])
         def ev(lb, key):
-            m = re.search(r"%s=(\S+)" % key, (g.get(lb) or {}).get("notes", ""))
+            m = re.search(r"\b%s=(\S+)" % key, (g.get(lb) or {}).get("notes", ""))
             return m.group(1) if m else ""
         rates = dict((lb, rate(lb)) for lb in ("g1", "g2", "g3", "g4"))
         mods = [float(ev(lb, "mod").split(">")[0]) for lb in rates if ev(lb, "mod")]
