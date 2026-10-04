@@ -107,7 +107,10 @@ P = [
          check=r'benches 60 crafts ~ Cooking Stove[^|]*Dried Meat'),
     # ---- work over time ----
     dict(file="pg-90-balance-farming.txt", rows="161-176", kind="operate", prof="farming", setstat="farming",
-         building="Wheat Farm L", fill=("Water", 40), window=30, extra_skills=[25, 75]),
+         building="Wheat Farm L", fill=("Water", 40), window=30, extra_skills=[25, 75],
+         # m31-5090: a window that ran at night read light 1.0 -> 0 and its growth differed: every point first waits
+         # (speed 20) for daylight, READY and POST assert it, so no point is measured in the dark.
+         daylight=True),
     dict(file="pg-54-research.txt", rows="184", kind="research", prof="science", setstat="science",
          building="Research Bench", window=30,
          ),
@@ -267,6 +270,7 @@ def post(*checks):
 
 AWAKE = r"where %s ~ ^(?!.*\b(KO|DEAD)\b)" % WORKER
 HASJOB = r"jobs %s ~ jobs=[1-9]" % WORKER
+DAYLIGHT = r"stat %s %s ~ light=(0\.[5-9]|1)"  # % (npc, stat): Character::getLightLevel >= 0.5 (day)
 
 
 def powered(b):
@@ -349,11 +353,16 @@ def gen_operate(p):
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
+        day = DAYLIGHT % (WORKER, p["setstat"])
+        if p.get("daylight"):
+            L += ["speed 20", "@until 1200 " + day, "speed 0"]
         L += ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1])]
-        L += ready(AWAKE, HASJOB)
+        L += ready(AWAKE, HASJOB, *([day] if p.get("daylight") else []))
         L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
-              TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1,
-              '@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
+              TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1]
+        if p.get("daylight"):
+            L += post(day)
+        L += ['@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
               echo(p["rows"], p["prof"], skill, gear, label, "operate", WIN, "0", "${OP}"),
               "hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]

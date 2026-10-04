@@ -53,10 +53,14 @@ setstat Beaks farming 25
 pg_clear Beaks ~ cleared affixes
 pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
+speed 20 hold
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
+stat Beaks farming ~ light=(0\.[5-9]|1)
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -65,6 +69,8 @@ speed 10 hold
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
+@echo POST
+stat Beaks farming ~ light=(0\.[5-9]|1)
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,g1,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -75,10 +81,14 @@ pg_clear Beaks ~ cleared affixes
 pg_force_affix Beaks "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+speed 20 hold
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
+stat Beaks farming ~ light=(0\.[5-9]|1)
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -87,6 +97,8 @@ speed 10 hold
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
+@echo POST
+stat Beaks farming ~ light=(0\.[5-9]|1)
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,50,own50,g2,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -96,10 +108,14 @@ setstat Beaks farming 90
 pg_clear Beaks ~ cleared affixes
 pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
+speed 20 hold
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
+stat Beaks farming ~ light=(0\.[5-9]|1)
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -108,6 +124,8 @@ speed 10 hold
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
+@echo POST
+stat Beaks farming ~ light=(0\.[5-9]|1)
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,90,0,none,g3,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -117,10 +135,14 @@ setstat Beaks farming 25
 pg_clear Beaks ~ cleared affixes
 pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
+speed 20 hold
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
+stat Beaks farming ~ light=(0\.[5-9]|1)
 pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
@@ -129,6 +151,8 @@ speed 10 hold
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
+@echo POST
+stat Beaks farming ~ light=(0\.[5-9]|1)
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,g4,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
