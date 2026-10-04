@@ -41,7 +41,7 @@ OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 WORKER = "Avarek"
 OTHER = "Beaks"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
-NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all) (KAH 24: chance, detect, "
+NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
 
@@ -213,7 +213,8 @@ def powered(b):
 def bench_has(bench, item):
     # the bench's own entry only: " || <bench> ... | in1 6x3 limit=1: [Steel Bars x7 @..]"; '||' separates benches.
     # m23-4080: an INPUT section (in1, in2, ...), never "out": materials in out don't feed the craft (stalled at 2.1%)
-    return r"benches 60 ~ %s[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[%s x[1-9]" % (bench, item)
+    # near WORKER (harness 616121b): benches searched around the worker, not the squad leader who may wander
+    return r"benches 60 near %s ~ %s[^|]*(?:\|[^|]+)*?\| in\d[^|]*\[%s x[1-9]" % (WORKER, bench, item)
 
 
 def timed_points(p):
@@ -235,8 +236,8 @@ def gen_craft(p):
                    "Labouring control), then the sanity pair."],
                ["every window has a BAL2 line with Q/F values on both sides and made > 0 at skill 50;",
                 "own > none = the bench reads the hooked stat."])
-    q = '@set Q%d benches 60 ~ ' + bench + r'[^|]*queue=(\d+)'
-    fpat = '@set F%d benches 60 ~ ' + bench + r'[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%%\)'
+    q = '@set Q%d benches 60 near ' + WORKER + ' ~ ' + bench + r'[^|]*queue=(\d+)'
+    fpat = '@set F%d benches 60 near ' + WORKER + ' ~ ' + bench + r'[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%%\)'
     L += start(p["prep"] + ["speed 1", "@sleep 2", "speed 0",
                             'teleport %s building "%s" dist 4 radius 1500' % (WORKER, bench),
                             "teleport %s %s dist 8" % (OTHER, WORKER), p["check"],
@@ -253,12 +254,12 @@ def gen_craft(p):
         # READY bench check reads the real bench state (m23b-4080: full-input refills made every craft row FAIL)
         L += ['fill "%s" "%s" %d radius 60 topup' % (bench, it, n) for it, n in p["give"]]
         L += ready(AWAKE, *[bench_has(bench, it) for it, _ in p["give"]] +
-                   [r"benches 8 ~ %s[^|]*queue=[1-9]" % bench, HASJOB, powered(bench)])
+                   [r"benches 8 near %s ~ %s[^|]*queue=[1-9]" % (WORKER, bench), HASJOB, powered(bench)])
         L += [q % 0, fpat % 0,
               TS0, "speed %d" % sp, "@wait-game %d 900" % w, "speed 0", TS1,
               "where %s" % WORKER, "jobs %s" % WORKER]
         # m22-4080 pg-52 w10: he walked 500 m away during the window (benches 60 then found another bench)
-        L += post(AWAKE, r"benches 8 ~ %s" % bench)
+        L += post(AWAKE, r"benches 8 near %s ~ %s" % (WORKER, bench))
         L += [q % 1, fpat % 1,
               echo(p["rows"], p["prof"], skill, gear, label, "craft", WIN, "${Q0}/${F0}", "${Q1}/${F1}"),
               "hunger %s 280" % WORKER]

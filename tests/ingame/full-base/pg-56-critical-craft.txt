@@ -2,7 +2,7 @@
 # covers: PG 89 (critical-success craft: the actual finished quality drives the tier)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; weapon smith)
 # reset: fresh
-# needs: ProfessionGearProgression.dll D7A60E49 or later (`pg_force_critical`, hook on CraftingBuilding::calculateCriticalChance),
+# needs: harness 616121b+ (benches near, fill topup); ProfessionGearProgression.dll D7A60E49 or later (`pg_force_critical`, hook on CraftingBuilding::calculateCriticalChance),
 #   harness 8BF347BF+ (m19-4080: the squad stands ~300 m from the benches, Weapon Smith V takes Steel Bars + Fabrics and
 #   needs Katanas + Basic Weapon Grades 3 before the Sickle shows); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: two REAL Sickle crafts by Avarek at weapon smithing 10 (low quality): first normal, then with pg_force_critical on.
@@ -41,20 +41,29 @@ speed 0
 benches 60 crafts ~ Weapon[^|]*Sickle
 setstat Avarek weapon_smith 10
 # --- normal craft ---
+# m24-4080: bench inputs take nothing until a craft is queued (m23 probe) -> craft first, then fill
+craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
 fill "Weapon Smith" "Steel Bars" 10 radius 60
 fill "Weapon Smith" "Fabrics" 10 radius 60
-craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
 speed 50 hold
-@until 900 benches 60 ~ Weapon[^|]*queue=0
+@until 900 benches 60 near Avarek ~ Weapon[^|]*queue=0
+where Avarek
+where Beaks
 speed 0
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" equipped=0 tier=\d
 # --- forced critical craft ---
 pg_force_critical on ~ forceCritical=1$
-fill "Weapon Smith" "Steel Bars" 10 radius 60
-fill "Weapon Smith" "Fabrics" 10 radius 60
+# m24-4080: at speed 50 the squad leader walked off (benches/fill search around him): bring both back
+@until 30 teleport Avarek building "Weapon Smith" dist 4 radius 1500 ~ moved=1
+@until 30 teleport Beaks Avarek dist 8 ~ moved=1
+# m24-4080: bench inputs take nothing until a craft is queued (m23 probe) -> craft first, then fill
 craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
+fill "Weapon Smith" "Steel Bars" 10 radius 60 topup
+fill "Weapon Smith" "Fabrics" 10 radius 60 topup
 speed 50 hold
-@until 900 benches 60 ~ Weapon[^|]*queue=0
+@until 900 benches 60 near Avarek ~ Weapon[^|]*queue=0
+where Avarek
+where Beaks
 speed 0
 pg_force_critical off ~ forceCritical=0$
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ force critical: chance [\d.e-]+ -> 1 smith=Avarek
