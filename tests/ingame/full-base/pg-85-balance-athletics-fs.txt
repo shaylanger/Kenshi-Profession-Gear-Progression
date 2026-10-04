@@ -4,7 +4,7 @@
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: Beaks runs 40 m along +x on open ground 150 m from Avarek (harness swimtime on land: any axis, seconds
+# design: Beaks runs 300 m along +x on open ground 150 m from Avarek (harness swimtime on land: any axis, seconds
 #   of game time), back to the start by teleport; also the game's movement speed (runspeed).
 # verify: every point arrives (no 'did not arrive'); speed rises with Athletics; own50 > none = movement
 #   reads the hooked Athletics.
@@ -52,7 +52,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,10,0,none,w1,move,0,${T},${RS}
 pg_statprobe read
@@ -69,7 +69,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,90,0,none,w2,move,0,${T},${RS}
 pg_statprobe read
@@ -86,7 +86,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,none,w3,move,0,${T},${RS}
 pg_statprobe read
@@ -106,7 +106,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,25,own25,w4,move,0,${T},${RS}
 pg_statprobe read
@@ -126,7 +126,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,50,own50,w5,move,0,${T},${RS}
 pg_statprobe read
@@ -146,7 +146,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,lab50,w6,move,0,${T},${RS}
 pg_statprobe read
@@ -163,7 +163,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,none,w7,move,0,${T},${RS}
 pg_statprobe read
@@ -183,7 +183,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,25,own25,w8,move,0,${T},${RS}
 pg_statprobe read
@@ -203,7 +203,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,50,own50,w9,move,0,${T},${RS}
 pg_statprobe read
@@ -223,7 +223,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,lab50,w10,move,0,${T},${RS}
 pg_statprobe read
@@ -240,7 +240,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,none,w11,move,0,${T},${RS}
 pg_statprobe read
@@ -260,7 +260,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,25,own25,w12,move,0,${T},${RS}
 pg_statprobe read
@@ -280,7 +280,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,50,own50,w13,move,0,${T},${RS}
 pg_statprobe read
@@ -300,7 +300,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,50,0,lab50,w14,move,0,${T},${RS}
 pg_statprobe read
@@ -317,7 +317,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,75,0,none,w15,move,0,${T},${RS}
 pg_statprobe read
@@ -337,7 +337,7 @@ speed 1 hold
 @set RS runspeed Beaks ~ (movement_speed=[\d.]+ .*ideal_run_speed=[\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 runspeed Beaks
-@set T swimtime Beaks 40 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
+@set T swimtime Beaks 300 +x run ~ (swam [\d.]+ m seconds=[\d.]+)
 speed 0
 @echo BAL2,193,athletics_fs,25,50,own50,w16,move,0,${T},${RS}
 pg_statprobe read

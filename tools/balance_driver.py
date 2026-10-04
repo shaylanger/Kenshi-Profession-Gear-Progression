@@ -115,12 +115,14 @@ P = [
          setstat="engineering", building="Small Shack", window=5),
     # ---- timed events ----
     dict(file="pg-84-balance-medic.txt", rows="191", kind="heal", prof="medic", setstat="medic", cut=30),
-    dict(file="pg-85-balance-athletics.txt", rows="193", kind="move", prof="athletics", setstat="athletics", dist=40),
+    dict(file="pg-85-balance-athletics.txt", rows="193", kind="move", prof="athletics", setstat="athletics", dist=300),
+    # m29-5090 gate: 40 units (~4 m: harness distances are game units) ran in 0.8-1.0 s at every Athletics while
+    # stats_run_speed went 82.5 -> 115: acceleration-bound, flat. 300 units ~ 2.6-3.6 s at run speed resolves it.
     dict(file="pg-86-balance-swimming.txt", rows="194", kind="swim", prof="swimming", setstat="swimming", dist=60),
     dict(file="pg-87-balance-stealth.txt", rows="195", kind="detect", prof="stealth", setstat="stealth",
-         side="sneaker", dist=20, timeout=120),
+         side="sneaker", dist=100, timeout=180),
     dict(file="pg-89-balance-perception.txt", rows="199", kind="detect", prof="perception", setstat="perception",
-         side="observer", dist=20, timeout=120),
+         side="observer", dist=100, timeout=180),
     # ---- the game's own chances ----
     # A player-owned/unoccupied cage can report zero at every skill. Compare a real
     # locked shackle with an explicit foreign owner before treating row 196 as no response.
@@ -532,7 +534,12 @@ def gen_detect(p):
                ["seen=1 in most points (seen=0 everywhere: this observer never notices a sneaker, send the .out to",
                 "the PG agent); stealth: seconds_to_seen grows with Stealth; perception: it shrinks with Perception."])
     L += start(["teleport %s %s dist 60" % (WORKER, OTHER), "setstat %s stealth 30" % WORKER]) +         (wear(WORKER) if sneaker_varies else [])
-    near = r"dist=(\d|[1-%d]\d)\.\d" % ((d + 10) // 10 - 1) if d + 10 >= 20 else r"dist=\d\."
+    # m29-5090 gate: dist 20 is 20 game units (~2 m): seen in 1.5-3.4 s at every skill (flat); 100 units ~ 10 m.
+    # The READY check was "where <obs>", whose dist= is from the search origin (pinned Avarek, ~80 away), not from
+    # the sneaker: every point read invalid. "face <obs> <worker>" reports the observer-to-sneaker distance.
+    lim = d + 10
+    near = (r"dist=(\d{1,2}|1[0-%d]\d)\.\d observer_ko=0" % ((lim - 100) // 10) if 100 <= lim < 200
+            else r"dist=(\d|[1-%d]\d)\.\d observer_ko=0" % (lim // 10 - 1))
     for n, (label, skill, gear) in enumerate(points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS), 1):
         obs = "PGW%d" % n
         who = WORKER if sneaker_varies else obs
@@ -552,8 +559,8 @@ def gen_detect(p):
         # m25-4080 batch19 pg-87: 2 of the first 3 observers stood ~200 m away 3 s after the spawn (the game moved
         # them out of the base layout), w2 was 16 m away: bring the sneaker to wherever the observer stands
         L += ['@until 30 teleport %s %s dist %d ~ moved=1' % (WORKER, obs, d), "face %s %s" % (obs, WORKER)]
-        L += ["speed 1", "@sleep 3", "speed 0"] + ready("where %s ~ %s" % (obs, near)) +              ["speed 1",
-              "@set T detecttime %s %s timeout %d ~ (seen=\d seconds_to_seen=\S+)" % (WORKER, obs, to),
+        L += ["speed 1", "@sleep 3", "speed 0"] + ready("face %s %s ~ %s" % (obs, WORKER, near)) +              ["speed 1",
+              "@set T detecttime %s %s timeout %d ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)" % (WORKER, obs, to),
               "speed 0",
               echo(p["rows"], p["prof"], skill, gear, label, "detect_" + p["side"], to, "${T}", "-"),
               "stealth %s off" % WORKER, "pin %s off ~ unpinned" % obs, "kill %s" % obs,
@@ -724,6 +731,17 @@ def measure(kind, window_s, a, b):
         if not m:
             return 0, 1, 0, "no detecttime reply"
         seen, secs = m.group(1) == "1", f(m.group(2))
+        # m29b-5090: the time until the observer first glances ("maybe") is random (1.7-63 s at the same skill);
+        # the maybe->seen phase is what Stealth/Perception set (s25 1.7-2.2 s, s90 10.2 s). Use that phase when the
+        # reply has seconds_to_maybe (generator m29b+).
+        mm = re.search(r"seconds_to_maybe=(\S+)", a or "")
+        if mm:
+            maybe = f(mm.group(1))
+            if maybe is None:
+                return 0, 1, 0, "never reached maybe (observer did not notice at all)"
+            if not seen:
+                return (window_s - maybe if kind == "detect_sneaker" else 0), 1, int(kind == "detect_sneaker"),                     "censored(maybe, not seen)"
+            secs = max(secs - maybe, 0.01)
         if kind == "detect_sneaker":   # longer unseen = better: censored at the timeout when never seen
             return (secs if seen else window_s), 1, 1, "" if seen else "censored(not seen)"
         if not seen:

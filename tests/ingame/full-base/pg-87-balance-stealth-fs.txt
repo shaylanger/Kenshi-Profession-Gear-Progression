@@ -4,9 +4,9 @@
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: a fresh neutral observer per point (Hungry Bandit, Drifters, renamed PGW<n>) spawned 20 m from Beaks,
+# design: a fresh neutral observer per point (Hungry Bandit, Drifters, renamed PGW<n>) spawned 100 m from Beaks,
 #   who sneaks (detecttime: sneak on). Result = game seconds until seen
-#   (timeout 120 s). The sneaker's skill/gear varies (stealth).
+#   (timeout 180 s). The sneaker's skill/gear varies (stealth).
 #   The observer is killed and moved away after every point.
 # verify: seen=1 in most points (seen=0 everywhere: this observer never notices a sneaker, send the .out to
 #   the PG agent); stealth: seconds_to_seen grows with Stealth; perception: it shrinks with Perception.
@@ -48,7 +48,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW1
 pin PGW1 face Beaks ~ pinned
 relation PGW1 0
@@ -59,18 +59,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW1 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW1 dist 100 ~ moved=1
 face PGW1 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW1 ~ dist=(\d|[1-2]\d)\.\d
+face PGW1 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW1 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW1 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,10,0,none,w1,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,10,0,none,w1,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW1 off ~ unpinned
@@ -83,7 +83,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW2
 pin PGW2 face Beaks ~ pinned
 relation PGW2 0
@@ -94,18 +94,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW2 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW2 dist 100 ~ moved=1
 face PGW2 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW2 ~ dist=(\d|[1-2]\d)\.\d
+face PGW2 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW2 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW2 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,90,0,none,w2,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,90,0,none,w2,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW2 off ~ unpinned
@@ -118,7 +118,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW3
 pin PGW3 face Beaks ~ pinned
 relation PGW3 0
@@ -129,18 +129,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW3 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW3 dist 100 ~ moved=1
 face PGW3 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW3 ~ dist=(\d|[1-2]\d)\.\d
+face PGW3 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW3 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW3 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,0,none,w3,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,0,none,w3,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW3 off ~ unpinned
@@ -153,7 +153,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW4
 pin PGW4 face Beaks ~ pinned
 relation PGW4 0
@@ -167,18 +167,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW4 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW4 dist 100 ~ moved=1
 face PGW4 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW4 ~ dist=(\d|[1-2]\d)\.\d
+face PGW4 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW4 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW4 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,25,own25,w4,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,25,own25,w4,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW4 off ~ unpinned
@@ -191,7 +191,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW5
 pin PGW5 face Beaks ~ pinned
 relation PGW5 0
@@ -205,18 +205,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW5 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW5 dist 100 ~ moved=1
 face PGW5 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW5 ~ dist=(\d|[1-2]\d)\.\d
+face PGW5 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW5 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW5 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,50,own50,w5,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,50,own50,w5,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW5 off ~ unpinned
@@ -229,7 +229,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW6
 pin PGW6 face Beaks ~ pinned
 relation PGW6 0
@@ -243,18 +243,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW6 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW6 dist 100 ~ moved=1
 face PGW6 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW6 ~ dist=(\d|[1-2]\d)\.\d
+face PGW6 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW6 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW6 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,0,lab50,w6,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,0,lab50,w6,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW6 off ~ unpinned
@@ -267,7 +267,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW7
 pin PGW7 face Beaks ~ pinned
 relation PGW7 0
@@ -278,18 +278,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW7 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW7 dist 100 ~ moved=1
 face PGW7 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW7 ~ dist=(\d|[1-2]\d)\.\d
+face PGW7 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW7 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW7 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,0,none,w7,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,0,none,w7,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW7 off ~ unpinned
@@ -302,7 +302,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW8
 pin PGW8 face Beaks ~ pinned
 relation PGW8 0
@@ -316,18 +316,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW8 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW8 dist 100 ~ moved=1
 face PGW8 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW8 ~ dist=(\d|[1-2]\d)\.\d
+face PGW8 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW8 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW8 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,25,own25,w8,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,25,own25,w8,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW8 off ~ unpinned
@@ -340,7 +340,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW9
 pin PGW9 face Beaks ~ pinned
 relation PGW9 0
@@ -354,18 +354,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW9 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW9 dist 100 ~ moved=1
 face PGW9 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW9 ~ dist=(\d|[1-2]\d)\.\d
+face PGW9 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW9 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW9 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,50,own50,w9,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,50,own50,w9,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW9 off ~ unpinned
@@ -378,7 +378,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW10
 pin PGW10 face Beaks ~ pinned
 relation PGW10 0
@@ -392,18 +392,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW10 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW10 dist 100 ~ moved=1
 face PGW10 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW10 ~ dist=(\d|[1-2]\d)\.\d
+face PGW10 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW10 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW10 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,0,lab50,w10,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,0,lab50,w10,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW10 off ~ unpinned
@@ -416,7 +416,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW11
 pin PGW11 face Beaks ~ pinned
 relation PGW11 0
@@ -427,18 +427,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW11 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW11 dist 100 ~ moved=1
 face PGW11 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW11 ~ dist=(\d|[1-2]\d)\.\d
+face PGW11 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW11 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW11 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,0,none,w11,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,0,none,w11,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW11 off ~ unpinned
@@ -451,7 +451,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW12
 pin PGW12 face Beaks ~ pinned
 relation PGW12 0
@@ -465,18 +465,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW12 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW12 dist 100 ~ moved=1
 face PGW12 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW12 ~ dist=(\d|[1-2]\d)\.\d
+face PGW12 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW12 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW12 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,25,own25,w12,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,25,own25,w12,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW12 off ~ unpinned
@@ -489,7 +489,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW13
 pin PGW13 face Beaks ~ pinned
 relation PGW13 0
@@ -503,18 +503,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW13 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW13 dist 100 ~ moved=1
 face PGW13 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW13 ~ dist=(\d|[1-2]\d)\.\d
+face PGW13 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW13 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW13 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,50,own50,w13,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,50,own50,w13,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW13 off ~ unpinned
@@ -527,7 +527,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW14
 pin PGW14 face Beaks ~ pinned
 relation PGW14 0
@@ -541,18 +541,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW14 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW14 dist 100 ~ moved=1
 face PGW14 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW14 ~ dist=(\d|[1-2]\d)\.\d
+face PGW14 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW14 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW14 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,50,0,lab50,w14,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,50,0,lab50,w14,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW14 off ~ unpinned
@@ -565,7 +565,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW15
 pin PGW15 face Beaks ~ pinned
 relation PGW15 0
@@ -576,18 +576,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW15 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW15 dist 100 ~ moved=1
 face PGW15 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW15 ~ dist=(\d|[1-2]\d)\.\d
+face PGW15 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW15 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW15 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,75,0,none,w15,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,75,0,none,w15,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW15 off ~ unpinned
@@ -600,7 +600,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks Avarek dist 60 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW16
 pin PGW16 face Beaks ~ pinned
 relation PGW16 0
@@ -614,18 +614,18 @@ wake Beaks
 speed 1 hold
 @sleep 3
 speed 0
-@until 30 teleport Beaks PGW16 dist 20 ~ moved=1
+@until 30 teleport Beaks PGW16 dist 100 ~ moved=1
 face PGW16 Beaks
 speed 1 hold
 @sleep 3
 speed 0
 @echo READY
-where PGW16 ~ dist=(\d|[1-2]\d)\.\d
+face PGW16 Beaks ~ dist=(\d{1,2}|1[0-1]\d)\.\d observer_ko=0
 speed 1 hold
 stat Beaks stealth ~ wounds=1\.0000
-@set T detecttime Beaks PGW16 timeout 120 ~ (seen=\d seconds_to_seen=\S+)
+@set T detecttime Beaks PGW16 timeout 180 ~ (seen=\d seconds_to_seen=\S+ seconds_to_maybe=\S+)
 speed 0
-@echo BAL2,195,stealth_fs,25,50,own50,w16,detect_sneaker,120,${T},-
+@echo BAL2,195,stealth_fs,25,50,own50,w16,detect_sneaker,180,${T},-
 pg_statprobe read
 stealth Beaks off
 pin PGW16 off ~ unpinned
