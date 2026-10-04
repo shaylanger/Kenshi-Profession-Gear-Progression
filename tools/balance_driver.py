@@ -699,7 +699,7 @@ def gen():
         with open(path, "w", newline="\n") as fh:
             fh.write("\n".join(L) + "\n")
         # FormulaScaling (PG C5CAC166+; default on since 1db9fe7): the same sweep with pg_formulas on, professions "<prof>_fs"
-        if p["kind"] in ("move", "swim", "chance") or p.get("prof") == "stealth":
+        if p["kind"] in ("move", "swim", "chance") or p.get("prof") in ("stealth", "medic"):
             F = []
             for x in L:
                 x = re.sub(r"^(@echo BAL2,[^,]*,)([^,]*),", r"\1\2_fs,", x)

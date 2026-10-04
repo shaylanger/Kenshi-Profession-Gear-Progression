@@ -1753,12 +1753,42 @@ float HookLockpick(Character* c,DoorLock* lock){
   return g_lockpickOrig?g_lockpickOrig(c,lock):0;
 }
 
+// Medic (m33, 4080 gate 84s: Standard kit s25 6.6 s, s25+Medic50 gear 6.6 s, s90 4.5 s): MedicalSystem::applyFirstAid /
+// applyDoctoring get the doctor's skill as a float argument computed from the raw CharStats::medic member, so getStat
+// gear never reached bandaging. While FormulaScaling is on, a skill argument that equals the doctor's raw medic (0..100
+// or 0..1 scale) is raised the way getStat raises it; any other value (already modified) is passed through unchanged.
+typedef bool (*MedicApplyFn)(void*, float, Item*, float, Character*);
+MedicApplyFn g_firstAidOrig = 0, g_doctoringOrig = 0;
+int g_medicLogN = 0;
+float MedicSkill(float skill, Character* who, const char* what){
+  if(!g_formulaScaling || !g_cfg.enabled || !who || !who->stats) return skill;
+  float pct=0;
+  try { pct=EquippedBonus(who,PGP::STAT_MEDIC); } catch (...) { return skill; }
+  if(pct==0.0f) return skill;
+  // the game passes either the raw member or the vanilla modified stat (raw x health/hunger modifiers, m33-4080
+  // log: Oktai skill 42.74 raw 53.43); both get the gear multiplier, anything else is passed through
+  const float raw=who->stats->medic;
+  const float vm=g_getStatOrig?g_getStatOrig(who->stats,STAT_MEDIC,false):-1.0f;
+  float out=skill;
+  if(fabs(skill-raw)<0.05f || fabs(skill-vm)<0.05f) out=PGP::EffectiveStatValue(skill,pct,false,150.0f);
+  else if(fabs(skill*100.0f-raw)<0.5f || fabs(skill*100.0f-vm)<0.5f) out=PGP::EffectiveStatValue(skill*100.0f,pct,false,150.0f)/100.0f;
+  if(g_medicLogN<6){ ++g_medicLogN; std::ostringstream ss;
+    ss<<"medic "<<what<<" who="<<who->getName()<<" skill="<<skill<<" raw="<<raw<<" vm="<<vm<<" pct="<<pct<<" out="<<out; Log(ss.str()); }
+  return out;
+}
+bool HookFirstAid(void* m,float skill,Item* eq,float t,Character* who){
+  return g_firstAidOrig?g_firstAidOrig(m,MedicSkill(skill,who,"firstaid"),eq,t,who):false;
+}
+bool HookDoctoring(void* m,float skill,Item* eq,float t,Character* who){
+  return g_doctoringOrig?g_doctoringOrig(m,MedicSkill(skill,who,"doctoring"),eq,t,who):false;
+}
+
 int KahFormulas(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_formulaScaling=(v=="on"||v=="1"||v=="true"); }
   Log(std::string("harness: formulaScaling=")+(g_formulaScaling?"1":"0"));
   std::ostringstream ss; ss<<"formulaScaling="<<(g_formulaScaling?1:0)<<" hooks="
     <<(g_maxRunOrig?1:0)+(g_idealRunOrig?1:0)+(g_maxSwimOrig?1:0)+(g_swimOrig?1:0)+(g_stealthSpeedOrig?1:0)
-      +(g_stealthSkillOrig?1:0)+(g_koChanceOrig?1:0)+(g_lockpickOrig?1:0)<<"/8";
+      +(g_stealthSkillOrig?1:0)+(g_koChanceOrig?1:0)+(g_lockpickOrig?1:0)<<"/8"<<" medic="<<(g_firstAidOrig?1:0)+(g_doctoringOrig?1:0)<<"/2";
   r->append(r,ss.str().c_str());
   return KAH_OK;
 }
@@ -1787,6 +1817,8 @@ void InstallHooks() {
   HookSymbol(lib,"?getStealthSkill01@CharStats@@QEBAM_N@Z",(void*)HookStealthSkill,(void**)&g_stealthSkillOrig);
   HookSymbol(lib,"?getStealthKOChance@Character@@QEAAMPEAV1@_N@Z",(void*)HookKOChance,(void**)&g_koChanceOrig);
   HookSymbol(lib,"?getLockpickChance@Character@@QEAAMPEAVDoorLock@@@Z",(void*)HookLockpick,(void**)&g_lockpickOrig);
+  HookSymbol(lib,"?applyFirstAid@MedicalSystem@@QEAA_NMPEAVItem@@MPEAVCharacter@@@Z",(void*)HookFirstAid,(void**)&g_firstAidOrig);
+  HookSymbol(lib,"?applyDoctoring@MedicalSystem@@QEAA_NMPEAVItem@@MPEAVCharacter@@@Z",(void*)HookDoctoring,(void**)&g_doctoringOrig);
   HookSymbol(lib,"?getTooltipData1@InventoryItemBase@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipBase,(void**)&g_tipBaseOrig);
   HookSymbol(lib,"?getTooltipData1@Armour@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipArmour,(void**)&g_tipArmourOrig);
   HookSymbol(lib,"?getTooltipData1@ContainerItem@@UEAAXAEAV?$vector@VStringPair@@V?$STLAllocator@VStringPair@@V?$CategorisedAllocPolicy@$0A@@Ogre@@@Ogre@@@std@@@Z",(void*)TipContainer,(void**)&g_tipContainerOrig);

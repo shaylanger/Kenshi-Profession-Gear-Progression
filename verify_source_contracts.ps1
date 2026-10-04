@@ -60,4 +60,10 @@ if($text -notmatch [regex]::Escape('bool g_jobOperateScaling = true;') -or
 }
 Write-Host "OK      worker jobs get the equipped bonus by default (row 177)"
 
-Write-Host "Source contract verification passed: 10 checks"
+if($text -notmatch [regex]::Escape('?applyFirstAid@MedicalSystem@@QEAA_NMPEAVItem@@MPEAVCharacter@@@Z') -or
+   $text -notmatch [regex]::Escape('?applyDoctoring@MedicalSystem@@QEAA_NMPEAVItem@@MPEAVCharacter@@@Z')){
+  throw "Source contract failed: medic first-aid/doctoring skill hooks not installed (gear never reaches bandaging)"
+}
+Write-Host "OK      medic gear reaches first aid / doctoring (gate 84)"
+
+Write-Host "Source contract verification passed: 11 checks"
