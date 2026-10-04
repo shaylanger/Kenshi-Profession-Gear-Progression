@@ -1772,6 +1772,9 @@ float MedicSkill(float skill, Character* who, const char* what){
   float out=skill;
   if(fabs(skill-raw)<0.05f || fabs(skill-vm)<0.05f) out=PGP::EffectiveStatValue(skill,pct,false,150.0f);
   else if(fabs(skill*100.0f-raw)<0.5f || fabs(skill*100.0f-vm)<0.5f) out=PGP::EffectiveStatValue(skill*100.0f,pct,false,150.0f)/100.0f;
+  // m34-4080 log: "Outcast Warrior skill=33.50 raw=41.88 vm=18.63" (skill = 0.8 x raw, matching neither): a skill
+  // argument below the raw member is the raw value times a game factor, so it gets the same gear ratio as raw
+  else if(skill>1.0f && raw>1.0f && skill<raw+0.05f) out=skill*PGP::EffectiveStatValue(raw,pct,false,150.0f)/raw;
   if(g_medicLogN<6){ ++g_medicLogN; std::ostringstream ss;
     ss<<"medic "<<what<<" who="<<who->getName()<<" skill="<<skill<<" raw="<<raw<<" vm="<<vm<<" pct="<<pct<<" out="<<out; Log(ss.str()); }
   return out;
