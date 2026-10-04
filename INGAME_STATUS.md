@@ -52,12 +52,22 @@ direction; none is a fitted value.
 ### Unresolved (rerun in the Beaks gate, classify there)
 - engineering (row 185, construct): batch 20 own50 at s50 ~ +2% vs skill gain 9.1k->23.8k/h: product candidate
   (construction may read Engineering through an unhooked path).
-- medic (row 191): flat at every Medic with the Basic kit (35.3 s), Standard kit ~4x faster; the protect wounds-bug medic factor 0.55
+- medic (row 191): flat at every Medic with the Basic kit (35.3 s: the Basic kit caps Medic), Standard kit ~4x faster
+  (d3/d4 ~4.5 s at 90 vs ~12.4 s at 10: scales; balance_driver ce5acc2 measures with the Standard kit); the protect wounds-bug medic factor 0.55
   was in play; d4 (Medic 10, Standard kit) next to d3 decides kit-bound vs skill.
 - athletics (193): run speed 11.0 at every skill = the protect wounds-bug cap (harness 6aa5685, setup).
 - swimming (194): actual swim speed capped at 4.0 while max_swim_speed rises: the protect wounds-bug cap again (setup), recheck.
 - stealth (195): seen in ~1.5 s at 20 m at every skill: measurement insensitive (observer pinned facing at 20 m).
-- lockpicking (196, Prisoner Cage / owned shackles): chance 0.0000 at every skill: target lock broken (setup).
+- lockpicking (196, Prisoner Cage / owned shackles): chance 0.0000 at every skill: measurement (harness), root cause found m31:
+  KenshiLib's `Character::getLockpickChance` is a dead stub in the running exe (`RE_Kenshi\kenshi_x64.exe`, Steam 1.0.65,
+  RVA 0x884DC0: reads the stat, returns 0.0). The game's real lockpick chance is the DoorLock chance fn (Steam RVA
+  0x297D80, called from the lockpick task 0x359100 -> attempt 0x297E10): 0.9 if lock level <= skill, else
+  0.9 / 2^((level - skill) / 10); skill = getStat(LOCKPICKING) (the PG getStat hook applies the gear in both
+  FormulaScaling modes) - 10 when caged. Harness 2B51AF08+ `chance lockpick` calls that fn (`method=game`), the
+  88/92 points assert it. **PG `HookLockpick` (src/ProfessionGearPlugin.cpp) hooks the dead stub = a no-op**
+  (harmless; lockpicking gear still works through getStat; fs == non-fs expected). Remove that hook in a later
+  plugin change (not done now: the file was being edited for the engineering construction hook). A cage whose
+  lock level <= skill reads a flat 0.9: real game behaviour, use a higher-level lock for the curve.
 - farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement.
 - perception (199, pg-89): never ran (batch 20 stopped).
 - pg-55 turret (192): FAIL 48/5 in batch 20 (dummies walked off); fixed by d6bb99b (pin each dummy), unrun.
