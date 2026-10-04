@@ -3,7 +3,8 @@
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has turrets)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0 (`protect`, `relation`) + c4fa520 (`pin`); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: Avarek mans the nearest turret (its own job). Per point a fresh "Hungry Bandit" (Drifters) is spawned 40 m
+# m29-4080: operator Beaks (Avarek is crippled in this save: wounds factor 0.25 at full hp; stat asserts wounds=1).
+# design: Beaks mans the nearest turret (its own job). Per point a fresh "Hungry Bandit" (Drifters) is spawned 40 m
 #   past the turret and made hostile (`relation` -100: the Drifters faction vs the player), then 45 real seconds at speed 1;
 #   the dummy's worst body part % is read. Points: Turrets 10 / 90 without gear, Turrets 10 with +50% Turrets gear.
 # verify (diagnostic): the turret fires (dummy worst < 100 or KO/DEAD in at least one point). If it does, worse hp at 90 and at
@@ -14,32 +15,35 @@
 @wait-world
 @sleep 8
 speed 0
-protect Beaks on
 protect Avarek on
-select Beaks
-clearjobs Avarek
+health Beaks 100
+blood Beaks 100%
+protect Beaks on
+select Avarek
+clearjobs Beaks
 # m25-4080 probe: the only real turret is the Double-Barrel Harpoon Turret ~570-760 m from the squad (search origin =
 # Avarek), unpowered (out_of_power=1); "Training Turret MkIII" is a trainer. Teleport him to it, power it, then the job.
 @set TX buildings 1500 harpoon ~ pos=([-\d.]+),[-\d.]+,[-\d.]+
 @set TY buildings 1500 harpoon ~ pos=[-\d.]+,([-\d.]+),[-\d.]+
 @set TZ buildings 1500 harpoon ~ pos=[-\d.]+,[-\d.]+,([-\d.]+)
 @echo turret at ${TX} ${TY} ${TZ}
-@until 30 teleport Avarek building "Harpoon Turret" dist 4 radius 1500 ~ moved=1
+@until 30 teleport Beaks building "Harpoon Turret" dist 4 radius 1500 ~ moved=1
 power "Harpoon Turret" supply radius 60
 building "Harpoon Turret" 60 ~ out_of_power=0
 # m25-4080: USE_TURRET is not a permanent job (job ... "job not recorded"; turret never fired): give the real order
-order Avarek USE_TURRET building "Harpoon Turret"
+order Beaks USE_TURRET building "Harpoon Turret"
 speed 1
 @sleep 5
 speed 0
 building "Harpoon Turret" 60 ~ operators=1
-give Avarek "Iron Hat" 1
-equip Avarek "Iron Hat"
-pg_clear Avarek ~ cleared affixes
+give Beaks "Iron Hat" 1
+equip Beaks "Iron Hat"
+pg_clear Beaks ~ cleared affixes
 speed 1
 @sleep 20
 # --- Turrets 10, no gear ---
-setstat Avarek turrets 10
+setstat Beaks turrets 10
+stat Beaks turrets ~ wounds=1\.0000
 @set D1 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 pin ${D1} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D1} -100
@@ -49,7 +53,8 @@ building "Harpoon Turret" 1500 ~ operators=1
 pin ${D1} off ~ unpinned
 kill ${D1}
 # --- Turrets 90, no gear ---
-setstat Avarek turrets 90
+setstat Beaks turrets 90
+stat Beaks turrets ~ wounds=1\.0000
 @set D2 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 pin ${D2} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D2} -100
@@ -59,9 +64,10 @@ building "Harpoon Turret" 1500 ~ operators=1
 pin ${D2} off ~ unpinned
 kill ${D2}
 # --- Turrets 10 with +50% Turrets gear ---
-setstat Avarek turrets 10
-pg_force_affix Avarek "Iron Hat" turrets 50 tier 6 ~ affixes=Turrets:50
-pg_bonus Avarek turrets ~ equipped_bonus=50% .*match=1
+setstat Beaks turrets 10
+stat Beaks turrets ~ wounds=1\.0000
+pg_force_affix Beaks "Iron Hat" turrets 50 tier 6 ~ affixes=Turrets:50
+pg_bonus Beaks turrets ~ equipped_bonus=50% .*match=1
 @set D3 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 pin ${D3} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D3} -100
@@ -75,4 +81,4 @@ speed 0
 @echo Turrets 10: ${H1}
 @echo Turrets 90: ${H2}
 @echo Turrets 10 + 50% gear: ${H3}
-clearjobs Avarek
+clearjobs Beaks
