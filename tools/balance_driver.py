@@ -60,22 +60,25 @@ CHANCE_GEAR = [("own2", "OWN", 2), ("own5", "OWN", 5), ("own10", "OWN", 10), ("o
 P = [
     # ---- crafting benches (window = queue drop) ----
     dict(file="pg-52-balance-weapon-smithing.txt", rows="188", kind="craft", prof="weapon_smithing",
-         setstat="weapon_smith", bench="Weapon Smith", item="Sickle", give=[("Iron Plates", 15)], window=10,
-         prep=['research "Basic Weapon Smithing"', 'research "Basic Weapon Grades"', 'research "Utility Weapons"'],
-         check=r'benches 400 crafts ~ Weapon Smith[^|]*Sickle'),
+         setstat="weapon_smith", bench="Weapon Smith", item="Sickle", give=[("Steel Bars", 10), ("Fabrics", 10)],
+         window=20, prep=['research "Basic Weapon Smithing"', 'research "Basic Weapon Grades"',
+                          'research "Utility Weapons"', 'research "Katanas"', 'research "Basic Weapon Grades 3"'],
+         check=r'benches 60 crafts ~ Weapon Smith[^|]*Sickle'),
     dict(file="pg-53-balance-armour-smithing.txt", rows="189", kind="craft", prof="armour_smithing",
-         setstat="armour_smith", bench="Clothing", item="Rag Shirt", give=[("584-gamedata.base", 15)], window=10,
-         prep=['blueprint "Rag Shirt"'], check=r'benches 400 crafts ~ Clothing[^|]*Rag Shirt'),
+         setstat="armour_smith", bench="Clothing", item="Rag Shirt", give=[("Fabrics", 10)], window=20,
+         prep=['blueprint "Rag Shirt"'], check=r'benches 60 crafts ~ Clothing[^|]*Rag Shirt'),
     dict(file="pg-80-balance-crossbow-smithing.txt", rows="190", kind="craft", prof="crossbow_smithing",
          setstat="crossbow_smith", bench="Crossbow Crafting", item="Junkbow",
-         give=[("Steel Bars", 40), ("Hinge", 10)], window=10,
-         prep=['research "Crossbow Crafting"'], check=r'benches 400 crafts ~ Crossbow Crafting[^|]*Junkbow'),
+         give=[("Steel Bars", 10), ("Hinge", 10)], window=20,
+         prep=['research "Crossbow Crafting"'], check=r'benches 60 crafts ~ Crossbow Crafting[^|]*Junkbow'),
     dict(file="pg-81-balance-robotics.txt", rows="186", kind="craft", prof="robotics", setstat="robotics",
-         bench="Robotics Bench", item="Gears", give=[("Iron Plates", 15)], window=10,
-         prep=['research "Robotics"'], check=r'benches 400 crafts ~ Robotics Bench[^|]*Gears'),
+         bench="Robotics Bench", item="Gears", give=[("Iron Plates", 15)], window=20,
+         prep=['research "Robotics"'], check=r'benches 60 crafts ~ Robotics Bench[^|]*Gears'),
     dict(file="pg-82-balance-cooking.txt", rows="187", kind="craft", prof="cooking", setstat="cooking",
-         bench="Cooking Stove", item="Dried Meat", give=[("Raw Meat", 15)], window=10,
-         prep=[], check=r'benches 400 crafts ~ Cooking Stove[^|]*Dried Meat'),
+         bench="Cooking Stove", item="Dried Meat", give=[("Raw Meat", 15)], window=20,
+         # Full-Base has no Cooking Stove (the Bread Oven runs without an operator): build one (m19-4080)
+         prep=['teleport %s %s dist 30' % (WORKER, OTHER), 'build "Cooking Stove" near %s dist 10' % WORKER],
+         check=r'benches 60 crafts ~ Cooking Stove[^|]*Dried Meat'),
     # ---- work over time ----
     dict(file="pg-90-balance-farming.txt", rows="161-176", kind="operate", prof="farming", setstat="farming",
          building="Wheat Farm L", fill=("Water", 40), window=30, extra_skills=[25, 75]),
@@ -160,7 +163,7 @@ def start(extra=()):
     return ["@wait-world", "@sleep 8", "speed 0",
             "protect %s on" % OTHER, "protect %s on" % WORKER,
             "hunger %s 280" % WORKER, "hunger %s 280" % OTHER,
-            "select %s" % OTHER, "clearjobs %s" % WORKER] + list(extra)
+            "select %s" % OTHER, "clearjobs %s" % WORKER, "pg_statprobe on %s" % WORKER] + list(extra)
 
 
 def wear(who):
@@ -175,23 +178,32 @@ def timed_points(p):
 
 # ---------------------------------------------------------------- kinds
 def gen_craft(p):
-    w = p["window"]
-    L = header(p, ["%d crafts of %s queued at the %s before every %d-game-minute window at speed 10;"
-                   % (10, p["item"], p["bench"], w),
-                   "skill %s without gear, then %d x (skill %d: none / +25%% / +50%% %s / +50%% Labouring control)."
-                   % ("/".join(map(str, TIMED_SKILLS)), TIMED_REPEATS, BASE, p["prof"])],
-               ["every window has a BAL2 line with two queue values and a drop > 0 at skill 50 (a drop of 10 =",
-                "saturated: tell the PG agent to shorten the window). own > none = the bench reads the hooked stat."])
-    L += start(p["prep"] + [p["check"]]) + wear(WORKER)
+    w, bench = p["window"], p["bench"]
+    sp = p.get("speed", 20)
+    L = header(p, ["%s works the %s (real craft job, %s queued 5 more per point); the bench input is refilled"
+                   % (WORKER, bench, p["item"]),
+                   "with %s before every %d-game-minute window at speed %d. Result = items made in the window:"
+                   % (", ".join(it for it, _ in p["give"]), w, sp),
+                   "queue drop + progress of the first queued item (benches prints it with 4 decimals, harness",
+                   "after 33087EDE). Skills %s without gear, then %d x (skill %d: none / +25%% / +50%% %s / +50%%"
+                   % ("/".join(map(str, TIMED_SKILLS)), TIMED_REPEATS, BASE, p["prof"]),
+                   "Labouring control), then the sanity pair."],
+               ["every window has a BAL2 line with Q/F values on both sides and made > 0 at skill 50;",
+                "own > none = the bench reads the hooked stat."])
+    q = '@set Q%d benches 60 ~ ' + bench + r'[^|]*queue=(\d+)'
+    fpat = '@set F%d benches 60 ~ ' + bench + r'[^|]*queue=\d+ \(first: [^|]*? ([\d.]+)%%\)'
+    L += start(p["prep"] + ["speed 1", "@sleep 2", "speed 0",
+                            'teleport %s building "%s" dist 4 radius 1500' % (WORKER, bench),
+                            "teleport %s %s dist 8" % (OTHER, WORKER), p["check"]]) + wear(WORKER)
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
-        L += ['give %s "%s" %d' % (WORKER, it, n) for it, n in p["give"]]
-        L += ['craft %s "%s" at "%s" count 10 ~ queued' % (WORKER, p["item"], p["bench"]),
-              '@set Q0 benches 400 ~ %s[^|]*queue=(\\d+)' % p["bench"],
-              "speed 10", "@wait-game %d 900" % w, "speed 0",
-              '@set Q1 benches 400 ~ %s[^|]*queue=(\\d+)' % p["bench"],
-              echo(p["rows"], p["prof"], skill, gear, label, "craft", w * 60, "${Q0}", "${Q1}"),
+        L += ['fill "%s" "%s" %d radius 60' % (bench, it, n) for it, n in p["give"]]
+        L += ['craft %s "%s" at "%s" count 5 ~ queued' % (WORKER, p["item"], bench),
+              q % 0, fpat % 0,
+              "speed %d" % sp, "@wait-game %d 900" % w, "speed 0",
+              q % 1, fpat % 1,
+              echo(p["rows"], p["prof"], skill, gear, label, "craft", w * 60, "${Q0}/${F0}", "${Q1}/${F1}"),
               "hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]
 
@@ -301,31 +313,38 @@ def gen_move(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         L += ["teleport %s %s dist 150" % (WORKER, OTHER), "speed 1", "@sleep 2",
-              "@set RS runspeed %s ~ movement_speed=%s" % (WORKER, NUM),
+              "@set RS runspeed %s ~ (movement_speed=[\\d.]+ .*ideal_run_speed=[\\d.]+)"
+              % WORKER,
               "@set T swimtime %s %d +x run ~ (swam [\\d.]+ m seconds=[\\d.]+)" % (WORKER, d),
               "speed 0",
               echo(p["rows"], p["prof"], skill, gear, label, "move", 0, "${T}", "${RS}")]
     return L + ["teleport %s %s dist 3" % (WORKER, OTHER)]
 
 
+# Deep water for row 194: Full-Base has none within 3 km (m19-4080 findwater). Treefall's river, 14.6 km away:
+# findwater there gives depth 3.3 and a 500 m run along -x (m19-4080).
+WATER_AT = "-61979 97 33880"
+WATER_DIR = "-x"
+
+
 def gen_swim(p):
     d = p["dist"]
-    L = header(p, ["findwater (radius 3000, depth 1.5) gives the nearest deep water and its longest straight run;",
-                   "%s is teleported there per point and swims %d m along that run (swimtime)." % (WORKER, d),
-                   "Result = swim_speed (distance in deep water / seconds in deep water)."],
-               ["findwater finds water with best_run >= %d (else: this fixture has no water within 3 km: tell the" % d,
-                "PG agent which save has some); deep_fraction near 1; own50 > none = swimming reads the hooked stat."])
-    L += start(["@set WX findwater %s radius 3000 depth 1.5 ~ water at ([-\\d.]+ [-\\d.]+ [-\\d.]+)" % WORKER,
-                "@set WD findwater %s radius 3000 depth 1.5 ~ best=(\\S+)" % WORKER,
-                "findwater %s radius 3000 depth 1.5 ~ best_run=([3-9]\\d|[1-9]\\d\\d)" % WORKER]) + wear(WORKER)
+    L = header(p, ["%s is teleported to deep water at Treefall (%s, findwater: depth 3.3, best run %s 500 m)"
+                   % (WORKER, WATER_AT, WATER_DIR),
+                   "per point and swims %d m along %s (swimtime). Result = swim_speed (deep distance / deep" % (d, WATER_DIR),
+                   "seconds); runspeed adds the game's own swim_speed/max_swim_speed (harness 740ba0a+)."],
+               ["water_level=deep at every start; deep_fraction near 1; own50 > none = swimming reads the hooked stat."])
+    L += start(["teleport %s %s" % (WORKER, WATER_AT), "speed 1", "@sleep 8", "speed 0",
+                "findwater %s radius 300 depth 1.5 ~ best_run=" % WORKER]) + wear(WORKER)
     for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
-        L += ["teleport %s ${WX}" % WORKER, "speed 1", "@sleep 3",
+        L += ["teleport %s %s" % (WORKER, WATER_AT), "speed 1", "@sleep 3",
               "water %s ~ water_level=deep" % WORKER,
-              "@set T swimtime %s %d ${WD} ~ (deep_seconds=[\\d.]+ deep_dist=[\\d.]+)" % (WORKER, d),
+              "@set RS runspeed %s ~ (swim_speed=[\\d.]+ max_swim_speed=[\\d.]+)" % WORKER,
+              "@set T swimtime %s %d %s ~ (deep_seconds=[\\d.]+ deep_dist=[\\d.]+)" % (WORKER, d, WATER_DIR),
               "speed 0",
-              echo(p["rows"], p["prof"], skill, gear, label, "swim", 0, "${T}", "-"),
+              echo(p["rows"], p["prof"], skill, gear, label, "swim", 0, "${T}", "${RS}"),
               "hunger %s 280" % WORKER]
     return L + ["teleport %s %s dist 3" % (WORKER, OTHER)]
 
@@ -348,7 +367,7 @@ def gen_detect(p):
                 "setname ${OBS} PGWatch",
                 "relation PGWatch 0",
                 "setstat PGWatch perception 30",
-                "where PGWatch"]) + wear(who)
+                "where PGWatch"] + (["pg_statprobe on PGWatch"] if not sneaker_varies else [])) + wear(who)
     for label, skill, gear in points(EVENT_SKILLS, EVENT_GEAR, EVENT_REPEATS):
         L += ["# --- %s: %s %d, gear %s ---" % (label, p["prof"], skill, gear[0]),
               "setstat %s %s %d" % (who, p["setstat"], skill)] + gear_lines(who, p["prof"], gear)
@@ -397,6 +416,9 @@ def gen():
     os.makedirs(OUT_DIR, exist_ok=True)
     for p in P:
         L = GEN[p["kind"]](p)
+        # PG 36D7474D+ pg_statprobe: after every point, which profession stats the game read through getStat
+        # (a read right after pg_bonus clears the reads pg_bonus itself made)
+        L = [y for x in L for y in ([x, "pg_statprobe read"] if x.startswith(("@echo BAL2", "pg_bonus ")) else [x])]
         path = os.path.join(OUT_DIR, p["file"])
         with open(path, "w", newline="\n") as fh:
             fh.write("\n".join(L) + "\n")
@@ -415,11 +437,15 @@ def f(x):
 def measure(kind, window_s, a, b):
     """(result_count, elapsed_game_seconds, valid, note) so that count/elapsed is 'higher = better'."""
     if kind == "craft":
-        q0, q1 = f(a), f(b)
-        if q0 is None or q1 is None:
+        # "Q/F": queue length / progress % of the first queued item (old files: queue only)
+        def qf(x):
+            parts = (x or "").split("/")
+            return f(parts[0]), (f(parts[1]) if len(parts) > 1 else 0.0)
+        (q0, f0), (q1, f1) = qf(a), qf(b)
+        if q0 is None or q1 is None or f0 is None or f1 is None:
             return 0, window_s, 0, "missing queue"
-        done = q0 - q1
-        return done, window_s, int(done > 0), "saturated" if done >= 10 else ""
+        done = (q0 - q1) + (f1 - f0) / 100.0
+        return done * 1000.0, window_s, int(done > 0 and q1 > 0), "queue empty" if q1 == 0 else ""
     if kind in ("operate", "research", "construct"):
         p0, p1 = f(a), f(b)
         if p0 is None or p1 is None:
@@ -467,7 +493,8 @@ def to_csv(paths):
     print("test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes")
     for path in paths:
         base = os.path.basename(path)
-        for line in open(path, encoding="utf-8", errors="replace"):
+        lines = list(open(path, encoding="utf-8", errors="replace"))
+        for i, line in enumerate(lines):
             m = re.search(r"=> BAL2,([^,]*),([^,]*),(\d+),(\d+),([^,]*),([^,]*),([^,]*),([^,]*),([^,]*),(.*)$", line)
             if m:
                 tid, prof, skill, bonus, gear, label, kind, win, a, b = m.groups()
@@ -478,8 +505,16 @@ def to_csv(paths):
                 count, secs, ok, note = measure(kind, f(win) or 0, a.strip(), b.strip())
                 if gear == "lab50":
                     prof, bonus = prof + "_lab50ctl", "0"
+                # the next pg_statprobe read: which profession stats the game read through getStat in this point
+                probe = ""
+                for nxt in lines[i + 1:i + 3]:
+                    pm = re.search(r"pg_statprobe read => statprobe \w+: (.*)$", nxt)
+                    if pm:
+                        probe = " probe[" + pm.group(1).strip().replace(",", "/") + "]"
+                        break
+                extra = (" b=" + b.strip().replace(",", ";")) if b.strip() not in ("", "-") and kind != "craft" else ""
                 print("%s,%s,%s,%s,%s,%s,%d,%s,%s" % (tid, prof, skill, bonus, secs, count, ok, gear,
-                                                     "%s %s %s %s" % (label, kind, note, base)))
+                                                     "%s %s %s %s%s%s" % (label, kind, note, base, extra, probe)))
                 continue
             # pg-14 labouring curve (rows 177-183, 30 game minutes per window): "skill 50 +25%: ... output_progress=x"
             m = re.search(r"=> skill (\d+) (no gear|\+(\d+)%|set 25\+25): .*output_progress=([-\d.]+)", line)

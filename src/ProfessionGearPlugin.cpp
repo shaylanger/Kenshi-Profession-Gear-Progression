@@ -101,6 +101,13 @@ bool g_jobOperateScaling = true;   // default on since run m16 (row 177)
 // CraftingBuilding::calculateCriticalChance answer 1.0, so the next real craft is a critical
 // success and the roll can be checked against the better finished quality.
 bool g_forceCritical = false;
+// Balance rows 193-199 (TEST ONLY, off by default): pg_statprobe counts CharStats::getStat calls per profession
+// stat for one character (modified vs unmodified reads), so a harness readout (chance, runspeed, detect...) shows
+// whether the game formula reads the hooked stat at all.
+bool g_statProbe = false;
+const Character* g_statProbeWho = 0;
+int g_statProbeMod[PGP::STAT_THIEVERY+1] = {0};
+int g_statProbeRaw[PGP::STAT_THIEVERY+1] = {0};
 typedef float (*CritChanceFn)(CraftingBuilding*, Character*);
 CritChanceFn g_critChanceOrig = 0;
 
@@ -1349,6 +1356,31 @@ int KahForceCritical(const char*,int argc,const char* const* argv,KAH_Reply* r,v
   return g_critChanceOrig?KAH_OK:KAH_ERROR;
 }
 
+// pg_statprobe on <npc> | read | off (TEST ONLY): getStat calls per profession stat for that character.
+int KahStatProbe(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  const std::string v=argc>=2?PGP::Lower(argv[1]):"read";
+  if(v=="on"){
+    if(argc<3){ r->append(r,"usage: pg_statprobe on <npc> | read | off"); return KAH_ERROR; }
+    Character* c=KahFindCharacter(argv[2]);
+    if(!c){ r->append(r,(std::string("no character named: ")+argv[2]).c_str()); return KAH_ERROR; }
+    for(int i=0;i<=PGP::STAT_THIEVERY;++i){ g_statProbeMod[i]=0; g_statProbeRaw[i]=0; }
+    g_statProbeWho=c; g_statProbe=true;
+    r->append(r,(std::string("statprobe on ")+c->getName()).c_str());
+    return KAH_OK;
+  }
+  std::ostringstream ss; ss<<"statprobe "<<(g_statProbe?"on":"off")<<":";
+  int n=0;
+  for(int i=1;i<=PGP::STAT_THIEVERY;++i){
+    if(!g_statProbeMod[i]&&!g_statProbeRaw[i]) continue;
+    ss<<" "<<PGP::StatName((PGP::ProfessionStat)i)<<"=mod:"<<g_statProbeMod[i]<<",raw:"<<g_statProbeRaw[i]; ++n;
+    g_statProbeMod[i]=0; g_statProbeRaw[i]=0;
+  }
+  if(!n) ss<<" none";
+  if(v=="off"){ g_statProbe=false; g_statProbeWho=0; }
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
+}
+
 void KahTick() {
   if(g_kahConnected) return;
   DWORD now=GetTickCount();
@@ -1372,9 +1404,10 @@ void KahTick() {
        +g_kah.registerCommand("pg_loot","pg_loot <from npc> <to npc> <item>",KahLoot,0)
        +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)
+       +g_kah.registerCommand("pg_statprobe","pg_statprobe on <npc> | read | off (TEST ONLY: getStat calls per stat)",KahStatProbe,0)
        +g_kah.registerCommand("pg_force_critical","pg_force_critical on|off (TEST ONLY: every craft is a critical success)",KahForceCritical,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe)";
   Log(ss.str());
 }
 
@@ -1404,6 +1437,10 @@ void HookPlayerUpdate(PlayerInterface* p) {
 
 float HookGetStat(const CharStats* s,StatsEnumerated st,bool unmodified) {
   float base=g_getStatOrig?g_getStatOrig(s,st,unmodified):0;
+  if(g_statProbe && s && s->me==g_statProbeWho){
+    PGP::ProfessionStat q=MapStat(st);
+    if(q!=PGP::STAT_NONE){ if(unmodified) ++g_statProbeRaw[q]; else ++g_statProbeMod[q]; }
+  }
   if(unmodified || !s || !s->me) return base;
   PGP::ProfessionStat p=MapStat(st);
   if(p==PGP::STAT_NONE) return base;

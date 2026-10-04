@@ -19,6 +19,7 @@ hunger Avarek 280
 hunger Beaks 280
 select Beaks
 clearjobs Avarek
+pg_statprobe on Avarek
 teleport Avarek Beaks dist 60
 setstat Avarek stealth 30
 @set OBS spawn "Hungry Bandit" Drifters near Avarek dist 20 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
@@ -26,6 +27,7 @@ setname ${OBS} PGWatch
 relation PGWatch 0
 setstat PGWatch perception 30
 where PGWatch
+pg_statprobe on PGWatch
 give PGWatch "Iron Hat" 1
 equip PGWatch "Iron Hat"
 pg_info PGWatch "Iron Hat" ~ equipped=1
@@ -40,6 +42,7 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,10,0,none,w1,detect_observer,120,${T},-
+pg_statprobe read
 # --- w2: perception 90, gear none ---
 setstat PGWatch perception 90
 pg_clear PGWatch ~ cleared affixes
@@ -51,6 +54,7 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,90,0,none,w2,detect_observer,120,${T},-
+pg_statprobe read
 # --- w3: perception 50, gear none ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
@@ -62,11 +66,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,0,none,w3,detect_observer,120,${T},-
+pg_statprobe read
 # --- w4: perception 50, gear own25 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -75,11 +81,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,25,own25,w4,detect_observer,120,${T},-
+pg_statprobe read
 # --- w5: perception 50, gear own50 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -88,11 +96,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,50,own50,w5,detect_observer,120,${T},-
+pg_statprobe read
 # --- w6: perception 50, gear lab50 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGWatch labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -101,6 +111,7 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,0,lab50,w6,detect_observer,120,${T},-
+pg_statprobe read
 # --- w7: perception 50, gear none ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
@@ -112,11 +123,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,0,none,w7,detect_observer,120,${T},-
+pg_statprobe read
 # --- w8: perception 50, gear own25 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -125,11 +138,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,25,own25,w8,detect_observer,120,${T},-
+pg_statprobe read
 # --- w9: perception 50, gear own50 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -138,11 +153,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,50,own50,w9,detect_observer,120,${T},-
+pg_statprobe read
 # --- w10: perception 50, gear lab50 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGWatch labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -151,6 +168,7 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,0,lab50,w10,detect_observer,120,${T},-
+pg_statprobe read
 # --- w11: perception 50, gear none ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
@@ -162,11 +180,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,0,none,w11,detect_observer,120,${T},-
+pg_statprobe read
 # --- w12: perception 50, gear own25 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 25 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -175,11 +195,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,25,own25,w12,detect_observer,120,${T},-
+pg_statprobe read
 # --- w13: perception 50, gear own50 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -188,11 +210,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,50,own50,w13,detect_observer,120,${T},-
+pg_statprobe read
 # --- w14: perception 50, gear lab50 ---
 setstat PGWatch perception 50
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus PGWatch labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -201,6 +225,7 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,50,0,lab50,w14,detect_observer,120,${T},-
+pg_statprobe read
 # --- w15: perception 75, gear none ---
 setstat PGWatch perception 75
 pg_clear PGWatch ~ cleared affixes
@@ -212,11 +237,13 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,75,0,none,w15,detect_observer,120,${T},-
+pg_statprobe read
 # --- w16: perception 25, gear own50 ---
 setstat PGWatch perception 25
 pg_clear PGWatch ~ cleared affixes
 pg_force_affix PGWatch "Iron Hat" perception 50 tier 6 ~ affixes=
 pg_bonus PGWatch perception ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 stealth Avarek off
 teleport Avarek Beaks dist 60
 teleport PGWatch Avarek dist 20
@@ -225,6 +252,7 @@ speed 1
 @set T detecttime Avarek PGWatch timeout 120 ~ (seen=\d seconds_to_seen=\S+)
 speed 0
 @echo BAL2,199,perception,25,50,own50,w16,detect_observer,120,${T},-
+pg_statprobe read
 stealth Avarek off
 teleport PGWatch Avarek dist 300
 kill PGWatch

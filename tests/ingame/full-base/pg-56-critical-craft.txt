@@ -3,7 +3,8 @@
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; weapon smith)
 # reset: fresh
 # needs: ProfessionGearProgression.dll D7A60E49 or later (`pg_force_critical`, hook on CraftingBuilding::calculateCriticalChance),
-#   harness 08AB6BF0; set_test_mode.ps1 -Mode Forced -Rules InGameTest
+#   harness 8BF347BF+ (m19-4080: the squad stands ~300 m from the benches, Weapon Smith V takes Steel Bars + Fabrics and
+#   needs Katanas + Basic Weapon Grades 3 before the Sickle shows); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # design: two REAL Sickle crafts by Avarek at weapon smithing 10 (low quality): first normal, then with pg_force_critical on.
 #   A critical success makes the game pick a better weapon grade (getCriticalSuccessWeapon), so the second roll line must
 #   show the better finished quality and a tier at least as high.
@@ -22,21 +23,30 @@ pg_force_critical off ~ forceCritical=0$
 research "Basic Weapon Smithing"
 research "Basic Weapon Grades"
 research "Utility Weapons"
-benches 500 crafts ~ Weapon[^|]*Sickle
+research "Katanas"
+research "Basic Weapon Grades 3"
+speed 1
+@sleep 2
+speed 0
+teleport Avarek building "Weapon Smith" dist 4 radius 1500
+teleport Beaks Avarek dist 8
+benches 60 crafts ~ Weapon[^|]*Sickle
 setstat Avarek weapon_smith 10
 # --- normal craft ---
-give Avarek "Iron Plates" 10
-craft Avarek "Sickle" at "Weapon" ~ queued 1x
-speed 10
-@until 400 benches 500 ~ Weapon[^|]*queue=0
+fill "Weapon Smith" "Steel Bars" 10 radius 60
+fill "Weapon Smith" "Fabrics" 10 radius 60
+craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
+speed 50
+@until 900 benches 60 ~ Weapon[^|]*queue=0
 speed 0
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ roll source=crafted key=pgp\S+ baseId=\S+ name="[^"]*Sickle[^"]*" equipped=0 tier=\d
 # --- forced critical craft ---
 pg_force_critical on ~ forceCritical=1$
-give Avarek "Iron Plates" 10
-craft Avarek "Sickle" at "Weapon" ~ queued 1x
-speed 10
-@until 400 benches 500 ~ Weapon[^|]*queue=0
+fill "Weapon Smith" "Steel Bars" 10 radius 60
+fill "Weapon Smith" "Fabrics" 10 radius 60
+craft Avarek "Sickle" at "Weapon Smith" ~ queued 1x
+speed 50
+@until 900 benches 60 ~ Weapon[^|]*queue=0
 speed 0
 pg_force_critical off ~ forceCritical=0$
 @log D:\Steam\steamapps\common\Kenshi\mods\ProfessionGearProgression\ProfessionGear.log ~ force critical: chance [\d.e-]+ -> 1 smith=Avarek

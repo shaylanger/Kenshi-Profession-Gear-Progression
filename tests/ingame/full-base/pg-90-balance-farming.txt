@@ -16,6 +16,7 @@ hunger Avarek 280
 hunger Beaks 280
 select Beaks
 clearjobs Avarek
+pg_statprobe on Avarek
 teleport Avarek building "Wheat Farm L" dist 6 radius 1000
 building "Wheat Farm L" 1000
 fill "Wheat Farm L" Water 40 radius 1000
@@ -38,6 +39,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,10,0,none,w1,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w2: skill 25, gear none ---
 setstat Avarek farming 25
@@ -49,6 +51,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,w2,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w3: skill 75, gear none ---
 setstat Avarek farming 75
@@ -60,6 +63,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,75,0,none,w3,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w4: skill 90, gear none ---
 setstat Avarek farming 90
@@ -71,6 +75,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,90,0,none,w4,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w5: skill 50, gear none ---
 setstat Avarek farming 50
@@ -82,12 +87,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,none,w5,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w6: skill 50, gear own25 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 25 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -95,12 +102,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,25,own25,w6,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w7: skill 50, gear own50 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -108,12 +117,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,50,own50,w7,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w8: skill 50, gear lab50 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -121,6 +132,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,lab50,w8,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w9: skill 50, gear none ---
 setstat Avarek farming 50
@@ -132,12 +144,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,none,w9,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w10: skill 50, gear own25 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 25 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -145,12 +159,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,25,own25,w10,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w11: skill 50, gear own50 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -158,12 +174,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,50,own50,w11,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w12: skill 50, gear lab50 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -171,6 +189,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,lab50,w12,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w13: skill 50, gear none ---
 setstat Avarek farming 50
@@ -182,12 +201,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,none,w13,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w14: skill 50, gear own25 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 25 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=25% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -195,12 +216,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,25,own25,w14,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w15: skill 50, gear own50 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -208,12 +231,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,50,own50,w15,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w16: skill 50, gear lab50 ---
 setstat Avarek farming 50
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" labouring 50 tier 6 ~ affixes=
 pg_bonus Avarek labouring ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -221,6 +246,7 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,50,0,lab50,w16,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w17: skill 75, gear none ---
 setstat Avarek farming 75
@@ -232,12 +258,14 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,75,0,none,w17,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 # --- w18: skill 25, gear own50 ---
 setstat Avarek farming 25
 pg_clear Avarek ~ cleared affixes
 pg_force_affix Avarek "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Avarek farming ~ equipped_bonus=50% .*match=1
+pg_statprobe read
 fill "Wheat Farm L" Water 40 radius 1000
 pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10
@@ -245,5 +273,6 @@ speed 10
 speed 0
 @set OP pg_operate "Wheat Farm L" radius 100 near Avarek ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,50,own50,w18,operate,1800,0,${OP}
+pg_statprobe read
 hunger Avarek 280
 clearjobs Avarek
