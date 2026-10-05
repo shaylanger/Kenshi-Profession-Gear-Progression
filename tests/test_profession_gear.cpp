@@ -344,6 +344,11 @@ int main(){
     Check(Eq((sk<qk?sk:qk),before*f),"medic 90 standard kit: +50% effective"); }
   { float s25=25,q=50; float sk=EffectiveStatValue(s25,50,false,150), qk=ScaledKitQuality(q,50);
     Check(Eq((sk<qk?sk:qk),37.5f),"medic 25 standard kit: skill boost only, no double dip"); }
+  // D4: acceleration scale
+  Check(Eq(AccelerationScale(50),1.5f),"accel +50%");
+  Check(AccelerationScale(0)==1.0f,"accel no gear");
+  Check(AccelerationScale(-200)==0.25f,"accel floor");
+  Check(AccelerationScale(400)==2.5f,"accel cap");
 
   tags.clear();tags.push_back(TAG_PACK_ORE);
   Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Raw Iron","raw_iron",false),.25f),"ore pack raw iron");

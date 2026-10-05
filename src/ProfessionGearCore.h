@@ -174,6 +174,10 @@ float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
 // same equipped Medic percent as the skill (cap 150): min(skill x f, quality x f) = f x min(skill, quality).
 float ScaledKitQuality(float quality, float medicPercent);
 
+// Athletics acceleration (Shay D4, row 254): HavokCharacter::updateVelocity changes the velocity by at most
+// acceleration x frame time (speeding up and braking alike). Scale = 1 + Athletics% / 100, clamped 0.25..2.5.
+float AccelerationScale(float athleticsPercent);
+
 // 0..1 wealth/competence from the NPC's best profession skill; < 0.15 (best skill < 12) = poor.
 float WealthFromBestSkill(float bestSkill);
 

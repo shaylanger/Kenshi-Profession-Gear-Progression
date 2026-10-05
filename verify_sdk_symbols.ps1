@@ -31,7 +31,8 @@ $required = @(
   "?getTooltipData1@Armour",
   "?getTooltipData1@ContainerItem",
   "?getTooltipData1@Crossbow",
-  "?getTooltipData1@Sword"
+  "?getTooltipData1@Sword",
+  "?updateVelocity@HavokCharacter@@QEAAXAEBVhkVector4f@@M@Z"
 )
 
 $missing = @()

@@ -1,0 +1,118 @@
+# id: PG-pg-94-athletics-accel
+# covers: PG 254 / Shay D4 (2026-10-05): Athletics gear raises acceleration and braking (AccelerationScaling, pg_accel)
+# fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
+# reset: fresh
+# run: bash tests/ingame/full-base/pg-94-athletics-accel.sh (WSL; prints the RESULT lines). Do not run this .txt alone.
+# needs: ProfessionGearProgression.dll with pg_accel (D4 commit), harness b0ddc74+ (acceltime), client kah.py from the
+#   harness repo (LONG_COMMANDS acceltime)
+# design: Beaks (Athletics 50, Iron Hat with Athletics +50%) on open ground 150 from Avarek runs 400 along +x
+#   (acceltime) and is stopped at 250 by a move order to his own spot; per point start_delay, cruise_speed, t50/t90
+#   (from the first movement to 50/90% of cruise) and stop_dist/stop_seconds. Points alternate pg_accel off/on (a1-a4).
+# expected: HavokCharacter::updateVelocity clamps the speed change to time x acceleration, and the hook scales the
+#   time by 1.5: t90 on ~ 0.67 x off and stop_dist on ~ 0.67 x off (v^2/2a), cruise_speed / runspeed unchanged.
+#   pg_accel Beaks: scale=1.5 handle_match=1, scaled > 0.
+@wait-world
+@sleep 8
+speed 0
+wake Beaks
+speed 1 hold
+@sleep 4
+speed 0
+protect Avarek on
+protect Beaks on
+health Beaks 100
+health Avarek 100
+blood Beaks 100%
+blood Avarek 100%
+hunger Beaks 280
+hunger Avarek 280
+select Beaks
+clearjobs Beaks
+pg_formulas on ~ formulaScaling=1 hooks=8/8
+wake Avarek
+pin Avarek ~ pinned
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+give Beaks "Iron Hat" 1
+equip Beaks "Iron Hat"
+pg_info Beaks "Iron Hat" ~ equipped=1
+setstat Beaks athletics 50
+pg_clear Beaks ~ cleared affixes
+pg_force_affix Beaks "Iron Hat" athletics 50 tier 6 ~ affixes=
+pg_bonus Beaks athletics ~ equipped_bonus=50% .*match=1
+# --- a1: Athletics 50, own50, pg_accel off ---
+pg_accel off ~ accelScaling=0 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a1 off ms=${RS} ${A}
+# --- a2: Athletics 50, own50, pg_accel on ---
+pg_accel on ~ accelScaling=1 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a2 on ms=${RS} ${A}
+@set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
+@echo ACCHOOK a2 ${K}
+# --- a3: Athletics 50, own50, pg_accel off ---
+pg_accel off ~ accelScaling=0 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a3 off ms=${RS} ${A}
+# --- a4: Athletics 50, own50, pg_accel on ---
+pg_accel on ~ accelScaling=1 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a4 on ms=${RS} ${A}
+@set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
+@echo ACCHOOK a4 ${K}
+pg_accel on ~ accelScaling=1
+pg_clear Beaks ~ cleared affixes
+pin Avarek off
+speed 0

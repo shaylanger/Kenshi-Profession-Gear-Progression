@@ -19,6 +19,7 @@
 #include <kenshi/Building/ProductionBuilding.h>
 #include <kenshi/Character.h>
 #include <kenshi/CharStats.h>
+#include <kenshi/CharMovement.h>
 #include <kenshi/Faction.h>
 #include <kenshi/GameWorld.h>
 #include <kenshi/GameData.h>
@@ -1503,6 +1504,7 @@ int KahStatProbe(const char*,int argc,const char* const* argv,KAH_Reply* r,void*
 
 int KahFormulas(const char*,int argc,const char* const* argv,KAH_Reply* r,void*); // FormulaScaling, below
 int KahMedicKit(const char*,int argc,const char* const* argv,KAH_Reply* r,void*); // MedicKitScaling, below
+int KahAccel(const char*,int argc,const char* const* argv,KAH_Reply* r,void*); // AccelerationScaling, below
 
 void KahTick() {
   if(g_kahConnected) return;
@@ -1529,10 +1531,11 @@ void KahTick() {
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)
        +g_kah.registerCommand("pg_formulas","pg_formulas on|off (FormulaScaling: gear raises run/swim/stealth/KO/lockpick formulas)",KahFormulas,0)
        +g_kah.registerCommand("pg_medickit","pg_medickit [on|off] (MedicKitScaling: Medic gear raises the kit quality cap; reply: calls, last kit quality -> scaled)",KahMedicKit,0)
+       +g_kah.registerCommand("pg_accel","pg_accel [on|off] [<npc>] (AccelerationScaling: Athletics gear raises acceleration and braking; with <npc>: accel, athletics_pct, scale, handle_match)",KahAccel,0)
        +g_kah.registerCommand("pg_statprobe","pg_statprobe on <npc> | read | callers | watch <npc> <hexoff> | watch off | off (TEST ONLY: getStat calls per stat)",KahStatProbe,0)
        +g_kah.registerCommand("pg_force_critical","pg_force_critical on|off (TEST ONLY: every craft is a critical success)",KahForceCritical,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe/pg_formulas/pg_medickit)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe/pg_formulas/pg_medickit/pg_accel)";
   Log(ss.str());
 }
 
@@ -1796,6 +1799,89 @@ float HookLockpick(Character* c,DoorLock* lock){
   return g_lockpickOrig?g_lockpickOrig(c,lock):0;
 }
 
+// ---- Athletics acceleration (Shay D4, 2026-10-05, row 254). Steam 1.0.65 HavokCharacter::updateVelocity
+// (RVA 0x147C60, GOG header 0x147B80): delta = desiredSpeed x direction - velocity, clamped to time x acceleration
+// (+0x78), velocity += delta. The frame time argument is used only for that clamp (disassembly: time is saved in
+// xmm12 and read once, `mulss xmm12,[rdi+0x78]`), so scaling it by (1 + Athletics %) raises the acceleration and the
+// braking alike and leaves the top speed (desiredSpeed) alone. AccelerationScaling=true (default); needs
+// FormulaScaling. The bonus comes from the bonus cache only (no inventory walk inside the movement update), looked up
+// by the HavokCharacter's own handle (+0x98) at most every 500 ms per character.
+typedef void (*UpdVelFn)(void*, const void*, float);
+UpdVelFn g_updVelOrig = 0;
+bool g_accelScaling = true;
+volatile LONG g_accelCalls = 0, g_accelScaled = 0;
+struct AccelEntry { float scale; DWORD tick; };
+CRITICAL_SECTION g_accelLock;
+std::map<void*, AccelEntry> g_accelCache;
+const size_t kHavokHandleOffset = 0x98;
+const size_t kHavokAccelerationOffset = 0x78;
+
+float CachedAthleticsPercent(const std::string& key) {
+  float pct=0;
+  EnterCriticalSection(&g_lock);
+  std::map<std::string,std::map<PGP::ProfessionStat,float> >::const_iterator ci=g_bonusCache.find(key);
+  if(ci!=g_bonusCache.end()){
+    std::map<PGP::ProfessionStat,float>::const_iterator bi=ci->second.find(PGP::STAT_ATHLETICS);
+    if(bi!=ci->second.end()) pct=bi->second;
+  }
+  LeaveCriticalSection(&g_lock);
+  return pct;
+}
+
+float AccelScaleFor(void* hc) {
+  const DWORD now=GetTickCount();
+  EnterCriticalSection(&g_accelLock);
+  std::map<void*,AccelEntry>::iterator it=g_accelCache.find(hc);
+  if(it!=g_accelCache.end() && now-it->second.tick<500){ const float s=it->second.scale; LeaveCriticalSection(&g_accelLock); return s; }
+  LeaveCriticalSection(&g_accelLock);
+  float scale=1.0f;
+  try {
+    const hand* h=(const hand*)((char*)hc+kHavokHandleOffset);
+    const std::string key=h->toString();
+    if(!key.empty()) scale=PGP::AccelerationScale(CachedAthleticsPercent(key));
+  } catch (...) { scale=1.0f; }
+  EnterCriticalSection(&g_accelLock);
+  if(g_accelCache.size()>1024) g_accelCache.clear(); // stale HavokCharacters of unloaded characters
+  AccelEntry e; e.scale=scale; e.tick=now; g_accelCache[hc]=e;
+  LeaveCriticalSection(&g_accelLock);
+  return scale;
+}
+
+void HookUpdateVelocity(void* hc, const void* direction, float time) {
+  if(g_accelScaling && g_formulaScaling && g_cfg.enabled && hc){
+    InterlockedIncrement(&g_accelCalls);
+    const float s=AccelScaleFor(hc);
+    if(s!=1.0f){ time*=s; InterlockedIncrement(&g_accelScaled); }
+  }
+  if(g_updVelOrig) g_updVelOrig(hc,direction,time);
+}
+
+int KahAccel(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  int a=1;
+  if(argc>=2){ const std::string v=PGP::Lower(argv[1]);
+    if(v=="on"||v=="off"||v=="1"||v=="0"||v=="true"||v=="false"){ g_accelScaling=(v=="on"||v=="1"||v=="true"); a=2;
+      EnterCriticalSection(&g_accelLock); g_accelCache.clear(); LeaveCriticalSection(&g_accelLock);
+      Log(std::string("harness: accelScaling=")+(g_accelScaling?"1":"0")); } }
+  std::ostringstream ss; ss<<"accelScaling="<<(g_accelScaling?1:0)<<" formulaScaling="<<(g_formulaScaling?1:0)
+    <<" hooked="<<(g_updVelOrig?1:0)<<" calls="<<g_accelCalls<<" scaled="<<g_accelScaled;
+  if(argc>a){
+    std::string name=argv[a]; for(int i=a+1;i<argc;++i){ name+=" "; name+=argv[i]; }
+    Character* c=KahFindCharacter(name);
+    if(!c){ r->append(r,("no character named "+name).c_str()); return KAH_ERROR; }
+    CharMovement* m=c->movement;
+    void* hc=m?(void*)m->havokCharacter:0;
+    if(!hc){ ss<<" "<<c->getName()<<" has no HavokCharacter"; r->append(r,ss.str().c_str()); return KAH_ERROR; }
+    std::string hk, ck;
+    try { hk=((const hand*)((char*)hc+kHavokHandleOffset))->toString(); ck=c->getHandle().toString(); } catch (...) {}
+    const float pct=EquippedBonus(c,PGP::STAT_ATHLETICS);
+    ss<<" npc="<<c->getName()<<" accel="<<*(const float*)((char*)hc+kHavokAccelerationOffset)<<" athletics_pct="<<pct
+      <<" scale="<<((g_accelScaling&&g_formulaScaling&&g_cfg.enabled)?PGP::AccelerationScale(pct):1.0f)
+      <<" handle_match="<<(!hk.empty()&&hk==ck?1:0);
+  }
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
+}
+
 // Medic (m33, 4080 gate 84s: Standard kit s25 6.6 s, s25+Medic50 gear 6.6 s, s90 4.5 s): MedicalSystem::applyFirstAid /
 // applyDoctoring get the doctor's skill as a float argument computed from the raw CharStats::medic member, so getStat
 // gear never reached bandaging. While FormulaScaling is on, a skill argument that equals the doctor's raw medic (0..100
@@ -1941,6 +2027,7 @@ void InstallHooks() {
   HookSymbol(lib,"?operate@FarmBuilding@@UEAAXPEAVCharacter@@M@Z",(void*)HookFarmOperate,(void**)&g_farmOperateOrig);
   HookSymbol(lib,"?calculateCriticalChance@CraftingBuilding@@QEAAMPEAVCharacter@@@Z",(void*)HookCritChance,(void**)&g_critChanceOrig);
   HookSymbol(lib,"?calculateMaxRunSpeed@CharStats@@QEAAXXZ",(void*)HookMaxRun,(void**)&g_maxRunOrig);
+  HookSymbol(lib,"?updateVelocity@HavokCharacter@@QEAAXAEBVhkVector4f@@M@Z",(void*)HookUpdateVelocity,(void**)&g_updVelOrig);
   HookSymbol(lib,"?calculateTheoreticalIdealMaxRunSpeed@CharStats@@QEAAMXZ",(void*)HookIdealRun,(void**)&g_idealRunOrig);
   HookSymbol(lib,"?_calculateMaxSwimSpeed@CharStats@@QEAAMXZ",(void*)HookMaxSwim,(void**)&g_maxSwimOrig);
   HookSymbol(lib,"?calculateSwimSpeed@CharStats@@QEAAMXZ",(void*)HookSwim,(void**)&g_swimOrig);
@@ -1981,6 +2068,7 @@ void LoadConfig() {
     else if(k=="farmoperatescaling") g_farmOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="formulascaling") g_formulaScaling=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="medickitscaling") g_medicKitScaling=(v!="0"&&PGP::Lower(v)!="false");
+    else if(k=="accelerationscaling") g_accelScaling=(v!="0"&&PGP::Lower(v)!="false");
   }
   PGP::NormalizeConfig(g_cfg);
 }
@@ -2021,6 +2109,7 @@ __declspec(dllexport) void startPlugin() {
   if(g_started) return;
   g_started=true;
   InitializeCriticalSection(&g_lock);
+  InitializeCriticalSection(&g_accelLock);
   char path[MAX_PATH]={0};
   GetModuleFileNameA((HMODULE)&__ImageBase,path,MAX_PATH);
   g_dir=DirName(path);
