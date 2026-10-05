@@ -4,7 +4,7 @@
 # back on at the end either way. Means of the two points per side:
 # RESULT 254-accel-start:    t90 on <= 0.85 x t90 off (expected ~0.67: acceleration x1.5)
 # RESULT 254-accel-stop:     stop_dist on <= 0.85 x stop_dist off (expected ~0.67: braking x1.5)
-# RESULT 254-accel-topspeed: cruise_speed and runspeed movement_speed on within 5% of off (top speed unchanged),
+# RESULT 254-accel-topspeed: cruise_speed and runspeed max_speed on within 5% of off (top speed unchanged),
 #                            and pg_accel Beaks reported scale=1.5 handle_match=1 scaled>0
 set -u
 DIR=$(cd "$(dirname "$0")" && pwd)
@@ -30,13 +30,15 @@ ratio_row() { # row key max_ratio
   fi
 }
 ratio_row 254-accel-start t90 0.85
+# m41: t90 barely moved (0.96) while t50 fell 27%: report the early ramp too (t90 assertion unchanged)
+ratio_row 254-accel-start50 t50 0.85
 ratio_row 254-accel-stop stop_dist 0.85
 CON=$(field cruise_speed on); COF=$(field cruise_speed off); MON=$(field ms on); MOF=$(field ms off)
 if [ -n "$CON" ] && [ -n "$COF" ] && [ -n "$MON" ] && [ -n "$MOF" ] && [ -n "$HOOK" ]; then
-  V=$(awk -v a="$CON" -v b="$COF" -v c="$MON" -v d="$MOF" -v h="$HOOK" 'BEGIN{r=a/b; q=c/d;
+  V=$(awk -v a="$CON" -v b="$COF" -v c="$MON" -v d="$MOF" -v h="$HOOK" 'BEGIN{r=(b>0)?a/b:9; q=(d>0)?c/d:9;
     hk=(h ~ /scale=1\.5 / && h ~ /handle_match=1/ && h !~ /scaled=0 /);
     printf "%s cruise_ratio=%.3f runspeed_ratio=%.3f", (r>=0.95&&r<=1.05&&q>=0.95&&q<=1.05&&hk)?"PASS":"FAIL", r, q}')
-  echo "RESULT 254-accel-topspeed ${V%% *} ${V#* } cruise on=$CON off=$COF movement_speed on=$MON off=$MOF $HOOK steps_failed=$FAILED$(tail_log "${V%% *}")"
+  echo "RESULT 254-accel-topspeed ${V%% *} ${V#* } cruise on=$CON off=$COF max_speed on=$MON off=$MOF $HOOK steps_failed=$FAILED$(tail_log "${V%% *}")"
 else
   echo "RESULT 254-accel-topspeed FAIL missing data: cruise on=${CON:-none} off=${COF:-none} ms on=${MON:-none} off=${MOF:-none} hook=${HOOK:-none} steps_failed=$FAILED log=$OUT"
 fi

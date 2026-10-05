@@ -55,7 +55,7 @@ water Beaks ~ water_level=none
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 speed 1 hold
 @sleep 2
-@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 @set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
 speed 0
@@ -71,7 +71,7 @@ water Beaks ~ water_level=none
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 speed 1 hold
 @sleep 2
-@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 @set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
 speed 0
@@ -89,7 +89,7 @@ water Beaks ~ water_level=none
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 speed 1 hold
 @sleep 2
-@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 @set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
 speed 0
@@ -105,7 +105,7 @@ water Beaks ~ water_level=none
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 speed 1 hold
 @sleep 2
-@set RS runspeed Beaks ~ movement_speed=([\d.]+)
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
 @set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
 speed 0
