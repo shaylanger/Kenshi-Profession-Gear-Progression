@@ -91,8 +91,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 - farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement.
 - perception (199, pg-89): never ran (batch 20 stopped).
 - pg-55 turret (192): FAIL 48/5 in batch 20 (dummies walked off); fixed by d6bb99b (pin each dummy), unrun.
-- pg-51: FAIL 58/4 (the smith hauled + equipped the crafted Sickle before pg_take); fixed by 57e0381 (@any: bench
-  output or hauled; worn-item affixes cleared for the baseline), unrun.
+- pg-51: PASS 67/0 in batch T (2026-10-04).
 
 ## Rows
 
@@ -122,7 +121,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 85–86 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 87 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): crafted tiers rise with Armour Smithing (5 vs 100; Kenshi quality has a random spread) |
 | 88 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
-| 89 | PENDING-auto | `tests/ingame/full-base/pg-56-critical-craft.txt` (needs PG D7A60E49: test-only `pg_force_critical on` hooks CraftingBuilding::calculateCriticalChance -> 1.0; real Sickle craft normal vs forced critical) |
+| 89 | PASS-live | `C:\KenshiTestRuns\m22\out-t\pg-56-critical-craft-5090.scenario.txt` 101/0, batch T 2026-10-04 (archive/test-run-2026-10-03-m22.md) |
 | 90–92 | PASS-live | `C:\KenshiTestRuns\m3\pg-10-craftfinish.out` (archive/test-run-2026-10-03-m3.md) 29/0 with the craft-output fix 159C552F (m2 found the bug) |
 | 93 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
 | 94 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
@@ -150,7 +149,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 134 | PASS-live | `C:\KenshiTestRuns\m2\pg-06-persistence.out` (archive/test-run-2026-10-03-m2.md) 25/0 |
 | 135–141 | NEEDS-SHAY | tooltip text is not readable by the harness (ui lists widgets, not hover tooltips) |
 | 142–144 | PASS-live | `C:\KenshiTestRuns\scenarios\smoke.txt` 2026-10-02 23:47: Stobe + KenshiFP + PG + harness in one game (help lists fp_mode/pg_bonus/stobe_say; stobe_ping, fp_state, pg_bonus answer) |
-| 145 | PENDING-auto | `tests/ingame/full-base/pg-51-tool-weapons.txt` (Testing-Save-Full-Base: research UWE utility weapons, craftfinish a Sickle; roll line tags TOOL_FARMING) |
+| 145 | PASS-live | `C:\KenshiTestRuns\m22\out-t\pg-51-tool-weapons-5090.scenario.txt` 67/0, batch T 2026-10-04 (Sickle roll tagged TOOL_FARMING) |
 | 146 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 147 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 148 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
@@ -185,7 +184,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 218–219 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 220–227 | PASS-live (measured; finding for Shay) | `C:\KenshiTestRuns\m18-4080\pg-60-squin-shops-4080.out` 53/15 + `pg-63-squin-shopkeepers-4080.out` 22/0 (4080, Normal chances, empty sidecar; the 15 FAILs are trader slots 8-12: Squin has 7 traders within 300 m). Squin shops: 7 shopkeepers, eligible stock only at Trader Tentpeg (7) and Double (3, armour), 0 at the barman and 3 apothecaries; census npc 210-247 records, 112-113 rolled: Athletics 53-57, Perception 47-54, Medic 22-27 (222 measurable), Engineering 2 (223), Robotics 1 (225), Stealth/Lockpicking/Thievery 2-3; traders 97 records, 35 rolled. Farming (220), Labouring (221), Science (224), Cooking (226), Smithing (227): 0 in Squin (also ~0 in the Trader town, m6). Production gear practically never appears in shops: a rarity/source decision for Shay (no balance change until the balance data is complete) |
 | 228 | PASS-live | `C:\KenshiTestRuns\m3\pg-05-npc-context.out` (archive/test-run-2026-10-03-m3.md) 54/0 |
-| 229 | PENDING-auto | `tests/ingame/full-base/pg-51-tool-weapons.txt` (Sickle with Farming 20: 0% carried, 20% equipped, 0% unequipped) |
+| 229 | PASS-live | `C:\KenshiTestRuns\m22\out-t\pg-51-tool-weapons-5090.scenario.txt` 67/0, batch T 2026-10-04 (Farming 20 Sickle: 0% carried, 20% equipped, 0% unequipped) |
 | 230 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
 | 231–234 | PASS-offline | classifier corpus tests (ordinary/legendary weapons, profession-named weapons); 59 rechecked live in pg-02 |
 | 235–236 | PASS-live | LIVE_TEST_PROGRESS.md "Contextual generic coherence fix - LIVE PASS" + "Additional NPC role-context live passes" |
