@@ -88,7 +88,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
   (harmless; lockpicking gear still works through getStat; fs == non-fs expected). Remove that hook in a later
   plugin change (not done now: the file was being edited for the engineering construction hook). A cage whose
   lock level <= skill reads a flat 0.9: real game behaviour, use a higher-level lock for the curve.
-- farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement. m44 (5090): 30-min farm windows are crop-capped (a ripe field = ~4 straw, cleared in 0.45-0.9 h); balance_driver now waits for a ripe crop and measures 12-min windows (bc3e687), gate m42/out-i4 PASS skill +78.6% gear +39.9%. The 4080 m35/m41 farm numbers used 30-min windows: re-measure is Shay's call.
+- farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement. m44 (5090): 30-min farm windows are crop-capped (a ripe field = ~4 straw, cleared in 0.45-0.9 h); balance_driver now waits for a ripe crop and measures 12-min windows (bc3e687), gate m42/out-i4 PASS skill +78.6% gear +39.9%. The 4080 m35/m41 farm numbers used 30-min windows: re-measure is Shay's call. m45 (5090) per-call method: per-call amount is deterministic (s25 0.728, s90 1.310); Shay set FarmOperateBonusFactor 0.5 (ad4d969). m46 gate (4080, `C:\KenshiTestRuns\m46\gate-4080.out`) PASS: s25 0.732, s25+own50 1.047 (+43.8%), s90 1.310, drift 0.9%.
 - perception (199, pg-89): never ran (batch 20 stopped).
 - pg-55 turret (192): the turret never picks a pinned dummy by itself (0 shots); harness `turret ... aim` designates it (dd72fa7). PASS 86/0 in batch W.
 - pg-51: PASS 67/0 in batch T (2026-10-04).
@@ -178,7 +178,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 193–198 | PASS-live (mechanical) | 193 athletics_fs: 4080 m34 + 5090 batch T (`C:\KenshiTestRuns\m22\out-t\pg-85-balance-athletics-fs-5090.scenario.txt` 323/0: swim 300 m s10 4.3 s / s90 3.0 / own50 ~2.8); 194 swimming s10 2.38 / s90 30.9 +24.8%; 195 stealth s10 0.70 / s90 1.30 +16.7%; 196-198 lockpick s25+50% 0.48, stealth KO (assassination) +36.7%, thievery +50% (4080 m35, `C:\KenshiTestRuns\pgbal-4080\m35-analysis.txt`) |
 | 199 | REMOVED (Shay D3 2026-10-05) | Perception dropped from gear (no Perception affixes, goggles/scout gear roll other stats; detection ignores perception in 1.0.65, m37 pg-89 flat 1.4-1.9 s); confirmed m41 pg-02 115/0 + pg-03 44/0 |
  |
-| 200–210 | PASS-live; 206 PASS (Shay D1 2026-10-05) | 4080 m41 farming (PG 9517FF06, farm factor 0.15): +25% gear +16.5%, +50% +29.7% at s50 (0.59/pt), s90/s10 2.23, lab50 ctl 1.011, 206 s75 > s25+50% (0.643 / 0.466); crossbow/robotics/science m41 0.28-0.47/pt (`archive/test-run-2026-10-05-m41.md`) |
+| 200–210 | PASS-live; 206 PASS (Shay D1 2026-10-05); farm factor now 0.5 (m46 gate PASS, gear +43.8% at +50%, per-call method) | 4080 m41 farming (PG 9517FF06, farm factor 0.15): +25% gear +16.5%, +50% +29.7% at s50 (0.59/pt), s90/s10 2.23, lab50 ctl 1.011, 206 s75 > s25+50% (0.643 / 0.466); crossbow/robotics/science m41 0.28-0.47/pt (`archive/test-run-2026-10-05-m41.md`) |
 | 211 | PASS-live | LIVE_TEST_PROGRESS.md "Real trader-stock context - PASS" (Blamo) |
 | 212 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 213 | PASS-live | `C:\KenshiTestRuns\m4\pg-07-worldloot.out` (archive/test-run-2026-10-03-m4.md) 31/0 |
