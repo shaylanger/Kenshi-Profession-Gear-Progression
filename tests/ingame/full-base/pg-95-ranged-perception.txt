@@ -15,7 +15,7 @@
 #   Hungry Bandit (PGRA/PGRB/PGRC, 40 m) with `rangedtest ... shots 20 attack`. Kenshi GunClass::shoot:
 #   acc01 = 0.005*Crossbows + 0.005*Perception (both via CharStats::getStat, the PG hook),
 #   dev = dev_base*(1-acc01). Points: a = Perception 25 no gear, b = Perception 90 no gear,
-#   c = Perception 25 + forced +50% Perception affix on the Iron Hat (effective 37.5).
+#   c = Perception 25 + forced +50% Perception affix on the Leather Shirt (effective 37.5).
 #   Expected acc01 a .375 b .70 c .4375; mean_dev ratio b/a .48, c/a .90.
 #   Each point: a warm-up (`@until` re-gives the attack order until a bolt flies), then the counted session,
 #   then `pg_statprobe callers` must list 0x874b84 (= RVA 0x43A5C2*2: the Perception getStat call in
@@ -54,6 +54,15 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
+# m47: the shooter must stay near the player/camera: 600 m away Kenshi barely updates him (reload crawls, 0 shots)
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 15 ~ moved=1
+pin Avarek ~ pinned
+camfollow Beaks on ~ following=1
+# m47: daytime only: at night the vanilla dark= factor halves Perception/Crossbows (21:51: x0.5)
+speed 20 hold
+@until 300 time ~ time=(0[7-9]|10):
+speed 0
 # --- kit: the crossbow of a spawned crossbowman (PGXB), moved to Beaks (game paused) ---
 @set XB spawn "Mercenary Crossbowman" Drifters near Beaks dist 6 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${XB} PGXB
@@ -66,9 +75,8 @@ give Beaks "${AMMO}" 20 ~ got [1-9]\d*/20
 kill PGXB
 @until 30 teleport PGXB Beaks dist 300 ~ moved=1
 rangedinfo Beaks ~ bow=.+ has_ammo=1 gun_active=1
-give Beaks "Iron Hat" 1
-equip Beaks "Iron Hat"
-pg_info Beaks "Iron Hat" ~ equipped=1
+# m47: affix carrier = the fixture's Leather Shirt (no vanilla stat modifiers; the Iron Hat gave crossbows x0.8, perception +4)
+pg_info Beaks "Leather Shirt" ~ equipped=1
 pg_clear Beaks ~ cleared affixes
 setstat Beaks crossbows 50
 pin Beaks ~ pinned
@@ -93,6 +101,8 @@ speed 1 hold
 rangedtest Beaks last
 setstat Beaks crossbows 50
 setstat Beaks perception 25
+stat Beaks perception ~ dark=1\.0000 .*gear=1\.0000
+stat Beaks crossbows ~ mod=1\.0000
 pg_statprobe callers
 @set RA rangedtest Beaks PGRA shots 20 timeout 400 attack ~ (complete=\d shots=[1-9].*)
 pg_statprobe callers ~ 0x874b84:[1-9]
@@ -119,6 +129,8 @@ speed 1 hold
 rangedtest Beaks last
 setstat Beaks crossbows 50
 setstat Beaks perception 90
+stat Beaks perception ~ dark=1\.0000 .*gear=1\.0000
+stat Beaks crossbows ~ mod=1\.0000
 pg_statprobe callers
 @set RB rangedtest Beaks PGRB shots 20 timeout 400 attack ~ (complete=\d shots=[1-9].*)
 pg_statprobe callers ~ 0x874b84:[1-9]
@@ -132,7 +144,7 @@ kill PGRB
 setstat Beaks crossbows 50
 setstat Beaks perception 25
 pg_clear Beaks ~ cleared affixes
-pg_force_affix Beaks "Iron Hat" perception 50 tier 6 ~ affixes=Perception:50
+pg_force_affix Beaks "Leather Shirt" perception 50 tier 6 ~ affixes=Perception:50
 pg_bonus Beaks perception ~ equipped_bonus=50% .*match=1
 health Beaks 100
 blood Beaks 100%
@@ -147,6 +159,8 @@ rangedtest Beaks last
 setstat Beaks crossbows 50
 setstat Beaks perception 25
 pg_bonus Beaks perception ~ equipped_bonus=50% .*match=1
+stat Beaks perception ~ dark=1\.0000 .*gear=1\.0000
+stat Beaks crossbows ~ mod=1\.0000
 pg_statprobe callers
 @set RC rangedtest Beaks PGRC shots 20 timeout 400 attack ~ (complete=\d shots=[1-9].*)
 pg_statprobe callers ~ 0x874b84:[1-9]
@@ -160,5 +174,6 @@ kill PGRC
 pg_clear Beaks ~ cleared affixes
 pin Beaks off ~ unpinned
 pin Avarek off ~ unpinned
+camfollow Beaks off
 pg_statprobe off
 @echo DONE pg-95
