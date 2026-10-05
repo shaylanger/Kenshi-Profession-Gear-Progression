@@ -145,7 +145,8 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 127–128 | PASS-live | `C:\KenshiTestRuns\m6\pg-31.out` (archive/test-run-2026-10-03-m5.md) 12/0 (launch 3); log "loaded affixes=3 legacyIgnored=1", no roll line |
 | 129–130 | PASS-live | ProfessionGear.log 2026-10-02 23:39: "loaded affixes=10157" (thousands of rows for items that no longer exist), normal startup, no errors |
 | 131 | PASS-live | `C:\KenshiTestRuns\m2\pg-06-persistence.out` (archive/test-run-2026-10-03-m2.md) 25/0 |
-| 132–133 | PENDING-auto | `tests/ingame/auto-home/pg-58-newgame-import.txt` (harness 5798EDF5 `newgame`/`import`; 132 is a policy finding: IDs persist or import rerolls) |
+| 133 | PASS-live | `tests/ingame/auto-home/pg-58-newgame-import.txt` steps 14-39, 5090 m37 batch I2: source save with 2 known records (K Medic:12 shirt, K2 Robotics:24.7 hat), `newgame` Wanderer reached the world, ProfessionGear.log after the save has no `restore` for K/K2 and no base_mismatch/collision; census shows only the new character's fresh roll (`C:\KenshiTestRuns\m22\out-i2\pg-58-i3-menu.txt`) |
+| 132 | BLOCKED-vanilla | Import into a fresh new game crashes Kenshi every time (kenshi_x64+0x94d6db AV read 0x270, town/building load in the main loop): import `all`, `squad` only, unpaused, and via the game's own Import dialog (harness `menu`), and with the PG DLL not loaded (batch I4, dump `C:\KenshiTestRuns\crash-m37-i4-nopg\`); the 4080 crashed the same without Stobe/KenshiFP. Not a PG bug; ID-persistence policy on import untestable on this mod setup (Shay decision) |
 | 134 | PASS-live | `C:\KenshiTestRuns\m2\pg-06-persistence.out` (archive/test-run-2026-10-03-m2.md) 25/0 |
 | 135–141 | NEEDS-SHAY | tooltip text is not readable by the harness (ui lists widgets, not hover tooltips) |
 | 142–144 | PASS-live | `C:\KenshiTestRuns\scenarios\smoke.txt` 2026-10-02 23:47: Stobe + KenshiFP + PG + harness in one game (help lists fp_mode/pg_bonus/stobe_say; stobe_ping, fp_state, pg_bonus answer) |
@@ -192,7 +193,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 237 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
 | 238 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
 | 239 | PASS-live | `C:\KenshiTestRuns\m13\pg-21-shop-stock.out` 39/0 (Trader fixture, Habul\'s shop counter, recruited buyer; DLL 59EFB4B1) |
-| 240 | PENDING-auto | `tests/ingame/auto-home/pg-58-newgame-import.txt` (trader stock after newgame/import) |
+| 240 | PASS-live (new game half) | batch I2: trader near the new start (`pg_shop` trader=1), no persistent-id collision for K/K2 after `newgame`; the import half is blocked by the vanilla import crash (see 132) |
 | 241–243 | PASS-live | LIVE_TEST_PROGRESS.md "Exact-ID harness + world-loot live results" |
 | 244 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 245 | PASS-live | `C:\KenshiTestRuns\m6\pg-41.out` (archive/test-run-2026-10-03-m5.md) launch 4: 30 world-loot Rattan Hats (tier 6, chance .96 x .5 = .48) rolled 15/30 = .50 |
