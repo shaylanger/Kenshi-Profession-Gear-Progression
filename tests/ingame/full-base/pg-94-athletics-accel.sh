@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # pg-94-athletics-accel.sh (WSL, PG 254 / Shay D4): runs pg-94-athletics-accel.txt (game in the world on a Full-Base kah
-# copy, Beaks + Avarek) and turns its ACC lines (a1/a3 pg_accel off, a2/a4 on) into RESULT lines. pg_accel is put
-# back on at the end either way. Means of the two points per side:
+# copy, Beaks + Avarek) and turns its ACC lines (odd a1-a11 pg_accel off, even a2-a12 on) into RESULT lines. pg_accel is put
+# back on at the end either way. Medians of the 6 points per side:
 # RESULT 254-accel-start:    t90 on <= 0.85 x t90 off (expected ~0.67: acceleration x1.5)
 # RESULT 254-accel-stop:     stop_dist on <= 0.85 x stop_dist off (expected ~0.67: braking x1.5)
 # RESULT 254-accel-topspeed: cruise_speed and runspeed max_speed on within 5% of off (top speed unchanged),
@@ -14,10 +14,10 @@ stobe-auto run "$SC" --csv "${OUT%.log}.csv" > "$OUT" 2>&1
 stobe-auto pg_accel on >/dev/null 2>&1
 STEPS=$(grep -oE '^== [0-9]+ passed, [0-9]+ failed' "$OUT" | tail -1)
 FAILED=$(echo "$STEPS" | awk '{print $4}'); FAILED=${FAILED:-?}
-# field <key> <on|off>: mean of that key over the ACC lines of one side ("" if any point lacks a number)
-field() { grep -oE "ACC a[0-9] $2 ms=.*" "$OUT" | awk -v k="$1" '{ok=0; for(i=1;i<=NF;i++){split($i,kv,"="); if(kv[1]==k && kv[2] ~ /^[0-9.]+$/){s+=kv[2]; ok=1}} n++; if(!ok) bad=1}
-  END{ if(n==2 && !bad) printf "%.4f", s/n }'; }
-HOOK=$(grep -oE 'ACCHOOK a[0-9] scaled=[0-9]+ npc=Beaks accel=[0-9.]+ athletics_pct=[0-9.]+ scale=[0-9.]+ handle_match=[0-9]' "$OUT" | tail -1 | cut -d' ' -f3-)
+# field <key> <on|off>: median of that key over the ACC lines of one side ("" unless all 6 points have a number)
+field() { grep -oE "ACC a[0-9]+ $2 ms=.*" "$OUT" | awk -v k="$1" '{ok=0; for(i=1;i<=NF;i++){split($i,kv,"="); if(kv[1]==k && kv[2] ~ /^[0-9.]+$/){v[++m]=kv[2]+0; ok=1}} n++; if(!ok) bad=1}
+  END{ if(n==6 && !bad){ for(i=1;i<=m;i++) for(j=i+1;j<=m;j++) if(v[j]<v[i]){x=v[i];v[i]=v[j];v[j]=x}; printf "%.4f", (v[3]+v[4])/2 } }'; }
+HOOK=$(grep -oE 'ACCHOOK a[0-9]+ scaled=[0-9]+ npc=Beaks accel=[0-9.]+ athletics_pct=[0-9.]+ scale=[0-9.]+ handle_match=[0-9]' "$OUT" | tail -1 | cut -d' ' -f3-)
 tail_log() { [ "$1" = FAIL ] && echo " log=$OUT"; }
 ratio_row() { # row key max_ratio
   local on off V
@@ -26,7 +26,7 @@ ratio_row() { # row key max_ratio
     V=$(awk -v a="$on" -v b="$off" -v m="$3" 'BEGIN{r=(b>0)?a/b:9; printf "%s %.3f", (r<=m)?"PASS":"FAIL", r}')
     echo "RESULT $1 ${V%% *} $2 on=$on off=$off ratio=${V#* } (want <= $3, expected ~0.67) steps_failed=$FAILED$(tail_log "${V%% *}")"
   else
-    echo "RESULT $1 FAIL missing data: $2 on=${on:-none} off=${off:-none} (2 points each side) steps_failed=$FAILED log=$OUT"
+    echo "RESULT $1 FAIL missing data: $2 on=${on:-none} off=${off:-none} (6 points each side) steps_failed=$FAILED log=$OUT"
   fi
 }
 ratio_row 254-accel-start t90 0.85

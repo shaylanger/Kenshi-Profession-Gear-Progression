@@ -7,7 +7,8 @@
 #   harness repo (LONG_COMMANDS acceltime)
 # design: Beaks (Athletics 50, Iron Hat with Athletics +50%) on open ground 150 from Avarek runs 400 along +x
 #   (acceltime) and is stopped at 250 by a move order to his own spot; per point start_delay, cruise_speed, t50/t90
-#   (from the first movement to 50/90% of cruise) and stop_dist/stop_seconds. Points alternate pg_accel off/on (a1-a4).
+#   (from the first movement to 50/90% of cruise) and stop_dist/stop_seconds. Points alternate pg_accel off/on (a1-a12, 6 per side; m42: 2 per side was noise, t90 jumps
+#   between ~0.9 and ~1.4 s either way and the no-gear stop distance moved 41 -> 57 between launches).
 # expected: HavokCharacter::updateVelocity clamps the speed change to time x acceleration, and the hook scales the
 #   time by 1.5: t90 on ~ 0.67 x off and stop_dist on ~ 0.67 x off (v^2/2a), cruise_speed / runspeed unchanged.
 #   pg_accel Beaks: scale=1.5 handle_match=1, scaled > 0.
@@ -112,6 +113,142 @@ speed 0
 @echo ACC a4 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
 @echo ACCHOOK a4 ${K}
+# --- a5: Athletics 50, own50, pg_accel off ---
+pg_accel off ~ accelScaling=0 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a5 off ms=${RS} ${A}
+# --- a6: Athletics 50, own50, pg_accel on ---
+pg_accel on ~ accelScaling=1 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a6 on ms=${RS} ${A}
+@set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
+@echo ACCHOOK a6 ${K}
+# --- a7: Athletics 50, own50, pg_accel off ---
+pg_accel off ~ accelScaling=0 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a7 off ms=${RS} ${A}
+# --- a8: Athletics 50, own50, pg_accel on ---
+pg_accel on ~ accelScaling=1 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a8 on ms=${RS} ${A}
+@set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
+@echo ACCHOOK a8 ${K}
+# --- a9: Athletics 50, own50, pg_accel off ---
+pg_accel off ~ accelScaling=0 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a9 off ms=${RS} ${A}
+# --- a10: Athletics 50, own50, pg_accel on ---
+pg_accel on ~ accelScaling=1 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a10 on ms=${RS} ${A}
+@set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
+@echo ACCHOOK a10 ${K}
+# --- a11: Athletics 50, own50, pg_accel off ---
+pg_accel off ~ accelScaling=0 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a11 off ms=${RS} ${A}
+# --- a12: Athletics 50, own50, pg_accel on ---
+pg_accel on ~ accelScaling=1 .*hooked=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 150 ~ moved=1
+water Beaks ~ water_level=none
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+speed 1 hold
+@sleep 2
+@set RS runspeed Beaks ~ max_speed=([\d.]+)
+stat Beaks athletics ~ wounds=1\.0000
+@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+speed 0
+@echo ACC a12 on ms=${RS} ${A}
+@set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
+@echo ACCHOOK a12 ${K}
 pg_accel on ~ accelScaling=1
 pg_clear Beaks ~ cleared affixes
 pin Avarek off
