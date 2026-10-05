@@ -200,7 +200,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 250 | PENDING-auto | `tests/ingame/full-base/pg-91-ruin-loot.txt` (own launch, NormalVerbose + Normal + empty sidecar; PG 266C68F5 `pg_lootscan` + harness `towns`): a Drifters-owned chest filled with 15 gear types x 3 at the base, then the 3 nearest ruins/labs by teleport; verdict `tools/analyze_loot.py` |
 | 251–252 | PASS-offline | core unique/legendary tests; a live check needs a unique item instance in a fixture |
 | 253 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): high-quality crafted items roll |
-| 254 | PENDING-auto | `tests/ingame/auto-home/pg-74-walktime.txt` (harness 5798EDF5 `runspeed`/`walktime`) |
+| 254 | PASS-live (mechanical) | `tests/ingame/auto-home/pg-74-walktime.sh` 34/0, 5090 m36 batch Y3: runspeed max 81.8 -> 113.1 u/s with +50% Athletics gear (+38%), 300-unit (~30 m) runs avg 75.8 -> 80.6 u/s (+6%, acceleration dominates short runs); balance open (`C:\KenshiTestRuns\m22\out-y3\pg-74-walktime.txt`) |
 | 255 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 256 | NEEDS-SETUP | swim gear in the mod stack + a water route |
 | 257 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
