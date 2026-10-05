@@ -1926,8 +1926,8 @@ float MedicSkill(float skill, Character* who, const char* what){
 // (quality ~50): Medic 90 e 50 -> 75, bandaging rate 8 -> 11.5 /s (+44%); Medic 25 e 25 -> 37.5 (skill boost only).
 bool g_medicKitScaling = true;
 int g_medicKitLogN = 0;
-float g_medicKitLastQ = 0, g_medicKitLastScaled = 0;
-unsigned long g_medicKitCalls = 0;
+float g_medicKitLastQ = 0, g_medicKitLastScaled = 0, g_medicKitLastSkill = 0;
+unsigned long g_medicKitCalls = 0, g_medicKitHeld = 0; // held: gear on but the kit stayed (skill argument <= quality)
 struct ScopedKit {
   Item* it; float saved; bool on;
   ScopedKit(Item* eq, Character* who, const char* what, float skill) : it(eq), saved(0), on(false) {
@@ -1936,7 +1936,8 @@ struct ScopedKit {
     try { pct=EquippedBonus(who,PGP::STAT_MEDIC); } catch (...) { return; }
     if(pct==0.0f) return;
     saved=eq->quality; const float q=PGP::ScaledKitQuality(saved,pct,skill);
-    if(q==saved) return;
+    g_medicKitLastSkill=skill;
+    if(q==saved){ ++g_medicKitHeld; return; }
     eq->quality=q; on=true; ++g_medicKitCalls; g_medicKitLastQ=saved; g_medicKitLastScaled=q;
     if(g_medicKitLogN<6){ ++g_medicKitLogN; std::ostringstream ss;
       ss<<"medic kit "<<what<<" who="<<who->getName()<<" quality="<<saved<<" pct="<<pct<<" skill="<<skill<<" scaled="<<q; Log(ss.str()); }
@@ -1958,6 +1959,7 @@ int KahMedicKit(const char*,int argc,const char* const* argv,KAH_Reply* r,void*)
   Log(std::string("harness: medicKitScaling=")+(g_medicKitScaling?"1":"0"));
   std::ostringstream ss; ss<<"medicKitScaling="<<(g_medicKitScaling?1:0)<<" formulaScaling="<<(g_formulaScaling?1:0)
     <<" calls="<<g_medicKitCalls<<" last_quality="<<g_medicKitLastQ<<" last_scaled="<<g_medicKitLastScaled
+    <<" last_skill_arg="<<g_medicKitLastSkill<<" held="<<g_medicKitHeld
     <<" hooks="<<(g_firstAidOrig?1:0)+(g_doctoringOrig?1:0)<<"/2";
   r->append(r,ss.str().c_str());
   return KAH_OK;
