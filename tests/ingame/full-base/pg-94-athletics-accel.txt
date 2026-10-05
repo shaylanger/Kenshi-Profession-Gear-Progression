@@ -3,7 +3,7 @@
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
 # reset: fresh
 # run: bash tests/ingame/full-base/pg-94-athletics-accel.sh (WSL; prints the RESULT lines). Do not run this .txt alone.
-# needs: ProfessionGearProgression.dll with pg_accel (D4 commit), harness b0ddc74+ (acceltime), client kah.py from the
+# needs: ProfessionGearProgression.dll with pg_accel (D4 commit), harness b159c4c+ (acceltime follow + on-screen frame counts), client kah.py from the
 #   harness repo (LONG_COMMANDS acceltime)
 # design: Beaks (Athletics 50, Iron Hat with Athletics +50%) on open ground 150 from Avarek runs 400 along +x
 #   (acceltime) and is stopped at 250 by a move order to his own spot; per point start_delay, cruise_speed, t50/t90
@@ -12,6 +12,9 @@
 # expected: HavokCharacter::updateVelocity clamps the speed change to time x acceleration, and the hook scales the
 #   time by 1.5: t90 on ~ 0.67 x off and stop_dist on ~ 0.67 x off (v^2/2a), cruise_speed / runspeed unchanged.
 #   pg_accel Beaks: scale=1.5 handle_match=1, scaled > 0.
+# camera: Kenshi uses the acceleration physics only while he is on screen (Character::isOnScreen); off screen he moves
+#   along the path at full speed (HavokCharacter::moveAlongPath). Every acceltime uses follow (the camera tracks him); a point
+#   with offscreen_frames > 0 is an invalid setup and the .sh fails the rows on it.
 @wait-world
 @sleep 8
 speed 0
@@ -58,7 +61,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a1 off ms=${RS} ${A}
 # --- a2: Athletics 50, own50, pg_accel on ---
@@ -74,7 +77,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a2 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
@@ -92,7 +95,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a3 off ms=${RS} ${A}
 # --- a4: Athletics 50, own50, pg_accel on ---
@@ -108,7 +111,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a4 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
@@ -126,7 +129,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a5 off ms=${RS} ${A}
 # --- a6: Athletics 50, own50, pg_accel on ---
@@ -142,7 +145,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a6 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
@@ -160,7 +163,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a7 off ms=${RS} ${A}
 # --- a8: Athletics 50, own50, pg_accel on ---
@@ -176,7 +179,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a8 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
@@ -194,7 +197,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a9 off ms=${RS} ${A}
 # --- a10: Athletics 50, own50, pg_accel on ---
@@ -210,7 +213,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a10 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
@@ -228,7 +231,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a11 off ms=${RS} ${A}
 # --- a12: Athletics 50, own50, pg_accel on ---
@@ -244,7 +247,7 @@ speed 1 hold
 @sleep 2
 @set RS runspeed Beaks ~ max_speed=([\d.]+)
 stat Beaks athletics ~ wounds=1\.0000
-@set A acceltime Beaks 400 +x run stopat 250 ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+)
+@set A acceltime Beaks 400 +x run stopat 250 follow ~ (cruise_speed=[\d.]+ t50=\S+ t90=\S+ d90=[\d.]+ stop=\S+ stop_at=[\d.]+ stop_dist=[\d.]+ stop_seconds=[\d.]+ .*?follow=\d onscreen_frames=\d+ offscreen_frames=\d+ refollows=\d+)
 speed 0
 @echo ACC a12 on ms=${RS} ${A}
 @set K pg_accel Beaks ~ (scaled=\d+ npc=Beaks accel=[\d.]+ athletics_pct=[\d.]+ scale=[\d.]+ handle_match=\d)
