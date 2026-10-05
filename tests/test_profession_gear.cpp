@@ -335,6 +335,15 @@ int main(){
   Check(EffectiveStatValue(140,20,false,150)==150,"effective stat cap");
   Check(EffectiveStatValue(10,-200,false,150)==0,"effective stat floor");
   Check(Eq(EffectiveStatValue(50,20,false,0),60),"effective stat no cap");
+  // D2: kit quality scales with the skill, so +50% Medic = +50% effective heal skill above and below the kit cap
+  Check(Eq(ScaledKitQuality(50,50),75),"kit quality +50%");
+  Check(ScaledKitQuality(50,0)==50,"kit quality no gear");
+  Check(ScaledKitQuality(0,50)==0,"no kit stays no kit");
+  Check(ScaledKitQuality(120,50)==150,"kit quality cap 150");
+  { float s90=90,q=50,f=1.5f; float before=s90<q?s90:q; float sk=EffectiveStatValue(s90,50,false,150), qk=ScaledKitQuality(q,50);
+    Check(Eq((sk<qk?sk:qk),before*f),"medic 90 standard kit: +50% effective"); }
+  { float s25=25,q=50; float sk=EffectiveStatValue(s25,50,false,150), qk=ScaledKitQuality(q,50);
+    Check(Eq((sk<qk?sk:qk),37.5f),"medic 25 standard kit: skill boost only, no double dip"); }
 
   tags.clear();tags.push_back(TAG_PACK_ORE);
   Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Raw Iron","raw_iron",false),.25f),"ore pack raw iron");

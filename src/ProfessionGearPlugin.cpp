@@ -1502,6 +1502,7 @@ int KahStatProbe(const char*,int argc,const char* const* argv,KAH_Reply* r,void*
 }
 
 int KahFormulas(const char*,int argc,const char* const* argv,KAH_Reply* r,void*); // FormulaScaling, below
+int KahMedicKit(const char*,int argc,const char* const* argv,KAH_Reply* r,void*); // MedicKitScaling, below
 
 void KahTick() {
   if(g_kahConnected) return;
@@ -1527,10 +1528,11 @@ void KahTick() {
        +g_kah.registerCommand("pg_operate","pg_operate <building> [reset] [radius <m>] [near <npc>]",KahOperate,0)
        +g_kah.registerCommand("pg_jobscale","pg_jobscale on|off",KahJobScale,0)
        +g_kah.registerCommand("pg_formulas","pg_formulas on|off (FormulaScaling: gear raises run/swim/stealth/KO/lockpick formulas)",KahFormulas,0)
+       +g_kah.registerCommand("pg_medickit","pg_medickit [on|off] (MedicKitScaling: Medic gear raises the kit quality cap; reply: calls, last kit quality -> scaled)",KahMedicKit,0)
        +g_kah.registerCommand("pg_statprobe","pg_statprobe on <npc> | read | callers | watch <npc> <hexoff> | watch off | off (TEST ONLY: getStat calls per stat)",KahStatProbe,0)
        +g_kah.registerCommand("pg_force_critical","pg_force_critical on|off (TEST ONLY: every craft is a critical success)",KahForceCritical,0);
   g_kah.log("ProfessionGear: test commands registered");
-  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe/pg_formulas)";
+  std::ostringstream ss; ss<<"harness: connected, "<<n<<" commands (pg_info/pg_force_affix/pg_clear/pg_roll/pg_bonus/pg_shop/pg_building/pg_take/pg_store/pg_pack/pg_check/pg_census/pg_loot/pg_operate/pg_jobscale/pg_force_critical/pg_statprobe/pg_formulas/pg_medickit)";
   Log(ss.str());
 }
 
@@ -1820,11 +1822,49 @@ float MedicSkill(float skill, Character* who, const char* what){
     ss<<"medic "<<what<<" who="<<who->getName()<<" skill="<<skill<<" raw="<<raw<<" vm="<<vm<<" pct="<<pct<<" out="<<out; Log(ss.str()); }
   return out;
 }
+// Kit quality (Shay D2, 2026-10-05, row 191). Steam 1.0.65 disassembly: applyFirstAid / applyDoctoring heal at
+// rates set by e = min(skill, kit Item::quality) (no kit: 5): wound closing lerp(e/100, 0.0005, 0.03), bleed
+// reduction e/100 per second, bandaging lerp(e/100, 1, 15) per second; drainMedkit reads the skill alone (higher
+// skill = slower drain). The Standard kit caps e, so the boosted skill above the cap changed nothing (m35: 4.5 s at
+// Medic 50 and 90). While MedicKitScaling is on, the kit's quality is raised by the same Medic percent for the call
+// and put back afterwards: e' = min(skill x f, quality x f) = f x e, so the gear adds exactly its percent to the
+// effective heal skill at every skill (no double dip: skill and kit never multiply). Example +50% gear, Standard kit
+// (quality ~50): Medic 90 e 50 -> 75, bandaging rate 8 -> 11.5 /s (+44%); Medic 25 e 25 -> 37.5 (skill boost only).
+bool g_medicKitScaling = true;
+int g_medicKitLogN = 0;
+float g_medicKitLastQ = 0, g_medicKitLastScaled = 0;
+unsigned long g_medicKitCalls = 0;
+struct ScopedKit {
+  Item* it; float saved; bool on;
+  ScopedKit(Item* eq, Character* who, const char* what) : it(eq), saved(0), on(false) {
+    if(!g_medicKitScaling || !g_formulaScaling || !g_cfg.enabled || !eq || !who) return;
+    float pct=0;
+    try { pct=EquippedBonus(who,PGP::STAT_MEDIC); } catch (...) { return; }
+    if(pct==0.0f) return;
+    saved=eq->quality; const float q=PGP::ScaledKitQuality(saved,pct);
+    if(q==saved) return;
+    eq->quality=q; on=true; ++g_medicKitCalls; g_medicKitLastQ=saved; g_medicKitLastScaled=q;
+    if(g_medicKitLogN<6){ ++g_medicKitLogN; std::ostringstream ss;
+      ss<<"medic kit "<<what<<" who="<<who->getName()<<" quality="<<saved<<" pct="<<pct<<" scaled="<<q; Log(ss.str()); }
+  }
+  ~ScopedKit(){ if(on) it->quality=saved; }
+};
 bool HookFirstAid(void* m,float skill,Item* eq,float t,Character* who){
+  ScopedKit k(eq,who,"firstaid");
   return g_firstAidOrig?g_firstAidOrig(m,MedicSkill(skill,who,"firstaid"),eq,t,who):false;
 }
 bool HookDoctoring(void* m,float skill,Item* eq,float t,Character* who){
+  ScopedKit k(eq,who,"doctoring");
   return g_doctoringOrig?g_doctoringOrig(m,MedicSkill(skill,who,"doctoring"),eq,t,who):false;
+}
+int KahMedicKit(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
+  if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_medicKitScaling=(v=="on"||v=="1"||v=="true"); }
+  Log(std::string("harness: medicKitScaling=")+(g_medicKitScaling?"1":"0"));
+  std::ostringstream ss; ss<<"medicKitScaling="<<(g_medicKitScaling?1:0)<<" formulaScaling="<<(g_formulaScaling?1:0)
+    <<" calls="<<g_medicKitCalls<<" last_quality="<<g_medicKitLastQ<<" last_scaled="<<g_medicKitLastScaled
+    <<" hooks="<<(g_firstAidOrig?1:0)+(g_doctoringOrig?1:0)<<"/2";
+  r->append(r,ss.str().c_str());
+  return KAH_OK;
 }
 
 // Engineering (m33-4080 diag: HW watchpoint on CharStats::engineer +0xCC while building): construction progress is
@@ -1940,6 +1980,7 @@ void LoadConfig() {
     else if(k=="joboperatescaling") g_jobOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="farmoperatescaling") g_farmOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="formulascaling") g_formulaScaling=(v!="0"&&PGP::Lower(v)!="false");
+    else if(k=="medickitscaling") g_medicKitScaling=(v!="0"&&PGP::Lower(v)!="false");
   }
   PGP::NormalizeConfig(g_cfg);
 }

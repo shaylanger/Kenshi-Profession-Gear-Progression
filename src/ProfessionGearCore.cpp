@@ -492,6 +492,11 @@ float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
   return result;
 }
 
+float ScaledKitQuality(float quality, float medicPercent) {
+  if (quality <= 0.0f || medicPercent == 0.0f) return quality;
+  return EffectiveStatValue(quality, medicPercent, false, 150.0f);
+}
+
 float WealthFromBestSkill(float bestSkill) {
   // Was 0.2 + best*0.8/100 (never below 0.2), so the poor-NPC multiplier (wealth < 0.15) only
   // ever applied to slaves. Now linear up to skill 80: best skill below 12 counts as poor.

@@ -1,0 +1,162 @@
+# id: PG-pg-93-medic-kit
+# covers: PG 191 / Shay D2 (2026-10-05): Medic gear raises the first aid kit's quality cap (MedicKitScaling, pg_medickit)
+# fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
+# reset: fresh
+# run: bash tests/ingame/full-base/pg-93-medic-kit.sh (WSL; prints the RESULT lines). Do not run this .txt alone.
+# needs: ProfessionGearProgression.dll with pg_medickit (D2 commit), harness healtime/pin/teleport (as pg-84)
+# design: Beaks (5 Standard First Aid Kits) treats Avarek (healtime ... wound 30) at speed 1; per point the bandage_rate
+#   (bandaging per game second). Standard kit quality ~50 caps the heal skill: Medic 90 heals like Medic 50.
+#   p1 Medic 90 own50 kit on, p2 same kit off, p3 Medic 90 none, p4 Medic 25 own50 kit on, p5 same kit off.
+# expected: p1/p2 >= 1.25 (e 50 -> 75: rate 8 -> 11.5, +44%); p2 ~ p3 (kit cap, old behaviour); p4 ~ p5
+#   (skill 37.5 under the cap, no double dip). pg_medickit after p1: calls>0, last_scaled = 1.5 x last_quality.
+@wait-world
+@sleep 8
+speed 0
+wake Beaks
+speed 1 hold
+@sleep 4
+speed 0
+protect Avarek on
+protect Beaks on
+health Beaks 100
+health Avarek 100
+blood Beaks 100%
+blood Avarek 100%
+hunger Beaks 280
+hunger Avarek 280
+select Beaks
+clearjobs Beaks
+pg_formulas on ~ formulaScaling=1 hooks=8/8
+pg_medickit ~ hooks=2/2
+wake Avarek
+pin Avarek ~ pinned
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 4 ~ moved=1
+protect Avarek off
+drop Avarek "Basic First Aid Kit" all
+drop Avarek "Standard First Aid Kit" all
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
+give Beaks "Iron Hat" 1
+equip Beaks "Iron Hat"
+pg_info Beaks "Iron Hat" ~ equipped=1
+# --- p1: Medic 90, gear own50, pg_medickit on ---
+pg_medickit on ~ medicKitScaling=1
+setstat Beaks medic 90
+pg_clear Beaks ~ cleared affixes
+pg_force_affix Beaks "Iron Hat" medic 50 tier 6 ~ affixes=
+pg_bonus Beaks medic ~ equipped_bonus=50% .*match=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 4 ~ moved=1
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+inv Beaks ~ Standard First Aid Kit
+speed 1 hold
+stat Beaks medic ~ wounds=1\.0000
+@set H healtime Beaks Avarek wound 30 timeout 600 ~ finished=1 .*bandage_rate=([\d.]+)
+speed 0
+@echo MK p1 ${H}
+@set K pg_medickit ~ (calls=[1-9]\d* last_quality=[\d.]+ last_scaled=[\d.]+)
+@echo MKCALLS p1 ${K}
+hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
+# --- p2: Medic 90, gear own50, pg_medickit off ---
+pg_medickit off ~ medicKitScaling=0
+setstat Beaks medic 90
+pg_clear Beaks ~ cleared affixes
+pg_force_affix Beaks "Iron Hat" medic 50 tier 6 ~ affixes=
+pg_bonus Beaks medic ~ equipped_bonus=50% .*match=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 4 ~ moved=1
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+inv Beaks ~ Standard First Aid Kit
+speed 1 hold
+stat Beaks medic ~ wounds=1\.0000
+@set H healtime Beaks Avarek wound 30 timeout 600 ~ finished=1 .*bandage_rate=([\d.]+)
+speed 0
+@echo MK p2 ${H}
+hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
+# --- p3: Medic 90, gear none, pg_medickit on ---
+pg_medickit on ~ medicKitScaling=1
+setstat Beaks medic 90
+pg_clear Beaks ~ cleared affixes
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 4 ~ moved=1
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+inv Beaks ~ Standard First Aid Kit
+speed 1 hold
+stat Beaks medic ~ wounds=1\.0000
+@set H healtime Beaks Avarek wound 30 timeout 600 ~ finished=1 .*bandage_rate=([\d.]+)
+speed 0
+@echo MK p3 ${H}
+hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
+# --- p4: Medic 25, gear own50, pg_medickit on ---
+pg_medickit on ~ medicKitScaling=1
+setstat Beaks medic 25
+pg_clear Beaks ~ cleared affixes
+pg_force_affix Beaks "Iron Hat" medic 50 tier 6 ~ affixes=
+pg_bonus Beaks medic ~ equipped_bonus=50% .*match=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 4 ~ moved=1
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+inv Beaks ~ Standard First Aid Kit
+speed 1 hold
+stat Beaks medic ~ wounds=1\.0000
+@set H healtime Beaks Avarek wound 30 timeout 600 ~ finished=1 .*bandage_rate=([\d.]+)
+speed 0
+@echo MK p4 ${H}
+hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
+# --- p5: Medic 25, gear own50, pg_medickit off ---
+pg_medickit off ~ medicKitScaling=0
+setstat Beaks medic 25
+pg_clear Beaks ~ cleared affixes
+pg_force_affix Beaks "Iron Hat" medic 50 tier 6 ~ affixes=
+pg_bonus Beaks medic ~ equipped_bonus=50% .*match=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 4 ~ moved=1
+where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
+inv Beaks ~ Standard First Aid Kit
+speed 1 hold
+stat Beaks medic ~ wounds=1\.0000
+@set H healtime Beaks Avarek wound 30 timeout 600 ~ finished=1 .*bandage_rate=([\d.]+)
+speed 0
+@echo MK p5 ${H}
+hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
+pg_medickit on ~ medicKitScaling=1
+pg_clear Beaks ~ cleared affixes
+pin Avarek off
+health Avarek 100
+protect Avarek on
+speed 0

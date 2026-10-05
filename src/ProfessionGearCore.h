@@ -169,6 +169,11 @@ float AggregatePercent(const std::vector<AffixRecord>& records,
 float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
                          float hardCap);
 
+// Medic kit quality (Shay D2, row 191): MedicalSystem::applyFirstAid/applyDoctoring heal at a rate set by
+// min(doctor skill, kit Item::quality), so a kit caps what Medic gear can do. The kit's quality is raised by the
+// same equipped Medic percent as the skill (cap 150): min(skill x f, quality x f) = f x min(skill, quality).
+float ScaledKitQuality(float quality, float medicPercent);
+
 // 0..1 wealth/competence from the NPC's best profession skill; < 0.15 (best skill < 12) = poor.
 float WealthFromBestSkill(float bestSkill);
 
