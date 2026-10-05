@@ -90,7 +90,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
   lock level <= skill reads a flat 0.9: real game behaviour, use a higher-level lock for the curve.
 - farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement.
 - perception (199, pg-89): never ran (batch 20 stopped).
-- pg-55 turret (192): FAIL 48/5 in batch 20 (dummies walked off); fixed by d6bb99b (pin each dummy), unrun.
+- pg-55 turret (192): the turret never picks a pinned dummy by itself (0 shots); harness `turret ... aim` designates it (dd72fa7). PASS 86/0 in batch W.
 - pg-51: PASS 67/0 in batch T (2026-10-04).
 
 ## Rows
@@ -172,7 +172,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 188 | PENDING-auto | `tests/ingame/full-base/pg-52-balance-weapon-smithing.txt` (regenerated: Weapon Smith V, Sickle, 16 points incl. +25% and the sanity pair) |
 | 189 | PENDING-auto | `tests/ingame/full-base/pg-53-balance-armour-smithing.txt` (regenerated: Clothing Bench, Rag Shirt) |
 | 190–191 | PENDING-auto | 190: `full-base/pg-80-balance-crossbow-smithing.txt` (Crossbow Crafting Bench, Junkbow from Steel Bars + Hinge after `research "Crossbow Crafting"`); 191: `full-base/pg-84-balance-medic.txt` (harness 33087EDE (KAH 24) `healtime <medic> <patient> wound 30`: same three cuts every point, bandaging per game second) |
-| 192 | PENDING-auto | `tests/ingame/full-base/pg-55-turret.txt` (diagnostic: hostile dummy hp after 45 s at Turrets 10 / 90 / 10+50% gear) |
+| 192 | PASS-live (mechanical) | `C:\KenshiTestRuns\m22\out-w\pg-55-turret-5090-r6.scenario.txt` 86/0, batch W 2026-10-04: Beaks on the turret, no squad within 150 m, gun skill01 0.10 / 0.90 / 0.15 (+50% gear), shots 6 / 1 / 1, dummy worst 5% / -27% KO / -58% KO; balance open (per-shot damage noisy, n=1) |
 | 193–199 | PENDING-auto | harness 33087EDE (KAH 24): 193 `pg-85-balance-athletics.txt` (40 m timed run + runspeed), 194 `pg-86-balance-swimming.txt` (`findwater` + `swimtime` through deep water), 195 `pg-87-balance-stealth.txt` and 199 `pg-89-balance-perception.txt` (`detecttime`: seconds until a neutral observer 20 m away sees the sneaking worker; sneaker vs observer skill varies), 196-198 `pg-88-balance-chances.txt` (the game's own `getLockpickChance` on a Prisoner Cage, `getStealthKOChance`, `getStealingSuccessChance` against a dummy; all paused, 45 reads) |
  |
 | 200–210 | PENDING-auto | `tools/analyze_balance.py` cross-profession block (200 curves side by side, 201 universal-table spread, 202 per-profession bonus for each target band, 203-205 bands, 206 skill 75 vs skill 25 + 50% gear, Labouring control) on `tools/balance_driver.py csv` of every launch-5 .out; first data: Labouring (pg-14): +1% gear bonus = +1.09% throughput, while skill 10 -> 90 gives only x1.26 (+25% gear already beats the whole skill curve: principle 4 at risk; decide after the other professions) |
