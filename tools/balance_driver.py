@@ -391,6 +391,9 @@ def gen_operate(p):
                 "pg_jobscale on ~ jobOperateScaling=1"]) + wear(WORKER)
     L += ["speed 10", "@wait-game 10 900",
           '@until 300 pg_operate "%s" radius 100 near %s ~ calls=[1-9]' % (b, WORKER), "speed 0"]
+    # daylight points pin OTHER next to the farm: look the counter up near him (m46 g3: the worker walked >100 m
+    # off and every lookup near him failed); other operate rows keep the worker
+    nb = OTHER if p.get("daylight") else WORKER
     for label, skill, gear in timed_points(p):
         L += ["# --- %s: skill %d, gear %s ---" % (label, skill, gear[0]),
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
@@ -405,23 +408,27 @@ def gen_operate(p):
                   '@until 30 teleport %s building "%s" dist 6 radius 1000 ~ moved=' % (WORKER, b),
                   'job %s "%s" radius 1000' % (WORKER, b),
                   # fresh counter: the calls check must not pass on the last window's calls (m44 probe)
-                  'pg_operate "%s" reset radius 100 near %s ~ \(reset\)' % (b, WORKER), "speed 10",
-                  '@until 300 pg_operate "%s" radius 100 near %s ~ calls=[1-9]' % (b, WORKER), "speed 0"]
+                  'pg_operate "%s" reset radius 100 near %s ~ \(reset\)' % (b, nb), "speed 10",
+                  '@until 300 pg_operate "%s" radius 100 near %s ~ calls=[1-9]' % (b, nb), "speed 0"]
+        if p.get("daylight") and p.get("percall"):
+            # m46-5090 gate: g4 still started at 03:55 (the warm-up/teleport steps after the day wait let the night
+            # in) and the water ran dry: wait for day again with the worker on the job, right before the window
+            L += ["speed 10", "@until 2400 " + DAYTIME, "@until 1200 " + day, "speed 0"]
         L += ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1])]
         if p.get("ripen"):
             L += ['farm "%s" empty radius 1000 ~ emptied=' % b, 'building "%s" 1000 ~ state=NORMAL' % b]
         L += ready(AWAKE, HASJOB, *([day, DAYTIME] if p.get("daylight") else []))
-        L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
+        L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, nb),
               TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1]
         if p.get("daylight"):
             L += post(day)
         L += ripe_after(p)
         if p.get("percall"):
-            L += ['@set NC pg_operate "%s" radius 100 near %s ~ calls=(\d+)' % (b, WORKER),
-                  '@set SA pg_operate "%s" radius 100 near %s ~ scaled_amount=%s' % (b, WORKER, NUM),
+            L += ['@set NC pg_operate "%s" radius 100 near %s ~ calls=(\d+)' % (b, nb),
+                  '@set SA pg_operate "%s" radius 100 near %s ~ scaled_amount=%s' % (b, nb, NUM),
                   echo(p["rows"], p["prof"], skill, gear, label, "percall", WIN, "${NC}", "${SA}")]
         else:
-            L += ['@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
+            L += ['@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, nb, NUM),
                   echo(p["rows"], p["prof"], skill, gear, label, "operate", WIN, "0", "${OP}")]
         L += ["hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]

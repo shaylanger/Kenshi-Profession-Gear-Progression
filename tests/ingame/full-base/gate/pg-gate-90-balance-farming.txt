@@ -67,9 +67,13 @@ pin Avarek off ~ unpinned
 @until 30 teleport Avarek Beaks dist 8 ~ moved=1
 pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10 hold
-@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
+@until 300 pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=[1-9]
+speed 0
+speed 10 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -77,7 +81,7 @@ where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
 time ~ time=(0[7-9]|1[0-8]):
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
@@ -87,8 +91,8 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
-@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@set NC pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Avarek ~ scaled_amount=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,g1,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
@@ -112,9 +116,13 @@ pin Avarek off ~ unpinned
 @until 30 teleport Avarek Beaks dist 8 ~ moved=1
 pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10 hold
-@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
+@until 300 pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=[1-9]
+speed 0
+speed 10 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -122,7 +130,7 @@ where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
 time ~ time=(0[7-9]|1[0-8]):
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
@@ -132,8 +140,8 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
-@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@set NC pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Avarek ~ scaled_amount=([-\d.]+)
 @echo BAL2,161,farming,25,50,own50,g2,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
@@ -156,9 +164,13 @@ pin Avarek off ~ unpinned
 @until 30 teleport Avarek Beaks dist 8 ~ moved=1
 pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10 hold
-@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
+@until 300 pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=[1-9]
+speed 0
+speed 10 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -166,7 +178,7 @@ where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
 time ~ time=(0[7-9]|1[0-8]):
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
@@ -176,8 +188,8 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
-@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@set NC pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Avarek ~ scaled_amount=([-\d.]+)
 @echo BAL2,161,farming,90,0,none,g3,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
@@ -200,9 +212,13 @@ pin Avarek off ~ unpinned
 @until 30 teleport Avarek Beaks dist 8 ~ moved=1
 pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 speed 10 hold
-@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
+@until 300 pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=[1-9]
+speed 0
+speed 10 hold
+@until 2400 time ~ time=(0[7-9]|1[0-8]):
+@until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -210,7 +226,7 @@ where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
 stat Beaks farming ~ light=(0\.[5-9]|1)
 time ~ time=(0[7-9]|1[0-8]):
-pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
+pg_operate "Wheat Farm L" reset radius 100 near Avarek ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
@@ -220,8 +236,8 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
-@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@set NC pg_operate "Wheat Farm L" radius 100 near Avarek ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Avarek ~ scaled_amount=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,g4,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
