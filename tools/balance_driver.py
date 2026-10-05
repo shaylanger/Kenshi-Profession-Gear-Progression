@@ -818,7 +818,8 @@ def measure(kind, window_s, a, b):
             return 0, window_s, 0, "missing calls/amount"
         if n < 50:
             return 0, window_s, 0, "invalid: only %d operate calls" % n
-        return amt / n * 1000.0, window_s, 1, ""
+        # count/elapsed (the csv contract) must equal the per-call amount, not depend on the window's exact length
+        return amt / n * window_s, window_s, 1, ""
     if kind in ("operate", "research", "construct"):
         p0, p1 = f(a), f(b)
         if p0 is None or p1 is None:
