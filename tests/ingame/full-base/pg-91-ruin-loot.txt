@@ -2,7 +2,7 @@
 # covers: PG 250 (world-loot profession distribution across a ruin/chest corpus)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the world has ruins and labs: `towns ruin,ancient,...`)
 # reset: fresh
-# needs: PG 266C68F5+ (`pg_lootscan`), harness 5BEC01D0+ (`towns`, KAH 24; teleport moved=, speed hold); own launch with
+# needs: PG 81D89609+ (`pg_lootscan` furniture, found=), harness E4E230FE+ (`build` faction check, `buildings` nearest first); own launch with
 #   set_test_mode.ps1 -Mode NormalVerbose -Rules Normal -Sidecar Empty (normal chances, every roll logged;
 #   afterwards -Sidecar Restore). Forced mode would make every eligible item roll: the result means nothing there.
 # design: part B runs first (at the base), then part A. Part A, real ruins: the 3 ruins/labs nearest the base (harness `towns ruin,ancient,...`) are visited by teleport
@@ -10,7 +10,7 @@
 #   250 m is given its world-loot roll as if Avarek picked it up (`pg_lootscan`: the same EnsureRecord call the
 #   character scan makes, Avarek as the finder). A second scan of the same place must find every eligible item
 #   already recorded (no re-roll). Part B, a harness-made chest corpus (always available): 300 m from the base a
-#   General Camp Storage Chest owned by Drifters is built and filled with 15 common gear types x 3, then scanned.
+#   5 General Camp Storage Chests owned by Drifters are built and filled with 15 common gear types x 3, then scanned.
 # verify (250): per scan line items / eligible / rolled / stats. Pass when, over all scans:
 #   - eligible > 0 and the rolled share of eligible is between 0.15 and 0.6 (world loot rolls at half the tier
 #     chance: .10-.48 by tier; a share above 0.6 = excessive frequency, below 0.15 = loot is pointless);
@@ -35,27 +35,45 @@ speed 1 hold
 @sleep 3
 speed 0
 # --- part B: harness-made chest corpus, 300 m from the base (away from the base's own chests) ---
+# m22 batch Z: one General Camp Storage Chest held only ~19 of the 45 items. Now 5 chests, 3 types x 3 each
+# (one backpack type per chest), 60 m apart along x; Avarek steps 60 m (teleport relative to himself) before each
+# build, so the nearest chest within 20 m is always the new one. Every fill must fit all 3.
 @until 30 teleport Avarek Beaks dist 300 ~ moved=1
 @until 30 teleport Beaks Avarek dist 6 ~ moved=1
-build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ built
-fill "General Camp Storage Chest" 2227-chris_r.mod 3 radius 60
-fill "General Camp Storage Chest" 2185-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 2212-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 18917-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 2309-clothes_v1.mod 3 radius 60
-fill "General Camp Storage Chest" 3061-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 575-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 2151-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 1169-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 544-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 2145-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 2222-chris_r.mod 3 radius 60
-fill "General Camp Storage Chest" 576-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 635-gamedata.base 3 radius 60
-fill "General Camp Storage Chest" 46036-rebirth.mod 3 radius 60
-@set LC pg_lootscan Avarek radius 60 ~ (items=[1-9]\d* eligible=[1-9]\d* already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
-pg_lootscan Avarek radius 60 ~ items=\d+ eligible=(\d+) already_recorded=\1
-unbuild "General Camp Storage Chest" 100
+build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ ^built .*\[Drifters\]
+fill "General Camp Storage Chest" 2227-chris_r.mod 3 radius 20 ~ Iron Hat 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 2185-gamedata.base 3 radius 20 ~ Rattan Hat 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 576-gamedata.base 3 radius 20 ~ Small Backpack 0 -> 3 \(3 of 3 fitted\)
+@until 30 teleport Avarek Avarek dist 60 ~ moved=1
+build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ ^built .*\[Drifters\]
+fill "General Camp Storage Chest" 2212-gamedata.base 3 radius 20 ~ Leather Vest 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 18917-gamedata.base 3 radius 20 ~ Black Cloth Shirt 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 635-gamedata.base 3 radius 20 ~ Medium Backpack 0 -> 3 \(3 of 3 fitted\)
+@until 30 teleport Avarek Avarek dist 60 ~ moved=1
+build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ ^built .*\[Drifters\]
+fill "General Camp Storage Chest" 2309-clothes_v1.mod 3 radius 20 ~ Rag Shirt 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 3061-gamedata.base 3 radius 20 ~ Dustcoat 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 46036-rebirth.mod 3 radius 20 ~ Thieves Backpack 0 -> 3 \(3 of 3 fitted\)
+@until 30 teleport Avarek Avarek dist 60 ~ moved=1
+build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ ^built .*\[Drifters\]
+fill "General Camp Storage Chest" 575-gamedata.base 3 radius 20 ~ Straw Hat 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 2151-gamedata.base 3 radius 20 ~ Ninja Rags 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 1169-gamedata.base 3 radius 20 ~ Leather Shirt 0 -> 3 \(3 of 3 fitted\)
+@until 30 teleport Avarek Avarek dist 60 ~ moved=1
+build "General Camp Storage Chest" near Avarek dist 15 faction Drifters ~ ^built .*\[Drifters\]
+fill "General Camp Storage Chest" 544-gamedata.base 3 radius 20 ~ Chain Shirt 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 2145-gamedata.base 3 radius 20 ~ Samurai Helmet 0 -> 3 \(3 of 3 fitted\)
+fill "General Camp Storage Chest" 2222-chris_r.mod 3 radius 20 ~ Bandana 0 -> 3 \(3 of 3 fitted\)
+# back to the middle chest: all 5 within 130 m (120 m the farthest), the base over 400 m away
+@until 30 teleport Avarek Avarek dist -105 ~ moved=1
+buildings 130 near Avarek
+@set LC pg_lootscan Avarek radius 130 ~ buildings=5 with_items=5 skipped_own=0 (items=45 eligible=[1-9]\d* already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
+pg_lootscan Avarek radius 130 ~ buildings=5 with_items=5 skipped_own=0 items=45 eligible=(\d+) already_recorded=\1
+unbuild "General Camp Storage Chest" 300 ~ destroyed
+unbuild "General Camp Storage Chest" 300 ~ destroyed
+unbuild "General Camp Storage Chest" 300 ~ destroyed
+unbuild "General Camp Storage Chest" 300 ~ destroyed
+unbuild "General Camp Storage Chest" 300 ~ destroyed
 # --- part A: ruin 1 ---
 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10
 @set X1 towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodlands lab" max 10 ~ \| 1: [^|]*?pos=([-\d.]+),[-\d.]+,[-\d.]+
@@ -64,7 +82,14 @@ towns "ruin,ancient,crumbling,crater,swamped lab,island lab,infested lab,floodla
 @until 30 teleport Avarek ${X1} ${Y1} ${Z1} ~ moved=1
 @until 30 teleport Beaks Avarek dist 5 ~ moved=1
 speed 1 hold
-@sleep 20
+# the town streams in: wait (bounded) for its buildings, then stand next to the nearest one (m22 batch Z: 0 within 250 of the town position)
+@until 120 buildings 800 near Avarek ~ ^[1-9]\d* buildings within
+@set BX1 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set BY1 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set BZ1 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=[-\d.]+,[-\d.]+,([-\d.]+)
+@until 30 teleport Avarek ${BX1} ${BY1} ${BZ1} dist 12 ~ moved=1
+@until 30 teleport Beaks Avarek dist 5 ~ moved=1
+@sleep 10
 speed 0
 where Avarek
 buildings 250 near Avarek
@@ -78,7 +103,14 @@ pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
 @until 30 teleport Avarek ${X2} ${Y2} ${Z2} ~ moved=1
 @until 30 teleport Beaks Avarek dist 5 ~ moved=1
 speed 1 hold
-@sleep 20
+# the town streams in: wait (bounded) for its buildings, then stand next to the nearest one (m22 batch Z: 0 within 250 of the town position)
+@until 120 buildings 800 near Avarek ~ ^[1-9]\d* buildings within
+@set BX2 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set BY2 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set BZ2 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=[-\d.]+,[-\d.]+,([-\d.]+)
+@until 30 teleport Avarek ${BX2} ${BY2} ${BZ2} dist 12 ~ moved=1
+@until 30 teleport Beaks Avarek dist 5 ~ moved=1
+@sleep 10
 speed 0
 where Avarek
 buildings 250 near Avarek
@@ -91,7 +123,14 @@ pg_lootscan Avarek radius 250 ~ items=\d+ eligible=(\d+) already_recorded=\1
 @until 30 teleport Avarek ${X3} ${Y3} ${Z3} ~ moved=1
 @until 30 teleport Beaks Avarek dist 5 ~ moved=1
 speed 1 hold
-@sleep 20
+# the town streams in: wait (bounded) for its buildings, then stand next to the nearest one (m22 batch Z: 0 within 250 of the town position)
+@until 120 buildings 800 near Avarek ~ ^[1-9]\d* buildings within
+@set BX3 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=([-\d.]+),[-\d.]+,[-\d.]+
+@set BY3 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=[-\d.]+,([-\d.]+),[-\d.]+
+@set BZ3 buildings 800 near Avarek ~ ^[1-9]\d* buildings within [\d.]+: \| [^|]*? pos=[-\d.]+,[-\d.]+,([-\d.]+)
+@until 30 teleport Avarek ${BX3} ${BY3} ${BZ3} dist 12 ~ moved=1
+@until 30 teleport Beaks Avarek dist 5 ~ moved=1
+@sleep 10
 speed 0
 where Avarek
 buildings 250 near Avarek
