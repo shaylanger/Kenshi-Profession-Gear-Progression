@@ -2,16 +2,29 @@
 # covers: PG 192 (Turrets response, diagnostic first pass)
 # fixture: Testing-Save-Full-Base (squad Beaks + Avarek; the base has turrets)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 7D80DBB3, harness 08AB6BF0 (`protect`, `relation`) + c4fa520 (`pin`); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 7D80DBB3, harness `protect`, `relation`, `pin` + `turret` (KAH 25: turret state,
+#   operator, shot counts per target from a GunClass::shoot hook); set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # m29-4080: operator Beaks; stat asserts wounds=1 (the 0.25 factor was the harness protect bug, fixed in harness 6aa5685: needed).
-# design: Beaks mans the nearest turret (its own job). Per point a fresh "Hungry Bandit" (Drifters) is spawned 40 m
-#   past the turret and made hostile (`relation` -100: the Drifters faction vs the player), then 45 real seconds at speed 1;
+# design: Beaks mans the Double-Barrel Harpoon Turret. Per point a fresh "Hungry Bandit" (Drifters) is spawned on the
+#   ground 120 m in front of the turret (its rest aim direction; `turret ... front 120`; m22 r4c: 120 m fires, 200 m not tested with aim),
+#   made hostile (`relation` -100), pinned there and given to the operator as his target (`turret ... aim`, KAH 25:
+#   RangedCombatClass::setTarget each frame while he has another or no target; aiming, shot check, accuracy, reload,
+#   damage stay the game's),
+#   then 45 real seconds at speed 1;
 #   the dummy's worst body part % is read. Points: Turrets 10 / 90 without gear, Turrets 10 with +50% Turrets gear.
-# verify (diagnostic): the turret fires (dummy worst < 100 or KO/DEAD in at least one point). If it does, worse hp at 90 and at
-#   10+gear than at 10 = the turret reads the hooked stat. If the turret never fires (target out of arc, no ammo), send
-#   the .out to the PG agent. Squad members are protected; spawned dummies are never next to the squad.
-#   m27-4080: the dummies ran off (D2/D3 "no character named" after 45 s, D1 untouched): each is pinned (harness
-#   c4fa520 `pin`) on its spawn spot 40 m past the turret until it is read, then unpinned and killed.
+# m22-5090 (PG 192 invalid runs): batch U read worst=100% x3 (turret never fired) and batch T measured melee damage
+#   (Beaks left the turret and hit the bandit with a Plank). Probe with the new `turret` command: the old dummy was
+#   pinned 40 m along +x AT THE TURRET'S HEIGHT, 86 m above the ground (the turret sits on a cliff), passive; the
+#   operator stayed on the turret in ranged state WAITING, ranged_target=none, 0 shots. Now each point ASSERTS the
+#   turret did the damage: Beaks on the turret at every read, no squad member within 20 m of the dummy (no melee),
+#   >= 1 turret shot at that dummy fired by Beaks with the Turrets stat (last_shot_stat=11) and the gun's skill01
+#   from his effective Turrets (0.10 / 0.90 / 0.15 with gear, +0.02 allowed: Turrets XP gained while firing, r4c 0.1036); at Turrets 90 the dummy's worst part must be < 100%
+#   (at Turrets 10 every harpoon may miss: recorded, not asserted).
+#   m35 batch V: a harpoon can kill the dummy before the reads (the harness no longer finds a dead one): every
+#   read/cleanup then accepts "dummy gone after Beaks' turret shot at it" (last_shot_target=that dummy, by Beaks, stat 11,
+#   the point's skill01 band at the final read); its hp is recorded as "target=no character named" (killed). r3 probe: a passive or `spawn ... target Beaks`
+#   dummy is never picked by the turret (WAITING, 0 shots); `attack Beaks <dummy>` makes him leave the turret and melee.
+# verify: worse hp at 90 and at 10+gear than at 10 = the turret's damage follows the hooked stat.
 @wait-world
 @sleep 8
 speed 0
@@ -25,10 +38,6 @@ clearjobs Beaks
 # ~600 m from the turret): those use radius 1500 too (the Double-Barrel Harpoon Turret is the only match in range).
 # m25-4080 probe: the only real turret is the Double-Barrel Harpoon Turret ~570-760 m from the squad (search origin =
 # Avarek), unpowered (out_of_power=1); "Training Turret MkIII" is a trainer. Teleport him to it, power it, then the job.
-@set TX buildings 1500 harpoon ~ pos=([-\d.]+),[-\d.]+,[-\d.]+
-@set TY buildings 1500 harpoon ~ pos=[-\d.]+,([-\d.]+),[-\d.]+
-@set TZ buildings 1500 harpoon ~ pos=[-\d.]+,[-\d.]+,([-\d.]+)
-@echo turret at ${TX} ${TY} ${TZ}
 @until 30 teleport Beaks building "Harpoon Turret" dist 4 radius 1500 ~ moved=1
 power "Harpoon Turret" supply radius 1500
 building "Harpoon Turret" 1500 ~ out_of_power=0
@@ -37,7 +46,16 @@ order Beaks USE_TURRET building "Harpoon Turret"
 speed 1
 @sleep 5
 speed 0
-building "Harpoon Turret" 1500 ~ operators=1
+# m22-5090 r4: 5 s after the order Beaks was not seated once (operators=0): poll up to 60 s at speed 1
+speed 1
+@until 60 turret "Harpoon Turret" radius 1500 ~ on_turret=1
+speed 0
+turret "Harpoon Turret" radius 1500 ~ on_turret=1
+# dummy spot: on the ground 200 m along the turret's rest aim (range 750; 40 m was 65 deg below the barrel)
+@set FX turret "Harpoon Turret" radius 1500 front 120 ~ front=([-\d.]+),[-\d.]+,[-\d.]+
+@set FY turret "Harpoon Turret" radius 1500 front 120 ~ front=[-\d.]+,([-\d.]+),[-\d.]+
+@set FZ turret "Harpoon Turret" radius 1500 front 120 ~ front=[-\d.]+,[-\d.]+,([-\d.]+)
+@echo dummy spot ${FX} ${FY} ${FZ}
 give Beaks "Iron Hat" 1
 equip Beaks "Iron Hat"
 pg_formulas off ~ formulaScaling=0
@@ -47,41 +65,58 @@ speed 1
 # --- Turrets 10, no gear ---
 setstat Beaks turrets 10
 stat Beaks turrets ~ wounds=1\.0000
-@set D1 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
-pin ${D1} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
+@set D1 spawn "Hungry Bandit" Drifters at ${FX} ${FY} ${FZ} count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+pin ${D1} at ${FX} ${FY} ${FZ} ~ pinned
 relation ${D1} -100
-@sleep 45
-building "Harpoon Turret" 1500 ~ operators=1
-@set H1 hp ${D1} ~ (worst=-?[\d.]+%?[^|]*)
-pin ${D1} off ~ unpinned
-kill ${D1}
+turret "Harpoon Turret" radius 1500 aim ${D1} ~ aim=Hungry Bandit
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D1} ~ on_turret=1 .*squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D1} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D1} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D1} ~ on_turret=1 .*squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D1} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D1} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D1} ~ on_turret=1 .*last_shot_by=Beaks last_shot_stat=11 last_shot_skill01=0\.(?:099\d|1[01]\d\d) .*shots_at_target=[1-9]\d* squad_nearest=\S+ squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D1} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D1} last_shot_by=Beaks last_shot_stat=11 last_shot_skill01=0\.(?:099\d|1[01]\d\d) .*target=no character named
+@any @set H1 hp ${D1} ~ (worst=-?[\d.]+%?[^|]*) || @set H1 turret "Harpoon Turret" radius 1500 target ${D1} ~ (target=no character named)
+@any pin ${D1} off ~ unpinned || turret "Harpoon Turret" radius 1500 target ${D1} ~ target=no character named
+@any kill ${D1} || turret "Harpoon Turret" radius 1500 target ${D1} ~ target=no character named
 # --- Turrets 90, no gear ---
 setstat Beaks turrets 90
 stat Beaks turrets ~ wounds=1\.0000
-@set D2 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
-pin ${D2} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
+@set D2 spawn "Hungry Bandit" Drifters at ${FX} ${FY} ${FZ} count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+pin ${D2} at ${FX} ${FY} ${FZ} ~ pinned
 relation ${D2} -100
-@sleep 45
-building "Harpoon Turret" 1500 ~ operators=1
-@set H2 hp ${D2} ~ (worst=-?[\d.]+%?[^|]*)
-pin ${D2} off ~ unpinned
-kill ${D2}
+turret "Harpoon Turret" radius 1500 aim ${D2} ~ aim=Hungry Bandit
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D2} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D2} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*last_shot_by=Beaks last_shot_stat=11 last_shot_skill01=0\.(?:899\d|9[01]\d\d) .*shots_at_target=[1-9]\d* squad_nearest=\S+ squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D2} last_shot_by=Beaks last_shot_stat=11 last_shot_skill01=0\.(?:899\d|9[01]\d\d) .*target=no character named
+@any @set H2 hp ${D2} ~ (worst=-?[\d.]+%?[^|]*) || @set H2 turret "Harpoon Turret" radius 1500 target ${D2} ~ (target=no character named)
+@any hp ${D2} ~ worst=(?:-\d+|\d{1,2})(?:\.\d+)?% || turret "Harpoon Turret" radius 1500 target ${D2} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D2} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@any pin ${D2} off ~ unpinned || turret "Harpoon Turret" radius 1500 target ${D2} ~ target=no character named
+@any kill ${D2} || turret "Harpoon Turret" radius 1500 target ${D2} ~ target=no character named
 # --- Turrets 10 with +50% Turrets gear ---
 setstat Beaks turrets 10
 stat Beaks turrets ~ wounds=1\.0000
 pg_force_affix Beaks "Iron Hat" turrets 50 tier 6 ~ affixes=Turrets:50
 pg_bonus Beaks turrets ~ equipped_bonus=50% .*match=1
-@set D3 spawn "Hungry Bandit" Drifters at ${TX} ${TY} ${TZ} dist 40 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
-pin ${D3} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
+@set D3 spawn "Hungry Bandit" Drifters at ${FX} ${FY} ${FZ} count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+pin ${D3} at ${FX} ${FY} ${FZ} ~ pinned
 relation ${D3} -100
-@sleep 45
-building "Harpoon Turret" 1500 ~ operators=1
-@set H3 hp ${D3} ~ (worst=-?[\d.]+%?[^|]*)
-relation ${D3} 0
-pin ${D3} off ~ unpinned
-kill ${D3}
+turret "Harpoon Turret" radius 1500 aim ${D3} ~ aim=Hungry Bandit
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D3} ~ on_turret=1 .*squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D3} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D3} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D3} ~ on_turret=1 .*squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D3} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D3} last_shot_by=Beaks last_shot_stat=11 .*target=no character named
+@sleep 15
+@any turret "Harpoon Turret" radius 1500 target ${D3} ~ on_turret=1 .*last_shot_by=Beaks last_shot_stat=11 last_shot_skill01=0\.(?:149\d|1[56]\d\d) .*shots_at_target=[1-9]\d* squad_nearest=\S+ squad_dist=(?:[2-9]\d|\d{3,}) || turret "Harpoon Turret" radius 1500 target ${D3} ~ on_turret=1 .*last_shot_target=Hungry Bandit ${D3} last_shot_by=Beaks last_shot_stat=11 last_shot_skill01=0\.(?:149\d|1[56]\d\d) .*target=no character named
+@any @set H3 hp ${D3} ~ (worst=-?[\d.]+%?[^|]*) || @set H3 turret "Harpoon Turret" radius 1500 target ${D3} ~ (target=no character named)
+@any relation ${D3} 0 || turret "Harpoon Turret" radius 1500 target ${D3} ~ target=no character named
+@any pin ${D3} off ~ unpinned || turret "Harpoon Turret" radius 1500 target ${D3} ~ target=no character named
+@any kill ${D3} || turret "Harpoon Turret" radius 1500 target ${D3} ~ target=no character named
 speed 0
 @echo Turrets 10: ${H1}
 @echo Turrets 90: ${H2}
 @echo Turrets 10 + 50% gear: ${H3}
+turret "Harpoon Turret" radius 1500 aim off ~ aim=off
 clearjobs Beaks
