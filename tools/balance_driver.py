@@ -49,6 +49,10 @@ OUT_DIR = os.path.join(ROOT, "tests", "ingame", "full-base")
 WORKER = "Beaks"
 OTHER = "Avarek"
 GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its affix is forced per point
+# PG 199 (pg-89 FAIL 597/11): 4 of 16 spawned Hungry Bandit observers could not wear the Iron Hat (equip failed,
+# slotType=3): UWE's Iron Hat has "races exclude" Reptiloid/Sharkoloid/Dragoloid. A spawned observer who wears the
+# gear is re-rolled until his race can wear it (harness 6a64ee8+: spawn ... race <filter>)
+GEAR_RACES = "!reptiloid|!sharkoloid|!dragoloid"
 NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
@@ -575,6 +579,9 @@ def gen_detect(p):
                    "The observer is killed and moved away after every point."],
                ["seen=1 in most points (seen=0 everywhere: this observer never notices a sneaker, send the .out to",
                 "the PG agent); stealth: seconds_to_seen grows with Stealth; perception: it shrinks with Perception."])
+    if not sneaker_varies:
+        L[4] += ("; harness 6a64ee8+ (spawn race filter: the observer wears the %s, which UWE excludes for "
+                 "Reptiloid/Sharkoloid/Dragoloid)" % GEAR_ITEM)
     L += start(["teleport %s %s dist 60" % (WORKER, OTHER), "setstat %s stealth %d" % (WORKER, p.get("sneaker_stealth", 30))]) +         (wear(WORKER) if sneaker_varies else [])
     # m29-5090 gate: dist 20 is 20 game units (~2 m): seen in 1.5-3.4 s at every skill (flat); 100 units ~ 10 m.
     # The READY check was "where <obs>", whose dist= is from the search origin (pinned Avarek, ~80 away), not from
@@ -589,8 +596,8 @@ def gen_detect(p):
               "stealth %s off" % WORKER,
               ("@until 30 teleport %s %s %s %s ~ moved=1" % ((WORKER,) + tuple(DETECT_SPOT)) if DETECT_SPOT
                else "teleport %s %s dist 60" % (WORKER, OTHER)),
-              "@set OBS spawn \"Hungry Bandit\" Drifters near %s dist %d count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)"
-              % (WORKER, d),
+              "@set OBS spawn \"Hungry Bandit\" Drifters near %s dist %d count 1%s ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)"
+              % (WORKER, d, "" if sneaker_varies else " race \"%s\"" % GEAR_RACES),
               "setname ${OBS} %s" % obs,
               # m27-4080 (pg-87/87-fs/89 batch19): the observer still ran 200-3000 m away during detecttime even
               # with the sneaker teleported to him (HOLD_POSITION did not help): pin him (harness c4fa520) where he
