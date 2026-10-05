@@ -203,7 +203,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 253 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): high-quality crafted items roll |
 | 254 | PASS-live (mechanical) | `tests/ingame/auto-home/pg-74-walktime.sh` 34/0, 5090 m36 batch Y3: runspeed max 81.8 -> 113.1 u/s with +50% Athletics gear (+38%), 300-unit (~30 m) runs avg 75.8 -> 80.6 u/s (+6%, acceleration dominates short runs); balance open (`C:\KenshiTestRuns\m22\out-y3\pg-74-walktime.txt`) |
 | 255 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
-| 256 | NEEDS-SETUP | swim gear in the mod stack + a water route |
+| 256 | PASS-live (negative) + PASS-offline (positive) | the mod stack has no swim-named item (gamedata/rebirth/Newwworld/UWE/patch .mod strings: only `swim speed mult`/`swimming mult` fields; the SWIM_GEAR tag needs swim/diving/diver/flipper/wetsuit in the name), and 554,143 `roll source` lines in 365 archived ProfessionGear.logs (C:\KenshiTestRuns\logs, m37) contain 0 Swimming affixes and 0 SWIM_GEAR tags = Swimming never lands on invalid gear; the positive side (a Diving Suit gets SWIM_GEAR/Swimming) is the offline classifier test `tests/test_profession_gear.cpp`, and a forced Swimming affix applies live (194). No water-route run possible without swim gear in the stack |
 | 257 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 258–271 | DEFERRED | by design (Shay): FCS profession items and selective stacking are later goals |
 | 272 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
