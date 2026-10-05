@@ -159,8 +159,10 @@ stat Beaks medic ~ wounds=1\.0000
 speed 0
 @echo BAL2,191,medic_fs,25,0,none,g1,heal,0,${H},-
 pg_statprobe read
-give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
 # --- g2: skill 25, gear own50 ---
 setstat Beaks medic 25
 pg_clear Beaks ~ cleared affixes
@@ -181,8 +183,10 @@ stat Beaks medic ~ wounds=1\.0000
 speed 0
 @echo BAL2,191,medic_fs,25,50,own50,g2,heal,0,${H},-
 pg_statprobe read
-give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
 # --- g3: skill 90, gear none ---
 setstat Beaks medic 90
 pg_clear Beaks ~ cleared affixes
@@ -202,8 +206,10 @@ stat Beaks medic ~ wounds=1\.0000
 speed 0
 @echo BAL2,191,medic_fs,90,0,none,g3,heal,0,${H},-
 pg_statprobe read
-give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
 # --- g4: skill 25, gear none ---
 setstat Beaks medic 25
 pg_clear Beaks ~ cleared affixes
@@ -223,8 +229,10 @@ stat Beaks medic ~ wounds=1\.0000
 speed 0
 @echo BAL2,191,medic_fs,25,0,none,g4,heal,0,${H},-
 pg_statprobe read
-give Beaks "Standard First Aid Kit" 1
 hunger Beaks 280
+drop Beaks "Basic First Aid Kit" all
+drop Beaks "Standard First Aid Kit" all
+give Beaks "Standard First Aid Kit" 5
 health Avarek 100
 protect Avarek on
 pg_formulas off

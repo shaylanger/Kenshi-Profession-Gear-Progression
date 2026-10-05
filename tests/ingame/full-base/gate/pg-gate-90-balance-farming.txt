@@ -53,9 +53,14 @@ setstat Beaks farming 25
 pg_clear Beaks ~ cleared affixes
 pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
+clearjobs Beaks
 speed 20 hold
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
+job Beaks "Wheat Farm L" radius 1000
+speed 10 hold
+@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -83,9 +88,14 @@ pg_clear Beaks ~ cleared affixes
 pg_force_affix Beaks "Iron Hat" farming 50 tier 6 ~ affixes=
 pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
+clearjobs Beaks
 speed 20 hold
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
+job Beaks "Wheat Farm L" radius 1000
+speed 10 hold
+@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -112,9 +122,14 @@ setstat Beaks farming 90
 pg_clear Beaks ~ cleared affixes
 pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
+clearjobs Beaks
 speed 20 hold
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
+job Beaks "Wheat Farm L" radius 1000
+speed 10 hold
+@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY
@@ -141,9 +156,14 @@ setstat Beaks farming 25
 pg_clear Beaks ~ cleared affixes
 pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
+clearjobs Beaks
 speed 20 hold
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
+speed 0
+job Beaks "Wheat Farm L" radius 1000
+speed 10 hold
+@until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
 @echo READY

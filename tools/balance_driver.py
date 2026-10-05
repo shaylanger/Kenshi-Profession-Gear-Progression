@@ -368,7 +368,13 @@ def gen_operate(p):
               "setstat %s %s %d" % (WORKER, p["setstat"], skill)] + gear_lines(WORKER, p["prof"], gear)
         day = DAYLIGHT % (WORKER, p["setstat"])
         if p.get("daylight"):
-            L += ["speed 20", "@until 2400 " + DAYTIME, "@until 1200 " + day, "speed 0"]
+            # m41-5090 probe-farm: worked through the night wait (speed 20) the farm finished a whole crop (output
+            # progress 72, 13 Wheatstraw in out), then sat IMPOSSIBLE with operators 0/4 and every later window read 0:
+            # the worker stops during the wait and takes the job back (and works again) once it is day
+            L += ["clearjobs %s" % WORKER,
+                  "speed 20", "@until 2400 " + DAYTIME, "@until 1200 " + day, "speed 0",
+                  'job %s "%s" radius 1000' % (WORKER, b), "speed 10",
+                  '@until 300 pg_operate "%s" radius 100 near %s ~ calls=[1-9]' % (b, WORKER), "speed 0"]
         L += ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1])]
         L += ready(AWAKE, HASJOB, *([day, DAYTIME] if p.get("daylight") else []))
         L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),

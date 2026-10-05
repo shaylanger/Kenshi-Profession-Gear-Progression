@@ -3,7 +3,7 @@
 # gate: validation gate (RUN_ORDER.md): g1 skill 25 gear none, g2 skill 25 gear own50, g3 skill 90 gear none, g4 skill 25 gear none, same fixture and method as the matrix file
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
 # reset: fresh
-# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest; harness 6a64ee8+ (spawn race filter: the observer wears the Iron Hat, which UWE excludes for Reptiloid/Sharkoloid/Dragoloid)
 # design: a fresh neutral observer per point (Hungry Bandit, Drifters, renamed PGW<n>) spawned 100 m from Beaks,
 #   who sneaks (detecttime: sneak on). Result = game seconds until seen
 #   (timeout 180 s). The observer's skill/gear varies (perception).
@@ -45,7 +45,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW1
 pin PGW1 at Beaks dist 100 face Beaks ~ pinned
 relation PGW1 0
@@ -82,7 +82,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW2
 pin PGW2 at Beaks dist 100 face Beaks ~ pinned
 relation PGW2 0
@@ -120,7 +120,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW3
 pin PGW3 at Beaks dist 100 face Beaks ~ pinned
 relation PGW3 0
@@ -157,7 +157,7 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
-@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+@set OBS spawn "Hungry Bandit" Drifters near Beaks dist 100 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
 setname ${OBS} PGW4
 pin PGW4 at Beaks dist 100 face Beaks ~ pinned
 relation PGW4 0
