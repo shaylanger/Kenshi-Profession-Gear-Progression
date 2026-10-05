@@ -1930,26 +1930,28 @@ float g_medicKitLastQ = 0, g_medicKitLastScaled = 0;
 unsigned long g_medicKitCalls = 0;
 struct ScopedKit {
   Item* it; float saved; bool on;
-  ScopedKit(Item* eq, Character* who, const char* what) : it(eq), saved(0), on(false) {
+  ScopedKit(Item* eq, Character* who, const char* what, float skill) : it(eq), saved(0), on(false) {
     if(!g_medicKitScaling || !g_formulaScaling || !g_cfg.enabled || !eq || !who) return;
     float pct=0;
     try { pct=EquippedBonus(who,PGP::STAT_MEDIC); } catch (...) { return; }
     if(pct==0.0f) return;
-    saved=eq->quality; const float q=PGP::ScaledKitQuality(saved,pct);
+    saved=eq->quality; const float q=PGP::ScaledKitQuality(saved,pct,skill);
     if(q==saved) return;
     eq->quality=q; on=true; ++g_medicKitCalls; g_medicKitLastQ=saved; g_medicKitLastScaled=q;
     if(g_medicKitLogN<6){ ++g_medicKitLogN; std::ostringstream ss;
-      ss<<"medic kit "<<what<<" who="<<who->getName()<<" quality="<<saved<<" pct="<<pct<<" scaled="<<q; Log(ss.str()); }
+      ss<<"medic kit "<<what<<" who="<<who->getName()<<" quality="<<saved<<" pct="<<pct<<" skill="<<skill<<" scaled="<<q; Log(ss.str()); }
   }
   ~ScopedKit(){ if(on) it->quality=saved; }
 };
 bool HookFirstAid(void* m,float skill,Item* eq,float t,Character* who){
-  ScopedKit k(eq,who,"firstaid");
-  return g_firstAidOrig?g_firstAidOrig(m,MedicSkill(skill,who,"firstaid"),eq,t,who):false;
+  const float s=MedicSkill(skill,who,"firstaid");
+  ScopedKit k(eq,who,"firstaid",s);
+  return g_firstAidOrig?g_firstAidOrig(m,s,eq,t,who):false;
 }
 bool HookDoctoring(void* m,float skill,Item* eq,float t,Character* who){
-  ScopedKit k(eq,who,"doctoring");
-  return g_doctoringOrig?g_doctoringOrig(m,MedicSkill(skill,who,"doctoring"),eq,t,who):false;
+  const float s=MedicSkill(skill,who,"doctoring");
+  ScopedKit k(eq,who,"doctoring",s);
+  return g_doctoringOrig?g_doctoringOrig(m,s,eq,t,who):false;
 }
 int KahMedicKit(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   if(argc>=2){ const std::string v=PGP::Lower(argv[1]); g_medicKitScaling=(v=="on"||v=="1"||v=="true"); }

@@ -492,9 +492,16 @@ float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
   return result;
 }
 
-float ScaledKitQuality(float quality, float medicPercent) {
+float ScaledKitQuality(float quality, float medicPercent, float effectiveSkill) {
   if (quality <= 0.0f || medicPercent == 0.0f) return quality;
-  return EffectiveStatValue(quality, medicPercent, false, 150.0f);
+  float q = EffectiveStatValue(quality, medicPercent, false, 150.0f);
+  // m41 pg-93: a kit raised above the medic's boosted skill heals slower (Medic 25 +50%: kit 40 -> 60 vs skill
+  // 37.5 = 0.72x), so the kit is raised at most to that skill and never lowered below its own quality.
+  if (effectiveSkill >= 0.0f) {
+    const float lim = effectiveSkill > quality ? effectiveSkill : quality;
+    if (q > lim) q = lim;
+  }
+  return q;
 }
 
 float AccelerationScale(float athleticsPercent) {

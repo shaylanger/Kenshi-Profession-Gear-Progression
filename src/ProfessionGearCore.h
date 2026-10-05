@@ -172,7 +172,7 @@ float EffectiveStatValue(float baseValue, float totalPercent, bool unmodified,
 // Medic kit quality (Shay D2, row 191): MedicalSystem::applyFirstAid/applyDoctoring heal at a rate set by
 // min(doctor skill, kit Item::quality), so a kit caps what Medic gear can do. The kit's quality is raised by the
 // same equipped Medic percent as the skill (cap 150): min(skill x f, quality x f) = f x min(skill, quality).
-float ScaledKitQuality(float quality, float medicPercent);
+float ScaledKitQuality(float quality, float medicPercent, float effectiveSkill = -1.0f);
 
 // Athletics acceleration (Shay D4, row 254): HavokCharacter::updateVelocity changes the velocity by at most
 // acceleration x frame time (speeding up and braking alike). Scale = 1 + Athletics% / 100, clamped 0.25..2.5.

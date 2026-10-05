@@ -344,6 +344,11 @@ int main(){
     Check(Eq((sk<qk?sk:qk),before*f),"medic 90 standard kit: +50% effective"); }
   { float s25=25,q=50; float sk=EffectiveStatValue(s25,50,false,150), qk=ScaledKitQuality(q,50);
     Check(Eq((sk<qk?sk:qk),37.5f),"medic 25 standard kit: skill boost only, no double dip"); }
+  // m41 pg-93 clamp: the kit rises at most to the boosted skill, never below its own quality
+  Check(Eq(ScaledKitQuality(40,50,37.5f),40),"medic 25 +50%: kit 40 not raised above skill 37.5");
+  Check(Eq(ScaledKitQuality(40,50,135),60),"medic 90 +50%: kit 40 -> 60 (skill 135 above)");
+  Check(Eq(ScaledKitQuality(40,50,50),50),"medic ~33 +50%: kit raised only to skill 50");
+  Check(Eq(ScaledKitQuality(40,0,10),40),"no gear: kit unchanged");
   // D4: acceleration scale
   Check(Eq(AccelerationScale(50),1.5f),"accel +50%");
   Check(AccelerationScale(0)==1.0f,"accel no gear");
