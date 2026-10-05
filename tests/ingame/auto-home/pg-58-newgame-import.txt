@@ -3,7 +3,7 @@
 #   policy), PG 240 (trader gear after new game/import: no stale sidecar record on replacement items)
 # fixture: auto-home copy (throwaway: this file saves kah-pg-import-src, then starts a new game; delete that save afterwards)
 # reset: fresh
-# needs: harness 5798EDF5 (KAH 21 `find start`, `newgame <start>`, `import <save> all`; the start is "Wanderer", sid 1980-gamedata.base); PG 7D80DBB3+; Forced + InGameTest
+# needs: harness 1a52214+ (newgame CONFIRM retried up to 2 min; was 5798EDF5: KAH 21 `find start`, `newgame <start>`, `import <save> all`; the start is "Wanderer", sid 1980-gamedata.base); PG 7D80DBB3+; Forced + InGameTest
 # verify:
 #   133: after `newgame` the census shows records only for items rolled now; ProfessionGear.log (grep after the
 #        "newgame" point) has no `restore item id=<K>` / `<K2>` line and no tier/base_mismatch from pg_check.
