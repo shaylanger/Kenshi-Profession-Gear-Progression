@@ -1,0 +1,155 @@
+# id: PG-pg-95-ranged-perception
+# covers: PG 199 (Perception gear validated on RANGED combat: crossbow accuracy; points 199a/199b/199c)
+# fixture: Testing-Save-Full-Base (squad Avarek + Beaks), on a kah-fullbase copy
+# reset: fresh
+# needs: ProfessionGearProgression.dll 9fd5a55+ (Perception back in the pools, pg_statprobe callers),
+#   harness d0a9b1f+ (KAH 26 `rangedtest`); client kah.py from the harness repo (LONG_COMMANDS rangedtest 1900 s);
+#   set_test_mode.ps1 -Mode Forced -Rules InGameTest
+# run (4080): python C:\KAH\client\kah.py run pg-95-ranged-perception.txt --csv pg95.csv
+#   then: python tools\ranged_gate.py pg95.csv   (one RESULT line per point)
+# design: Beaks (Crossbows fixed at 50, Toothpick + Bolts [Toothpicks], pinned) shoots a pinned hostile
+#   Hungry Bandit (PGRA/PGRB/PGRC, 40 m) with `rangedtest ... shots 20 attack`. Kenshi GunClass::shoot:
+#   acc01 = 0.005*Crossbows + 0.005*Perception (both via CharStats::getStat, the PG hook),
+#   dev = dev_base*(1-acc01). Points: a = Perception 25 no gear, b = Perception 90 no gear,
+#   c = Perception 25 + forced +50% Perception affix on the Iron Hat (effective 37.5).
+#   Expected acc01 a .375 b .70 c .4375; mean_dev ratio b/a .48, c/a .90.
+#   Each point: a warm-up (`@until` re-gives the attack order until a bolt flies), then the counted session,
+#   then `pg_statprobe callers` must list 0x874b84 (= RVA 0x43A5C2*2: the Perception getStat call in
+#   GunClass::shoot, return address 0x43A5C2) to prove the shot read Perception through the PG hook.
+# verify: python tools/ranged_gate.py <csv> -> RESULT 199a|199b|199c PASS|FAIL <evidence>.
+#   0 shots: see harness.log `KAH: rangedtest` (use_ranged_before / should_use_ranged / weapon) and the
+#   `rangedtest Beaks last` rows; hit_rate 0 or 1 everywhere: tune the dist (dev_base/range in the reply).
+@wait-world
+@sleep 8
+speed 0
+wake Beaks
+speed 1 hold
+@sleep 4
+speed 0
+protect Avarek on
+protect Beaks on
+health Beaks 100
+health Avarek 100
+blood Beaks 100%
+blood Avarek 100%
+hunger Beaks 280
+hunger Avarek 280
+select Beaks
+clearjobs Beaks
+pg_statprobe on Beaks
+pg_formulas off ~ formulaScaling=0
+wake Avarek
+pin Avarek ~ pinned
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks Avarek dist 60 ~ moved=1
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
+# --- kit: crossbow first (equip before the bolts are in, so "Toothpick" is not ambiguous) ---
+give Beaks "Toothpick" 1 ~ got 1/1
+equip Beaks "Toothpick"
+give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
+give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
+give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
+give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
+give Beaks "Iron Hat" 1
+equip Beaks "Iron Hat"
+pg_info Beaks "Iron Hat" ~ equipped=1
+pg_clear Beaks ~ cleared affixes
+setstat Beaks crossbows 50
+pin Beaks ~ pinned
+speed 1 hold
+@sleep 3
+speed 0
+# ================= 199a: Perception 25, gear none =================
+@echo POINT 199a perception=25 gear=none
+setstat Beaks crossbows 50
+setstat Beaks perception 25
+pg_clear Beaks ~ cleared affixes
+pg_bonus Beaks perception ~ equipped_bonus=0% .*match=1
+health Beaks 100
+blood Beaks 100%
+@set TA spawn "Hungry Bandit" Drifters near Beaks dist 40 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${TA} PGRA
+pin PGRA at Beaks dist 40 face Beaks ~ pinned
+relation PGRA -100
+speed 1 hold
+@sleep 3
+@until 420 rangedtest Beaks PGRA shots 2 timeout 90 attack ~ shots=[1-9]
+rangedtest Beaks last
+setstat Beaks crossbows 50
+setstat Beaks perception 25
+pg_statprobe callers
+@set RA rangedtest Beaks PGRA shots 20 timeout 400 attack ~ (complete=\d shots=[1-9].*)
+pg_statprobe callers ~ 0x874b84:[1-9]
+speed 0
+pin PGRA off ~ unpinned
+kill PGRA
+@until 30 teleport PGRA Beaks dist 300 ~ moved=1
+@echo RANGED 199a ${RA}
+# ================= 199b: Perception 90, gear none =================
+@echo POINT 199b perception=90 gear=none
+setstat Beaks crossbows 50
+setstat Beaks perception 90
+pg_clear Beaks ~ cleared affixes
+pg_bonus Beaks perception ~ equipped_bonus=0% .*match=1
+health Beaks 100
+blood Beaks 100%
+@set TB spawn "Hungry Bandit" Drifters near Beaks dist 40 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${TB} PGRB
+pin PGRB at Beaks dist 40 face Beaks ~ pinned
+relation PGRB -100
+speed 1 hold
+@sleep 3
+@until 420 rangedtest Beaks PGRB shots 2 timeout 90 attack ~ shots=[1-9]
+rangedtest Beaks last
+setstat Beaks crossbows 50
+setstat Beaks perception 90
+pg_statprobe callers
+@set RB rangedtest Beaks PGRB shots 20 timeout 400 attack ~ (complete=\d shots=[1-9].*)
+pg_statprobe callers ~ 0x874b84:[1-9]
+speed 0
+pin PGRB off ~ unpinned
+kill PGRB
+@until 30 teleport PGRB Beaks dist 300 ~ moved=1
+@echo RANGED 199b ${RB}
+# ================= 199c: Perception 25 + forced +50% Perception affix =================
+@echo POINT 199c perception=25 gear=perception50
+setstat Beaks crossbows 50
+setstat Beaks perception 25
+pg_clear Beaks ~ cleared affixes
+pg_force_affix Beaks "Iron Hat" perception 50 tier 6 ~ affixes=Perception:50
+pg_bonus Beaks perception ~ equipped_bonus=50% .*match=1
+health Beaks 100
+blood Beaks 100%
+@set TC spawn "Hungry Bandit" Drifters near Beaks dist 40 count 1 race "greenlander|scorchlander|shek" ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${TC} PGRC
+pin PGRC at Beaks dist 40 face Beaks ~ pinned
+relation PGRC -100
+speed 1 hold
+@sleep 3
+@until 420 rangedtest Beaks PGRC shots 2 timeout 90 attack ~ shots=[1-9]
+rangedtest Beaks last
+setstat Beaks crossbows 50
+setstat Beaks perception 25
+pg_bonus Beaks perception ~ equipped_bonus=50% .*match=1
+pg_statprobe callers
+@set RC rangedtest Beaks PGRC shots 20 timeout 400 attack ~ (complete=\d shots=[1-9].*)
+pg_statprobe callers ~ 0x874b84:[1-9]
+pg_bonus Beaks perception ~ equipped_bonus=50% .*match=1
+speed 0
+pin PGRC off ~ unpinned
+kill PGRC
+@until 30 teleport PGRC Beaks dist 300 ~ moved=1
+@echo RANGED 199c ${RC}
+# --- cleanup ---
+pg_clear Beaks ~ cleared affixes
+pin Beaks off ~ unpinned
+pin Avarek off ~ unpinned
+pg_statprobe off
+@echo DONE pg-95
