@@ -17,13 +17,15 @@ stobe-auto run "$SC" --csv "${OUT%.log}.csv" > "$OUT" 2>&1
 stobe-auto pg_accel on >/dev/null 2>&1
 STEPS=$(grep -oE '^== [0-9]+ passed, [0-9]+ failed' "$OUT" | tail -1)
 FAILED=$(echo "$STEPS" | awk '{print $4}'); FAILED=${FAILED:-?}
+# the run log truncates long lines (offscreen_frames fell off in m43): read the echoed values from the CSV
+DATA=${OUT%.log}.acc; cut -d, -f4- "${OUT%.log}.csv" 2>/dev/null > "$DATA"
 # field <key> <on|off>: median of that key over the ACC lines of one side ("" unless all 6 points have a number)
-field() { grep -oE "ACC a[0-9]+ $2 ms=.*" "$OUT" | awk -v k="$1" '{ok=0; for(i=1;i<=NF;i++){split($i,kv,"="); if(kv[1]==k && kv[2] ~ /^[0-9.]+$/){v[++m]=kv[2]+0; ok=1}} n++; if(!ok) bad=1}
+field() { grep -oE "ACC a[0-9]+ $2 ms=.*" "$DATA" | awk -v k="$1" '{ok=0; for(i=1;i<=NF;i++){split($i,kv,"="); if(kv[1]==k && kv[2] ~ /^[0-9.]+$/){v[++m]=kv[2]+0; ok=1}} n++; if(!ok) bad=1}
   END{ if(n==6 && !bad){ for(i=1;i<=m;i++) for(j=i+1;j<=m;j++) if(v[j]<v[i]){x=v[i];v[i]=v[j];v[j]=x}; printf "%.4f", (v[3]+v[4])/2 } }'; }
-HOOK=$(grep -oE 'ACCHOOK a[0-9]+ scaled=[0-9]+ npc=Beaks accel=[0-9.]+ athletics_pct=[0-9.]+ scale=[0-9.]+ handle_match=[0-9]' "$OUT" | tail -1 | cut -d' ' -f3-)
+HOOK=$(grep -oE 'ACCHOOK a[0-9]+ scaled=[0-9]+ npc=Beaks accel=[0-9.]+ athletics_pct=[0-9.]+ scale=[0-9.]+ handle_match=[0-9]' "$DATA" | tail -1 | cut -d' ' -f3-)
 tail_log() { [ "$1" = FAIL ] && echo " log=$OUT"; }
 # on-screen gate: points without follow=1, with offscreen_frames>0 or with no on-screen frames (harness b159c4c+)
-GATE=$(grep -oE "ACC a[0-9]+ (on|off) ms=.*" "$OUT" | awk '{f="";on="";off=""; for(i=1;i<=NF;i++){split($i,kv,"=");
+GATE=$(grep -oE "ACC a[0-9]+ (on|off) ms=.*" "$DATA" | awk '{f="";on="";off=""; for(i=1;i<=NF;i++){split($i,kv,"=");
     if(kv[1]=="follow")f=kv[2]; if(kv[1]=="onscreen_frames")on=kv[2]; if(kv[1]=="offscreen_frames")off=kv[2]}
   n++; if(f!="1" || on=="" || off=="" || off+0>0 || on+0==0){bad++; list=list sprintf(" %s(follow=%s on=%s off=%s)",$2,(f==""?"?":f),(on==""?"?":on),(off==""?"?":off))}
   else {ton+=on}}
