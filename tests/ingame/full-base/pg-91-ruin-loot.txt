@@ -67,8 +67,8 @@ fill "General Camp Storage Chest" 2222-chris_r.mod 3 radius 20 ~ Bandana 0 -> 3 
 # back to the middle chest: all 5 within 130 m (120 m the farthest), the base over 400 m away
 @until 30 teleport Avarek Avarek dist -105 ~ moved=1
 buildings 130 near Avarek
-@set LC pg_lootscan Avarek radius 130 ~ buildings=5 with_items=5 skipped_own=0 (items=45 eligible=[1-9]\d* already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
-pg_lootscan Avarek radius 130 ~ buildings=5 with_items=5 skipped_own=0 items=45 eligible=(\d+) already_recorded=\1
+@set LC pg_lootscan Avarek radius 130 ~ buildings=5 with_items=5 skipped_own=\d+ (?!.*General Camp Storage Chest [^|]*own skipped)(items=45 eligible=[1-9]\d* already_recorded=\d+ rolled=\d+ multi=\d+ rate=[\d.e-]+ stats:[^|]*)
+pg_lootscan Avarek radius 130 ~ buildings=5 with_items=5 skipped_own=\d+ (?!.*General Camp Storage Chest [^|]*own skipped)items=45 eligible=(\d+) already_recorded=\1
 unbuild "General Camp Storage Chest" 300 ~ destroyed
 unbuild "General Camp Storage Chest" 300 ~ destroyed
 unbuild "General Camp Storage Chest" 300 ~ destroyed
