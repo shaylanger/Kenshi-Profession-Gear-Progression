@@ -488,8 +488,10 @@ def gen_heal(p):
               % (WORKER, OTHER, p["cut"]),
               "speed 0",
               echo(p["rows"], p["prof"], skill, gear, label, "heal", 0, "${H}", "-"),
-              'give %s "%s First Aid Kit" 1' % (WORKER, HEAL_KIT),
-              "hunger %s 280" % WORKER]
+              "hunger %s 280" % WORKER] + clear_kits + [
+              # m33-4080: a plain `give 1` refill FAILed once Beaks held 16 kits (kit present, data valid):
+              # fresh kits for every point instead
+              'give %s "%s First Aid Kit" 5' % (WORKER, HEAL_KIT)]
     return L + ["health %s 100" % OTHER, "protect %s on" % OTHER]
 
 
