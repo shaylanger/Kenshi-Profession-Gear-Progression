@@ -361,6 +361,8 @@ static void AddStat(std::vector<ProfessionStat>& out, ProfessionStat s) {
   if (s!=STAT_NONE && std::find(out.begin(),out.end(),s)==out.end()) out.push_back(s);
 }
 
+bool StatRetired(ProfessionStat stat) { return stat==STAT_PERCEPTION; }
+
 std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags) {
   std::vector<ProfessionStat> out;
   for (size_t i=0;i<tags.size();++i) {
@@ -379,8 +381,8 @@ std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags) {
       case TAG_TOOL_COOKING: AddStat(out,STAT_COOKING); break;
       case TAG_GLOVES_WORK: AddStat(out,STAT_LABOURING); AddStat(out,STAT_ENGINEERING); break;
       case TAG_BOOTS_WORK: AddStat(out,STAT_LABOURING); AddStat(out,STAT_ATHLETICS); break;
-      case TAG_BOOTS_TRAVEL: case TAG_SCOUT_GEAR: AddStat(out,STAT_ATHLETICS); AddStat(out,STAT_PERCEPTION); break;
-      case TAG_TURRET_GEAR: AddStat(out,STAT_TURRETS); AddStat(out,STAT_PERCEPTION); break;
+      case TAG_BOOTS_TRAVEL: case TAG_SCOUT_GEAR: AddStat(out,STAT_ATHLETICS); break;
+      case TAG_TURRET_GEAR: AddStat(out,STAT_TURRETS); break;
       case TAG_STEALTH_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_LOCKPICKING); break;
       case TAG_ASSASSIN_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_ASSASSINATION); break;
       case TAG_THIEF_GEAR: AddStat(out,STAT_STEALTH); AddStat(out,STAT_LOCKPICKING); AddStat(out,STAT_THIEVERY); break;
@@ -392,7 +394,7 @@ std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags) {
         AddStat(out,STAT_ROBOTICS); AddStat(out,STAT_WEAPON_SMITH); AddStat(out,STAT_ARMOUR_SMITH);
         AddStat(out,STAT_CROSSBOW_SMITH); break;
       case TAG_GOGGLES_GENERIC:
-        AddStat(out,STAT_PERCEPTION); AddStat(out,STAT_SCIENCE); AddStat(out,STAT_ENGINEERING); AddStat(out,STAT_ROBOTICS); AddStat(out,STAT_TURRETS); break;
+        AddStat(out,STAT_SCIENCE); AddStat(out,STAT_ENGINEERING); AddStat(out,STAT_ROBOTICS); AddStat(out,STAT_TURRETS); break;
       default: break;
     }
   }

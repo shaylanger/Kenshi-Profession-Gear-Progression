@@ -573,7 +573,8 @@ void RebuildCharacterBonusCache(Character* c) {
     std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(equippedIds[i]);
     if(it==g_records.end()) continue;
     for(size_t j=0;j<it->second.affixes.size();++j)
-      totals[it->second.affixes[j].stat]+=it->second.affixes[j].percent;
+      if(!PGP::StatRetired(it->second.affixes[j].stat))
+        totals[it->second.affixes[j].stat]+=it->second.affixes[j].percent;
   }
   std::string characterKey;
   try { characterKey=c->getHandle().toString(); } catch (...) {}
@@ -698,8 +699,10 @@ void AppendTip(InventoryItemBase* base,Ogre::vector<StringPair>::type& lines) {
   EnterCriticalSection(&g_lock);
   std::map<std::string,PGP::AffixRecord>::const_iterator it=g_records.find(key);
   if(it!=g_records.end() && it->second.baseId==baseId && !it->second.affixes.empty()){
-    lines.push_back(StringPair("Profession Gear",""));
+    bool header=false;
     for(size_t j=0;j<it->second.affixes.size();++j){
+      if(PGP::StatRetired(it->second.affixes[j].stat)) continue;
+      if(!header){ lines.push_back(StringPair("Profession Gear","")); header=true; }
       std::ostringstream s; s<<"+"<<it->second.affixes[j].percent<<"%";
       lines.push_back(StringPair(PGP::StatName(it->second.affixes[j].stat),s.str()));
     }
@@ -1136,6 +1139,7 @@ int KahCheck(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   std::set<int> seen;
   for(size_t i=0;i<rec.affixes.size();++i){
     const PGP::Affix& a=rec.affixes[i];
+    if(PGP::StatRetired(a.stat)) continue;  // old record, inert by design
     if(std::find(pool.begin(),pool.end(),a.stat)==pool.end()) problems+=" illegal_stat("+PGP::StatName(a.stat)+")";
     if(a.percent<lo-0.051f || a.percent>hi+0.051f) problems+=" out_of_range("+PGP::StatName(a.stat)+")";
     if(!seen.insert((int)a.stat).second) problems+=" duplicate_stat("+PGP::StatName(a.stat)+")";
