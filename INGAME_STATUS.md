@@ -88,7 +88,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
   (harmless; lockpicking gear still works through getStat; fs == non-fs expected). Remove that hook in a later
   plugin change (not done now: the file was being edited for the engineering construction hook). A cage whose
   lock level <= skill reads a flat 0.9: real game behaviour, use a higher-level lock for the curve.
-- farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement.
+- farming (161-176, pg-90): crop/water state dominates (1.3k..6.8k per window): measurement. m44 (5090): 30-min farm windows are crop-capped (a ripe field = ~4 straw, cleared in 0.45-0.9 h); balance_driver now waits for a ripe crop and measures 12-min windows (bc3e687), gate m42/out-i4 PASS skill +78.6% gear +39.9%. The 4080 m35/m41 farm numbers used 30-min windows: re-measure is Shay's call.
 - perception (199, pg-89): never ran (batch 20 stopped).
 - pg-55 turret (192): the turret never picks a pinned dummy by itself (0 shots); harness `turret ... aim` designates it (dd72fa7). PASS 86/0 in batch W.
 - pg-51: PASS 67/0 in batch T (2026-10-04).
