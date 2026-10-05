@@ -38,6 +38,26 @@ health 100, over 3.4 game hours). Kept from 0da79eb: `stat <worker> <stat> ~ wou
 (it caught this); worker = Beaks with Avarek pinned (harmless). Batch 17-20 balance numbers are kept only as provisional
 direction; none is a fitted value.
 
+### Gate verdicts m31-m34 (2026-10-04; newest first wins over the older notes below)
+Mechanical = gear reaches the formula the game uses; balance = gear gain matches the skill curve (gatecheck PASS).
+- engineering_fs (83, 4080, PG 5DECDFA9 construction hook): PASS, gear +22.4% vs pred +22.8% (s25 3.78, s25+g 4.53, s90 8.09).
+- medic_fs (84, 4080, PG 3CAEEB30 medic hook v3): PASS, gear +44.6% vs pred +10.5% (s25 11.3, s25+g 17.1, s90 18.3):
+  the healing curve saturates, so +50% gear brings skill 25 close to skill 90 speed (balance note for Shay).
+- farming (90, 4080, daylight 10:37-13:00): PASS, gear +101.7% vs pred +88.6% (JobOperateScaling), drift 2.2%.
+- lockpicking (88/88fs/92/92fs, 5090 m31a): PASS with the game's exponential chance (gatecheck a8727aa): 88 gear
+  +138.1% vs pred +137.8%, 92 +41.4% = pred (cap 0.9).
+- thievery 88: PASS (+50% = pred). assassination_fs 88: PASS (+24.9% = pred); non-fs gear 0 (raw member, by design).
+- stealth (87, 5090 m31b): fs PASS (gear +33.3% vs pred +41.7%); non-fs PASS skill, gear unresolved (raw member).
+- perception (89): FAIL flat at d100 (5090), d180/d500/d800 (4080): seen in 1.1-2.2 s at every Perception and
+  distance. Native evidence (4080 m34 pg-diag-perc-watch): a DR0 watchpoint on CharStats::perception (+0x8C) of the
+  observer had 0 hits during detection and getStat(Perception) is not called per frame; observer_perception_mult
+  stays 0.5 at Perception 25 and 90. Game behaviour: 1.0.65 sneak detection does not read the observer's
+  Perception here, so neither skill nor gear can move it. Gear reaches getStat (eff 29 -> 43.5) = mechanical PASS
+  for getStat only; balance not measurable (Shay decision whether Perception gear keeps a purpose).
+- athletics_fs (85, 4080 m34, PG 3CAEEB30, harness 2B51AF08): PASS, run speed s25 69.5, s25+g 78.6, s90 85.4, drift
+  2.4%; gear +14.5% vs linear pred +4.7% (m29b same: +14.6/+5.6): the run-speed curve is steep at low skill, so gear at
+  s25 buys more than the average skill point. swimming_fs (86, 5090 m29b): PASS (gear +38% vs pred +19%).
+
 ### Mechanical passes (gear applies; native pg_bonus match=1, effective = vanilla x (1 + bonus))
 - weapon/armour/crossbow smithing, robotics, cooking, science, thievery: pg_bonus match=1 at own +25/+50%
   (batches 19/20 + m29 Avarek gate). Thievery chance: own50 at s50 = s75 value (gear reaches the chance).
