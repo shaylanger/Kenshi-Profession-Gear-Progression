@@ -3,11 +3,15 @@
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks), on a kah-fullbase copy
 # reset: fresh
 # needs: ProfessionGearProgression.dll 9fd5a55+ (Perception back in the pools, pg_statprobe callers),
-#   harness d0a9b1f+ (KAH 26 `rangedtest`); client kah.py from the harness repo (LONG_COMMANDS rangedtest 1900 s);
+#   harness 93d03e3+ (KAH 26 `rangedtest`; m46: `attack` gives crossbow users the ranged order, `rangedinfo`); client kah.py from the harness repo (LONG_COMMANDS rangedtest 1900 s);
 #   set_test_mode.ps1 -Mode Forced -Rules InGameTest
 # run (4080): python C:\KAH\client\kah.py run pg-95-ranged-perception.txt --csv pg95.csv
 #   then: python tools\ranged_gate.py pg95.csv   (one RESULT line per point)
-# design: Beaks (Crossbows fixed at 50, Toothpick + Bolts [Toothpicks], pinned) shoots a pinned hostile
+# design: Beaks (Crossbows fixed at 50, pinned; his crossbow comes from a spawned "Mercenary Crossbowman"
+#   (PGXB): `give` can't create crossbows (the item factory returns nothing, m46), so the donor's bow is
+#   unequipped, transferred to Beaks and equipped, and Beaks gets the donor's ammo type (Kenshi doesn't use
+#   up the bolt stack; `reloads=` in the reply is the reload evidence). The bow type varies per spawn but is
+#   the same for all three points) shoots a pinned hostile
 #   Hungry Bandit (PGRA/PGRB/PGRC, 40 m) with `rangedtest ... shots 20 attack`. Kenshi GunClass::shoot:
 #   acc01 = 0.005*Crossbows + 0.005*Perception (both via CharStats::getStat, the PG hook),
 #   dev = dev_base*(1-acc01). Points: a = Perception 25 no gear, b = Perception 90 no gear,
@@ -50,13 +54,18 @@ speed 1 hold
 @sleep 3
 speed 0
 @until 30 teleport Beaks -75966.1 327.2 33085.7 ~ moved=1
-# --- kit: crossbow first (equip before the bolts are in, so "Toothpick" is not ambiguous) ---
-give Beaks "Toothpick" 1 ~ got 1/1
-equip Beaks "Toothpick"
-give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
-give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
-give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
-give Beaks "Bolts [Toothpicks]" 50 ~ got [1-9]\d*/50
+# --- kit: the crossbow of a spawned crossbowman (PGXB), moved to Beaks (game paused) ---
+@set XB spawn "Mercenary Crossbowman" Drifters near Beaks dist 6 count 1 ~ spawned 1/1 [^:]+: .+? (#\d+(?:/\d+)?)
+setname ${XB} PGXB
+@set BOW rangedinfo PGXB ~ bow=(.+?) has_ammo=1
+@set AMMO rangedinfo PGXB ~ ammo_type=(.+?) gun_user=
+unequip PGXB "${BOW}" ~ unequipped
+transfer PGXB Beaks "${BOW}" ~ transferred
+equip Beaks "${BOW}" ~ equipped
+give Beaks "${AMMO}" 20 ~ got [1-9]\d*/20
+kill PGXB
+@until 30 teleport PGXB Beaks dist 300 ~ moved=1
+rangedinfo Beaks ~ bow=.+ has_ammo=1 gun_active=1
 give Beaks "Iron Hat" 1
 equip Beaks "Iron Hat"
 pg_info Beaks "Iron Hat" ~ equipped=1
