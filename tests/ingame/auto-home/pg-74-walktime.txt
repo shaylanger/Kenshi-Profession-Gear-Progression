@@ -3,10 +3,11 @@
 # fixture: auto-home
 # reset: fresh
 # needs: harness 5798EDF5 (KAH 15-21) (`runspeed <npc>`, `walktime <npc> <dist> run`: seconds= speed=; +x path must be open, 180 s max); PG 7D80DBB3+;
-#   Forced + InGameTest. Malzin runs 40 m along +x and back (-x is not possible: each run starts where the last ended, so
+#   Forced + InGameTest; harness 05fd291+ (walktime axis). Malzin runs 300 units (~30 m) along an axis (+x here; pg-74-walktime.sh probes
+#   +x/-x/+z/-z and runs this file on the first reachable one; 40 units = ~4 m took ~1 s = noise, m35 batch X) Each run starts where the last ended, so
 #   she is teleported back next to Shay before every run).
 # verify: walktime speed (m/s) with +50% Athletics > without (3 runs each, echoed; the measure for row 254). `runspeed` is a
-#   diagnostic only: its max_speed read 80.0 with and without gear (m16-4080), a cap, not the athletics-driven run speed.
+#   diagnostic only: its max_speed read 80.0 with and without gear (m16-4080); m35 batch X read 80.0 -> 92.4 with +50%.
 #   Athletics base unchanged at the end. Walks need the game running: speed 1 (at speed 0 nobody moves).
 @wait-world
 @sleep 8
@@ -19,25 +20,25 @@ speed 1
 @set RS0 runspeed Malzin ~ (max_speed=[\d.]+)
 teleport Malzin Shay dist 3
 @sleep 2
-@set T1 walktime Malzin 40 run ~ (seconds=[\d.]+ speed=[\d.]+)
+@set T1 walktime Malzin 300 +x run ~ (seconds=[\d.]+ speed=[\d.]+)
 teleport Malzin Shay dist 3
 @sleep 2
-@set T2 walktime Malzin 40 run ~ (seconds=[\d.]+ speed=[\d.]+)
+@set T2 walktime Malzin 300 +x run ~ (seconds=[\d.]+ speed=[\d.]+)
 teleport Malzin Shay dist 3
 @sleep 2
-@set T3 walktime Malzin 40 run ~ (seconds=[\d.]+ speed=[\d.]+)
+@set T3 walktime Malzin 300 +x run ~ (seconds=[\d.]+ speed=[\d.]+)
 pg_force_affix Malzin "Black Cloth Shirt" athletics 50 tier 6 ~ affixes=Athletics:50
 pg_bonus Malzin athletics ~ equipped_bonus=50% .*match=1
 @set RS1 runspeed Malzin ~ (max_speed=[\d.]+)
 teleport Malzin Shay dist 3
 @sleep 2
-@set G1 walktime Malzin 40 run ~ (seconds=[\d.]+ speed=[\d.]+)
+@set G1 walktime Malzin 300 +x run ~ (seconds=[\d.]+ speed=[\d.]+)
 teleport Malzin Shay dist 3
 @sleep 2
-@set G2 walktime Malzin 40 run ~ (seconds=[\d.]+ speed=[\d.]+)
+@set G2 walktime Malzin 300 +x run ~ (seconds=[\d.]+ speed=[\d.]+)
 teleport Malzin Shay dist 3
 @sleep 2
-@set G3 walktime Malzin 40 run ~ (seconds=[\d.]+ speed=[\d.]+)
+@set G3 walktime Malzin 300 +x run ~ (seconds=[\d.]+ speed=[\d.]+)
 stat Malzin athletics ~ base=3[01]\.
 @echo runspeed no gear / +50%: ${RS0} / ${RS1}
 @echo no gear: ${T1} | ${T2} | ${T3}
