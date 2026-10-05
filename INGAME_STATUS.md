@@ -12,8 +12,8 @@ States: **PASS-offline** (core tests / build gates / source contracts), **PASS-l
 | State | Rows |
 |---|---|
 | PASS-offline | 71 |
-| PASS-live | 181 |
-| PENDING-auto | 25 |
+| PASS-live | 182 |
+| PENDING-auto | 24 |
 | NEEDS-SETUP | 30 |
 | NEEDS-SHAY | 10 |
 | DEFERRED | 26 |
@@ -198,7 +198,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 244 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 245 | PASS-live | `C:\KenshiTestRuns\m6\pg-41.out` (archive/test-run-2026-10-03-m5.md) launch 4: 30 world-loot Rattan Hats (tier 6, chance .96 x .5 = .48) rolled 15/30 = .50 |
 | 246–249 | PASS-live | `C:\KenshiTestRuns\m4\pg-07-worldloot.out` (archive/test-run-2026-10-03-m4.md) 31/0 |
-| 250 | PENDING-auto | `tests/ingame/full-base/pg-91-ruin-loot.txt` (own launch, NormalVerbose + Normal + empty sidecar; PG 266C68F5 `pg_lootscan` + harness `towns`): a Drifters-owned chest filled with 15 gear types x 3 at the base, then the 3 nearest ruins/labs by teleport; verdict `tools/analyze_loot.py` |
+| 250 | PASS-live | `tests/ingame/full-base/pg-91-ruin-loot.txt` batch Z2 (m39, out-z2, kah-fullbase, NormalVerbose + Normal + empty sidecar; PG 81D89609, lootscan scans furniture): 5 Drifters chests, scan items=45 eligible=24 rolled=10; re-scan already_recorded=24 (=eligible), rolled unchanged; `tools/analyze_loot.py` verdict PASS (share 0.37 in 0.15..0.60, 12 stats, top 16%). Own base benches in the radius correctly skipped (skipped_own=2). Note: the 3 nearest ruins had no filled containers (items=0) |
 | 251–252 | PASS-offline | core unique/legendary tests; a live check needs a unique item instance in a fixture |
 | 253 | PASS-live | `C:\KenshiTestRuns\m8\pg-11-real-craft.out` 39/0 + that launch's ProfessionGear.log (archived under `C:\KenshiTestRuns\logs\`): high-quality crafted items roll |
 | 254 | PASS-live (mechanical) | `tests/ingame/auto-home/pg-74-walktime.sh` 34/0, 5090 m36 batch Y3: runspeed max 81.8 -> 113.1 u/s with +50% Athletics gear (+38%), 300-unit (~30 m) runs avg 75.8 -> 80.6 u/s (+6%, acceleration dominates short runs); balance open (`C:\KenshiTestRuns\m22\out-y3\pg-74-walktime.txt`) |
