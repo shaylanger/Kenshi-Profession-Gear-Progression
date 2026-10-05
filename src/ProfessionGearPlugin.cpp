@@ -106,8 +106,9 @@ bool g_jobOperateScaling = true;   // default on since run m16 (row 177)
 // (Shay D1, 2026-10-05); FarmOperateScaling=true in the ini brings the old double scaling back.
 bool g_farmOperateScaling = false;
 // With FarmOperateScaling off, FarmOperateBonusFactor of the Farming gear bonus is still added to the farm amount
-// (m41 4080: native alone +15.9% at +50%; 0.15 brings it to ~+25%, Shay D1 ~0.5% output per 1% gear).
-float g_farmOperateBonusFactor = 0.15f;
+// (Shay m45, 2026-10-05: 0.5. 5090 per-call matrix: native alone +15.8% for +50% gear at s25; 0.15 gave +33% at
+// s50; the s75 > s25+50% rule (row 206) holds up to ~0.79, 0.5 keeps a ~10% margin).
+float g_farmOperateBonusFactor = 0.5f;
 // Row 89 (TEST ONLY, off by default, never read from the ini): pg_force_critical on makes
 // CraftingBuilding::calculateCriticalChance answer 1.0, so the next real craft is a critical
 // success and the roll can be checked against the better finished quality.
