@@ -178,6 +178,12 @@ float ScaledKitQuality(float quality, float medicPercent);
 // acceleration x frame time (speeding up and braking alike). Scale = 1 + Athletics% / 100, clamped 0.25..2.5.
 float AccelerationScale(float athleticsPercent);
 
+// Farm work (Shay D1, row 206): farms already read the hooked Farming stat (m41 4080: +50% gear at skill 50 =
+// +15.9% output), so only a part of the gear bonus is added to the FarmBuilding::operate amount to reach the
+// ~0.5% output per 1% gear target. Scale = 1 + factor x Farming% / 100; factor clamped 0..1 (1 = the old full
+// FarmOperateScaling), scale clamped 0.25..2.5.
+float FarmOperatePartialScale(float farmingPercent, float factor);
+
 // 0..1 wealth/competence from the NPC's best profession skill; < 0.15 (best skill < 12) = poor.
 float WealthFromBestSkill(float bestSkill);
 

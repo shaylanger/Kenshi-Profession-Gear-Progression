@@ -349,6 +349,17 @@ int main(){
   Check(AccelerationScale(0)==1.0f,"accel no gear");
   Check(AccelerationScale(-200)==0.25f,"accel floor");
   Check(AccelerationScale(400)==2.5f,"accel cap");
+  // D1: farm operate partial scale
+  Check(Eq(FarmOperatePartialScale(50,0.15f),1.075f),"farm +50% factor 0.15");
+  Check(Eq(FarmOperatePartialScale(25,0.15f),1.0375f),"farm +25% factor 0.15");
+  Check(FarmOperatePartialScale(0,0.15f)==1.0f,"farm no gear");
+  Check(FarmOperatePartialScale(50,0)==1.0f,"farm factor 0 = native only");
+  Check(FarmOperatePartialScale(50,-1)==1.0f,"farm negative factor = native only");
+  Check(Eq(FarmOperatePartialScale(50,3),1.5f),"farm factor capped at full scaling");
+  Check(Eq(FarmOperatePartialScale(-50,0.15f),0.925f),"farm negative gear");
+  { // m41 4080: native +15.9% at s50 +50%; with 0.15: ~+24.6% (target ~+25%); s25+50 (0.4403) x1.075 < s75 0.6332
+    Check(Eq(1.159f*FarmOperatePartialScale(50,0.15f),1.2459f),"farm s50 +50% total ~+25%");
+    Check(0.4403f*FarmOperatePartialScale(50,0.15f)<0.6332f,"farm s75 still beats s25+50 (row 206)"); }
 
   tags.clear();tags.push_back(TAG_PACK_ORE);
   Check(Eq(SpecialistPackItemWeightMultiplier(tags,"Raw Iron","raw_iron",false),.25f),"ore pack raw iron");

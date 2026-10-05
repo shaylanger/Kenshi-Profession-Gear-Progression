@@ -504,6 +504,15 @@ float AccelerationScale(float athleticsPercent) {
   return s;
 }
 
+float FarmOperatePartialScale(float farmingPercent, float factor) {
+  if (factor <= 0.0f || farmingPercent == 0.0f) return 1.0f;
+  if (factor > 1.0f) factor = 1.0f;
+  float s = 1.0f + factor * farmingPercent / 100.0f;
+  if (s < 0.25f) s = 0.25f;
+  if (s > 2.5f) s = 2.5f;
+  return s;
+}
+
 float WealthFromBestSkill(float bestSkill) {
   // Was 0.2 + best*0.8/100 (never below 0.2), so the poor-NPC multiplier (wealth < 0.15) only
   // ever applied to slaves. Now linear up to skill 80: best skill below 12 counts as poor.
