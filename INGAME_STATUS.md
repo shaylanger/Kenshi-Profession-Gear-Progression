@@ -137,7 +137,7 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 109–116 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 117 | PASS-live | LIVE_TEST_PROGRESS.md "Generic backpack live weight control - PASS" (rechecked in pg-04) |
 | 118–119 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
-| 120 | PENDING-auto | `tests/ingame/auto-home/pg-73-pack-weight-edge.txt` (harness 5798EDF5 `packweight` inventory/ground/chest/nested) |
+| 120 | PASS-live | `tests/ingame/auto-home/pg-73-pack-weight-edge.txt` 26/0, 5090 m36 batch X (`C:\KenshiTestRuns\m22\out-x\pg-73-packweight.txt`) |
 | 121–122 | PASS-live | `C:\KenshiTestRuns\m3\pg-04-backpacks.out` (archive/test-run-2026-10-03-m3.md) 69/0 |
 | 123–124 | PASS-live | LIVE_TEST_PROGRESS.md "Persistence v2 live verification" + Phase 2 (restart) |
 | 125 | PASS-live | LIVE_TEST_PROGRESS.md Phase 1 live scan: no sidecar at the first launch, created safely |
@@ -155,10 +155,10 @@ Mechanical = gear reaches the formula the game uses; balance = gear gain matches
 | 148 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 149 | PASS-live | `C:\KenshiTestRuns\m5\pg-30.out` (archive/test-run-2026-10-03-m5.md) 21/0 (launch 2, AutoClassify off) |
 | 150 | PASS-live | `C:\KenshiTestRuns\m6\pg-31.out` (archive/test-run-2026-10-03-m5.md) 12/0 (launch 3); log "loaded affixes=3 legacyIgnored=1", no roll line |
-| 151–152 | PENDING-auto | `tests/ingame/auto-home/pg-15-crowd-frametime.txt` (harness `fps` worst_ms/avg with 100 and 300 spawned characters), run in launch 1 (PG on) and launch 3 (PG disabled) and compare. Launch 1 done: `C:\KenshiTestRuns\m16\pg\pg-15-crowd-frametime.out` 56/0 (DLL 7D80DBB3): baseline avg 57.5 fps, 100 spawned avg 56.8 worst 148 ms, 300 spawned avg 44.2 worst 155 ms; launch 3 (PG off) still to run |
+| 151–152 | PASS-live | `tests/ingame/auto-home/pg-15-crowd-frametime.txt`, 5090 same session, m36 batch X (PG Forced) vs Y2 (PG Disabled, `config enabled=0`, 0 rolls): 100 spawned avg 56.7 vs 59.7 fps (-5%), worst 232.4 vs 177.7 ms (1.31x); 300 spawned avg 48.9 vs 51.2 (-4.5%), worst 169.6 vs 167.7 (1.01x); pass = within ~10% / <=1.5x (`C:\KenshiTestRuns\m22\out-x\pg-15-on.txt`, `out-y2\pg-15-off.txt`) |
 | 153–154 | PASS-live | `C:\KenshiTestRuns\m2\pg-01-startup-stability.out` (archive/test-run-2026-10-03-m2.md) 50/0 |
 | 155 | NEEDS-SHAY | feel: repeated tooltip opening / shop-open stall |
-| 156 | PENDING-auto | `tests/ingame/auto-home/pg-09-soak.txt` (30 real min at 50x, Shay and Malzin protected) |
+| 156 | PASS-live | `tests/ingame/auto-home/pg-09-soak.txt` 24/0, 5090 m36 batch X: 30 real min at 50x, health ok, forced Farming 20% unchanged at the end; a Hungry Bandit raid hit, protect held (`C:\KenshiTestRuns\m22\out-x\pg-09-soak.txt`) |
 | 157 | PASS-live | `C:\KenshiTestRuns\m2\pg-01-startup-stability.out` (archive/test-run-2026-10-03-m2.md) 50/0 |
 | 158 | PASS-live | `C:\KenshiTestRuns\m4\pg-02-equip-stats.out` (archive/test-run-2026-10-03-m4.md) 115/0 (83 with +400%: vanilla effective is ~31% of base for Malzin) |
 | 159 | PASS-live | `C:\KenshiTestRuns\m4\pg-03-identity.out` (archive/test-run-2026-10-03-m4.md) 44/0 |
