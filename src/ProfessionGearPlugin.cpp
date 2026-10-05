@@ -100,6 +100,10 @@ struct OperateStats {
 };
 std::map<Building*, OperateStats> g_operateStats;
 bool g_jobOperateScaling = true;   // default on since run m16 (row 177)
+// Farms read the hooked Farming stat themselves (row 331: +50% Farming raised the native amount 195 -> 240),
+// so scaling the farm amount too counted the bonus twice (m35 row 206: +50% gear = +108.7%). Off by default
+// (Shay D1, 2026-10-05); FarmOperateScaling=true in the ini brings the old double scaling back.
+bool g_farmOperateScaling = false;
 // Row 89 (TEST ONLY, off by default, never read from the ini): pg_force_critical on makes
 // CraftingBuilding::calculateCriticalChance answer 1.0, so the next real craft is a critical
 // success and the roll can be checked against the better finished quality.
@@ -1652,7 +1656,7 @@ float HookCritChance(CraftingBuilding* b, Character* smith) {
 }
 
 void HookFarmOperate(Building* b, Character* who, float amount) {
-  const float scaled=amount*OperateScale(b,who,PGP::STAT_FARMING);
+  const float scaled=g_farmOperateScaling ? amount*OperateScale(b,who,PGP::STAT_FARMING) : amount;
   if(g_farmOperateOrig) g_farmOperateOrig(b,who,scaled);
   float out=0; try { ProductionBuilding* pb=dynamic_cast<ProductionBuilding*>(b); if(pb) out=pb->getOutput(); } catch (...) {}
   RecordOperate(b,who,amount,scaled,out);
@@ -1930,6 +1934,7 @@ void LoadConfig() {
     else if(k=="worldlootmultiplier") g_cfg.worldLootMultiplier=(float)atof(v.c_str());
     else if(k=="maxaffixes") g_cfg.maxAffixes=atoi(v.c_str());
     else if(k=="joboperatescaling") g_jobOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
+    else if(k=="farmoperatescaling") g_farmOperateScaling=(v!="0"&&PGP::Lower(v)!="false");
     else if(k=="formulascaling") g_formulaScaling=(v!="0"&&PGP::Lower(v)!="false");
   }
   PGP::NormalizeConfig(g_cfg);
@@ -1991,7 +1996,7 @@ __declspec(dllexport) void startPlugin() {
       <<" poorNpcMultiplier="<<g_cfg.poorNpcMultiplier
       <<" worldLootMultiplier="<<g_cfg.worldLootMultiplier
       <<" maxAffixes="<<g_cfg.maxAffixes
-      <<" jobOperateScaling="<<(g_jobOperateScaling?1:0)<<" formulaScaling="<<(g_formulaScaling?1:0)
+      <<" jobOperateScaling="<<(g_jobOperateScaling?1:0)<<" farmOperateScaling="<<(g_farmOperateScaling?1:0)<<" formulaScaling="<<(g_formulaScaling?1:0)
       <<" overrides="<<(unsigned long)g_overrides.size()
       <<" exclusions="<<(unsigned long)g_exclusions.size();
     Log(ss.str());
