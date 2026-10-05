@@ -117,7 +117,11 @@ P = [
          check=r'benches 60 crafts ~ Cooking Stove[^|]*Dried Meat'),
     # ---- work over time ----
     dict(file="pg-90-balance-farming.txt", rows="161-176", kind="operate", prof="farming", setstat="farming",
-         building="Wheat Farm L", fill=("Water", 40), window=12, ripen=True, extra_skills=[25, 75],
+         building="Wheat Farm L", fill=("Water", 40), window=12, percall=True, extra_skills=[25, 75],
+         # m45-5090 matrix: output_progress is capped by the crop (a leftover partial crop also reads state=NORMAL,
+         # s75 emptied it inside 12 min) and the ripen wait (up to 46 game h) let the water run dry. The worker makes
+         # the same ~205-225 operate calls per window at every skill, crop or not, and the amount per call is
+         # deterministic (s50 x5: 0.9506-0.9517): the point measures scaled_amount / calls, no ripen wait.
          # m31-5090: a window that ran at night read light 1.0 -> 0 and its growth differed: every point first waits
          # (speed 20) for daylight, READY and POST assert it, so no point is measured in the dark.
          daylight=True),
@@ -412,9 +416,14 @@ def gen_operate(p):
         if p.get("daylight"):
             L += post(day)
         L += ripe_after(p)
-        L += ['@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
-              echo(p["rows"], p["prof"], skill, gear, label, "operate", WIN, "0", "${OP}"),
-              "hunger %s 280" % WORKER]
+        if p.get("percall"):
+            L += ['@set NC pg_operate "%s" radius 100 near %s ~ calls=(\d+)' % (b, WORKER),
+                  '@set SA pg_operate "%s" radius 100 near %s ~ scaled_amount=%s' % (b, WORKER, NUM),
+                  echo(p["rows"], p["prof"], skill, gear, label, "percall", WIN, "${NC}", "${SA}")]
+        else:
+            L += ['@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
+                  echo(p["rows"], p["prof"], skill, gear, label, "operate", WIN, "0", "${OP}")]
+        L += ["hunger %s 280" % WORKER]
     return L + ["clearjobs %s" % WORKER]
 
 
@@ -801,6 +810,15 @@ def measure(kind, window_s, a, b):
             return 0, window_s, 0, "missing queue"
         done = (q0 - q1) + (f1 - f0) / 100.0
         return done * 1000.0, window_s, int(done > 0 and q1 > 0), "queue empty" if q1 == 0 else ""
+    if kind == "percall":
+        # farms (m45): scaled operate amount per worker call; a = calls, b = scaled_amount. The window only has to
+        # hold enough calls for a stable mean (the amount per call does not depend on the crop).
+        n, amt = f(a), f(b)
+        if n is None or amt is None:
+            return 0, window_s, 0, "missing calls/amount"
+        if n < 50:
+            return 0, window_s, 0, "invalid: only %d operate calls" % n
+        return amt / n * 1000.0, window_s, 1, ""
     if kind in ("operate", "research", "construct"):
         p0, p1 = f(a), f(b)
         if p0 is None or p1 is None:
@@ -930,7 +948,7 @@ def to_csv(paths):
                     continue
                 count, secs, ok, note = measure(kind, f(win) or 0, a.strip(), b.strip())
                 # game time must advance in a timed window (a paused or stuck clock is not a slow worker)
-                if kind in ("craft", "operate", "research", "construct") and (f(win) or 0) <= 0:
+                if kind in ("craft", "operate", "percall", "research", "construct") and (f(win) or 0) <= 0:
                     count, ok, note = 0, 0, "invalid: game clock did not advance (%s)" % win
                 cond_ev = (" eff=" + bonus_ev if bonus_ev else "") + (" mod=" + ">".join(mods) if mods else "")
                 bonus_ev, mods = "", []
@@ -955,7 +973,7 @@ def to_csv(paths):
                 print("%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s" % (
                     tid, prof, skill, bonus, secs, count, ok, gear,
                     "%s %s %s %s%s%s%s%s" % (label, kind, note, base, extra, probe, cond_ev,
-                                             ff if kind == "operate" and prof.startswith("farming") else ""),
+                                             ff if kind in ("operate", "percall") and prof.startswith("farming") else ""),
                     setup, evidence, prov))
                 if ok and gear == "none" and float(secs or 0) > 0:
                     flats.setdefault((base, prof), {})[int(skill)] = count / float(secs)

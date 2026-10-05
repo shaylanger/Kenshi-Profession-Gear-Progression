@@ -52,9 +52,6 @@ setstat Beaks farming 10
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -72,8 +69,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -89,9 +84,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,10,0,none,w1,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,10,0,none,w1,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w2: skill 25, gear none ---
@@ -99,9 +94,6 @@ setstat Beaks farming 25
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -119,8 +111,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -136,9 +126,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,25,0,none,w2,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,25,0,none,w2,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w3: skill 75, gear none ---
@@ -146,9 +136,6 @@ setstat Beaks farming 75
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -166,8 +153,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -183,9 +168,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,75,0,none,w3,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,75,0,none,w3,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w4: skill 90, gear none ---
@@ -193,9 +178,6 @@ setstat Beaks farming 90
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -213,8 +195,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -230,9 +210,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,90,0,none,w4,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,90,0,none,w4,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w5: skill 50, gear none ---
@@ -240,9 +220,6 @@ setstat Beaks farming 50
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -260,8 +237,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -277,9 +252,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,0,none,w5,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,0,none,w5,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w6: skill 50, gear own25 ---
@@ -290,9 +265,6 @@ pg_bonus Beaks farming ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -310,8 +282,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -327,9 +297,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,25,own25,w6,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,25,own25,w6,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w7: skill 50, gear own50 ---
@@ -340,9 +310,6 @@ pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -360,8 +327,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -377,9 +342,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,50,own50,w7,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,50,own50,w7,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w8: skill 50, gear lab50 ---
@@ -390,9 +355,6 @@ pg_bonus Beaks labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -410,8 +372,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -427,9 +387,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,0,lab50,w8,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,0,lab50,w8,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w9: skill 50, gear none ---
@@ -437,9 +397,6 @@ setstat Beaks farming 50
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -457,8 +414,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -474,9 +429,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,0,none,w9,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,0,none,w9,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w10: skill 50, gear own25 ---
@@ -487,9 +442,6 @@ pg_bonus Beaks farming ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -507,8 +459,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -524,9 +474,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,25,own25,w10,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,25,own25,w10,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w11: skill 50, gear own50 ---
@@ -537,9 +487,6 @@ pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -557,8 +504,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -574,9 +519,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,50,own50,w11,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,50,own50,w11,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w12: skill 50, gear lab50 ---
@@ -587,9 +532,6 @@ pg_bonus Beaks labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -607,8 +549,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -624,9 +564,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,0,lab50,w12,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,0,lab50,w12,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w13: skill 50, gear none ---
@@ -634,9 +574,6 @@ setstat Beaks farming 50
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -654,8 +591,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -671,9 +606,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,0,none,w13,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,0,none,w13,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w14: skill 50, gear own25 ---
@@ -684,9 +619,6 @@ pg_bonus Beaks farming ~ equipped_bonus=25% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -704,8 +636,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -721,9 +651,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,25,own25,w14,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,25,own25,w14,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w15: skill 50, gear own50 ---
@@ -734,9 +664,6 @@ pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -754,8 +681,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -771,9 +696,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,50,own50,w15,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,50,own50,w15,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w16: skill 50, gear lab50 ---
@@ -784,9 +709,6 @@ pg_bonus Beaks labouring ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -804,8 +726,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -821,9 +741,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,50,0,lab50,w16,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,50,0,lab50,w16,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w17: skill 75, gear none ---
@@ -831,9 +751,6 @@ setstat Beaks farming 75
 pg_clear Beaks ~ cleared affixes
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -851,8 +768,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -868,9 +783,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,75,0,none,w17,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,75,0,none,w17,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 # --- w18: skill 25, gear own50 ---
@@ -881,9 +796,6 @@ pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
-fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
@@ -901,8 +813,6 @@ speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
-farm "Wheat Farm L" empty radius 1000 ~ emptied=
-building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -918,9 +828,9 @@ speed 0
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
-building "Wheat Farm L" 1000 ~ state=NORMAL
-@set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
-@echo BAL2,161,farming,25,50,own50,w18,operate,T${T0}_${T1},0,${OP}
+@set NC pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=(\d+)
+@set SA pg_operate "Wheat Farm L" radius 100 near Beaks ~ scaled_amount=([-\d.]+)
+@echo BAL2,161,farming,25,50,own50,w18,percall,T${T0}_${T1},${NC},${SA}
 pg_statprobe read
 hunger Beaks 280
 clearjobs Beaks
