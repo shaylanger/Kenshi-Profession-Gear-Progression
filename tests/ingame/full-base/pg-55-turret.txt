@@ -52,7 +52,7 @@ pin ${D1} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D1} -100
 @sleep 45
 building "Harpoon Turret" 1500 ~ operators=1
-@set H1 hp ${D1} ~ (worst=[\d.]+%?[^|]*)
+@set H1 hp ${D1} ~ (worst=-?[\d.]+%?[^|]*)
 pin ${D1} off ~ unpinned
 kill ${D1}
 # --- Turrets 90, no gear ---
@@ -63,7 +63,7 @@ pin ${D2} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D2} -100
 @sleep 45
 building "Harpoon Turret" 1500 ~ operators=1
-@set H2 hp ${D2} ~ (worst=[\d.]+%?[^|]*)
+@set H2 hp ${D2} ~ (worst=-?[\d.]+%?[^|]*)
 pin ${D2} off ~ unpinned
 kill ${D2}
 # --- Turrets 10 with +50% Turrets gear ---
@@ -76,7 +76,7 @@ pin ${D3} at ${TX} ${TY} ${TZ} dist 40 ~ pinned
 relation ${D3} -100
 @sleep 45
 building "Harpoon Turret" 1500 ~ operators=1
-@set H3 hp ${D3} ~ (worst=[\d.]+%?[^|]*)
+@set H3 hp ${D3} ~ (worst=-?[\d.]+%?[^|]*)
 relation ${D3} 0
 pin ${D3} off ~ unpinned
 kill ${D3}
