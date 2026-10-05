@@ -52,8 +52,9 @@ GEAR_ITEM = "Iron Hat"       # given + worn by whoever's stat is varied; its aff
 # PG 199 (pg-89 FAIL 597/11): 4 of 16 spawned Hungry Bandit observers could not wear the Iron Hat (equip failed,
 # slotType=3): UWE's Iron Hat has "races exclude" Reptiloid/Sharkoloid/Dragoloid. A spawned observer who wears the
 # gear is re-rolled until his race can wear it (harness 6a64ee8+: spawn ... race <filter>)
-# m36 batch Y: PGW10 rolled Mechanical (skeleton: race_no_slot=1 for hats); skeletons and fishmen have no head slot
-GEAR_RACES = "!reptiloid|!sharkoloid|!dragoloid|!mechanical|!skeleton|!fishman"
+# m36 batch Y/Y3: Mechanical and the modded Midland race have no head slot either (race_no_slot=1): allow-list the
+# vanilla human races that wear hats instead of excluding
+GEAR_RACES = "greenlander|scorchlander|shek"
 NEEDS = ("ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, "
          "detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness "
          "repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest")
