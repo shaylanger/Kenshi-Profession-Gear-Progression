@@ -1807,17 +1807,31 @@ float HookLockpick(Character* c,DoorLock* lock){
   return g_lockpickOrig?g_lockpickOrig(c,lock):0;
 }
 
-// ---- Athletics acceleration (Shay D4, 2026-10-05, row 254). Steam 1.0.65 HavokCharacter::updateVelocity
-// (RVA 0x147C60, GOG header 0x147B80): delta = desiredSpeed x direction - velocity, clamped to time x acceleration
-// (+0x78), velocity += delta. The frame time argument is used only for that clamp (disassembly: time is saved in
-// xmm12 and read once, `mulss xmm12,[rdi+0x78]`), so scaling it by (1 + Athletics %) raises the acceleration and the
-// braking alike and leaves the top speed (desiredSpeed) alone. AccelerationScaling=true (default); needs
-// FormulaScaling. The bonus comes from the bonus cache only (no inventory walk inside the movement update), looked up
-// by the HavokCharacter's own handle (+0x98) at most every 500 ms per character.
+// ---- Athletics acceleration (Shay D4, 2026-10-05, row 254). Steam 1.0.65 (VA = RVA + 0x140000000):
+// HavokCharacter::acceleration (+0x78, 24 for Beaks; desiredSpeed +0x7C is speed x 0.1) is read in exactly two places
+// (only other access: the constructor store at 0x146909):
+//  1. HavokCharacter::updateVelocity (RVA 0x147CA0, GOG header 0x147B80): delta = desiredSpeed x direction - velocity,
+//     clamped to time x acceleration (0x147EF3 `mulss xmm12,[rdi+0x78]`), velocity += delta. The time argument is
+//     used only there.
+//  2. HavokCharacter::update (RVA 0x147FD0, GOG 0x147EB0), FOLLOWING_PATH only (0x148194-0x1482FA): after
+//     calculatePathVector, if the braking distance v^2/(2a) (0x148227 `movss xmm4,[rsi+0x78]`, x2.0) exceeds the
+//     distance to the path's slow-down point along the heading minus 0.1, the target direction is cut to
+//     sqrt(2a x lateral)/desiredSpeed. That braking/corner curve tracks the raw acceleration, so a stronger clamp
+//     alone (m43: time x 1.5) only shortened the early ramp (t50 0.75) and left t90 and the stop unchanged.
+// CharMovement::update (0x65FFA0) calls HavokCharacter::update only on screen (Character +0x1A9, time < 0.5);
+// off screen moveAlongPath (0x148AC0) moves at full speed with no acceleration model, so the gear can't act there.
+// While AccelerationScaling (default on; needs FormulaScaling) is on: HookHavokUpdate writes acceleration x
+// (1 + Athletics %) into +0x78 for the call (both uses above scaled once, top speed untouched) and puts the raw value
+// back; updateVelocity calls from outside update (CharMovement MOVE_DIRECTION 0x660125, 0x354008) still get the
+// scaled time instead. The bonus comes from the bonus cache only (no inventory walk inside the movement update),
+// looked up by the HavokCharacter's own handle (+0x98) at most every 500 ms per character.
 typedef void (*UpdVelFn)(void*, const void*, float);
+typedef void (*HavokUpdateFn)(void*, float);
 UpdVelFn g_updVelOrig = 0;
+HavokUpdateFn g_havokUpdateOrig = 0;
 bool g_accelScaling = true;
-volatile LONG g_accelCalls = 0, g_accelScaled = 0;
+volatile LONG g_accelCalls = 0, g_accelScaled = 0, g_havokUpdCalls = 0, g_havokUpdScaled = 0;
+__declspec(thread) void* t_accelScaledHc = 0; // HavokCharacter whose +0x78 holds the scaled value right now
 struct AccelEntry { float scale; DWORD tick; };
 CRITICAL_SECTION g_accelLock;
 std::map<void*, AccelEntry> g_accelCache;
@@ -1858,10 +1872,24 @@ float AccelScaleFor(void* hc) {
 void HookUpdateVelocity(void* hc, const void* direction, float time) {
   if(g_accelScaling && g_formulaScaling && g_cfg.enabled && hc){
     InterlockedIncrement(&g_accelCalls);
-    const float s=AccelScaleFor(hc);
-    if(s!=1.0f){ time*=s; InterlockedIncrement(&g_accelScaled); }
+    if(hc==t_accelScaledHc) InterlockedIncrement(&g_accelScaled); // +0x78 already scaled by HookHavokUpdate
+    else { const float s=AccelScaleFor(hc); if(s!=1.0f){ time*=s; InterlockedIncrement(&g_accelScaled); } }
   }
   if(g_updVelOrig) g_updVelOrig(hc,direction,time);
+}
+
+void HookHavokUpdate(void* hc, float time) {
+  if(!g_havokUpdateOrig) return;
+  if(!(g_accelScaling && g_formulaScaling && g_cfg.enabled && hc) || t_accelScaledHc){ g_havokUpdateOrig(hc,time); return; }
+  InterlockedIncrement(&g_havokUpdCalls);
+  const float s=AccelScaleFor(hc);
+  if(s==1.0f){ g_havokUpdateOrig(hc,time); return; }
+  float* accel=(float*)((char*)hc+kHavokAccelerationOffset);
+  const float raw=*accel;
+  *accel=raw*s; t_accelScaledHc=hc;
+  InterlockedIncrement(&g_havokUpdScaled);
+  g_havokUpdateOrig(hc,time);
+  t_accelScaledHc=0; *accel=raw;
 }
 
 int KahAccel(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
@@ -1886,6 +1914,7 @@ int KahAccel(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
       <<" scale="<<((g_accelScaling&&g_formulaScaling&&g_cfg.enabled)?PGP::AccelerationScale(pct):1.0f)
       <<" handle_match="<<(!hk.empty()&&hk==ck?1:0);
   }
+  ss<<" update_hooked="<<(g_havokUpdateOrig?1:0)<<" update_calls="<<g_havokUpdCalls<<" update_scaled="<<g_havokUpdScaled;
   r->append(r,ss.str().c_str());
   return KAH_OK;
 }
@@ -2040,6 +2069,7 @@ void InstallHooks() {
   HookSymbol(lib,"?calculateCriticalChance@CraftingBuilding@@QEAAMPEAVCharacter@@@Z",(void*)HookCritChance,(void**)&g_critChanceOrig);
   HookSymbol(lib,"?calculateMaxRunSpeed@CharStats@@QEAAXXZ",(void*)HookMaxRun,(void**)&g_maxRunOrig);
   HookSymbol(lib,"?updateVelocity@HavokCharacter@@QEAAXAEBVhkVector4f@@M@Z",(void*)HookUpdateVelocity,(void**)&g_updVelOrig);
+  HookSymbol(lib,"?update@HavokCharacter@@QEAAXM@Z",(void*)HookHavokUpdate,(void**)&g_havokUpdateOrig);
   HookSymbol(lib,"?calculateTheoreticalIdealMaxRunSpeed@CharStats@@QEAAMXZ",(void*)HookIdealRun,(void**)&g_idealRunOrig);
   HookSymbol(lib,"?_calculateMaxSwimSpeed@CharStats@@QEAAMXZ",(void*)HookMaxSwim,(void**)&g_maxSwimOrig);
   HookSymbol(lib,"?calculateSwimSpeed@CharStats@@QEAAMXZ",(void*)HookSwim,(void**)&g_swimOrig);
