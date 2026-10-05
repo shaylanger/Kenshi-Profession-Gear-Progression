@@ -148,9 +148,6 @@ std::vector<ItemTag> Classify(const ItemDescriptor& item,
 
 std::vector<ProfessionStat> AllowedStats(const std::vector<ItemTag>& tags);
 bool IsProfessionStat(ProfessionStat stat);
-// Retired stats never roll and give no bonus or tooltip line even on old records (Perception: game 1.0.65
-// detection never reads it, row 199 / Shay D3).
-bool StatRetired(ProfessionStat stat);
 
 unsigned int Hash32(const std::string& text);
 float UnitRoll(unsigned int& state);

@@ -137,7 +137,7 @@ int main(){
 
   ItemDescriptor goggles; goggles.baseId="mod.goggles"; goggles.name="Green-Tint Goggles"; goggles.slot="head"; goggles.armour=true;
   {std::vector<ItemTag> x=Classify(goggles,overrides,exclusions);Check(HasTag(x,TAG_GOGGLES_GENERIC),"plain modded goggles generic precision");}
-  {std::vector<ProfessionStat> x=AllowedStats(Classify(goggles,overrides,exclusions));Check(!HasStat(x,STAT_PERCEPTION)&&HasStat(x,STAT_SCIENCE)&&HasStat(x,STAT_ENGINEERING)&&HasStat(x,STAT_ROBOTICS)&&HasStat(x,STAT_TURRETS),"goggles multi-context pool, no Perception");}
+  {std::vector<ProfessionStat> x=AllowedStats(Classify(goggles,overrides,exclusions));Check(HasStat(x,STAT_PERCEPTION)&&HasStat(x,STAT_SCIENCE)&&HasStat(x,STAT_ENGINEERING)&&HasStat(x,STAT_ROBOTICS)&&HasStat(x,STAT_TURRETS),"goggles multi-context pool");}
 
   ItemDescriptor shoes; shoes.baseId="mod.running_shoes"; shoes.name="Running Shoes"; shoes.slot="boots"; shoes.armour=true;
   {std::vector<ItemTag> x=Classify(shoes,overrides,exclusions);Check(HasTag(x,TAG_BOOTS_TRAVEL),"running shoes infer athletics context from name");}
@@ -191,9 +191,7 @@ int main(){
   tags.clear();tags.push_back(TAG_BODY_SMITH);
   {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_ARMOUR_SMITH)&&HasStat(s,STAT_WEAPON_SMITH),"smith stat pool");}
   tags.clear();tags.push_back(TAG_BOOTS_TRAVEL);
-  {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_ATHLETICS)&&!HasStat(s,STAT_PERCEPTION),"travel stat pool, no Perception");}
-  Check(StatRetired(STAT_PERCEPTION)&&!StatRetired(STAT_ATHLETICS),"Perception retired");
-  {for(int t=0;t<=TAG_GOGGLES_GENERIC;++t){std::vector<ItemTag> one(1,(ItemTag)t);Check(!HasStat(AllowedStats(one),STAT_PERCEPTION),"no pool rolls Perception");}}
+  {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_ATHLETICS)&&HasStat(s,STAT_PERCEPTION),"travel stat pool");}
   tags.clear();tags.push_back(TAG_STEALTH_GEAR);
   {std::vector<ProfessionStat> s=AllowedStats(tags);Check(HasStat(s,STAT_STEALTH)&&HasStat(s,STAT_LOCKPICKING),"stealth stat pool");}
   tags.clear();tags.push_back(TAG_ASSASSIN_GEAR);

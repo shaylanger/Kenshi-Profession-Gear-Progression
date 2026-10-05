@@ -73,8 +73,7 @@ pg_force_affix Malzin "Iron Hat" athletics 15 tier 4 ~ affixes=Athletics:15
 pg_bonus Malzin athletics ~ equipped_bonus=15% base=40\.00 .*match=1
 setstat Malzin perception 40
 pg_force_affix Malzin "Iron Hat" perception 15 tier 4 ~ affixes=Perception:15
-# Perception is retired (Shay D3): a forced Perception affix stays on the record but gives no bonus
-pg_bonus Malzin perception ~ equipped_bonus=0% base=40\.00 .*match=1
+pg_bonus Malzin perception ~ equipped_bonus=15% base=40\.00 .*match=1
 setstat Malzin stealth 40
 pg_force_affix Malzin "Iron Hat" stealth 15 tier 4 ~ affixes=Stealth:15
 pg_bonus Malzin stealth ~ equipped_bonus=15% base=40\.00 .*match=1

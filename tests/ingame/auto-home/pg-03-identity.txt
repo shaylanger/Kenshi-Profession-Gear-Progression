@@ -49,7 +49,7 @@ give Malzin 46982-Newwworld.mod 1
 pg_info Malzin "Hoe" ~ record=none \(not eligible
 # --- 146: mod-added goggles (UWE Square Goggles (alt)) classify as generic goggles only ---
 give Malzin "5008368-Universal Wasteland Expansion.mod" 1
-@until 10 pg_check Malzin "Square Goggles (alt)" ~ tags=GOGGLES_GENERIC pool=Science,Engineering,Robotics,Turrets .*valid=1
+@until 10 pg_check Malzin "Square Goggles (alt)" ~ tags=GOGGLES_GENERIC pool=Perception,Science,Engineering,Robotics,Turrets .*valid=1
 # --- 54-56: rule check on everything Malzin and Shay wear that has a record ---
 pg_check Malzin "Black Cloth Shirt" ~ valid=1
 pg_check Malzin "Black Rag Shirt" ~ valid=1
