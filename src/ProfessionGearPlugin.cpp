@@ -1189,6 +1189,11 @@ int KahLoot(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
 // crates, shelves) within radius of a player character, as if he had picked each one up (EnsureRecord with
 // him as the finder, the same call the character scan makes). Player-faction buildings are skipped unless
 // `all`. Row 250 (ruin/chest loot corpus). TEST ONLY.
+// m22 batch Z: a ruin's chests and shelves are furniture of its shell building (the sphere search returned only
+// "Outpost s-II", which has no inventory, so nothing was scanned). Every building found also contributes its
+// furniture (findAllFurnitureWithFunction BF_ANY), deduplicated. The reply counts found= (sphere, the same set
+// the harness `buildings` lists), furniture= (added), no_inventory=, and lists every container it looked at,
+// skipped own ones included ("[faction] own skipped"), so an ownership mix-up shows in the reply.
 int KahLootScan(const char*,int argc,const char* const* argv,KAH_Reply* r,void*) {
   if(argc<2){ r->append(r,"usage: pg_lootscan <player npc> [radius <m>] [all]"); return KAH_ERROR; }
   GameWorld* world=KahWorld();
@@ -1210,16 +1215,43 @@ int KahLootScan(const char*,int argc,const char* const* argv,KAH_Reply* r,void*)
   try { mine=c->getFaction(); world->getObjectsWithinSphere(nearby,c->getPosition(),radius,BUILDING,2048,0); }
   catch (...) { r->append(r,"building search failed"); return KAH_ERROR; }
   int buildings=0, withItems=0, skippedOwn=0, items=0, eligible=0, already=0, rolled=0, multi=0;
+  int found=0, furniture=0, noInventory=0;
   std::map<PGP::ProfessionStat,int> stats;
   std::map<int,int> tierAll, tierRolled;
   std::ostringstream per;
   int listed=0;
+  std::vector<Building*> cands;
+  std::set<Building*> seen;
+  static lektor<Building*> furn;   // reused: lektor has no destructor
   for(uint32_t bi=0;bi<nearby.size();++bi){
     Building* b=dynamic_cast<Building*>(nearby.stuff[bi]);
+    if(!b || !seen.insert(b).second) continue;
+    ++found;
+    cands.push_back(b);
+    furn.clear();
+    try { b->findAllFurnitureWithFunction(furn,BF_ANY); } catch (...) { furn.clear(); }
+    for(uint32_t fi=0;fi<furn.size();++fi){
+      Building* fb=furn.stuff[fi];
+      if(fb && seen.insert(fb).second){ ++furniture; cands.push_back(fb); }
+    }
+  }
+  for(size_t bi=0;bi<cands.size();++bi){
+    Building* b=cands[bi];
     Inventory* inv=0;
-    try { inv=b?b->getInventory():0; } catch (...) { inv=0; }
-    if(!inv) continue;
-    try { if(!all && mine && b->getFaction()==mine){ ++skippedOwn; continue; } } catch (...) { continue; }
+    try { inv=b->getInventory(); } catch (...) { inv=0; }
+    if(!inv){ ++noInventory; continue; }
+    bool own=false;
+    try { own=!all && mine && b->getFaction()==mine; } catch (...) { continue; }
+    if(own){
+      ++skippedOwn;
+      if(listed<15){
+        ++listed;
+        std::string fac="?";
+        try { fac=mine->getName(); } catch (...) {}
+        per<<" | "<<b->getName()<<" ["<<fac<<"] own skipped";
+      }
+      continue;
+    }
     ++buildings;
     std::vector<Item*> list;
     CollectCharacterInventoryItems(inv,list);
@@ -1254,7 +1286,8 @@ int KahLootScan(const char*,int argc,const char* const* argv,KAH_Reply* r,void*)
     }
   }
   std::ostringstream ss;
-  ss<<"lootscan finder="<<c->getName()<<" radius="<<(int)radius<<" buildings="<<buildings<<" with_items="<<withItems
+  ss<<"lootscan finder="<<c->getName()<<" radius="<<(int)radius<<" found="<<found<<" furniture="<<furniture
+    <<" no_inventory="<<noInventory<<" buildings="<<buildings<<" with_items="<<withItems
     <<" skipped_own="<<skippedOwn<<" items="<<items<<" eligible="<<eligible<<" already_recorded="<<already
     <<" rolled="<<rolled<<" multi="<<multi<<" rate="<<(eligible?(double)rolled/eligible:0.0)<<" stats:";
   for(std::map<PGP::ProfessionStat,int>::const_iterator s=stats.begin();s!=stats.end();++s)
