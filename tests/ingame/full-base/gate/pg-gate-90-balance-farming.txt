@@ -4,7 +4,7 @@
 # fixture: Testing-Save-Full-Base (squad Avarek + Beaks)
 # reset: fresh
 # needs: ProfessionGearProgression.dll 36D7474D+ (pg_statprobe), harness c5a5c88+ (give artifacts, research start any; 90a0e33: teleport moved=/bed, speed hold; 6933d0f: fill topup, drop all; 616121b: benches near; c4fa520: pin, d91fe88: face) (KAH 24: chance, detect, detecttime, healtime, findwater, swimtime, construct, construction); client kah.py from the harness repo (LONG_COMMANDS has the KAH 24 timers); set_test_mode.ps1 -Mode Forced -Rules InGameTest
-# design: Wheat Farm L worked by Beaks (its own job); pg_operate output_progress per 30-game-minute window at speed 10
+# design: Wheat Farm L worked by Beaks (its own job); pg_operate output_progress per 12-game-minute window at speed 10
 #   (JobOperateScaling on = the default build). Skills 10/25/75/90 without gear, then 3 x gear points at 50.
 # verify: calls > 0 in every window; own50 ~ x1.5 of none at the same skill (pg-13 measured x1.50 on auto-home).
 #   Data: python3 tools/balance_driver.py csv <out> > balance.csv; python3 tools/analyze_balance.py balance.csv
@@ -55,14 +55,28 @@ pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
+fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks building "Wheat Farm L" dist 6 radius 1000 ~ moved=
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
+pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -72,12 +86,13 @@ pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
-@wait-game 30 900
+@wait-game 12 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,g1,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -90,14 +105,28 @@ pg_bonus Beaks farming ~ equipped_bonus=50% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
+fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks building "Wheat Farm L" dist 6 radius 1000 ~ moved=
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
+pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -107,12 +136,13 @@ pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
-@wait-game 30 900
+@wait-game 12 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,50,own50,g2,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -124,14 +154,28 @@ pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
+fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks building "Wheat Farm L" dist 6 radius 1000 ~ moved=
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
+pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -141,12 +185,13 @@ pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
-@wait-game 30 900
+@wait-game 12 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,90,0,none,g3,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read
@@ -158,14 +203,28 @@ pg_bonus Beaks farming ~ equipped_bonus=0% .*match=1
 pg_statprobe read
 clearjobs Beaks
 speed 20 hold
+fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+@until 2400 building "Wheat Farm L" 1000 ~ state=NORMAL
 @until 2400 time ~ time=(0[7-9]|1[0-8]):
 @until 1200 stat Beaks farming ~ light=(0\.[5-9]|1)
 speed 0
+wake Beaks
+speed 1 hold
+@sleep 3
+speed 0
+@until 30 teleport Beaks building "Wheat Farm L" dist 6 radius 1000 ~ moved=
+pin Avarek off ~ unpinned
+@until 30 teleport Avarek Beaks dist 8 ~ moved=1
+pin Avarek ~ pinned
 job Beaks "Wheat Farm L" radius 1000
+pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 speed 10 hold
 @until 300 pg_operate "Wheat Farm L" radius 100 near Beaks ~ calls=[1-9]
 speed 0
 fill "Wheat Farm L" Water 40 radius 1000 topup
+farm "Wheat Farm L" empty radius 1000 ~ emptied=
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @echo READY
 where Beaks ~ ^(?!.*\b(KO|DEAD)\b)
 jobs Beaks ~ jobs=[1-9]
@@ -175,12 +234,13 @@ pg_operate "Wheat Farm L" reset radius 100 near Beaks ~ \(reset\)
 stat Beaks farming ~ wounds=1\.0000
 @set T0 time ~ game_hours=([\d.]+)
 speed 10 hold
-@wait-game 30 900
+@wait-game 12 900
 speed 0
 @set T1 time ~ game_hours=([\d.]+)
 stat Beaks farming
 @echo POST
 stat Beaks farming ~ light=(0\.[5-9]|1)
+building "Wheat Farm L" 1000 ~ state=NORMAL
 @set OP pg_operate "Wheat Farm L" radius 100 near Beaks ~ output_progress=([-\d.]+)
 @echo BAL2,161,farming,25,0,none,g4,operate,T${T0}_${T1},0,${OP}
 pg_statprobe read

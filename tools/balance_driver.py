@@ -117,7 +117,7 @@ P = [
          check=r'benches 60 crafts ~ Cooking Stove[^|]*Dried Meat'),
     # ---- work over time ----
     dict(file="pg-90-balance-farming.txt", rows="161-176", kind="operate", prof="farming", setstat="farming",
-         building="Wheat Farm L", fill=("Water", 40), window=30, extra_skills=[25, 75],
+         building="Wheat Farm L", fill=("Water", 40), window=12, ripen=True, extra_skills=[25, 75],
          # m31-5090: a window that ran at night read light 1.0 -> 0 and its growth differed: every point first waits
          # (speed 20) for daylight, READY and POST assert it, so no point is measured in the dark.
          daylight=True),
@@ -349,6 +349,30 @@ def gen_craft(p):
     return L + ["clearjobs %s" % WORKER]
 
 
+def ripen(p):
+    """Farms (m44-5090 gate-90 + farm probe): a ripe field holds ~4 Wheatstraw (~7 output_progress) and is cleared in
+    ~0.9 game h at skill 25 / ~0.45 h at 90 (harvest rate 7.7 vs 15.9 progress/h). After that the farm sits
+    IMPOSSIBLE until the plants regrow (~2.3 game h) and every 30-minute window was capped by the crop, not the
+    skill (g3 s90 read below g1 s25). Forcing harness `farm grown 1` does not make plants harvestable (0 calls for
+    1.5 h). So with the worker off the job the crop ripens by itself (state NORMAL = ripe plants to harvest), the
+    output store (20 Wheatstraw; full = state FULL) is emptied, and the window (12 game min) ends before the field
+    is cleared; ripe_after rejects a window in which the farm stopped."""
+    if not p.get("ripen"):
+        return []
+    b = p["building"]
+    return ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1]),
+            'farm "%s" empty radius 1000 ~ emptied=' % b,
+            '@until 2400 building "%s" 1000 ~ state=NORMAL' % b]
+
+
+def ripe_after(p):
+    """After the window the farm must still be working (FULL = store filled, IMPOSSIBLE = crop gone): a stopped
+    farm cut the window short and the point is invalid, not slow."""
+    if not p.get("ripen"):
+        return []
+    return ['building "%s" 1000 ~ state=NORMAL' % p["building"]]
+
+
 def gen_operate(p):
     w, b = p["window"], p["building"]
     L = header(p, ["%s worked by %s (its own job); pg_operate output_progress per %d-game-minute window at speed 10"
@@ -371,16 +395,23 @@ def gen_operate(p):
             # m41-5090 probe-farm: worked through the night wait (speed 20) the farm finished a whole crop (output
             # progress 72, 13 Wheatstraw in out), then sat IMPOSSIBLE with operators 0/4 and every later window read 0:
             # the worker stops during the wait and takes the job back (and works again) once it is day
-            L += ["clearjobs %s" % WORKER,
-                  "speed 20", "@until 2400 " + DAYTIME, "@until 1200 " + day, "speed 0",
-                  'job %s "%s" radius 1000' % (WORKER, b), "speed 10",
+            L += ["clearjobs %s" % WORKER, "speed 20"] + ripen(p) + [
+                  "@until 2400 " + DAYTIME, "@until 1200 " + day, "speed 0",
+                  # m44-5090 farm probe: without a job the worker walked 1960 m off during the wait
+                  '@until 30 teleport %s building "%s" dist 6 radius 1000 ~ moved=' % (WORKER, b),
+                  'job %s "%s" radius 1000' % (WORKER, b),
+                  # fresh counter: the calls check must not pass on the last window's calls (m44 probe)
+                  'pg_operate "%s" reset radius 100 near %s ~ \(reset\)' % (b, WORKER), "speed 10",
                   '@until 300 pg_operate "%s" radius 100 near %s ~ calls=[1-9]' % (b, WORKER), "speed 0"]
         L += ['fill "%s" %s %d radius 1000 topup' % (b, p["fill"][0], p["fill"][1])]
+        if p.get("ripen"):
+            L += ['farm "%s" empty radius 1000 ~ emptied=' % b, 'building "%s" 1000 ~ state=NORMAL' % b]
         L += ready(AWAKE, HASJOB, *([day, DAYTIME] if p.get("daylight") else []))
         L += ['pg_operate "%s" reset radius 100 near %s ~ \\(reset\\)' % (b, WORKER),
               TS0, "speed 10", "@wait-game %d 900" % w, "speed 0", TS1]
         if p.get("daylight"):
             L += post(day)
+        L += ripe_after(p)
         L += ['@set OP pg_operate "%s" radius 100 near %s ~ output_progress=%s' % (b, WORKER, NUM),
               echo(p["rows"], p["prof"], skill, gear, label, "operate", WIN, "0", "${OP}"),
               "hunger %s 280" % WORKER]
