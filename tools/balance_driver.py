@@ -17,6 +17,10 @@ gate: the validation gate files (tests/ingame/full-base/gate/pg-gate-*.txt): GAT
      fixture and method as the matrix; run them before any full matrix (RUN_ORDER.md).
 gatecheck: one GATE line per profession from csv files of gate outputs (valid points, drift bracket, equal game
      conditions, skill 25 vs 90 response, gear gain vs the gain the game's own hooked values predict).
+     Operate jobs: JobOperateScaling adds x(1 + gear%) on top of the skill read, except farms (Shay D1): they keep
+     only the native Farming read plus FarmOperateBonusFactor x gear% (the csv `ff=` note from the pg_jobscale
+     reply, else FarmOperateBonusFactor / FarmOperateScaling=true in the PROV ini, else 0 = a pre-factor build);
+     --farm-factor <f> overrides it (1 = the old full farm scaling).
 csv: turn the BAL2 (and old BAL) lines of runner .out files into the CSV tools/analyze_balance.py reads
      (test_id,profession,base_skill,effective_bonus_pct,elapsed_game_seconds,result_count,valid,gear_loadout,notes,
      setup,evidence,provenance): setup = READY/POST checks (ready=ok, or ready=FAIL with the failed check in
@@ -34,7 +38,7 @@ Usage:
   python3 tools/balance_driver.py list                (files, rows, kinds, window counts)
   python3 tools/balance_driver.py csv run.out... > balance.csv
   python3 tools/balance_driver.py gate                (writes the gate files)
-  python3 tools/balance_driver.py gatecheck gate.csv...
+  python3 tools/balance_driver.py gatecheck [--farm-factor <f>] gate.csv...
 """
 import os
 import re
@@ -838,6 +842,13 @@ def to_csv(paths):
         base = os.path.basename(path)
         lines = list(open(path, encoding="utf-8", errors="replace"))
         prov = prov_of(lines)
+        # farm work factor of this run (pg_jobscale reply since ba24f01): " ff=<f>" on farming operate notes
+        ff = ""
+        for line in lines:
+            fm = re.search(r"farmOperateScaling=(\d) farmOperateBonusFactor=([-\d.]+)", line)
+            if fm:
+                ff = " ff=" + ("1" if fm.group(1) == "1" else fm.group(2))
+                break
         fail = ""          # first failed command since the last point (its text is the invalid reason)
         stage = "setup"    # setup | ready | post
         control_bad = ""   # heal_control: the patient got bandaged with no kit on the medic
@@ -906,7 +917,9 @@ def to_csv(paths):
                 extra = (" b=" + b.strip().replace(",", ";")) if b.strip() not in ("", "-") and kind != "craft" else ""
                 print("%s,%s,%s,%s,%s,%s,%d,%s,%s,%s,%s,%s" % (
                     tid, prof, skill, bonus, secs, count, ok, gear,
-                    "%s %s %s %s%s%s%s" % (label, kind, note, base, extra, probe, cond_ev), setup, evidence, prov))
+                    "%s %s %s %s%s%s%s%s" % (label, kind, note, base, extra, probe, cond_ev,
+                                             ff if kind == "operate" and prof.startswith("farming") else ""),
+                    setup, evidence, prov))
                 if ok and gear == "none" and float(secs or 0) > 0:
                     flats.setdefault((base, prof), {})[int(skill)] = count / float(secs)
                 continue
@@ -935,9 +948,31 @@ def to_csv(paths):
                              % (base, prof, pts[10], pts[90]))
 
 
+def farm_factor(row, override=None):
+    """Share of the Farming gear bonus a farm's operate amount gets on top of the native read (Shay D1), and where
+    the number came from: --farm-factor, the csv ff= note, the PROV ini, else 0 (build before FarmOperateBonusFactor)."""
+    if override is not None:
+        return override, "flag"
+    m = re.search(r"\bff=([-\d.]+)", row.get("notes", ""))
+    if m:
+        return float(m.group(1)), "run"
+    prov = row.get("provenance", "")
+    if re.search(r"FarmOperateScaling=(true|1)\b", prov, re.I):
+        return 1.0, "ini"
+    m = re.search(r"FarmOperateBonusFactor=([-\d.]+)", prov)
+    if m:
+        return float(m.group(1)), "ini"
+    return 0.0, "assumed"
+
+
 def gatecheck(paths):
     """One GATE line per (output file, profession) from csv files made by `csv` on gate outputs (labels g1..g4)."""
     import csv as _csv
+    override = None
+    if "--farm-factor" in paths:
+        i = paths.index("--farm-factor")
+        override = float(paths[i + 1])
+        paths = paths[:i] + paths[i + 2:]
     groups = {}
     for path in paths:
         for r in _csv.DictReader(open(path, encoding="utf-8")):
@@ -988,8 +1023,16 @@ def gatecheck(paths):
             # the chance by 2^(d / 10) up to the cap (m34: 88 s25 0.0281 -> 0.0669 = x2^1.25 exactly)
             pred = min(0.9, base * 2.0 ** ((e2 - e1) / 10.0)) / base - 1.0
             mech += " exp"
-        if kind == "operate":  # JobOperateScaling multiplies work by the bonus on top of the skill read
-            pred = (1 + pred) * 1.5 - 1
+        if kind == "operate":
+            gpct = float(g["g2"].get("effective_bonus_pct") or 0) / 100.0
+            if prof.split("_")[0] == "farming":
+                # farms read the hooked Farming stat natively; only FarmOperateBonusFactor of the bonus is added
+                # to the work (Shay D1, ba24f01; 038aea1..ba24f01 builds: 0)
+                fct, fsrc = farm_factor(g["g2"], override)
+                pred = (1 + pred) * (1 + fct * gpct) - 1
+                mech += " ff=%.3g(%s)" % (fct, fsrc)
+            else:  # JobOperateScaling multiplies work by the bonus on top of the skill read
+                pred = (1 + pred) * (1 + gpct) - 1
         modtxt = "mod " + "/".join("%.3g" % m for m in mods) if mods else "mod ?"
         nums = "s25=%.4g s25+g=%.4g s90=%.4g s25b=%.4g drift=%.1f%% skill=%+.1f%% gear=%+.1f%% pred=%+.1f%% %s %s" % (
             r1, r2, r3, r4, 100 * drift, 100 * skill, 100 * gear, 100 * pred, mech, modtxt)
