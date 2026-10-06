@@ -1,5 +1,8 @@
 # PG in-game run order (for the coordinator)
 
+All launches below ran and their rows passed (state 2026-10-06: `INGAME_STATUS.md`); kept as the regression run recipe.
+Build hashes named below are the ones each step first needed; any later build works.
+
 ## Gate: standing step before any balance matrix (Shay 2026-10-04)
 
 1. `python3 tools/balance_driver.py gate` (WSL) writes `tests/ingame/full-base/gate/pg-gate-*.txt` (same generator,

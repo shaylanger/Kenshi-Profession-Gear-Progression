@@ -4,34 +4,9 @@ This file records approved future scope that is **part of the mod vision** but d
 
 ## Goal 1 — Broad utility progression
 
-ProfessionGear should support more than profession skills when the item concept justifies it.
-
-Approved utility effects include:
-- Athletics
-- movement/run-speed support
-- Swimming
-- Perception
-- Stealth
-- Assassination
-- Lockpicking / Thievery
-- encumbrance reduction
-- carry/hauling efficiency
-- specialist backpack weight reduction
-- other native Kenshi equipment modifiers when they fit the item
-
-Principle:
-- prefer existing Kenshi mechanics/fields where they already exist,
-- do not invent a parallel stat when Kenshi already has a native equivalent,
-- only add an effect when the item name/type/description makes sense for it.
-
-Examples:
-- Running Shoes / Traveler's Sandals -> Athletics and/or movement utility
-- Scout goggles -> Perception
-- Stealth gear -> Stealth
-- load-bearing harness / hauling pack -> encumbrance/carry utility
-- swimmer/diving-style gear -> Swimming where sensible
-
-The exact effect implementation may differ by category because Kenshi already exposes some modifiers directly on Armour/ContainerItem while profession skills require the CharStats hook.
+Built and verified in game (2026-10-06): Athletics/run speed (+ acceleration hook), Swimming, Perception, Stealth,
+Assassination, Lockpicking/Thievery, hauling/specialist backpack weight (rows 254-257, 272, balance gates m28-m47).
+Principle kept for new effects: prefer existing Kenshi mechanics, no parallel stats, only when the item name/type fits.
 
 ## Goal 2 — Profession-themed item generation/content layer
 
@@ -108,16 +83,7 @@ Current runtime API appears to expose section-wide stacking rather than per-item
 
 ## Goal 5 — Preserve authored unique gear
 
-Approved rule:
-- explicitly unique/special item instances are protected from ProfessionGear augmentation.
-
-Protection includes:
-- Kenshi `Item::isUnique`,
-- Meitou / Cross,
-- explicit legendary markers,
-- other curated exclusions.
-
-Normal high-quality non-unique gear can still participate where semantically appropriate.
+Built and verified (rows 251-253): `Item::isUnique`, Meitou/Cross and legendary markers are never augmented.
 
 ## Release philosophy
 

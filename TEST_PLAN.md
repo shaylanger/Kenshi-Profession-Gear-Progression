@@ -1,6 +1,6 @@
 # Profession Gear Progression — Full Test Plan
 
-**Status:** installed for testing; the coordinator session runs the game. Per-row state: `INGAME_STATUS.md`; in-game scenarios: `tests/ingame/` (`RUN_ORDER.md`).
+**Status (2026-10-06):** every automated row is PASS (offline or live); open rows (Shay feel/tooltip checks, D4, deferred FCS/stacking) are listed in `INGAME_STATUS.md`. This file stays the regression specification (row IDs are referenced by the scenario `covers:` headers); in-game scenarios: `tests/ingame/` (`RUN_ORDER.md`).
 
 **Current offline automation:** `run_tests.bat` passes **5,238 core checks**; `verify_offline.bat` passes **21 required SDK/export symbol checks**; source-contract verification passes **9 checks**; `build_portable.bat`, `package.bat`, and the full readiness gate are green. The numbered plan now extends through **331**. These do not substitute for the in-game rows below.
 

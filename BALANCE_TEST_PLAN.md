@@ -280,6 +280,7 @@ Needed operations:
 
 The runner should automatically iterate skill/bonus matrices and emit CSV plus a summarized recommendation.
 
-## Important current limitation
+## Current state (2026-10-06)
 
-This plan and the analysis tooling can be built now, but the actual throughput measurements **cannot be run until the plugin is authorized to be installed into Kenshi**. Until then, current tier values remain provisional.
+All professions were measured in game (gates + matrices m28-m47; summary in `INGAME_STATUS.md` "Balance state");
+Shay decisions D1-D8 applied. Open: D4 athletics feel and Shay's whole-picture balance decision.
