@@ -41,7 +41,7 @@ if($text -notmatch [regex]::Escape('?serialiseInInventory@Item@@UEAAPEAVGameData
 }
 Write-Host "OK      item save/load hooks installed"
 
-Require-Ordered "void HookPlayerUpdate" "ProcessCharacter(*i);" "ProcessTraderShop(world,*i,false);" "trader shop storage scanned with the character scan"
+Require-Ordered "void HookPlayerUpdate" "ProcessCharacter(c);" "ProcessTraderShop(world,c,false);" "trader shop storage scanned with the character scan"
 
 if($text -notmatch [regex]::Escape('?buyItem@Inventory@@QEAAPEAVItem@@PEAV2@PEAVRootObject@@@Z') -or
    $text -notmatch [regex]::Escape('BindPersistentItemId(bought,shopId);')){

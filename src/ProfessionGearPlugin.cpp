@@ -1541,28 +1541,55 @@ void KahTick() {
   Log(ss.str());
 }
 
+// Character scan, spread over frames. It used to walk the whole update list in ONE frame once a second
+// (every item: Describe/TagsFor/PersistentItemId), a 40-90 ms game-thread stall every second: the 1 Hz
+// frame hitch in every KenshiFP take on both test rigs (take-hitch, 2026-10-10). Now a sweep starts at most
+// once a second (after the previous one finished) and each frame scans characters for at most
+// kScanBudgetMs; a character that left the update list since the sweep started is skipped.
+const double kScanBudgetMs = 2.0;
+std::vector<Character*> g_scanQueue;
+size_t g_scanPos = 0;
+
+double ScanNowMs() {
+  static LARGE_INTEGER freq = {0};
+  if(!freq.QuadPart) QueryPerformanceFrequency(&freq);
+  LARGE_INTEGER c; QueryPerformanceCounter(&c);
+  return freq.QuadPart ? (double)c.QuadPart*1000.0/(double)freq.QuadPart : 0.0;
+}
+
 void HookPlayerUpdate(PlayerInterface* p) {
   if(g_playerUpdateOrig) g_playerUpdateOrig(p);
   KahTick();
-  DWORD now=GetTickCount();
-  if(now-g_lastScan<1000) return;
-  g_lastScan=now;
-  GameWorld* world=0;
-  HMODULE kl=GetModuleHandleA("KenshiLib.dll");
-  if(kl){
-    GameWorld** pp=(GameWorld**)GetProcAddress(kl,"?ou@@3PEAVGameWorld@@EA");
-    if(pp) world=*pp;
+  static GameWorld** pp=0;
+  if(!pp){
+    HMODULE kl=GetModuleHandleA("KenshiLib.dll");
+    if(kl) pp=(GameWorld**)GetProcAddress(kl,"?ou@@3PEAVGameWorld@@EA");
   }
-  if(world){
+  GameWorld* world=pp?*pp:0;
+  if(!world){ g_scanQueue.clear(); g_scanPos=0; return; }
+  if(g_scanPos>=g_scanQueue.size()){
+    DWORD now=GetTickCount();
+    if(now-g_lastScan<1000) return;
+    g_lastScan=now;
+    g_scanQueue.clear(); g_scanPos=0;
     try {
       const ogre_unordered_set<Character*>::type& chars=world->getCharacterUpdateList();
-      for(ogre_unordered_set<Character*>::type::const_iterator i=chars.begin();i!=chars.end();++i){
-        ProcessCharacter(*i);
-        ProcessTraderShop(world,*i,false);
-      }
-    } catch (...) {}
+      for(ogre_unordered_set<Character*>::type::const_iterator i=chars.begin();i!=chars.end();++i)
+        g_scanQueue.push_back(*i);
+    } catch (...) { g_scanQueue.clear(); return; }
   }
-  SaveDb();
+  const double t0=ScanNowMs();
+  try {
+    const ogre_unordered_set<Character*>::type& chars=world->getCharacterUpdateList();
+    while(g_scanPos<g_scanQueue.size()){
+      Character* c=g_scanQueue[g_scanPos++];
+      if(chars.find(c)==chars.end()) continue;   // gone (unloaded/deleted) since the sweep started
+      ProcessCharacter(c);
+      ProcessTraderShop(world,c,false);
+      if(ScanNowMs()-t0>=kScanBudgetMs) break;
+    }
+  } catch (...) { g_scanPos=g_scanQueue.size(); }
+  if(g_scanPos>=g_scanQueue.size()) SaveDb();   // once per finished sweep, as before
 }
 
 float HookGetStat(const CharStats* s,StatsEnumerated st,bool unmodified) {
